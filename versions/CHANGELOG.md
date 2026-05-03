@@ -5,6 +5,8 @@ Todos os registros de versões, mudanças e decisões do projeto.
 ---
 
 ## [2.6.0] — 2026-04-20
+[CONFIG] Especialista atualizado para v2.6.1-INTEGRATED
+
 
 ### Adicionado
 - Configuração inicial do Especialista (Auditor Kern 0xF1) v2.6.0-INTEGRATED
