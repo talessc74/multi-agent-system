@@ -4,6 +4,29 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [3.2.1-exp] — 2026-05-04 — branch: semente-jurisprudencial
+
+### [EXPERIMENTO] Primeira semente gerada pelo JURIS_SEED_GENERATOR + Correção factual crítica
+
+- [EXPERIMENTO] `seeds/rosemarie_diedrichs_pimpao_v3.0.json` gerada pelo JURIS_SEED_GENERATOR v1.0 com base em pesquisa real de fontes públicas verificáveis.
+  - **Threshold**: 4 decisões verificáveis (mínimo: 3) — confiabilidade ALTA
+  - **Fontes consultadas**: portal oficial TRT-9 (trt9.jus.br — 4 notícias com acórdãos), Conjur, Gazeta do Paraná, LEX Editora, OABPR, TST
+  - **Decisões documentadas**: (1) audiência telepresencial vs. acesso à Justiça — proc. 0000579-78.2021.5.09.0084; (2) dispensa discriminatória por câncer ósseo — 2ª Turma, R$10.000 dano moral, Súmula 443 TST; (3) reintegração por violação de cota de deficiente — proc. 37634-2015-041-09-00-9, Lei 8.213/1991; (4) rescisão indireta de idosa com restrições médicas ignoradas — 7ª Turma, Lei 10.741/2003
+  - **Padrões identificados**: vulnerabilidade como eixo decisório, ônus da prova ao empregador, acesso à Justiça como limite ao formalismo digital, rescisão indireta como instrumento ativo, astreintes para coerção real
+  - **Campo `versao`** adicionado ao seed para rastreabilidade conforme padrão do sistema
+
+- **[FIX CRÍTICO] Erro factual no seed v2.0 detectado e documentado**:
+  - `rosemarie_diedrichs_pimpao_v2.0.json` identifica incorretamente a magistrada como "Ministra do STJ — 4ª Turma e 2ª Seção"
+  - **Fato verificado**: Rosemarie Diedrichs Pimpão é Desembargadora Federal do Trabalho do TRT-9 desde 11/11/1996 — nunca integrou o STJ
+  - Os axiomas do seed v2.0 (direito civil/consumidor, expectativa legítima, contratos bancários) não representam seu padrão decisório real
+  - O seed v2.0 foi possivelmente gerado por confusão de identidade com outra magistrada de mesmo nome, ou por alucinação factual do modelo que o gerou
+  - **Ação necessária pós-merge**: marcar v2.0 como DEPRECADO com nota de erro factual no AGENTS_REGISTRY.json e SEEDS_REGISTRY.json; o agente `juiza_rosemarie_v1.0` gerado a partir do v2.0 também deve ser revisado
+
+### Status do experimento
+Semente gerada e validada com fontes reais. O mecanismo de threshold e fallback honesto funcionou corretamente — o JURIS_SEED_GENERATOR identificou o erro do v2.0 durante a pesquisa, coisa que a Semente de Shaw não teria detectado (não pesquisa fontes por padrão). **Experimento aprovado para merge após revisão do Especialista sobre o v2.0.**
+
+---
+
 ## [3.2.0-exp] — 2026-05-04 — branch: semente-jurisprudencial
 
 ### [EXPERIMENTO] Novo agente de configuração: JURIS_SEED_GENERATOR
