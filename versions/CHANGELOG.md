@@ -4,6 +4,27 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [3.1.0] — 2026-05-04
+
+### Sementes
+- [SEMENTE] yoav_shoham v1.0 criada — destilação do legado de Yoav Shoham (Stanford/AI21 Labs): sistemas multiagente, papel delimitado, comportamento emergente antecipado, dívida técnica explícita e governança de repositórios de agentes de IA.
+
+### Agentes
+- [AGENTE] revisor_sistema v1.0 gerado — auditor de saúde do sistema multiagente baseado na semente yoav_shoham_v1.0. Responsável por verificar consistência de registros, sobreposição de papéis, atualidade do CLAUDE.md e dívida técnica acumulada.
+
+### Revisão do Sistema (Kern: Yoav Shoham)
+- [REVISAO] Auditoria completa do estado do repositório executada pelo revisor_sistema_v1.0.
+- [FIX] SEEDS_REGISTRY.json: counter `total_sementes` corrigido de 7 para 9 (bug introduzido em v3.0.0 — seed rosemarie não havia incrementado o counter).
+- [DOCS] CLAUDE.md atualizado para refletir o estado real do sistema v3.1.0: escala atual (9 seeds, 10 agentes), cluster taxonomy, tipos de semente jurisprudencial, prefixo [REVISAO] na convenção de commits, anomalia legacy documentada.
+- [DOCS] AGENTS_REGISTRY.json: nota_estrutural adicionada ao agente legacy agente_claude_code_expert_v1.0, documentando desvio de campos (semente_origem vs seed_utilizada, BORIS_CHERNY_LEGACY_KERNEL vs SHAW_AUDITOR_KERN_0XF1).
+- [DOCS] versions/HEALTH_REPORT_v3.1.0.md gerado — relatório completo de saúde com inventário, análise de sobreposições, lacunas de cobertura, comportamentos emergentes documentados e recomendações priorizadas.
+
+### Registries
+- SEEDS_REGISTRY.json atualizado: 9 sementes indexadas
+- AGENTS_REGISTRY.json atualizado: 10 agentes indexados
+
+---
+
 ## [3.0.0] — 2026-05-04
 
 ### Sementes

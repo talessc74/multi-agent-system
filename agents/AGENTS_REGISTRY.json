@@ -2,7 +2,7 @@
   "registry_id": "AGENTS_REGISTRY",
   "descricao": "Índice de todos os agentes criados pelo Especialista",
   "ultima_atualizacao": "2026-05-04",
-  "total_agentes": 9,
+  "total_agentes": 10,
   "agentes": [
     {
       "agent_id": "consultor_ia_v1.0",
@@ -18,7 +18,8 @@
       "arquivo": "agents/agente_claude_code_expert_v1.0.json",
       "seed_utilizada": "boris_cherny_v1.0",
       "data_criacao": "2026-05-03",
-      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+      "gerado_por": "Especialista v2.6.1-INTEGRATED",
+      "nota_estrutural": "Agente legado — usa campos semente_origem e BORIS_CHERNY_LEGACY_KERNEL em vez dos campos padrão seed_utilizada e SHAW_AUDITOR_KERN_0XF1. Documentado na revisão v3.1.0. Candidato a normalização em versão futura."
     },
     {
       "agent_id": "arquiteto_produto_v1.0",
@@ -73,6 +74,14 @@
       "nome": "Advogado Trabalhista (Kern: Nelson Mannrich)",
       "arquivo": "agents/advogado_mannrich_v1.0.json",
       "seed_utilizada": "nelson_mannrich_v1.0",
+      "data_criacao": "2026-05-04",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    },
+    {
+      "agent_id": "revisor_sistema_v1.0",
+      "nome": "Revisor do Sistema (Kern: Yoav Shoham)",
+      "arquivo": "agents/revisor_sistema_v1.0.json",
+      "seed_utilizada": "yoav_shoham_v1.0",
       "data_criacao": "2026-05-04",
       "gerado_por": "Especialista v2.6.1-INTEGRATED"
     }
