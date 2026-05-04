@@ -4,6 +4,16 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [2.9.0] — 2026-05-04 (branch: jurisprudencial)
+
+### Sementes
+- [SEMENTE] rosemarie_diedrichs_pimpao v2.0 jurisprudencial criada — semente de tipo jurisprudencial extraída de acórdãos públicos do STJ (4ª Turma e 2ª Seção): expectativa legítima, dano moral in re ipsa, boa-fé contratual bilateral e acesso à Justiça como cláusula protetiva.
+
+### Registries
+- SEEDS_REGISTRY.json atualizado: 5 sementes indexadas (andrew_ng, boris_cherny, marty_cagan, claudia_lima_marques, rosemarie_diedrichs_pimpao)
+
+---
+
 ## [2.8.0] — 2026-05-04
 
 ### Sementes
