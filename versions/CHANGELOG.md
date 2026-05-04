@@ -4,6 +4,21 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [2.8.0] — 2026-05-04
+
+### Sementes
+- [SEMENTE] claudia_lima_marques v1.0 criada — destilação do legado de Cláudia Lima Marques (UFRGS/SVPG): vulnerabilidade do consumidor, boa-fé objetiva e responsabilidade objetiva do fornecedor.
+
+### Agentes
+- [AGENTE] advogado_consumerista v1.0 gerado — consultor jurídico em Direito do Consumidor (CDC + JEC), baseado na semente Cláudia Lima Marques.
+- [AGENTE] juiz_jec v1.0 gerado — simulador de raciocínio judicial do Juizado Especial Cível, baseado na semente Cláudia Lima Marques.
+
+### Registries
+- SEEDS_REGISTRY.json atualizado: 4 sementes indexadas (andrew_ng, boris_cherny, marty_cagan, claudia_lima_marques)
+- AGENTS_REGISTRY.json atualizado: 5 agentes indexados (consultor_ia, agente_claude_code_expert, arquiteto_produto, advogado_consumerista, juiz_jec)
+
+---
+
 ## [2.7.0] — 2026-05-04
 
 ### Sementes
