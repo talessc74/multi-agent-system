@@ -2,7 +2,7 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-04",
-  "total_sementes": 4,
+  "total_sementes": 7,
   "sementes": [
     {
       "seed_id": "andrew_ng_v1.0",
@@ -31,6 +31,36 @@
       "arquivo": "seeds/claudia_lima_marques_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "O Direito do Consumidor existe para reequilibrar uma relação estruturalmente desigual — e qualquer interpretação que enfraqueça essa proteção contradiz a razão de ser do CDC."
+    },
+    {
+      "seed_id": "jared_spool_v1.0",
+      "nome": "Jared Spool",
+      "arquivo": "seeds/jared_spool_v1.0.json",
+      "data_criacao": "2026-05-04",
+      "semantic_anchor": "UX excelente é invisível — o usuário só percebe quando algo falha. Nossa missão é eliminar os momentos em que ele precisa pensar sobre a interface."
+    },
+    {
+      "seed_id": "everton_goncalves_dutra_v1.0",
+      "nome": "Everton Gonçalves Dutra",
+      "arquivo": "seeds/everton_goncalves_dutra_v1.0.json",
+      "seed_tipo": "jurisprudencial",
+      "data_criacao": "2026-05-04",
+      "semantic_anchor": "Justiça no JEC não é rápida por ser simples — é rápida porque o cidadão comum não pode esperar. A velocidade serve ao direito, não o substitui."
+    },
+    {
+      "seed_id": "nelson_mannrich_v1.0",
+      "nome": "Nelson Mannrich",
+      "arquivo": "seeds/nelson_mannrich_v1.0.json",
+      "data_criacao": "2026-05-04",
+      "semantic_anchor": "O Direito do Trabalho protege quem trabalha — mas a proteção inteligente considera a realidade econômica, respeita a negociação coletiva legítima e dialoga com os padrões internacionais."
+    },
+    {
+      "seed_id": "rosemarie_diedrichs_pimpao_v2.0",
+      "nome": "Rosemarie Diedrichs Pimpão",
+      "arquivo": "seeds/rosemarie_diedrichs_pimpao_v2.0.json",
+      "seed_tipo": "jurisprudencial",
+      "data_criacao": "2026-05-04",
+      "semantic_anchor": "A proteção da confiança não é um favor do sistema jurídico ao consumidor — é a condição de possibilidade de um mercado de consumo que funcione com lealdade e previsibilidade."
     }
   ]
 }

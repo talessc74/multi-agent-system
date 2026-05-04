@@ -4,6 +4,26 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [3.0.0] — 2026-05-04
+
+### Sementes
+- [SEMENTE] jared_spool v1.0 criada — destilação do legado de Jared Spool (UIE/Center Centre): evidence-based UX, experience gap, maturidade organizacional de design e discovery contínuo baseado em observação real de usuários.
+- [SEMENTE] everton_goncalves_dutra v1.0 criada — semente jurisprudencial extraída de decisões públicas do TJPR: celeridade com profundidade, primazia da prova documental, dano moral com função pedagógica e conciliação como instrumento de justiça.
+- [SEMENTE] nelson_mannrich v1.0 criada — destilação do legado de Nelson Mannrich (USP/TST): primazia da realidade, boa-fé bilateral no contrato de trabalho, negociado sobre legislado com limites constitucionais e Convenções OIT como fonte supralegal.
+- [SEMENTE] rosemarie_diedrichs_pimpao v2.0 integrada do branch jurisprudencial — semente de tipo jurisprudencial extraída de acórdãos públicos do STJ (4ª Turma e 2ª Seção): expectativa legítima, dano moral in re ipsa, boa-fé contratual bilateral e acesso à Justiça como cláusula protetiva.
+
+### Agentes
+- [AGENTE] ux_validator v1.0 gerado — validador de decisões de UX baseado em evidência empírica, mapeamento de experience gaps e diagnóstico de maturidade organizacional de design. Semente: jared_spool_v1.0.
+- [AGENTE] juiz_everton v1.0 gerado — simulador de raciocínio judicial de juiz do TJPR em causas cíveis e consumeristas, com ênfase em prova documental e celeridade. Semente: everton_goncalves_dutra_v1.0.
+- [AGENTE] juiza_rosemarie v1.0 gerado — simulador de raciocínio jurisprudencial da Ministra Rosemarie Diedrichs Pimpão (STJ 4ª Turma/2ª Seção): expectativa legítima, contratos bancários e seguros, dano moral com função pedagógica. Semente: rosemarie_diedrichs_pimpao_v2.0.
+- [AGENTE] advogado_mannrich v1.0 gerado — consultor trabalhista em Direito Individual e Coletivo do Trabalho, CLT, Reforma Trabalhista e Convenções OIT. Semente: nelson_mannrich_v1.0.
+
+### Registries
+- SEEDS_REGISTRY.json atualizado: 8 sementes indexadas (andrew_ng, boris_cherny, marty_cagan, claudia_lima_marques, jared_spool, everton_goncalves_dutra, nelson_mannrich, rosemarie_diedrichs_pimpao)
+- AGENTS_REGISTRY.json atualizado: 9 agentes indexados (consultor_ia, agente_claude_code_expert, arquiteto_produto, advogado_consumerista, juiz_jec, ux_validator, juiz_everton, juiza_rosemarie, advogado_mannrich)
+
+---
+
 ## [2.8.0] — 2026-05-04
 
 ### Sementes

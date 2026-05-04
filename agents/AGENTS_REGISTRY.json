@@ -2,7 +2,7 @@
   "registry_id": "AGENTS_REGISTRY",
   "descricao": "Índice de todos os agentes criados pelo Especialista",
   "ultima_atualizacao": "2026-05-04",
-  "total_agentes": 5,
+  "total_agentes": 9,
   "agentes": [
     {
       "agent_id": "consultor_ia_v1.0",
@@ -41,6 +41,38 @@
       "nome": "Juiz do JEC — Juizado Especial Cível (Kern: Cláudia Lima Marques)",
       "arquivo": "agents/juiz_jec_v1.0.json",
       "seed_utilizada": "claudia_lima_marques_v1.0",
+      "data_criacao": "2026-05-04",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    },
+    {
+      "agent_id": "ux_validator_v1.0",
+      "nome": "UX Validator (Kern: Jared Spool)",
+      "arquivo": "agents/ux_validator_v1.0.json",
+      "seed_utilizada": "jared_spool_v1.0",
+      "data_criacao": "2026-05-04",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    },
+    {
+      "agent_id": "juiz_everton_v1.0",
+      "nome": "Juiz Everton — TJPR (Kern: Everton Gonçalves Dutra)",
+      "arquivo": "agents/juiz_everton_v1.0.json",
+      "seed_utilizada": "everton_goncalves_dutra_v1.0",
+      "data_criacao": "2026-05-04",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    },
+    {
+      "agent_id": "juiza_rosemarie_v1.0",
+      "nome": "Ministra Rosemarie — STJ (Kern: Rosemarie Diedrichs Pimpão)",
+      "arquivo": "agents/juiza_rosemarie_v1.0.json",
+      "seed_utilizada": "rosemarie_diedrichs_pimpao_v2.0",
+      "data_criacao": "2026-05-04",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    },
+    {
+      "agent_id": "advogado_mannrich_v1.0",
+      "nome": "Advogado Trabalhista (Kern: Nelson Mannrich)",
+      "arquivo": "agents/advogado_mannrich_v1.0.json",
+      "seed_utilizada": "nelson_mannrich_v1.0",
       "data_criacao": "2026-05-04",
       "gerado_por": "Especialista v2.6.1-INTEGRATED"
     }
