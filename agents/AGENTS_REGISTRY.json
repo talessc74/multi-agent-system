@@ -1,7 +1,32 @@
 {
   "registry_id": "AGENTS_REGISTRY",
   "descricao": "Índice de todos os agentes criados pelo Especialista",
-  "ultima_atualizacao": "2026-04-20",
-  "total_agentes": 0,
-  "agentes": []
+  "ultima_atualizacao": "2026-05-04",
+  "total_agentes": 3,
+  "agentes": [
+    {
+      "agent_id": "consultor_ia_v1.0",
+      "nome": "Consultor Pessoal de IA (Kern: Andrew Ng)",
+      "arquivo": "agents/consultor_ia_v1.0.json",
+      "seed_utilizada": "andrew_ng_v1.0",
+      "data_criacao": "2026-05-03",
+      "gerado_por": "Especialista v2.6.0-INTEGRATED"
+    },
+    {
+      "agent_id": "agente_claude_code_expert_v1.0",
+      "nome": "Claude Code Expert (Boris Cherny Legacy Kernel)",
+      "arquivo": "agents/agente_claude_code_expert_v1.0.json",
+      "seed_utilizada": "boris_cherny_v1.0",
+      "data_criacao": "2026-05-03",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    },
+    {
+      "agent_id": "arquiteto_produto_v1.0",
+      "nome": "Arquiteto de Produto (Kern: Marty Cagan)",
+      "arquivo": "agents/arquiteto_produto_v1.0.json",
+      "seed_utilizada": "marty_cagan_v1.0",
+      "data_criacao": "2026-05-04",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    }
+  ]
 }
