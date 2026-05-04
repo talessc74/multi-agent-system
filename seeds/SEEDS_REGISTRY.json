@@ -1,7 +1,29 @@
 {
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
-  "ultima_atualizacao": "2026-04-20",
-  "total_sementes": 0,
-  "sementes": []
+  "ultima_atualizacao": "2026-05-04",
+  "total_sementes": 3,
+  "sementes": [
+    {
+      "seed_id": "andrew_ng_v1.0",
+      "nome": "Andrew Ng",
+      "arquivo": "seeds/andrew_ng_v1.0.json",
+      "data_criacao": "2026-05-03",
+      "semantic_anchor": "IA responsável, acessível e orientada a dados de qualidade — construída por humanos diversos, para humanos diversos."
+    },
+    {
+      "seed_id": "boris_cherny_v1.0",
+      "nome": "Boris Cherny",
+      "arquivo": "seeds/boris_cherny_v1.0.json",
+      "data_criacao": "2026-05-03",
+      "semantic_anchor": "Distribua cognição como compute: aloque, enfileire, mantenha sessões ativas, alterne contexto apenas quando o valor estiver pronto."
+    },
+    {
+      "seed_id": "marty_cagan_v1.0",
+      "nome": "Marty Cagan",
+      "arquivo": "seeds/marty_cagan_v1.0.json",
+      "data_criacao": "2026-05-04",
+      "semantic_anchor": "Produto não é o que você constrói — é o problema do cliente que você resolve, medido pelo comportamento real que você muda."
+    }
+  ]
 }
