@@ -4,6 +4,27 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [3.2.0-exp] — 2026-05-04 — branch: semente-jurisprudencial
+
+### [EXPERIMENTO] Novo agente de configuração: JURIS_SEED_GENERATOR
+
+- [EXPERIMENTO] `config/semente_jurisprudencial.json` criado — agente JURIS_SEED_GENERATOR, separado do SHAW_ARCHITECT_GENERATOR, com foco exclusivo em buscar e destilar padrões decisórios reais de magistrados brasileiros a partir de acórdãos e jurisprudência pública verificável.
+  - Fontes autorizadas: Jusbrasil, portais de TJs estaduais, STJ, STF, DJe, e-SAJ
+  - Threshold mínimo de 3 decisões antes de gerar output — fallback honesto se insuficiente
+  - Distinção explícita entre padrão real (inferido das decisões) e padrão declarado (o que o magistrado afirma)
+  - Gera `kernel_jurisprudencial` no formato das sementes jurisprudenciais existentes (everton, rosemarie)
+  - Campo `confiabilidade_kernel` (ALTA/MEDIA/BAIXA) adicionado ao output para rastrear saturação da amostra
+  - Campos proibidos: `kernel_logic` — exclusivo da Semente de Shaw
+- [EXPERIMENTO] `prompts/ativar_semente_jurisprudencial.md` criado — documentação de uso do JURIS_SEED_GENERATOR com tabela comparativa vs. Semente de Shaw, exemplos de prompts, comportamento de fallback e lista de fontes autorizadas.
+
+### Motivação
+A Semente de Shaw foi projetada para legado intelectual declarado. Magistrados raramente publicam doutrina sistemática — seus padrões estão nas decisões. Um agente dedicado à extração jurisprudencial elimina o risco de contaminar sementes judiciais com inferências doutrinárias e impõe um threshold de evidência que a Semente de Shaw não possui.
+
+### Status
+Experimento em branch isolada. Pendente de validação com pelo menos 1 semente gerada e agente derivado antes de merge na main.
+
+---
+
 ## [3.1.1] — 2026-05-04
 
 ### Correções Estruturais
