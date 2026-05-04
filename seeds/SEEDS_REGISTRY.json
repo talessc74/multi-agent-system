@@ -2,7 +2,7 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-04",
-  "total_sementes": 4,
+  "total_sementes": 5,
   "sementes": [
     {
       "seed_id": "andrew_ng_v1.0",
@@ -31,6 +31,14 @@
       "arquivo": "seeds/claudia_lima_marques_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "O Direito do Consumidor existe para reequilibrar uma relação estruturalmente desigual — e qualquer interpretação que enfraqueça essa proteção contradiz a razão de ser do CDC."
+    },
+    {
+      "seed_id": "rosemarie_diedrichs_pimpao_v2.0",
+      "nome": "Rosemarie Diedrichs Pimpão",
+      "arquivo": "seeds/rosemarie_diedrichs_pimpao_v2.0.json",
+      "seed_tipo": "jurisprudencial",
+      "data_criacao": "2026-05-04",
+      "semantic_anchor": "A proteção da confiança não é um favor do sistema jurídico ao consumidor — é a condição de possibilidade de um mercado de consumo que funcione com lealdade e previsibilidade."
     }
   ]
 }
