@@ -53,8 +53,8 @@ Jurisprudential seeds (`seed_tipo: "jurisprudencial"`) replace `kernel_logic` wi
 
 The `logicaDatas` block is **exclusive to the Especialista** and must never appear in generated agent files.
 
-### Known structural anomaly
-`agente_claude_code_expert_v1.0` is a legacy agent that predates field standardization. It uses `semente_origem` instead of `seed_utilizada` and `BORIS_CHERNY_LEGACY_KERNEL` instead of `SHAW_AUDITOR_KERN_0XF1`. This deviation is documented and tracked — do not treat as a model for new agents.
+### Structural conformance
+All agents in `agents/` follow the same field schema. The legacy anomaly in `agente_claude_code_expert_v1.0` (non-standard `semente_origem`, `BORIS_CHERNY_LEGACY_KERNEL`, extra blocks `logicaDatas` and `referencias_semente`) was corrected in v3.1.1.
 
 ## Versioning
 

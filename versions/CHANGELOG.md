@@ -4,6 +4,21 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [3.1.1] — 2026-05-04
+
+### Correções Estruturais
+- [FIX] agente_claude_code_expert_v1.0.json normalizado para seguir o padrão atual do sistema (Argus — Revisor do Sistema):
+  - `versao.kernel`: `"BORIS_CHERNY_LEGACY_KERNEL"` → `"SHAW_AUDITOR_KERN_0XF1"`
+  - `versao.semente_origem` renomeado para `versao.seed_utilizada`; valor corrigido de `"boris_cherny_v1.0.json"` para `"boris_cherny_v1.0"` (sem extensão, apenas o ID)
+  - `versao.gerado_por` adicionado: `"Especialista v2.6.0-INTEGRATED"`
+  - `nomeAgente` atualizado: `"Claude Code Expert (Boris Cherny Legacy Kernel)"` → `"Claude Code Expert (Kern: Boris Cherny)"` (padrão `Kern: Nome`)
+  - Bloco `logicaDatas` removido — exclusivo do Especialista, proibido em agentes gerados (CLAUDE.md)
+  - `padraoEstrutura.blocosObrigatorios`: `"logicaDatas"` removido da lista
+  - Bloco `referencias_semente` removido — campo não-padrão sem equivalente em nenhum outro agente do sistema
+  - AGENTS_REGISTRY.json: campo `nota_estrutural` removido (anomalia corrigida)
+
+---
+
 ## [3.1.0] — 2026-05-04
 
 ### Sementes
