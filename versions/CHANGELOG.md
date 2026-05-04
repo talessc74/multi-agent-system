@@ -4,6 +4,31 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [3.1.2] — 2026-05-04
+
+### Correções Estruturais (Argus — Revisor do Sistema)
+
+- [FIX] `agents/juiza_rosemarie_v1.0.json` corrigido integralmente — erro factual crítico detectado pelo JURIS_SEED_GENERATOR na branch `semente-jurisprudencial` e corrigido por Argus na main:
+  - **Erro**: agente v1.0.0 foi gerado a partir do seed v2.0, que identificava incorretamente Rosemarie Diedrichs Pimpão como "Ministra do STJ — 4ª Turma e 2ª Seção"
+  - **Fato verificado**: ela é Desembargadora Federal do Trabalho do TRT-9 desde 11/11/1996 — nunca integrou o STJ
+  - **Campos corrigidos**:
+    - `nomeAgente`: `"Ministra Rosemarie — STJ..."` → `"Desembargadora Rosemarie — TRT-9..."`
+    - `versao.numero`: `"1.0.0"` → `"1.1.0"` (major minor bump por correção de conteúdo)
+    - `versao.seed_utilizada`: `"rosemarie_diedrichs_pimpao_v2.0"` → `"rosemarie_diedrichs_pimpao_v3.0"`
+    - `versao.tipo`: STJ/civil → TRT-9/trabalhista
+    - `versao.nota_correcao`: campo adicionado com rastreabilidade do erro e da correção
+    - `objetivo`: STJ/consumidor/bancos → TRT-9/trabalhista/dispensa discriminatória/reintegração/rescisão indireta
+    - `kernel_logic.philosophy` e `kernel_logic.axiomas`: 6 axiomas STJ/consumidor → 6 axiomas trabalhistas baseados no seed v3.0 (vulnerabilidade, ônus ao empregador, acesso à Justiça digital, rescisão indireta, astreintes)
+    - `logicaArquivos` completo: objetivo, densidade mínima e 3 entregáveis reescritos para direito trabalhista
+    - `logicaInterpretacao.revisaoAutomatica.etapas`: 6 etapas STJ → 6 etapas TRT-9 (competência, vulnerabilidade, Súmula 443, rescisão indireta, acesso à Justiça digital, sanção)
+    - `logicaInterpretacao.coreTraits`: 5 traits STJ/consumidor → 5 traits TRT-9/trabalhista
+    - `instrucoesEspecificas.mainObjective`, `.restricoes` (5), `.analysisProcess.steps` (6): todos reescritos para direito trabalhista
+    - `instrucoesEspecificas.exemplos_de_prompts_validados`: 3 casos STJ/consumidor substituídos por 3 casos TRT-9 baseados em decisões verificadas (câncer/Súmula 443, cotas/Lei 8.213, audiência digital/CF Art. 5º LV)
+    - `diretrizesEticas`: título, pilares (Transparência, Supervisão, Segurança) e mandamentos_kern reescritos para jurisdição trabalhista
+  - **Fonte da correção**: seed `rosemarie_diedrichs_pimpao_v3.0` gerado pelo JURIS_SEED_GENERATOR v1.0 com confiabilidade ALTA (4 decisões verificadas do TRT-9, período 2015–2026)
+
+---
+
 ## [3.1.1] — 2026-05-04
 
 ### Correções Estruturais
