@@ -134,3 +134,4 @@ const features = [
     desc: 'Ao final, receba um relatório com pontos fortes, fracos, probabilidade de êxito estimada e caminhos alternativos.',
   },
 ]
+// trigger deploy Tue May  5 16:57:27 UTC 2026
