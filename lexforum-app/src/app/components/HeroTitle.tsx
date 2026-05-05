@@ -31,8 +31,8 @@ export default function HeroTitle() {
       setTimeout(() => {
         setIndex((i) => (i + 1) % phrases.length)
         setVisible(true)
-      }, 500)
-    }, 3000)
+      }, 800)
+    }, 5000)
 
     return () => clearInterval(interval)
   }, [])
@@ -44,7 +44,7 @@ export default function HeroTitle() {
       className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight text-shadow-glow"
       style={{
         opacity: visible ? 1 : 0,
-        transition: 'opacity 500ms ease-in-out',
+        transition: 'opacity 800ms ease-in-out',
       }}
     >
       {plain}
