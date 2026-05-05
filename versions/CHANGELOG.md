@@ -4,6 +4,41 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [3.4.0] — 2026-05-05
+
+### [FEAT] Conselho Consultivo LexForum v1.0 — Advisory Board estratégico
+
+**Escopo:** Criação do cluster Advisory Board com 4 novas sementes, 1 agente multi-seed e 1 framework reutilizável.
+
+#### Sementes
+- [SEMENTE] SEED_ADV_001 v1.0 criada — legado de visão de produto: simplicidade, inovação radical, foco extremo.
+- [SEMENTE] SEED_ADV_002 v1.0 criada — legado de estratégia de negócio: monopólio criativo, pensamento contrário, vantagem do último movimento.
+- [SEMENTE] SEED_ADV_003 v1.0 criada — legado de crescimento: product-market fit, must-have score, North Star Metric.
+- [SEMENTE] SEED_ADV_004 v1.0 criada — legado do futuro do direito: democratização do acesso à justiça, transformação da profissão jurídica por tecnologia.
+
+#### Agentes
+- [AGENTE] conselho_consultivo_lexforum v1.0 gerado — Advisory Board estratégico com 5 membros (SEED_ADV_001–004 + SEED_UX_001). Arquitetura não-padrão (multi-seed, sem blocos logicaArquivos/logicaInterpretacao/instrucoesEspecificas/diretrizesEticas) — desvio intencional documentado.
+
+#### Config
+- [CONFIG] `config/advisory_board_framework.json` adicionado — framework reutilizável para instanciar Advisory Boards em novos projetos. Papéis fixos 1–4 com sementes reutilizáveis; papel 5 específico de domínio via Semente de Shaw.
+
+#### Registries
+- SEEDS_REGISTRY.json atualizado: 9 → 13 sementes (`total_sementes: 13`)
+- AGENTS_REGISTRY.json atualizado: 10 → 11 agentes (`total_agentes: 11`)
+
+#### CLAUDE.md
+- [DOCS] Scale counter atualizado: v3.3.0 → v3.4.0, 9 seeds → 13, 10 agents → 11
+- [DOCS] Domain Clusters: novo cluster "Advisory Board" adicionado (SEED_ADV_001–004, conselho_consultivo_lexforum)
+- [DOCS] Overview: referência ao advisory board framework adicionada
+
+### [REVISAO] Kernel → Legado — pseudonimização semântica global
+
+**Escopo:** Substituição do termo "Kernel" (maiúsculo, semântico) por "Legado" em todos os arquivos públicos do repositório. Chaves técnicas de JSON (`kernel_logic`, `kernel_jurisprudencial`) mantidas intactas.
+
+- 19 arquivos atualizados: agents/ (7), seeds/ (9), docs/README.md, versions/CHANGELOG.md, lexforum-app/src/app/page.tsx
+
+---
+
 ## [3.3.0] — 2026-05-05
 
 ### [REVISAO] Auditoria completa do sistema — Argus (Revisão de Saúde v3.3.0)

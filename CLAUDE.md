@@ -9,13 +9,13 @@ This repository contains two distinct components:
 1. **Multi-Agent System** — JSON-based, no executable code. All artifacts are configuration files and Markdown prompts consumed by AI platforms (Claude, Gemini, Copilot).
 2. **LexForum App** (`lexforum-app/`) — Next.js 16 web application, deployed at [lexforum.radiokactus.com](https://lexforum.radiokactus.com) via Vercel.
 
-**Current scale (v3.3.0):** 9 seeds · 10 generated agents · 2 core config agents · 1 web application
+**Current scale (v3.4.0):** 13 seeds · 11 generated agents · 2 core config agents · 1 advisory board framework · 1 web application
 
 Three layers make up the multi-agent system:
 
 - **Especialista** (`config/especialista.json`) — Auditor Kern 0xF1, a senior AI agent architect. Receives user intent (with or without a seed) and produces a structured agent JSON file.
 - **Semente de Shaw** (`config/semente.json`) — SHAW_ARCHITECT_GENERATOR, a real-time web researcher that distills public knowledge from a person or domain into a reusable seed JSON.
-- **Generated agents** (`agents/`) — 10 domain-specific agents created by the Especialista from seeds. See `agents/AGENTS_REGISTRY.json` for the full index.
+- **Generated agents** (`agents/`) — 11 domain-specific agents created by the Especialista from seeds. See `agents/AGENTS_REGISTRY.json` for the full index.
 
 ## Domain Clusters
 
@@ -27,6 +27,7 @@ Agents are organized into five functional clusters:
 | Produto & UX | SEED_PM_001, SEED_UX_001 | arquiteto_produto, ux_validator |
 | Jurídico Consumerista | SEED_JUR_001, SEED_JUR_002, SEED_JUR_003 | advogado_consumerista, juiz_jec, juiz_everton, juiza_rosemarie |
 | Jurídico Trabalhista | SEED_JUR_004 | advogado_mannrich |
+| Advisory Board | SEED_ADV_001, SEED_ADV_002, SEED_ADV_003, SEED_ADV_004 | conselho_consultivo_lexforum |
 
 ## Web Application — LexForum
 
