@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import HeroTitle from './components/HeroTitle'
 
 export default function Home() {
   return (
@@ -41,10 +42,7 @@ export default function Home() {
           </div>
 
           {/* Title */}
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight text-shadow-glow">
-            Sua causa tem{' '}
-            <span className="text-lex-cyan">chances reais?</span>
-          </h1>
+          <HeroTitle />
 
           {/* Subtitle */}
           <p className="font-sans text-lg text-white/65 leading-relaxed max-w-xl mx-auto">
