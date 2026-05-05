@@ -2,7 +2,7 @@
   "registry_id": "AGENTS_REGISTRY",
   "descricao": "Índice de todos os agentes criados pelo Especialista",
   "ultima_atualizacao": "2026-05-05",
-  "total_agentes": 11,
+  "total_agentes": 12,
   "agentes": [
     {
       "agent_id": "consultor_ia_v1.0",
@@ -82,6 +82,14 @@
       "arquivo": "agents/revisor_sistema_v1.0.json",
       "seed_utilizada": "SEED_SYS_001_v1.0",
       "data_criacao": "2026-05-04",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    },
+    {
+      "agent_id": "recepcionista_v1.0",
+      "nome": "Recepcionista LexForum — Agente de Triagem Visual",
+      "arquivo": "agents/recepcionista_v1.0.json",
+      "seed_utilizada": "SEED_UX_001_v1.0",
+      "data_criacao": "2026-05-05",
       "gerado_por": "Especialista v2.6.1-INTEGRATED"
     },
     {

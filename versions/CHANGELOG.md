@@ -4,6 +4,17 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [3.5.0] — 2026-05-05
+
+### [AGENTE] recepcionista_v1.0 — Agente de Triagem Visual LexForum
+
+- [AGENTE] `agents/recepcionista_v1.0.json` criado — Recepcionista LexForum: identifica perfil do usuário (leigo / profissional) em 1 interação visual e redireciona para /causa sem fricção. Legado: SEED_UX_001.
+- 2 cards visuais com `decision_gates` para linguagem adaptativa por perfil
+- Comportamento de fallback: aguardar 30s sem pressionar, exibir mensagem de calma
+- AGENTS_REGISTRY.json atualizado: 11 → 12 agentes (`total_agentes: 12`)
+
+---
+
 ## [3.4.0] — 2026-05-05
 
 ### [FEAT] Conselho Consultivo LexForum v1.0 — Advisory Board estratégico
