@@ -124,7 +124,7 @@ const features = [
   {
     icon: '🏛️',
     title: 'Fórum Virtual Real',
-    desc: 'Juiz, advogado da parte contrária e relator com kernels de jurisprudência brasileira — JEC, TRT, TJPR e STJ.',
+    desc: 'Juiz, advogado da parte contrária e relator com legados de jurisprudência brasileira — JEC, TRT, TJPR e STJ.',
   },
   {
     icon: '🔄',

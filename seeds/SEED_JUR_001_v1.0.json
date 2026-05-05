@@ -4,7 +4,7 @@
   "seed_date": "2026-05-04",
   "referencia_fonte": {
     "id": "SEED_JUR_001",
-    "descriptor": "Kernel consumerista — vulnerabilidade do consumidor, interpretação protetiva CDC"
+    "descriptor": "Legado consumerista — vulnerabilidade do consumidor, interpretação protetiva CDC"
   },
   "kernel_logic": {
     "axioma_1": "Vulnerabilidade é o fundamento do CDC. O consumidor é presumidamente vulnerável (técnica, jurídica, fática ou informacional) e essa presunção orienta toda a interpretação da lei.",

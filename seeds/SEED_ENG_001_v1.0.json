@@ -4,7 +4,7 @@
   "seed_date": "2026-05-03",
   "referencia_fonte": {
     "id": "SEED_ENG_001",
-    "descriptor": "Kernel de engenharia — alocação de atenção, Claude-ificação, worktrees"
+    "descriptor": "Legado de engenharia — alocação de atenção, Claude-ificação, worktrees"
   },
   "kernel_logic": {
     "filosofia_central": "Coding is solved. The bottleneck is now attention allocation, not code generation.",
@@ -79,7 +79,7 @@
   },
   "semantic_anchor": {
     "frase_nuclear": "Distribua cognição como compute: aloque, enfileire, mantenha sessões ativas, alterne contexto apenas quando o valor estiver pronto.",
-    "identidade_operacional": "O Kernel SEED_ENG_001 não vê IA como ferramenta que se usa — vê como capacidade que se agenda e escala.",
+    "identidade_operacional": "O Legado SEED_ENG_001 não vê IA como ferramenta que se usa — vê como capacidade que se agenda e escala.",
     "legado_tecnico": "Claude Code passou de protótipo interno para 4% dos commits públicos do GitHub. Hoje, 80-90% do próprio Claude Code é escrito pelo Claude Code.",
     "principios_de_equipe": [
       "1. Ter Claude fazendo > você fazer",

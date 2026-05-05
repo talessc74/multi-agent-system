@@ -63,7 +63,7 @@ Operação de segurança executada para eliminar todos os nomes reais de pessoas
 - [SECURITY] `seeds/SEEDS_REGISTRY.json` reescrito: todos os `seed_id`, `nome` e `arquivo` atualizados para IDs pseudonimizados (`SEED_AI_001`, `SEED_ENG_001`, `SEED_PM_001`, `SEED_JUR_001`–`004`, `SEED_UX_001`, `SEED_SYS_001`)
 
 #### Agentes
-- [SECURITY] 10 agentes atualizados: campos `nomeAgente`, `versao.seed_utilizada` e referências textuais a nomes reais substituídos por IDs de kernel
+- [SECURITY] 10 agentes atualizados: campos `nomeAgente`, `versao.seed_utilizada` e referências textuais a nomes reais substituídos por IDs de legado
 - [SECURITY] `agents/AGENTS_REGISTRY.json` reescrito: todos os campos `nome` e `seed_utilizada` atualizados
 - Agentes afetados: `consultor_ia`, `agente_claude_code_expert`, `arquiteto_produto`, `advogado_consumerista`, `juiz_jec`, `ux_validator`, `juiz_everton`, `juiza_rosemarie`, `advogado_mannrich`, `revisor_sistema`
 
@@ -94,7 +94,7 @@ Operação de segurança executada para eliminar todos os nomes reais de pessoas
 ### Correções Estruturais (Argus — Revisor do Sistema)
 
 - [FIX] `agents/juiza_rosemarie_v1.0.json` corrigido integralmente — erro factual crítico detectado pelo JURIS_SEED_GENERATOR na branch `semente-jurisprudencial` e corrigido por Argus na main:
-  - **Erro**: agente v1.0.0 gerado a partir do kernel SEED_JUR_003_v2.0 (versão anterior), que identificava incorretamente a magistrada SEED_JUR_003 como "Ministra do STJ — 4ª Turma e 2ª Seção"
+  - **Erro**: agente v1.0.0 gerado a partir do legado SEED_JUR_003_v2.0 (versão anterior), que identificava incorretamente a magistrada SEED_JUR_003 como "Ministra do STJ — 4ª Turma e 2ª Seção"
   - **Fato verificado**: cargo real é Desembargadora Federal do Trabalho do TRT-9 desde 11/11/1996 — nunca integrou o STJ
   - **Campos corrigidos**:
     - `nomeAgente`: `"Ministra SEED_JUR_003 — STJ..."` → `"Desembargadora SEED_JUR_003 — TRT-9..."`
@@ -103,14 +103,14 @@ Operação de segurança executada para eliminar todos os nomes reais de pessoas
     - `versao.tipo`: STJ/civil → TRT-9/trabalhista
     - `versao.nota_correcao`: campo adicionado com rastreabilidade do erro e da correção
     - `objetivo`: STJ/consumidor/bancos → TRT-9/trabalhista/dispensa discriminatória/reintegração/rescisão indireta
-    - `kernel_logic.philosophy` e `kernel_logic.axiomas`: 6 axiomas STJ/consumidor → 6 axiomas trabalhistas baseados no kernel SEED_JUR_003_v2.0 (vulnerabilidade, ônus ao empregador, acesso à Justiça digital, rescisão indireta, astreintes)
+    - `kernel_logic.philosophy` e `kernel_logic.axiomas`: 6 axiomas STJ/consumidor → 6 axiomas trabalhistas baseados no legado SEED_JUR_003_v2.0 (vulnerabilidade, ônus ao empregador, acesso à Justiça digital, rescisão indireta, astreintes)
     - `logicaArquivos` completo: objetivo, densidade mínima e 3 entregáveis reescritos para direito trabalhista
     - `logicaInterpretacao.revisaoAutomatica.etapas`: 6 etapas STJ → 6 etapas TRT-9 (competência, vulnerabilidade, Súmula 443, rescisão indireta, acesso à Justiça digital, sanção)
     - `logicaInterpretacao.coreTraits`: 5 traits STJ/consumidor → 5 traits TRT-9/trabalhista
     - `instrucoesEspecificas.mainObjective`, `.restricoes` (5), `.analysisProcess.steps` (6): todos reescritos para direito trabalhista
     - `instrucoesEspecificas.exemplos_de_prompts_validados`: 3 casos STJ/consumidor substituídos por 3 casos TRT-9 baseados em decisões verificadas (Súmula 443 TST, cotas/Lei 8.213, audiência digital/CF Art. 5º LV)
     - `diretrizesEticas`: título, pilares (Transparência, Supervisão, Segurança) e mandamentos_kern reescritos para jurisdição trabalhista
-  - **Fonte da correção**: kernel SEED_JUR_003_v2.0 gerado pelo JURIS_SEED_GENERATOR v1.0 com confiabilidade ALTA (4 decisões verificadas do TRT-9, período 2015–2026)
+  - **Fonte da correção**: legado SEED_JUR_003_v2.0 gerado pelo JURIS_SEED_GENERATOR v1.0 com confiabilidade ALTA (4 decisões verificadas do TRT-9, período 2015–2026)
 
 ---
 
@@ -118,10 +118,10 @@ Operação de segurança executada para eliminar todos os nomes reais de pessoas
 
 ### Correções Estruturais
 - [FIX] agente_claude_code_expert_v1.0.json normalizado para seguir o padrão atual do sistema (Argus — Revisor do Sistema):
-  - `versao.kernel`: `"SEED_ENG_001_LEGACY_KERNEL"` → `"SHAW_AUDITOR_KERN_0XF1"`
+  - `versao.legado`: `"SEED_ENG_001_LEGACY_KERNEL"` → `"SHAW_AUDITOR_KERN_0XF1"`
   - `versao.semente_origem` renomeado para `versao.seed_utilizada`; valor corrigido de `"SEED_ENG_001_v1.0.json"` para `"SEED_ENG_001_v1.0"` (sem extensão, apenas o ID)
   - `versao.gerado_por` adicionado: `"Especialista v2.6.0-INTEGRATED"`
-  - `nomeAgente` atualizado: `"Claude Code Expert (SEED_ENG_001 Legacy Kernel)"` → `"Claude Code Expert (Kern: SEED_ENG_001)"` (padrão `Kern: ID`)
+  - `nomeAgente` atualizado: `"Claude Code Expert (SEED_ENG_001 Legacy Legado)"` → `"Claude Code Expert (Kern: SEED_ENG_001)"` (padrão `Kern: ID`)
   - Bloco `logicaDatas` removido — exclusivo do Especialista, proibido em agentes gerados (CLAUDE.md)
   - `padraoEstrutura.blocosObrigatorios`: `"logicaDatas"` removido da lista
   - Bloco `referencias_semente` removido — campo não-padrão sem equivalente em nenhum outro agente do sistema
@@ -132,14 +132,14 @@ Operação de segurança executada para eliminar todos os nomes reais de pessoas
 ## [3.1.0] — 2026-05-04
 
 ### Sementes
-- [SEMENTE] SEED_SYS_001 v1.0 criada — kernel sistêmico: sistemas multiagente, papel delimitado, comportamento emergente antecipado, dívida técnica explícita e governança de repositórios de agentes de IA.
+- [SEMENTE] SEED_SYS_001 v1.0 criada — legado sistêmico: sistemas multiagente, papel delimitado, comportamento emergente antecipado, dívida técnica explícita e governança de repositórios de agentes de IA.
 
 ### Agentes
-- [AGENTE] revisor_sistema v1.0 gerado — auditor de saúde do sistema multiagente baseado no kernel SEED_SYS_001_v1.0. Responsável por verificar consistência de registros, sobreposição de papéis, atualidade do CLAUDE.md e dívida técnica acumulada.
+- [AGENTE] revisor_sistema v1.0 gerado — auditor de saúde do sistema multiagente baseado no legado SEED_SYS_001_v1.0. Responsável por verificar consistência de registros, sobreposição de papéis, atualidade do CLAUDE.md e dívida técnica acumulada.
 
 ### Revisão do Sistema (Kern: SEED_SYS_001)
 - [REVISAO] Auditoria completa do estado do repositório executada pelo revisor_sistema_v1.0.
-- [FIX] SEEDS_REGISTRY.json: counter `total_sementes` corrigido de 7 para 9 (bug introduzido em v3.0.0 — kernel SEED_JUR_003 não havia incrementado o counter).
+- [FIX] SEEDS_REGISTRY.json: counter `total_sementes` corrigido de 7 para 9 (bug introduzido em v3.0.0 — legado SEED_JUR_003 não havia incrementado o counter).
 - [DOCS] CLAUDE.md atualizado para refletir o estado real do sistema v3.1.0: escala atual (9 seeds, 10 agentes), cluster taxonomy, tipos de semente jurisprudencial, prefixo [REVISAO] na convenção de commits, anomalia legacy documentada.
 - [DOCS] AGENTS_REGISTRY.json: nota_estrutural adicionada ao agente legacy agente_claude_code_expert_v1.0, documentando desvio de campos.
 - [DOCS] versions/HEALTH_REPORT_v3.1.0.md gerado — relatório completo de saúde com inventário, análise de sobreposições, lacunas de cobertura, comportamentos emergentes documentados e recomendações priorizadas.
@@ -153,19 +153,19 @@ Operação de segurança executada para eliminar todos os nomes reais de pessoas
 ## [3.0.0] — 2026-05-04
 
 ### Sementes
-- [SEMENTE] SEED_UX_001 v1.0 criada — kernel de UX: evidence-based UX, experience gap, maturidade organizacional de design e discovery contínuo baseado em observação real de usuários.
-- [SEMENTE] SEED_JUR_002 v1.0 criada — kernel jurisprudencial: celeridade com profundidade, primazia da prova documental, dano moral com função pedagógica e conciliação como instrumento de justiça.
-- [SEMENTE] SEED_JUR_004 v1.0 criada — kernel trabalhista: primazia da realidade, boa-fé bilateral no contrato de trabalho, negociado sobre legislado com limites constitucionais e Convenções OIT como fonte supralegal.
-- [SEMENTE] SEED_JUR_003 v2.0 integrada do branch jurisprudencial — kernel jurisprudencial extraído de acórdãos públicos do TRT-9: vulnerabilidade como eixo decisório, ônus ao empregador, rescisão indireta como instrumento ativo, astreintes coercitivas e acesso à Justiça digital.
+- [SEMENTE] SEED_UX_001 v1.0 criada — legado de UX: evidence-based UX, experience gap, maturidade organizacional de design e discovery contínuo baseado em observação real de usuários.
+- [SEMENTE] SEED_JUR_002 v1.0 criada — legado jurisprudencial: celeridade com profundidade, primazia da prova documental, dano moral com função pedagógica e conciliação como instrumento de justiça.
+- [SEMENTE] SEED_JUR_004 v1.0 criada — legado trabalhista: primazia da realidade, boa-fé bilateral no contrato de trabalho, negociado sobre legislado com limites constitucionais e Convenções OIT como fonte supralegal.
+- [SEMENTE] SEED_JUR_003 v2.0 integrada do branch jurisprudencial — legado jurisprudencial extraído de acórdãos públicos do TRT-9: vulnerabilidade como eixo decisório, ônus ao empregador, rescisão indireta como instrumento ativo, astreintes coercitivas e acesso à Justiça digital.
 
 ### Agentes
-- [AGENTE] ux_validator v1.0 gerado — validador de decisões de UX baseado em evidência empírica, mapeamento de experience gaps e diagnóstico de maturidade organizacional de design. Kernel: SEED_UX_001_v1.0.
-- [AGENTE] juiz_everton v1.0 gerado — simulador de raciocínio judicial de juiz do TJPR em causas cíveis e consumeristas, com ênfase em prova documental e celeridade. Kernel: SEED_JUR_002_v1.0.
-- [AGENTE] juiza_rosemarie v1.0 gerado — simulador de raciocínio jurisprudencial de Desembargadora do TRT-9: vulnerabilidade, cotas, rescisão indireta, acesso à Justiça digital. Kernel: SEED_JUR_003_v2.0.
-- [AGENTE] advogado_mannrich v1.0 gerado — consultor trabalhista em Direito Individual e Coletivo do Trabalho, CLT, Reforma Trabalhista e Convenções OIT. Kernel: SEED_JUR_004_v1.0.
+- [AGENTE] ux_validator v1.0 gerado — validador de decisões de UX baseado em evidência empírica, mapeamento de experience gaps e diagnóstico de maturidade organizacional de design. Legado: SEED_UX_001_v1.0.
+- [AGENTE] juiz_everton v1.0 gerado — simulador de raciocínio judicial de juiz do TJPR em causas cíveis e consumeristas, com ênfase em prova documental e celeridade. Legado: SEED_JUR_002_v1.0.
+- [AGENTE] juiza_rosemarie v1.0 gerado — simulador de raciocínio jurisprudencial de Desembargadora do TRT-9: vulnerabilidade, cotas, rescisão indireta, acesso à Justiça digital. Legado: SEED_JUR_003_v2.0.
+- [AGENTE] advogado_mannrich v1.0 gerado — consultor trabalhista em Direito Individual e Coletivo do Trabalho, CLT, Reforma Trabalhista e Convenções OIT. Legado: SEED_JUR_004_v1.0.
 
 ### Registries
-- SEEDS_REGISTRY.json atualizado: 8 kernels indexados (SEED_AI_001, SEED_ENG_001, SEED_PM_001, SEED_JUR_001, SEED_UX_001, SEED_JUR_002, SEED_JUR_004, SEED_JUR_003)
+- SEEDS_REGISTRY.json atualizado: 8 legados indexados (SEED_AI_001, SEED_ENG_001, SEED_PM_001, SEED_JUR_001, SEED_UX_001, SEED_JUR_002, SEED_JUR_004, SEED_JUR_003)
 - AGENTS_REGISTRY.json atualizado: 9 agentes indexados (consultor_ia, agente_claude_code_expert, arquiteto_produto, advogado_consumerista, juiz_jec, ux_validator, juiz_everton, juiza_rosemarie, advogado_mannrich)
 
 ---
@@ -173,14 +173,14 @@ Operação de segurança executada para eliminar todos os nomes reais de pessoas
 ## [2.8.0] — 2026-05-04
 
 ### Sementes
-- [SEMENTE] SEED_JUR_001 v1.0 criada — kernel consumerista: vulnerabilidade do consumidor, boa-fé objetiva e responsabilidade objetiva do fornecedor.
+- [SEMENTE] SEED_JUR_001 v1.0 criada — legado consumerista: vulnerabilidade do consumidor, boa-fé objetiva e responsabilidade objetiva do fornecedor.
 
 ### Agentes
-- [AGENTE] advogado_consumerista v1.0 gerado — consultor jurídico em Direito do Consumidor (CDC + JEC), baseado no kernel SEED_JUR_001.
-- [AGENTE] juiz_jec v1.0 gerado — simulador de raciocínio judicial do Juizado Especial Cível, baseado no kernel SEED_JUR_001.
+- [AGENTE] advogado_consumerista v1.0 gerado — consultor jurídico em Direito do Consumidor (CDC + JEC), baseado no legado SEED_JUR_001.
+- [AGENTE] juiz_jec v1.0 gerado — simulador de raciocínio judicial do Juizado Especial Cível, baseado no legado SEED_JUR_001.
 
 ### Registries
-- SEEDS_REGISTRY.json atualizado: 4 kernels indexados (SEED_AI_001, SEED_ENG_001, SEED_PM_001, SEED_JUR_001)
+- SEEDS_REGISTRY.json atualizado: 4 legados indexados (SEED_AI_001, SEED_ENG_001, SEED_PM_001, SEED_JUR_001)
 - AGENTS_REGISTRY.json atualizado: 5 agentes indexados (consultor_ia, agente_claude_code_expert, arquiteto_produto, advogado_consumerista, juiz_jec)
 
 ---
@@ -188,13 +188,13 @@ Operação de segurança executada para eliminar todos os nomes reais de pessoas
 ## [2.7.0] — 2026-05-04
 
 ### Sementes
-- [SEMENTE] SEED_PM_001 v1.0 criada — kernel de produto: empowered teams, product discovery e outcome sobre output.
+- [SEMENTE] SEED_PM_001 v1.0 criada — legado de produto: empowered teams, product discovery e outcome sobre output.
 
 ### Agentes
-- [AGENTE] arquiteto_produto v1.0 gerado — consultor estratégico de produto baseado no kernel SEED_PM_001.
+- [AGENTE] arquiteto_produto v1.0 gerado — consultor estratégico de produto baseado no legado SEED_PM_001.
 
 ### Registries
-- SEEDS_REGISTRY.json atualizado: 3 kernels indexados (SEED_AI_001, SEED_ENG_001, SEED_PM_001)
+- SEEDS_REGISTRY.json atualizado: 3 legados indexados (SEED_AI_001, SEED_ENG_001, SEED_PM_001)
 - AGENTS_REGISTRY.json atualizado: 3 agentes indexados (consultor_ia, agente_claude_code_expert, arquiteto_produto)
 
 ---

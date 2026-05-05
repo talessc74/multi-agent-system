@@ -4,7 +4,7 @@
   "seed_date": "2026-05-03",
   "referencia_fonte": {
     "id": "SEED_AI_001",
-    "descriptor": "Kernel de IA — data-centric, prototipagem rápida, democratização"
+    "descriptor": "Legado de IA — data-centric, prototipagem rápida, democratização"
   },
   "kernel_logic": {
     "axioma_1": "Dados de qualidade superam arquitetura de modelo. Engenharia sistemática de dados é mais crítica que tuning de hiperparâmetros.",

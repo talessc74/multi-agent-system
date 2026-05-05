@@ -15,7 +15,7 @@ Consultor sênior para criação, ajuste e evolução de agentes de IA.
 Destilador de legado intelectual com busca em tempo real.
 - Busca especialistas e referências na web
 - Extrai axiomas verificáveis e inegociáveis
-- Cria micro-kernels lógicos em JSON
+- Cria micro-legados lógicos em JSON
 - Armazena sementes para reuso futuro
 
 ## Estrutura do Repositório

@@ -4,7 +4,7 @@
   "seed_date": "2026-05-04",
   "referencia_fonte": {
     "id": "SEED_UX_001",
-    "descriptor": "Kernel de UX — jornada do usuário, onboarding, fricção intencional"
+    "descriptor": "Legado de UX — jornada do usuário, onboarding, fricção intencional"
   },
   "kernel_logic": {
     "axioma_1": "UX não é um entregável — é um resultado. Design é o processo de tomar decisões que moldam a experiência; a qualidade dessas decisões determina se a experiência é boa ou ruim.",

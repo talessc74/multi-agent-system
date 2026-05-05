@@ -4,7 +4,7 @@
   "seed_date": "2026-05-04",
   "referencia_fonte": {
     "id": "SEED_PM_001",
-    "descriptor": "Kernel de produto — discovery antes de delivery, outcomes sobre outputs"
+    "descriptor": "Legado de produto — discovery antes de delivery, outcomes sobre outputs"
   },
   "kernel_logic": {
     "axioma_1": "Times empoderados superam feature teams. A diferença não é processo — é propósito: resolver problemas reais de clientes vs executar listas de funcionalidades de stakeholders.",

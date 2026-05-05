@@ -4,7 +4,7 @@
   "seed_date": "2026-05-04",
   "referencia_fonte": {
     "id": "SEED_SYS_001",
-    "descriptor": "Kernel sistêmico — coordenação multi-agente, resiliência, observabilidade"
+    "descriptor": "Legado sistêmico — coordenação multi-agente, resiliência, observabilidade"
   },
   "kernel_logic": {
     "axioma_1": "Papel sem fronteira é papel sem função. Todo agente em um sistema multiagente deve ter um escopo de atuação explícito, delimitado e não-ambíguo — sobreposição de papéis cria conflitos de coordenação e degrada a qualidade do sistema.",
