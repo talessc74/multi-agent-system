@@ -4,6 +4,50 @@ Todos os registros de versões, mudanças e decisões do projeto.
 
 ---
 
+## [3.3.0] — 2026-05-05
+
+### [REVISAO] Auditoria completa do sistema — Argus (Revisão de Saúde v3.3.0)
+
+**Escopo:** Incorporação do lexforum-app ao repositório, correção do tsconfig.json e atualização de documentação.
+
+#### CLAUDE.md
+- [DOCS] Versão atualizada de v3.1.0 para v3.3.0
+- [DOCS] Nova seção "Web Application — LexForum" adicionada: stack, deploy URL, design system, convenção de commits para o app
+- [DOCS] Overview reescrito para refletir repositório híbrido (multi-agent system + web app)
+
+#### LexForum App
+- [FIX] `lexforum-app/tsconfig.json` corrigido:
+  - `jsx: "preserve"` → `jsx: "react-jsx"` (necessário para React 18 sem import explícito de React)
+  - `target: "ES2017"` adicionado (alinha com suporte Next.js 16)
+  - `.next/dev/types/**/*.ts` adicionado ao `include` (necessário para tipos de dev mode do Next.js 16)
+
+#### Relatório de Saúde
+- [REVISAO] `versions/HEALTH_REPORT_v3.3.0.md` gerado — cobre estado pós-integração do lexforum-app
+
+---
+
+## [3.2.1] — 2026-05-05
+
+### [FEAT] LexForum — design system navy/ciano + homepage aprovada
+
+- Design system implementado: paleta navy (`#0A1628`) + ciano (`#00C4CC`) no `tailwind.config.ts`
+- Homepage (`src/app/page.tsx`) implementada e aprovada visualmente
+- Deploy realizado na Vercel em `lexforum.radiokactus.com`
+
+---
+
+## [3.2.0-lexforum] — 2026-05-05
+
+### [FEAT] LexForum MVP v0.1.0 — estrutura base Next.js 16 + Tailwind CSS
+
+- `lexforum-app/` adicionado ao repositório como subprojeto independente
+- Stack: Next.js 16, React 18, TypeScript 5, Tailwind CSS 3
+- Estrutura base: `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/globals.css`
+- Configurações: `next.config.js`, `tailwind.config.ts`, `postcss.config.js`, `tsconfig.json`
+- `.gitignore` específico para o app (exclui `.next/`, `node_modules/`, `.env*.local`)
+
+---
+
 ## [3.2.0] — 2026-05-05
 
 ### [SECURITY] Pseudonimização completa do repositório (Argus — modo SECURITY)

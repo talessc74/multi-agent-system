@@ -4,11 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a JSON-based multi-agent system with no executable code, build system, or tests. All artifacts are JSON configuration files and Markdown prompts consumed directly by AI platforms (Claude, Gemini, Copilot).
+This repository contains two distinct components:
 
-**Current scale (v3.1.0):** 9 seeds · 10 generated agents · 2 core config agents
+1. **Multi-Agent System** — JSON-based, no executable code. All artifacts are configuration files and Markdown prompts consumed by AI platforms (Claude, Gemini, Copilot).
+2. **LexForum App** (`lexforum-app/`) — Next.js 16 web application, deployed at [lexforum.radiokactus.com](https://lexforum.radiokactus.com) via Vercel.
 
-Three layers make up the system:
+**Current scale (v3.3.0):** 9 seeds · 10 generated agents · 2 core config agents · 1 web application
+
+Three layers make up the multi-agent system:
 
 - **Especialista** (`config/especialista.json`) — Auditor Kern 0xF1, a senior AI agent architect. Receives user intent (with or without a seed) and produces a structured agent JSON file.
 - **Semente de Shaw** (`config/semente.json`) — SHAW_ARCHITECT_GENERATOR, a real-time web researcher that distills public knowledge from a person or domain into a reusable seed JSON.
@@ -24,6 +27,24 @@ Agents are organized into five functional clusters:
 | Produto & UX | SEED_PM_001, SEED_UX_001 | arquiteto_produto, ux_validator |
 | Jurídico Consumerista | SEED_JUR_001, SEED_JUR_002, SEED_JUR_003 | advogado_consumerista, juiz_jec, juiz_everton, juiza_rosemarie |
 | Jurídico Trabalhista | SEED_JUR_004 | advogado_mannrich |
+
+## Web Application — LexForum
+
+`lexforum-app/` is a standalone Next.js 16 application housed inside this monorepo. It is developed and deployed independently from the multi-agent system.
+
+| Property | Value |
+|---|---|
+| Framework | Next.js 16 + React 18 |
+| Styling | Tailwind CSS 3 |
+| Language | TypeScript 5 (strict mode) |
+| Deploy | Vercel — `lexforum.radiokactus.com` |
+| Entry point | `lexforum-app/src/app/page.tsx` |
+| Design system | Navy/ciano palette defined in `tailwind.config.ts` |
+
+**Working inside `lexforum-app/`:**
+- Run `npm run dev` from `lexforum-app/` to start the dev server.
+- The `.next/` build folder and `node_modules/` are git-ignored.
+- Commit convention for app changes: use `[FEAT]`, `[FIX]`, `[DOCS]`, `[STYLE]` prefixed with `LexForum —` (e.g. `[FEAT] LexForum — homepage aprovada`).
 
 ## Main Workflow
 
