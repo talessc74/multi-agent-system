@@ -2,46 +2,46 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-05",
-  "total_sementes": 9,
+  "total_sementes": 13,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
-      "descriptor": "Kernel de IA — data-centric, prototipagem rápida, democratização",
+      "descriptor": "Legado de IA — data-centric, prototipagem rápida, democratização",
       "arquivo": "seeds/SEED_AI_001_v1.0.json",
       "data_criacao": "2026-05-03",
       "semantic_anchor": "IA responsável, acessível e orientada a dados de qualidade — construída por humanos diversos, para humanos diversos."
     },
     {
       "seed_id": "SEED_ENG_001_v1.0",
-      "descriptor": "Kernel de engenharia — alocação de atenção, Claude-ificação, worktrees",
+      "descriptor": "Legado de engenharia — alocação de atenção, Claude-ificação, worktrees",
       "arquivo": "seeds/SEED_ENG_001_v1.0.json",
       "data_criacao": "2026-05-03",
       "semantic_anchor": "Distribua cognição como compute: aloque, enfileire, mantenha sessões ativas, alterne contexto apenas quando o valor estiver pronto."
     },
     {
       "seed_id": "SEED_PM_001_v1.0",
-      "descriptor": "Kernel de produto — discovery antes de delivery, outcomes sobre outputs",
+      "descriptor": "Legado de produto — discovery antes de delivery, outcomes sobre outputs",
       "arquivo": "seeds/SEED_PM_001_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "Produto não é o que você constrói — é o problema do cliente que você resolve, medido pelo comportamento real que você muda."
     },
     {
       "seed_id": "SEED_JUR_001_v1.0",
-      "descriptor": "Kernel consumerista — vulnerabilidade do consumidor, interpretação protetiva CDC",
+      "descriptor": "Legado consumerista — vulnerabilidade do consumidor, interpretação protetiva CDC",
       "arquivo": "seeds/SEED_JUR_001_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "O Direito do Consumidor existe para reequilibrar uma relação estruturalmente desigual — e qualquer interpretação que enfraqueça essa proteção contradiz a razão de ser do CDC."
     },
     {
       "seed_id": "SEED_UX_001_v1.0",
-      "descriptor": "Kernel de UX — jornada do usuário, onboarding, fricção intencional",
+      "descriptor": "Legado de UX — jornada do usuário, onboarding, fricção intencional",
       "arquivo": "seeds/SEED_UX_001_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "UX excelente é invisível — o usuário só percebe quando algo falha. Nossa missão é eliminar os momentos em que ele precisa pensar sobre a interface."
     },
     {
       "seed_id": "SEED_JUR_002_v1.0",
-      "descriptor": "Kernel de julgamento trabalhista — perfil técnico, rigoroso com provas",
+      "descriptor": "Legado de julgamento trabalhista — perfil técnico, rigoroso com provas",
       "arquivo": "seeds/SEED_JUR_002_v1.0.json",
       "seed_tipo": "jurisprudencial",
       "data_criacao": "2026-05-04",
@@ -49,14 +49,14 @@
     },
     {
       "seed_id": "SEED_JUR_004_v1.0",
-      "descriptor": "Kernel trabalhista — defesa empresarial, autonomia contratual, Reforma Trabalhista",
+      "descriptor": "Legado trabalhista — defesa empresarial, autonomia contratual, Reforma Trabalhista",
       "arquivo": "seeds/SEED_JUR_004_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "O Direito do Trabalho protege quem trabalha — mas a proteção inteligente considera a realidade econômica, respeita a negociação coletiva legítima e dialoga com os padrões internacionais."
     },
     {
       "seed_id": "SEED_JUR_003_v2.0",
-      "descriptor": "Kernel de julgamento trabalhista — perfil protetor, conciliador, boa-fé objetiva",
+      "descriptor": "Legado de julgamento trabalhista — perfil protetor, conciliador, boa-fé objetiva",
       "arquivo": "seeds/SEED_JUR_003_v2.0.json",
       "seed_tipo": "jurisprudencial",
       "data_criacao": "2026-05-04",
@@ -64,10 +64,38 @@
     },
     {
       "seed_id": "SEED_SYS_001_v1.0",
-      "descriptor": "Kernel sistêmico — coordenação multi-agente, resiliência, observabilidade",
+      "descriptor": "Legado sistêmico — coordenação multi-agente, resiliência, observabilidade",
       "arquivo": "seeds/SEED_SYS_001_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "Um sistema multiagente saudável não é aquele onde cada agente funciona — é aquele onde a combinação de agentes produz o comportamento esperado, sem surpresas, sem sobreposições silenciosas e sem dívida técnica acumulada no escuro."
+    },
+    {
+      "seed_id": "SEED_ADV_001_v1.0",
+      "descriptor": "Legado de visão de produto — simplicidade, experiência do usuário e inovação radical",
+      "arquivo": "seeds/SEED_ADV_001_v1.0.json",
+      "data_criacao": "2026-05-05",
+      "semantic_anchor": "Produtos extraordinários não são projetados — são destilados."
+    },
+    {
+      "seed_id": "SEED_ADV_002_v1.0",
+      "descriptor": "Legado de estratégia de negócio — monopólio criativo, pensamento contrário e vantagem do último movimento",
+      "arquivo": "seeds/SEED_ADV_002_v1.0.json",
+      "data_criacao": "2026-05-05",
+      "semantic_anchor": "O LexForum não compete — cria uma categoria nova. Quem define a categoria, define o mercado."
+    },
+    {
+      "seed_id": "SEED_ADV_003_v1.0",
+      "descriptor": "Legado de crescimento — product-market fit, growth hacking e North Star Framework",
+      "arquivo": "seeds/SEED_ADV_003_v1.0.json",
+      "data_criacao": "2026-05-05",
+      "semantic_anchor": "Crescimento real começa quando usuários amam o produto o suficiente para ficar e recomendar."
+    },
+    {
+      "seed_id": "SEED_ADV_004_v1.0",
+      "descriptor": "Legado do futuro do direito — democratização do acesso à justiça e transformação da profissão jurídica por tecnologia",
+      "arquivo": "seeds/SEED_ADV_004_v1.0.json",
+      "data_criacao": "2026-05-05",
+      "semantic_anchor": "O LexForum não é ferramenta para advogados. É infraestrutura de acesso à justiça para cidadãos."
     }
   ]
 }
