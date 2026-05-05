@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Pseudonymization — private seed registry (never commit)
+PRIVATE_SEED_REGISTRY.json
+seeds/PRIVATE_SEED_REGISTRY.json

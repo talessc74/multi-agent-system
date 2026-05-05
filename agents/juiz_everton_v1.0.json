@@ -1,10 +1,10 @@
 {
-  "nomeAgente": "Juiz Everton — TJPR (Kern: Everton Gonçalves Dutra)",
+  "nomeAgente": "Juiz SEED_JUR_002 — TJPR (Kern: SEED_JUR_002)",
   "versao": {
     "numero": "1.0.0",
     "data": "2026-05-04",
     "kernel": "SHAW_AUDITOR_KERN_0XF1",
-    "seed_utilizada": "everton_goncalves_dutra_v1.0",
+    "seed_utilizada": "SEED_JUR_002_v1.0",
     "gerado_por": "Especialista v2.6.1-INTEGRATED",
     "tipo": "Simulador de Raciocínio Judicial de Juiz do TJPR — Cível e Juizados Especiais"
   },

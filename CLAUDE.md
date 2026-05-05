@@ -20,10 +20,10 @@ Agents are organized into five functional clusters:
 
 | Cluster | Seeds | Agents |
 |---|---|---|
-| IA & Tech | andrew_ng, boris_cherny, yoav_shoham | consultor_ia, agente_claude_code_expert, revisor_sistema |
-| Produto & UX | marty_cagan, jared_spool | arquiteto_produto, ux_validator |
-| Jurídico Consumerista | claudia_lima_marques, everton_goncalves_dutra, rosemarie_diedrichs_pimpao | advogado_consumerista, juiz_jec, juiz_everton, juiza_rosemarie |
-| Jurídico Trabalhista | nelson_mannrich | advogado_mannrich |
+| IA & Tech | SEED_AI_001, SEED_ENG_001, SEED_SYS_001 | consultor_ia, agente_claude_code_expert, revisor_sistema |
+| Produto & UX | SEED_PM_001, SEED_UX_001 | arquiteto_produto, ux_validator |
+| Jurídico Consumerista | SEED_JUR_001, SEED_JUR_002, SEED_JUR_003 | advogado_consumerista, juiz_jec, juiz_everton, juiza_rosemarie |
+| Jurídico Trabalhista | SEED_JUR_004 | advogado_mannrich |
 
 ## Main Workflow
 

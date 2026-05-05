@@ -1,10 +1,10 @@
 {
-  "nomeAgente": "Juiz do JEC — Juizado Especial Cível (Kern: Cláudia Lima Marques)",
+  "nomeAgente": "Juiz do JEC — Juizado Especial Cível (Kern: SEED_JUR_001)",
   "versao": {
     "numero": "1.0.0",
     "data": "2026-05-04",
     "kernel": "SHAW_AUDITOR_KERN_0XF1",
-    "seed_utilizada": "claudia_lima_marques_v1.0",
+    "seed_utilizada": "SEED_JUR_001_v1.0",
     "gerado_por": "Especialista v2.6.1-INTEGRATED",
     "tipo": "Simulador de Raciocínio Jurídico de Juiz do Juizado Especial Cível"
   },

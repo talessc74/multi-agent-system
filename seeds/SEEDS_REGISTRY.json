@@ -1,71 +1,71 @@
 {
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
-  "ultima_atualizacao": "2026-05-04",
+  "ultima_atualizacao": "2026-05-05",
   "total_sementes": 9,
   "sementes": [
     {
-      "seed_id": "andrew_ng_v1.0",
-      "nome": "Andrew Ng",
-      "arquivo": "seeds/andrew_ng_v1.0.json",
+      "seed_id": "SEED_AI_001_v1.0",
+      "descriptor": "Kernel de IA — data-centric, prototipagem rápida, democratização",
+      "arquivo": "seeds/SEED_AI_001_v1.0.json",
       "data_criacao": "2026-05-03",
       "semantic_anchor": "IA responsável, acessível e orientada a dados de qualidade — construída por humanos diversos, para humanos diversos."
     },
     {
-      "seed_id": "boris_cherny_v1.0",
-      "nome": "Boris Cherny",
-      "arquivo": "seeds/boris_cherny_v1.0.json",
+      "seed_id": "SEED_ENG_001_v1.0",
+      "descriptor": "Kernel de engenharia — alocação de atenção, Claude-ificação, worktrees",
+      "arquivo": "seeds/SEED_ENG_001_v1.0.json",
       "data_criacao": "2026-05-03",
       "semantic_anchor": "Distribua cognição como compute: aloque, enfileire, mantenha sessões ativas, alterne contexto apenas quando o valor estiver pronto."
     },
     {
-      "seed_id": "marty_cagan_v1.0",
-      "nome": "Marty Cagan",
-      "arquivo": "seeds/marty_cagan_v1.0.json",
+      "seed_id": "SEED_PM_001_v1.0",
+      "descriptor": "Kernel de produto — discovery antes de delivery, outcomes sobre outputs",
+      "arquivo": "seeds/SEED_PM_001_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "Produto não é o que você constrói — é o problema do cliente que você resolve, medido pelo comportamento real que você muda."
     },
     {
-      "seed_id": "claudia_lima_marques_v1.0",
-      "nome": "Cláudia Lima Marques",
-      "arquivo": "seeds/claudia_lima_marques_v1.0.json",
+      "seed_id": "SEED_JUR_001_v1.0",
+      "descriptor": "Kernel consumerista — vulnerabilidade do consumidor, interpretação protetiva CDC",
+      "arquivo": "seeds/SEED_JUR_001_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "O Direito do Consumidor existe para reequilibrar uma relação estruturalmente desigual — e qualquer interpretação que enfraqueça essa proteção contradiz a razão de ser do CDC."
     },
     {
-      "seed_id": "jared_spool_v1.0",
-      "nome": "Jared Spool",
-      "arquivo": "seeds/jared_spool_v1.0.json",
+      "seed_id": "SEED_UX_001_v1.0",
+      "descriptor": "Kernel de UX — jornada do usuário, onboarding, fricção intencional",
+      "arquivo": "seeds/SEED_UX_001_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "UX excelente é invisível — o usuário só percebe quando algo falha. Nossa missão é eliminar os momentos em que ele precisa pensar sobre a interface."
     },
     {
-      "seed_id": "everton_goncalves_dutra_v1.0",
-      "nome": "Everton Gonçalves Dutra",
-      "arquivo": "seeds/everton_goncalves_dutra_v1.0.json",
+      "seed_id": "SEED_JUR_002_v1.0",
+      "descriptor": "Kernel de julgamento trabalhista — perfil técnico, rigoroso com provas",
+      "arquivo": "seeds/SEED_JUR_002_v1.0.json",
       "seed_tipo": "jurisprudencial",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "Justiça no JEC não é rápida por ser simples — é rápida porque o cidadão comum não pode esperar. A velocidade serve ao direito, não o substitui."
     },
     {
-      "seed_id": "nelson_mannrich_v1.0",
-      "nome": "Nelson Mannrich",
-      "arquivo": "seeds/nelson_mannrich_v1.0.json",
+      "seed_id": "SEED_JUR_004_v1.0",
+      "descriptor": "Kernel trabalhista — defesa empresarial, autonomia contratual, Reforma Trabalhista",
+      "arquivo": "seeds/SEED_JUR_004_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "O Direito do Trabalho protege quem trabalha — mas a proteção inteligente considera a realidade econômica, respeita a negociação coletiva legítima e dialoga com os padrões internacionais."
     },
     {
-      "seed_id": "rosemarie_diedrichs_pimpao_v2.0",
-      "nome": "Rosemarie Diedrichs Pimpão",
-      "arquivo": "seeds/rosemarie_diedrichs_pimpao_v2.0.json",
+      "seed_id": "SEED_JUR_003_v2.0",
+      "descriptor": "Kernel de julgamento trabalhista — perfil protetor, conciliador, boa-fé objetiva",
+      "arquivo": "seeds/SEED_JUR_003_v2.0.json",
       "seed_tipo": "jurisprudencial",
       "data_criacao": "2026-05-04",
-      "semantic_anchor": "A proteção da confiança não é um favor do sistema jurídico ao consumidor — é a condição de possibilidade de um mercado de consumo que funcione com lealdade e previsibilidade."
+      "semantic_anchor": "A proteção da confiança não é um favor do sistema jurídico ao consumidor — é a condição de possibilidade de um mercado de consumo que funciona com lealdade e previsibilidade."
     },
     {
-      "seed_id": "yoav_shoham_v1.0",
-      "nome": "Yoav Shoham",
-      "arquivo": "seeds/yoav_shoham_v1.0.json",
+      "seed_id": "SEED_SYS_001_v1.0",
+      "descriptor": "Kernel sistêmico — coordenação multi-agente, resiliência, observabilidade",
+      "arquivo": "seeds/SEED_SYS_001_v1.0.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "Um sistema multiagente saudável não é aquele onde cada agente funciona — é aquele onde a combinação de agentes produz o comportamento esperado, sem surpresas, sem sobreposições silenciosas e sem dívida técnica acumulada no escuro."
     }

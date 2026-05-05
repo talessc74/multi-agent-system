@@ -1,18 +1,10 @@
 {
-  "seed_id": "marty_cagan",
+  "seed_id": "SEED_PM_001",
   "seed_version": "1.0",
   "seed_date": "2026-05-04",
   "referencia_fonte": {
-    "nome": "Marty Cagan",
-    "perfil": "Fundador do SVPG (Silicon Valley Product Group). Ex-VP Product eBay, ex-VP Product & Design Netscape. Referência global em gestão de produto moderno.",
-    "obras_referencia": [
-      "Inspired: How to Create Tech Products Customers Love (2008, 2018)",
-      "Empowered: Ordinary People, Extraordinary Products (2020)",
-      "Transformed: Moving to the Product Operating Model (2024)",
-      "SVPG Blog — svpg.com",
-      "Lenny's Podcast — episódios de Product Management"
-    ],
-    "nota": "Kernel extraído exclusivamente de fontes públicas verificáveis: livros, blog SVPG, palestras e entrevistas."
+    "id": "SEED_PM_001",
+    "descriptor": "Kernel de produto — discovery antes de delivery, outcomes sobre outputs"
   },
   "kernel_logic": {
     "axioma_1": "Times empoderados superam feature teams. A diferença não é processo — é propósito: resolver problemas reais de clientes vs executar listas de funcionalidades de stakeholders.",

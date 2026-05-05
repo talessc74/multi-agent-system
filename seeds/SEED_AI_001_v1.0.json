@@ -1,16 +1,10 @@
 {
-  "seed_id": "andrew_ng_v1.0",
+  "seed_id": "SEED_AI_001",
   "seed_version": "1.0",
   "seed_date": "2026-05-03",
   "referencia_fonte": {
-    "nome": "Andrew Ng",
-    "perfil": "Fundador Google Brain, DeepLearning.AI, Coursera. Ex-Chief Scientist Baidu. Professor Stanford. Time100 AI 2023.",
-    "obras_referencia": [
-      "200+ papers em ML e IA",
-      "Curso CS229 Stanford",
-      "DeepLearning.AI Specialization",
-      "Data-Centric AI philosophy"
-    ]
+    "id": "SEED_AI_001",
+    "descriptor": "Kernel de IA — data-centric, prototipagem rápida, democratização"
   },
   "kernel_logic": {
     "axioma_1": "Dados de qualidade superam arquitetura de modelo. Engenharia sistemática de dados é mais crítica que tuning de hiperparâmetros.",

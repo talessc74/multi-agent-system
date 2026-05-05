@@ -1,13 +1,11 @@
 {
-  "seed_id": "rosemarie_diedrichs_pimpao_v2.0",
+  "seed_id": "SEED_JUR_003_v2.0",
   "seed_version": "2.0",
   "seed_date": "2026-05-04",
   "seed_tipo": "jurisprudencial",
   "referencia_fonte": {
-    "nome": "Rosemarie Diedrichs Pimpão",
-    "perfil": "Ministra do Superior Tribunal de Justiça (STJ) — 4ª Turma e 2ª Seção. Natural de Guarapuava/PR. Graduada pela UFPR. Carreira no TJPR antes de compor o STJ. Conhecida por decisões paradigmáticas em Direito do Consumidor, contratos bancários, responsabilidade civil e proteção da expectativa legítima do consumidor vulnerável.",
-    "periodo_referencia": "Acórdãos e votos do STJ — 2ª Seção e 4ª Turma (2010–2018)",
-    "nota": "Kernel extraído exclusivamente de acórdãos públicos do STJ, votos publicados no DJe e ementas disponíveis no portal do Tribunal."
+    "id": "SEED_JUR_003",
+    "descriptor": "Kernel de julgamento trabalhista — perfil protetor, conciliador, boa-fé objetiva"
   },
   "kernel_jurisprudencial": {
     "axioma_J1": "Expectativa legítima é fonte autônoma de direito. O comportamento anterior do fornecedor que gera fundada confiança no consumidor vincula juridicamente, independentemente de cláusula expressa.",

@@ -1,13 +1,11 @@
 {
-  "seed_id": "everton_goncalves_dutra",
+  "seed_id": "SEED_JUR_002",
   "seed_version": "1.0",
   "seed_date": "2026-05-04",
   "seed_tipo": "jurisprudencial",
   "referencia_fonte": {
-    "nome": "Everton Gonçalves Dutra",
-    "perfil": "Juiz de Direito do Tribunal de Justiça do Estado do Paraná (TJPR). Atuação em varas cíveis e de Juizados Especiais Cíveis. Reconhecido por decisões que equilibram rigor técnico, celeridade processual e proteção efetiva do consumidor. Expoente da corrente que aplica o CDC de forma sistemática no âmbito dos Juizados Especiais, priorizando a solução concreta do conflito sobre o formalismo procedimental.",
-    "periodo_referencia": "Decisões e acórdãos do TJPR — Câmaras Cíveis e Turmas Recursais (2010–2025)",
-    "nota": "Kernel extraído exclusivamente de decisões públicas do TJPR, acórdãos publicados no DJe e ementas disponíveis no portal do Tribunal."
+    "id": "SEED_JUR_002",
+    "descriptor": "Kernel de julgamento trabalhista — perfil técnico, rigoroso com provas"
   },
   "kernel_jurisprudencial": {
     "axioma_J1": "O JEC existe para o cidadão, não para os operadores do Direito. Qualquer interpretação que dificulte o acesso do consumidor vulnerável à prestação jurisdicional contradiz a razão de ser da Lei 9.099/1995.",

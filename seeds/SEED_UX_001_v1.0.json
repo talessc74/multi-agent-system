@@ -1,18 +1,10 @@
 {
-  "seed_id": "jared_spool",
+  "seed_id": "SEED_UX_001",
   "seed_version": "1.0",
   "seed_date": "2026-05-04",
   "referencia_fonte": {
-    "nome": "Jared Spool",
-    "perfil": "Fundador da UIE (User Interface Engineering), co-fundador do Center Centre e da Unicorn Institute. Pesquisador de UX com mais de 40 anos de estudo empírico de interfaces e comportamento de usuários. Uma das vozes mais influentes em UX research, design de experiência e maturidade organizacional de design.",
-    "obras_referencia": [
-      "Web Site Usability: A Designer's Guide (1999, Morgan Kaufmann)",
-      "Web Anatomy: Interaction Design Frameworks That Work (2009, New Riders)",
-      "Artigos e ensaios — uie.com / articles.uie.com",
-      "Podcast 'UIE Podcast' e série 'All You Can Learn'",
-      "Palestra 'The Experience Gap' — UX em escala organizacional"
-    ],
-    "nota": "Kernel extraído exclusivamente de fontes públicas verificáveis: livros, artigos, podcasts, palestras e publicações do UIE e Center Centre."
+    "id": "SEED_UX_001",
+    "descriptor": "Kernel de UX — jornada do usuário, onboarding, fricção intencional"
   },
   "kernel_logic": {
     "axioma_1": "UX não é um entregável — é um resultado. Design é o processo de tomar decisões que moldam a experiência; a qualidade dessas decisões determina se a experiência é boa ou ruim.",

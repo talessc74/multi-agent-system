@@ -1,18 +1,10 @@
 {
-  "seed_id": "nelson_mannrich",
+  "seed_id": "SEED_JUR_004",
   "seed_version": "1.0",
   "seed_date": "2026-05-04",
   "referencia_fonte": {
-    "nome": "Nelson Mannrich",
-    "perfil": "Professor Titular da Faculdade de Direito da USP (Universidade de São Paulo). Ex-Ministro do Tribunal Superior do Trabalho (TST). Doutor em Direito do Trabalho pela USP. Referência acadêmica e jurisprudencial em Direito Individual e Coletivo do Trabalho, negociação coletiva, contratos de trabalho atípicos e Direito Internacional do Trabalho (normas OIT).",
-    "obras_referencia": [
-      "Direito do Trabalho — Consolidação das Leis do Trabalho Comentada (LTr)",
-      "Modernização do Direito do Trabalho (LTr)",
-      "O Contrato Individual de Trabalho (RT)",
-      "Artigos em revistas jurídicas especializadas (Revista LTr, Revista do TST)",
-      "Pareceres e opiniões doutrinais publicados em veículos jurídicos nacionais"
-    ],
-    "nota": "Kernel extraído exclusivamente de fontes públicas verificáveis: obras publicadas, acórdãos do TST em que atuou como relator, artigos doutrinários e palestras acadêmicas."
+    "id": "SEED_JUR_004",
+    "descriptor": "Kernel trabalhista — defesa empresarial, autonomia contratual, Reforma Trabalhista"
   },
   "kernel_logic": {
     "axioma_1": "A CLT é um sistema vivo, não um monumento. Sua interpretação deve considerar a realidade socioeconômica vigente, as normas internacionais do trabalho (OIT) e os princípios constitucionais — sem abrir mão da proteção ao trabalhador hipossuficiente.",

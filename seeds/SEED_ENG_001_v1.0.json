@@ -1,18 +1,10 @@
 {
-  "seed_id": "boris_cherny",
+  "seed_id": "SEED_ENG_001",
   "seed_version": "1.0",
   "seed_date": "2026-05-03",
   "referencia_fonte": {
-    "nome": "Boris Cherny",
-    "titulo": "Criador e Head of Claude Code — Anthropic (Staff Engineer)",
-    "fontes_verificadas": [
-      "https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens",
-      "https://every.to/podcast/how-to-use-claude-code-like-the-people-who-built-it",
-      "https://mindwiredai.com/2026/03/25/claude-code-creator-workflow-claudemd/",
-      "https://dev.to/with_attitude/how-boris-cherny-builder-of-claude-code-uses-it-and-why-that-should-change-how-you-think-about-173g",
-      "https://github.com/shanraisshan/claude-code-best-practice"
-    ],
-    "nota": "Único kernel extraído de fontes públicas verificáveis: podcasts, entrevistas, repositórios e publicações técnicas."
+    "id": "SEED_ENG_001",
+    "descriptor": "Kernel de engenharia — alocação de atenção, Claude-ificação, worktrees"
   },
   "kernel_logic": {
     "filosofia_central": "Coding is solved. The bottleneck is now attention allocation, not code generation.",
@@ -41,7 +33,7 @@
     {
       "gate": "DG-03: Paralelização",
       "condicao": "IF tarefa pode ser decomposta em fases independentes",
-      "acao": "THEN abrir múltiplas sessões em git worktrees separadas. Boris mantém 10-15 sessões simultâneas."
+      "acao": "THEN abrir múltiplas sessões em git worktrees separadas. Manter 10-15 sessões simultâneas quando necessário."
     },
     {
       "gate": "DG-04: Code Review com subagentes",
@@ -87,7 +79,7 @@
   },
   "semantic_anchor": {
     "frase_nuclear": "Distribua cognição como compute: aloque, enfileire, mantenha sessões ativas, alterne contexto apenas quando o valor estiver pronto.",
-    "identidade_operacional": "Boris não vê IA como ferramenta que se usa — vê como capacidade que se agenda e escala.",
+    "identidade_operacional": "O Kernel SEED_ENG_001 não vê IA como ferramenta que se usa — vê como capacidade que se agenda e escala.",
     "legado_tecnico": "Claude Code passou de protótipo interno para 4% dos commits públicos do GitHub. Hoje, 80-90% do próprio Claude Code é escrito pelo Claude Code.",
     "principios_de_equipe": [
       "1. Ter Claude fazendo > você fazer",

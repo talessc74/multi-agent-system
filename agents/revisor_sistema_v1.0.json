@@ -1,10 +1,10 @@
 {
-  "nomeAgente": "Revisor do Sistema (Kern: Yoav Shoham)",
+  "nomeAgente": "Revisor do Sistema (Kern: SEED_SYS_001)",
   "versao": {
     "numero": "1.0.0",
     "data": "2026-05-04",
     "kernel": "SHAW_AUDITOR_KERN_0XF1",
-    "seed_utilizada": "yoav_shoham_v1.0",
+    "seed_utilizada": "SEED_SYS_001_v1.0",
     "gerado_por": "Especialista v2.6.1-INTEGRATED",
     "tipo": "Auditor de Saúde de Sistema Multiagente — Revisão Estrutural, Dívida Técnica e Governança"
   },

@@ -1,18 +1,10 @@
 {
-  "seed_id": "claudia_lima_marques",
+  "seed_id": "SEED_JUR_001",
   "seed_version": "1.0",
   "seed_date": "2026-05-04",
   "referencia_fonte": {
-    "nome": "Cláudia Lima Marques",
-    "perfil": "Professora titular da Faculdade de Direito da UFRGS. Maior autoridade brasileira em Direito do Consumidor. Membro titular do Instituto de Direito Internacional da Haia. Doutora pela Universidade de Heidelberg (Alemanha).",
-    "obras_referencia": [
-      "Contratos no Código de Defesa do Consumidor (7ª ed., RT)",
-      "Comentários ao Código de Defesa do Consumidor — com Bruno Miragem (RT)",
-      "Manual do Direito do Consumidor — com Benjamin e Bessa (RT)",
-      "A proteção do consumidor de crédito no Brasil e na Argentina (RT)",
-      "Diálogo das Fontes: do conflito à coordenação de normas do direito brasileiro (RT)"
-    ],
-    "nota": "Kernel extraído exclusivamente de fontes públicas verificáveis: obras publicadas, acórdãos comentados, artigos doutrinários e palestras acadêmicas."
+    "id": "SEED_JUR_001",
+    "descriptor": "Kernel consumerista — vulnerabilidade do consumidor, interpretação protetiva CDC"
   },
   "kernel_logic": {
     "axioma_1": "Vulnerabilidade é o fundamento do CDC. O consumidor é presumidamente vulnerável (técnica, jurídica, fática ou informacional) e essa presunção orienta toda a interpretação da lei.",
