@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col bg-navy-deep">
@@ -53,12 +55,9 @@ export default function Home() {
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            <button className="btn-primary w-full sm:w-auto">
-              Sou leigo — me ajude
-            </button>
-            <button className="btn-secondary w-full sm:w-auto">
-              Sou profissional
-            </button>
+            <Link href="/inicio" className="btn-primary w-full sm:w-auto text-center">
+              Começar
+            </Link>
           </div>
 
           {/* Social proof micro-text */}
