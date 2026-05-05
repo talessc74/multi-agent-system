@@ -6,7 +6,33 @@
   html {
     scroll-behavior: smooth;
   }
-  body {
-    @apply antialiased;
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-playfair), Georgia, serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-lex-cyan text-navy-deep font-semibold font-sans px-7 py-3.5 rounded-lg
+           hover:bg-lex-cyan-dark transition-all duration-200 shadow-lg
+           hover:shadow-lex-cyan/30 hover:shadow-xl active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply border border-lex-cyan/60 text-lex-cyan font-semibold font-sans px-7 py-3.5 rounded-lg
+           hover:bg-lex-cyan/10 transition-all duration-200 active:scale-95;
+  }
+
+  .feature-card {
+    @apply bg-navy/60 border border-lex-cyan/20 rounded-2xl p-7
+           hover:border-lex-cyan/50 hover:bg-navy/80 transition-all duration-300
+           backdrop-blur-sm;
+  }
+}
+
+@layer utilities {
+  .text-shadow-glow {
+    text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
   }
 }

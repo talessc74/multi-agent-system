@@ -9,16 +9,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50:  '#f0f4ff',
-          100: '#dce6ff',
-          500: '#3b5bdb',
-          700: '#2c44b0',
-          900: '#1a2a6c',
-        },
+        'navy-deep': '#0F1E2E',
+        navy:        '#1A3A5C',
+        'lex-cyan':  '#00D4FF',
+        'lex-cyan-dark': '#0099CC',
+        'white-ice': '#F8FAFC',
       },
       fontFamily: {
-        serif: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
+        serif: ['var(--font-playfair)', 'Georgia', 'Cambria', 'serif'],
+        sans:  ['var(--font-inter)', 'system-ui', 'sans-serif'],
+      },
+      backgroundImage: {
+        'hero-gradient': 'linear-gradient(135deg, #0F1E2E 0%, #1A3A5C 60%, #0F1E2E 100%)',
       },
     },
   },
