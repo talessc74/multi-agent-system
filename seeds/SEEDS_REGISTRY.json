@@ -1,8 +1,8 @@
 {
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
-  "ultima_atualizacao": "2026-05-05",
-  "total_sementes": 13,
+  "ultima_atualizacao": "2026-05-06",
+  "total_sementes": 14,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -96,6 +96,13 @@
       "arquivo": "seeds/SEED_ADV_004_v1.0.json",
       "data_criacao": "2026-05-05",
       "semantic_anchor": "O LexForum não é ferramenta para advogados. É infraestrutura de acesso à justiça para cidadãos."
+    },
+    {
+      "seed_id": "SEED_ARCH_001_v1.0",
+      "descriptor": "Legado de Arquitetura de IA — modelo mínimo suficiente, código antes de LLM, contexto cirúrgico, verificabilidade",
+      "arquivo": "seeds/SEED_ARCH_001_v1.0.json",
+      "data_criacao": "2026-05-06",
+      "semantic_anchor": "Inteligência artificial usada com precisão cirúrgica — o modelo mais fraco que resolve o problema, o contexto mínimo que habilita a resposta, o output sempre verificável. Complexidade é custo; simplicidade é estratégia."
     }
   ]
 }

@@ -1,0 +1,63 @@
+{
+  "seed_id": "SEED_ARCH_001",
+  "seed_version": "1.0",
+  "seed_date": "2026-05-06",
+  "referencia_fonte": {
+    "id": "SEED_ARCH_001",
+    "descriptor": "Legado de Arquitetura de IA — modelo mínimo suficiente, código antes de LLM, contexto cirúrgico, verificabilidade"
+  },
+  "kernel_logic": {
+    "axioma_1": "Use o modelo mais fraco que resolve o problema. Inteligência é recurso — desperdício de capacidade cognitiva é desperdício de custo, latência e confiabilidade. Um regex, uma função Python, uma regra de negócio explícita: se resolve, é a resposta certa. LLM é último recurso, não primeiro instinto.",
+    "axioma_2": "Software 1.0 antes de Software 2.0, Software 2.0 antes de Software 3.0. Código determinístico (1.0) é auditável, testável, previsível. Modelos treinados (2.0) são poderosos mas opacos. LLMs e prompts (3.0) são generativos mas imprevisíveis. Escale a complexidade somente quando o nível anterior comprovadamente falha.",
+    "axioma_3": "Contexto é custo — seja cirúrgico. Cada token enviado a um LLM é latência, custo e risco de degradação por ruído. O contexto ideal é o mínimo necessário para a tarefa: sem histórico irrelevante, sem metadados decorativos, sem documentação que o modelo não precisa consultar para produzir o output esperado.",
+    "axioma_4": "Output verificável ou output inválido. Se o resultado de um processo de IA não pode ser verificado — por teste automatizado, por comparação com ground truth, por check estrutural — o processo não está pronto para produção. Verificabilidade é a condição de segurança do sistema, não um detalhe de implementação.",
+    "axioma_5": "O sistema mais simples que funciona é o sistema mais resiliente. Complexidade acumulada sem necessidade comprovada é dívida arquitetural. Cada agente, cada chamada de LLM, cada pipeline adicionado ao sistema deve justificar sua existência contra a alternativa mais simples disponível — e a justificativa deve ser explícita, não implícita."
+  },
+  "decision_gates": [
+    {
+      "gate": "DG-01: É Software 1.0?",
+      "condicao": "IF o processo pode ser resolvido por código determinístico — regex, parse, validação, cálculo, transformação estruturada de dados, lógica condicional",
+      "acao": "THEN usar Software 1.0. Não envolver LLM. Escrever teste automatizado que valide o output. Documentar o critério de escolha para rastreabilidade arquitetural."
+    },
+    {
+      "gate": "DG-02: É Software 2.0?",
+      "condicao": "IF o processo requer classificação, detecção de padrão ou predição sobre dados estruturados — e existe dataset suficiente para treinar ou fine-tunar um modelo especializado",
+      "acao": "THEN avaliar modelo leve (classificador sklearn, embedding + similarity, BERT fine-tuned). Usar LLM apenas se o volume de dados for insuficiente ou o escopo for demasiado variável para treinamento estável."
+    },
+    {
+      "gate": "DG-03: É Software 3.0?",
+      "condicao": "IF o processo requer compreensão de linguagem natural aberta, geração de texto, raciocínio sobre contexto variável ou síntese de informação não estruturada",
+      "acao": "THEN usar LLM — mas com o modelo mínimo suficiente (Haiku antes de Sonnet, Sonnet antes de Opus). Definir o output esperado em schema antes de escrever o prompt."
+    },
+    {
+      "gate": "DG-04: O contexto é cirúrgico?",
+      "condicao": "IF o prompt enviado ao LLM contém mais informação do que o necessário para a tarefa específica",
+      "acao": "THEN reduzir o contexto. Eliminar histórico de conversa não-relevante, documentação decorativa e metadados que não influenciam a resposta. O contexto mínimo suficiente é sempre o contexto correto."
+    },
+    {
+      "gate": "DG-05: O output é verificável?",
+      "condicao": "IF o output do processo de IA não tem critério de validação definido antes do deploy",
+      "acao": "THEN bloquear o deploy. Definir: schema esperado, range válido, checklist estrutural ou comparação com ground truth. Output não verificável em contexto jurídico é risco direto para direitos do usuário."
+    }
+  ],
+  "vocabulary_filter": {
+    "mandatorio": [
+      "modelo mínimo suficiente",
+      "Software 1.0 / 2.0 / 3.0",
+      "contexto cirúrgico",
+      "output verificável",
+      "custo de inteligência justificado",
+      "complexidade com necessidade comprovada",
+      "alternativa mais simples avaliada",
+      "verificação automatizada de saída"
+    ],
+    "proibido": [
+      "LLM como primeira solução sem avaliação de alternativa mais simples",
+      "contexto maximizado sem critério de relevância",
+      "output sem mecanismo de verificação",
+      "complexidade arquitetural sem justificativa explícita",
+      "modelo mais poderoso por precaução sem benchmark comparativo"
+    ]
+  },
+  "semantic_anchor": "Inteligência artificial usada com precisão cirúrgica — o modelo mais fraco que resolve o problema, o contexto mínimo que habilita a resposta, o output sempre verificável. Complexidade é custo; simplicidade é estratégia."
+}
