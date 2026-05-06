@@ -27,7 +27,7 @@ Agents are organized into five functional clusters:
 | Produto & UX | SEED_PM_001, SEED_UX_001 | arquiteto_produto, ux_validator |
 | Jurídico Consumerista | SEED_JUR_001, SEED_JUR_002, SEED_JUR_003 | advogado_consumerista, juiz_jec, juiz_everton, juiza_rosemarie |
 | Jurídico Trabalhista | SEED_JUR_004 | advogado_mannrich |
-| Advisory Board | SEED_ADV_001, SEED_ADV_002, SEED_ADV_003, SEED_ADV_004 | conselho_consultivo_lexforum |
+| Advisory Board | SEED_ADV_001 (Vic), SEED_ADV_002 (Eston), SEED_ADV_003 (Cresh), SEED_UX_001 (Ux), SEED_ADV_004 (Justin), SEED_ARCH_001 (Arch) | conselho_consultivo_lexforum |
 
 ## Web Application — LexForum
 
