@@ -1,6 +1,47 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import HeroTitle from './components/HeroTitle'
+
+const leigoPhrases = [
+  'Aconteceu algo com você?',
+  'Seus direitos importam',
+  'Sem juridiquês',
+]
+
+const proPhrases = [
+  'Teste sua tese jurídica',
+  'Jurisprudência real',
+  'Simulação de 3 rodadas',
+]
+
+function CardCarousel({ phrases, variant }: { phrases: string[]; variant: 'leigo' | 'pro' }) {
+  const [index, setIndex] = useState(0)
+  const [visible, setVisible] = useState(true)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setVisible(false)
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % phrases.length)
+        setVisible(true)
+      }, 400)
+    }, 3000)
+    return () => clearInterval(timer)
+  }, [phrases.length])
+
+  return (
+    <div className={`carousel carousel-${variant}`}>
+      <div
+        className="carousel-phrase"
+        style={{ opacity: visible ? 1 : 0, transition: 'opacity 400ms ease-in-out' }}
+      >
+        {phrases[index]}
+      </div>
+    </div>
+  )
+}
 
 export default function Home() {
   const router = useRouter()
@@ -27,28 +68,21 @@ export default function Home() {
         </div>
       </header>
 
-      {/* ── Hero v2 ── */}
+      {/* ── Hero ── */}
       <section className="hero">
-        <h1 className="hero-headline">
-          Leve sua causa ao tribunal<br />
-          — <em>antes de ir ao tribunal.</em>
-        </h1>
+        <div className="max-w-2xl mx-auto mb-6 text-center">
+          <HeroTitle />
+        </div>
         <p className="hero-sub">
-          Simule sua ação em um fórum jurídico com IA. Juiz, advogado da parte contrária e relator analisam os argumentos — você recebe um laudo com pontos fortes, fracos e probabilidade de êxito.
+          Simule sua ação em um fórum jurídico com IA. Juiz, advogado da parte contrária e relator
+          analisam os argumentos — você recebe um laudo com pontos fortes, fracos e probabilidade de êxito.
         </p>
 
         <div className="cards-wrapper">
 
           {/* CARD LEIGO */}
-          <div className="card card-leigo" onClick={() => router.push('/causa?perfil=leigo')}>
-            <div className="carousel carousel-leigo">
-              <div className="carousel-track">
-                <div className="carousel-phrase">Aconteceu algo com você?</div>
-                <div className="carousel-phrase">Seus direitos importam</div>
-                <div className="carousel-phrase">Sem juridiquês</div>
-                <div className="carousel-phrase">Aconteceu algo com você?</div>
-              </div>
-            </div>
+          <div className="card card-leigo" onClick={() => router.push('/inicio')}>
+            <CardCarousel phrases={leigoPhrases} variant="leigo" />
             <span className="card-icon">⚖️</span>
             <h2 className="card-title">Tenho um problema<br />e preciso de ajuda</h2>
             <p className="card-desc">Algo aconteceu comigo<br />e quero saber se tenho direito</p>
@@ -56,15 +90,8 @@ export default function Home() {
           </div>
 
           {/* CARD PROFISSIONAL */}
-          <div className="card card-pro" onClick={() => router.push('/causa?perfil=profissional')}>
-            <div className="carousel carousel-pro">
-              <div className="carousel-track">
-                <div className="carousel-phrase">Teste sua tese jurídica</div>
-                <div className="carousel-phrase">Jurisprudência real</div>
-                <div className="carousel-phrase">Simulação de 3 rodadas</div>
-                <div className="carousel-phrase">Teste sua tese jurídica</div>
-              </div>
-            </div>
+          <div className="card card-pro" onClick={() => router.push('/inicio')}>
+            <CardCarousel phrases={proPhrases} variant="pro" />
             <span className="card-icon">📋</span>
             <h2 className="card-title">Sou profissional e quero<br />simular uma estratégia</h2>
             <p className="card-desc">Advogado, estudante<br />ou operador do direito</p>
@@ -76,7 +103,7 @@ export default function Home() {
         <p className="pricing-line">A simulação é gratuita · O laudo completo custa R$&nbsp;9,90</p>
       </section>
 
-      {/* ── Feature cards ── */}
+      {/* ── Como Funciona ── */}
       <section className="bg-navy-deep px-6 py-20">
         <div className="max-w-6xl mx-auto">
           <p className="font-sans text-xs text-lex-cyan/70 text-center tracking-[0.3em] uppercase mb-12">
