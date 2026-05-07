@@ -1,8 +1,8 @@
 {
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
-  "ultima_atualizacao": "2026-05-06",
-  "total_sementes": 14,
+  "ultima_atualizacao": "2026-05-07",
+  "total_sementes": 15,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -103,6 +103,14 @@
       "arquivo": "seeds/SEED_ARCH_001_v1.0_ARCH.json",
       "data_criacao": "2026-05-06",
       "semantic_anchor": "Inteligência artificial usada com precisão cirúrgica — o modelo mais fraco que resolve o problema, o contexto mínimo que habilita a resposta, o output sempre verificável. Complexidade é custo; simplicidade é estratégia."
+    },
+    {
+      "seed_id": "SEED_UX_002_v1.0",
+      "nome_publico": "Bald",
+      "descriptor": "Legado de design industrial — materialidade, inevitabilidade formal, coerência estético-funcional",
+      "arquivo": "seeds/SEED_UX_002_Bald_v1_0.json",
+      "data_criacao": "2026-05-07",
+      "semantic_anchor": "Design é a destilação de um objeto até sua forma mais honesta — aquela que parece ter sempre existido, que não poderia ser de outro jeito, que o material pedia antes do designer chegar."
     }
   ]
 }
