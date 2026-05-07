@@ -35,7 +35,7 @@
     {
       "seed_id": "SEED_UX_001_v1.0",
       "descriptor": "Legado de UX — jornada do usuário, onboarding, fricção intencional",
-      "arquivo": "seeds/SEED_UX_001_v1.0.json",
+      "arquivo": "seeds/SEED_UX_001_v1.0_UX.json",
       "data_criacao": "2026-05-04",
       "semantic_anchor": "UX excelente é invisível — o usuário só percebe quando algo falha. Nossa missão é eliminar os momentos em que ele precisa pensar sobre a interface."
     },
@@ -72,35 +72,35 @@
     {
       "seed_id": "SEED_ADV_001_v1.0",
       "descriptor": "Legado de visão de produto — simplicidade, experiência do usuário e inovação radical",
-      "arquivo": "seeds/SEED_ADV_001_v1.0.json",
+      "arquivo": "seeds/SEED_ADV_001_v1.0_VIC.json",
       "data_criacao": "2026-05-05",
       "semantic_anchor": "Produtos extraordinários não são projetados — são destilados."
     },
     {
       "seed_id": "SEED_ADV_002_v1.0",
       "descriptor": "Legado de estratégia de negócio — monopólio criativo, pensamento contrário e vantagem do último movimento",
-      "arquivo": "seeds/SEED_ADV_002_v1.0.json",
+      "arquivo": "seeds/SEED_ADV_002_v1.0_ESTON.json",
       "data_criacao": "2026-05-05",
       "semantic_anchor": "O LexForum não compete — cria uma categoria nova. Quem define a categoria, define o mercado."
     },
     {
       "seed_id": "SEED_ADV_003_v1.0",
       "descriptor": "Legado de crescimento — product-market fit, growth hacking e North Star Framework",
-      "arquivo": "seeds/SEED_ADV_003_v1.0.json",
+      "arquivo": "seeds/SEED_ADV_003_v1.0_CRESH.json",
       "data_criacao": "2026-05-05",
       "semantic_anchor": "Crescimento real começa quando usuários amam o produto o suficiente para ficar e recomendar."
     },
     {
       "seed_id": "SEED_ADV_004_v1.0",
       "descriptor": "Legado do futuro do direito — democratização do acesso à justiça e transformação da profissão jurídica por tecnologia",
-      "arquivo": "seeds/SEED_ADV_004_v1.0.json",
+      "arquivo": "seeds/SEED_ADV_004_v1.0_JUSTIN.json",
       "data_criacao": "2026-05-05",
       "semantic_anchor": "O LexForum não é ferramenta para advogados. É infraestrutura de acesso à justiça para cidadãos."
     },
     {
       "seed_id": "SEED_ARCH_001_v1.0",
       "descriptor": "Legado de Arquitetura de IA — modelo mínimo suficiente, código antes de LLM, contexto cirúrgico, verificabilidade",
-      "arquivo": "seeds/SEED_ARCH_001_v1.0.json",
+      "arquivo": "seeds/SEED_ARCH_001_v1.0_ARCH.json",
       "data_criacao": "2026-05-06",
       "semantic_anchor": "Inteligência artificial usada com precisão cirúrgica — o modelo mais fraco que resolve o problema, o contexto mínimo que habilita a resposta, o output sempre verificável. Complexidade é custo; simplicidade é estratégia."
     }
