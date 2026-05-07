@@ -19,6 +19,7 @@ const PLACEHOLDER =
 export default function Causa() {
   const router = useRouter()
   const [text, setText] = useState('')
+  const [perfil, setPerfil] = useState<'leigo' | 'profissional'>('leigo')
 
   function handleChip(chip: string) {
     setText((prev) => {
@@ -30,8 +31,9 @@ export default function Causa() {
 
   function handleSimular() {
     if (text.trim().length <= 10) return
-    sessionStorage.setItem('causa', text)
-    router.push('/simulacao')
+    sessionStorage.setItem('lf_causa', text)
+    sessionStorage.setItem('lf_perfil', perfil)
+    router.push('/confirmacao')
   }
 
   const canSubmit = text.trim().length > 10
@@ -42,20 +44,12 @@ export default function Causa() {
       {/* ── Nav ── */}
       <nav className="sticky top-0 z-50 bg-navy-deep/95 backdrop-blur-md border-b border-white/5">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="font-sans text-sm text-white/50 hover:text-white transition-colors"
-          >
+          <Link href="/" className="font-sans text-sm text-white/50 hover:text-white transition-colors">
             ← Voltar
           </Link>
-
-          <div className="flex flex-col items-center leading-none">
-            <span className="font-serif text-xl font-bold tracking-tight text-white">
-              Lex<span className="text-lex-cyan">Forum</span>
-            </span>
-          </div>
-
-          {/* spacer para centralizar logo */}
+          <span className="font-serif text-xl font-bold tracking-tight text-white">
+            Lex<span className="text-lex-cyan">Forum</span>
+          </span>
           <div className="w-16" />
         </div>
       </nav>
@@ -84,6 +78,26 @@ export default function Causa() {
             <p className="font-sans text-sm text-white/50 leading-relaxed">
               Descreva com suas palavras. Sem juridiquês — quanto mais detalhes, melhor a simulação.
             </p>
+          </div>
+
+          {/* Perfil */}
+          <div className="space-y-2">
+            <p className="font-sans text-xs text-white/35 uppercase tracking-widest">Perfil</p>
+            <div className="flex gap-2">
+              {(['leigo', 'profissional'] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPerfil(p)}
+                  className={`font-sans text-xs px-4 py-1.5 rounded-full border transition-all duration-150 ${
+                    perfil === p
+                      ? 'border-lex-cyan text-lex-cyan'
+                      : 'border-white/15 text-white/60 hover:border-lex-cyan/50 hover:text-lex-cyan'
+                  }`}
+                >
+                  {p === 'leigo' ? 'Leigo' : 'Profissional'}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Chips opcionais */}
@@ -126,7 +140,6 @@ export default function Causa() {
             >
               Simular →
             </button>
-
             <p className="font-sans text-xs text-white/30 text-center sm:text-right leading-relaxed">
               Esta simulação tem fins educativos e não substitui assessoria jurídica real.
             </p>
