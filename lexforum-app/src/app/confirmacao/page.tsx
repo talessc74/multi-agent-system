@@ -4,22 +4,51 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+type ValidarResult = {
+  completo: boolean
+  perguntas: string[]
+  resumo: string
+  area: string
+  area_label: string
+  confianca: number
+}
+
+type Estado = 'carregando' | 'ok' | 'erro'
+
 export default function Confirmacao() {
   const router = useRouter()
-  const [causa, setCausa] = useState<string | null>(null)
+  const [causa, setCausa] = useState('')
+  const [estado, setEstado] = useState<Estado>('carregando')
+  const [validacao, setValidacao] = useState<ValidarResult | null>(null)
+  const [erroMsg, setErroMsg] = useState('')
 
   useEffect(() => {
-    const stored = sessionStorage.getItem('causa')
-    if (!stored) router.replace('/causa')
-    else setCausa(stored)
+    const stored = sessionStorage.getItem('lf_causa')
+    if (!stored) { router.replace('/causa'); return }
+    setCausa(stored)
+
+    fetch('/api/validar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ causa: stored }),
+    })
+      .then((r) => r.json())
+      .then((data: ValidarResult & { error?: string }) => {
+        if (data.error) throw new Error(data.error)
+        setValidacao(data)
+        setEstado('ok')
+      })
+      .catch((e: Error) => {
+        setErroMsg(e.message || 'Erro ao validar causa.')
+        setEstado('erro')
+      })
   }, [router])
 
   function handleConfirmar() {
-    // TODO: chamar /api/validar, depois redirecionar para /loading
+    if (!validacao) return
+    sessionStorage.setItem('lf_area', validacao.area)
     router.push('/loading')
   }
-
-  if (!causa) return null
 
   return (
     <main className="min-h-screen flex flex-col bg-navy-deep">
@@ -27,17 +56,12 @@ export default function Confirmacao() {
       {/* ── Nav ── */}
       <nav className="sticky top-0 z-50 bg-navy-deep/95 backdrop-blur-md border-b border-white/5">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link
-            href="/causa"
-            className="font-sans text-sm text-white/50 hover:text-white transition-colors"
-          >
+          <Link href="/causa" className="font-sans text-sm text-white/50 hover:text-white transition-colors">
             ← Voltar
           </Link>
-          <div className="flex flex-col items-center leading-none">
-            <span className="font-serif text-xl font-bold tracking-tight text-white">
-              Lex<span className="text-lex-cyan">Forum</span>
-            </span>
-          </div>
+          <span className="font-serif text-xl font-bold tracking-tight text-white">
+            Lex<span className="text-lex-cyan">Forum</span>
+          </span>
           <div className="w-16" />
         </div>
       </nav>
@@ -64,34 +88,81 @@ export default function Confirmacao() {
               Confirmar e simular
             </h1>
             <p className="font-sans text-sm text-white/50 leading-relaxed">
-              Revise sua causa antes de iniciar a simulação jurídica.
+              Revise as informações antes de iniciar a simulação.
             </p>
           </div>
 
-          {/* Preview da causa */}
+          {/* Causa */}
           <div className="bg-navy/60 border border-white/10 rounded-2xl px-5 py-4">
-            <p className="font-sans text-xs text-white/35 uppercase tracking-widest mb-3">
-              Sua causa
-            </p>
-            <p className="font-sans text-sm text-white/80 leading-relaxed whitespace-pre-wrap">
-              {causa}
-            </p>
+            <p className="font-sans text-xs text-white/35 uppercase tracking-widest mb-3">Sua causa</p>
+            <p className="font-sans text-sm text-white/80 leading-relaxed whitespace-pre-wrap">{causa}</p>
           </div>
 
-          {/* TODO: resumo de agentes que serão acionados */}
+          {/* Estado da validação */}
+          {estado === 'carregando' && (
+            <div className="flex items-center gap-3">
+              <div className="w-4 h-4 rounded-full border-2 border-white/10 border-t-lex-cyan animate-spin" />
+              <p className="font-sans text-sm text-white/50">Classificando sua causa…</p>
+            </div>
+          )}
 
-          {/* Botão */}
-          <div className="flex flex-col items-stretch sm:items-end gap-3">
+          {estado === 'erro' && (
+            <div className="bg-red-900/30 border border-red-500/30 rounded-xl px-5 py-4">
+              <p className="font-sans text-sm text-red-400">{erroMsg}</p>
+            </div>
+          )}
+
+          {estado === 'ok' && validacao && (
+            <div className="bg-navy/60 border border-lex-cyan/20 rounded-2xl px-5 py-4 space-y-3">
+              <p className="font-sans text-xs text-white/35 uppercase tracking-widest">Análise preliminar</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-sans text-xs text-lex-cyan border border-lex-cyan/30 rounded-full px-3 py-1">
+                  {validacao.area_label}
+                </span>
+                <span className="font-sans text-xs text-white/40">
+                  {Math.round(validacao.confianca * 100)}% confiança
+                </span>
+              </div>
+              <p className="font-sans text-sm text-white/70 leading-relaxed">{validacao.resumo}</p>
+              {!validacao.completo && validacao.perguntas.length > 0 && (
+                <div className="space-y-1 pt-2 border-t border-white/5">
+                  <p className="font-sans text-xs text-yellow-400/80">
+                    Para melhorar a simulação, considere informar:
+                  </p>
+                  <ul className="space-y-1">
+                    {validacao.perguntas.map((q, i) => (
+                      <li key={i} className="font-sans text-xs text-white/50">· {q}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Botões */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <button
               onClick={handleConfirmar}
-              className="font-sans font-semibold px-8 py-3.5 rounded-lg bg-lex-cyan text-navy-deep hover:bg-lex-cyan-dark shadow-lg hover:shadow-lex-cyan/30 hover:shadow-xl active:scale-95 transition-all duration-200 cursor-pointer"
+              disabled={estado !== 'ok'}
+              className={`font-sans font-semibold px-8 py-3.5 rounded-lg transition-all duration-200 ${
+                estado === 'ok'
+                  ? 'bg-lex-cyan text-navy-deep hover:bg-lex-cyan-dark shadow-lg active:scale-95 cursor-pointer'
+                  : 'bg-white/10 text-white/30 cursor-not-allowed'
+              }`}
             >
               Iniciar simulação →
             </button>
-            <p className="font-sans text-xs text-white/30 text-center sm:text-right leading-relaxed">
-              Esta simulação tem fins educativos e não substitui assessoria jurídica real.
-            </p>
+            <Link
+              href="/causa"
+              className="font-sans text-sm text-white/50 hover:text-white text-center py-3 transition-colors"
+            >
+              ← Ajustar causa
+            </Link>
           </div>
+
+          <p className="font-sans text-xs text-white/30 leading-relaxed">
+            Esta simulação tem fins educativos e não substitui assessoria jurídica real.
+          </p>
 
         </div>
       </div>
