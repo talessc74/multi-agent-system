@@ -25,15 +25,44 @@ Campos:
 - area_label: nome legível da área. Ex: "Direito do Consumidor", "Direito Trabalhista".
 - confianca: número de 0 a 1 indicando sua confiança na classificação.`
 
+type ArquivoInput = { nome: string; tipo: string; base64: string }
+
+const IMAGENS_SUPORTADAS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'] as const
+type ImageMime = (typeof IMAGENS_SUPORTADAS)[number]
+
+function buildUserContent(
+  causa: string,
+  arquivos: ArquivoInput[],
+): string | Anthropic.ContentBlockParam[] {
+  if (!arquivos.length) return `Causa: ${causa}`
+
+  const blocks: Anthropic.ContentBlockParam[] = []
+
+  for (const arq of arquivos) {
+    if (IMAGENS_SUPORTADAS.includes(arq.tipo as ImageMime)) {
+      blocks.push({
+        type: 'image',
+        source: { type: 'base64', media_type: arq.tipo as ImageMime, data: arq.base64 },
+      } as Anthropic.ImageBlockParam)
+    } else if (arq.tipo === 'application/pdf') {
+      blocks.push({
+        type: 'document',
+        source: { type: 'base64', media_type: 'application/pdf', data: arq.base64 },
+      } as Anthropic.DocumentBlockParam)
+    }
+  }
+
+  blocks.push({ type: 'text', text: `Causa: ${causa}` })
+  return blocks
+}
+
 function parseJsonRobust(text: string): Record<string, unknown> | null {
-  // Estratégia 1: parse direto
   try {
     return JSON.parse(text) as Record<string, unknown>
   } catch {
     // continua
   }
 
-  // Estratégia 2: extrai primeiro bloco JSON entre chaves
   try {
     const match = text.match(/\{[\s\S]*\}/)
     if (match) return JSON.parse(match[0]) as Record<string, unknown>
@@ -41,7 +70,6 @@ function parseJsonRobust(text: string): Record<string, unknown> | null {
     // continua
   }
 
-  // Estratégia 3: remove possível markdown code fence e tenta novamente
   try {
     const stripped = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
     return JSON.parse(stripped) as Record<string, unknown>
@@ -57,15 +85,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Campo "causa" obrigatório.' }, { status: 400 })
   }
 
-  const { causa, arquivos } = body as { causa: string; arquivos?: string[] }
+  const { causa, arquivos } = body as { causa: string; arquivos?: ArquivoInput[] }
 
   if (causa.trim().length < 10) {
     return NextResponse.json({ error: 'Causa muito curta. Descreva com mais detalhes.' }, { status: 422 })
   }
 
-  const userContent = arquivos?.length
-    ? `Causa: ${causa}\n\nArquivos anexados: ${arquivos.join(', ')}`
-    : `Causa: ${causa}`
+  const userContent = buildUserContent(causa, arquivos ?? [])
 
   const message = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
