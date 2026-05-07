@@ -18,6 +18,7 @@ type Estado = 'carregando' | 'ok' | 'erro'
 export default function Confirmacao() {
   const router = useRouter()
   const [causa, setCausa] = useState('')
+  const [perfil, setPerfil] = useState<'leigo' | 'profissional'>('leigo')
   const [estado, setEstado] = useState<Estado>('carregando')
   const [validacao, setValidacao] = useState<ValidarResult | null>(null)
   const [erroMsg, setErroMsg] = useState('')
@@ -50,6 +51,7 @@ export default function Confirmacao() {
   function handleConfirmar() {
     if (!validacao) return
     sessionStorage.setItem('lf_area', validacao.area)
+    sessionStorage.setItem('lf_perfil', perfil)
     router.push('/loading')
   }
 
@@ -141,6 +143,26 @@ export default function Confirmacao() {
               )}
             </div>
           )}
+
+          {/* Perfil */}
+          <div className="space-y-2">
+            <p className="font-sans text-xs text-white/35 uppercase tracking-widest">Perfil do laudo</p>
+            <div className="flex gap-2">
+              {(['leigo', 'profissional'] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPerfil(p)}
+                  className={`font-sans text-xs px-4 py-1.5 rounded-full border transition-all duration-150 ${
+                    perfil === p
+                      ? 'border-lex-cyan text-lex-cyan'
+                      : 'border-white/15 text-white/60 hover:border-lex-cyan/50 hover:text-lex-cyan'
+                  }`}
+                >
+                  {p === 'leigo' ? 'Leigo' : 'Profissional'}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Botões */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

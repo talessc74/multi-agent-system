@@ -33,7 +33,6 @@ function fileToBase64(file: File): Promise<string> {
 export default function Causa() {
   const router = useRouter()
   const [text, setText] = useState('')
-  const [perfil, setPerfil] = useState<'leigo' | 'profissional'>('leigo')
   const [arquivos, setArquivos] = useState<ArquivoItem[]>([])
   const [erroArquivo, setErroArquivo] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -88,7 +87,6 @@ export default function Causa() {
     )
 
     sessionStorage.setItem('lf_causa', text)
-    sessionStorage.setItem('lf_perfil', perfil)
     sessionStorage.setItem('lf_arquivos', JSON.stringify(arquivosBase64))
     router.push('/confirmacao')
   }
@@ -135,26 +133,6 @@ export default function Causa() {
             <p className="font-sans text-sm text-white/50 leading-relaxed">
               Descreva com suas palavras. Sem juridiquês — quanto mais detalhes, melhor a simulação.
             </p>
-          </div>
-
-          {/* Perfil */}
-          <div className="space-y-2">
-            <p className="font-sans text-xs text-white/35 uppercase tracking-widest">Perfil</p>
-            <div className="flex gap-2">
-              {(['leigo', 'profissional'] as const).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setPerfil(p)}
-                  className={`font-sans text-xs px-4 py-1.5 rounded-full border transition-all duration-150 ${
-                    perfil === p
-                      ? 'border-lex-cyan text-lex-cyan'
-                      : 'border-white/15 text-white/60 hover:border-lex-cyan/50 hover:text-lex-cyan'
-                  }`}
-                >
-                  {p === 'leigo' ? 'Leigo' : 'Profissional'}
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Chips opcionais */}
