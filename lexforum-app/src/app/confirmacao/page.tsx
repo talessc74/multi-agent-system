@@ -27,10 +27,13 @@ export default function Confirmacao() {
     if (!stored) { router.replace('/causa'); return }
     setCausa(stored)
 
+    const arquivosRaw = sessionStorage.getItem('lf_arquivos')
+    const arquivos = arquivosRaw ? (JSON.parse(arquivosRaw) as unknown[]) : []
+
     fetch('/api/validar', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ causa: stored }),
+      body: JSON.stringify({ causa: stored, arquivos }),
     })
       .then((r) => r.json())
       .then((data: ValidarResult & { error?: string }) => {
