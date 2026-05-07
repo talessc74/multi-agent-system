@@ -81,7 +81,7 @@ export default function Home() {
         <div className="cards-wrapper">
 
           {/* CARD LEIGO */}
-          <div className="card card-leigo" onClick={() => router.push('/inicio')}>
+          <div className="card card-leigo" onClick={() => router.push('/causa')}>
             <CardCarousel phrases={leigoPhrases} variant="leigo" />
             <span className="card-icon">⚖️</span>
             <h2 className="card-title">Tenho um problema<br />e preciso de ajuda</h2>
@@ -90,7 +90,7 @@ export default function Home() {
           </div>
 
           {/* CARD PROFISSIONAL */}
-          <div className="card card-pro" onClick={() => router.push('/inicio')}>
+          <div className="card card-pro" onClick={() => router.push('/causa')}>
             <CardCarousel phrases={proPhrases} variant="pro" />
             <span className="card-icon">📋</span>
             <h2 className="card-title">Sou profissional e quero<br />simular uma estratégia</h2>
