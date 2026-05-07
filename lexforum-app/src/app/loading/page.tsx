@@ -14,6 +14,8 @@ export default function Loading() {
     const causa = sessionStorage.getItem('lf_causa')
     const area = sessionStorage.getItem('lf_area')
     const perfil = sessionStorage.getItem('lf_perfil') ?? 'leigo'
+    const arquivosRaw = sessionStorage.getItem('lf_arquivos')
+    const arquivos = arquivosRaw ? (JSON.parse(arquivosRaw) as unknown[]) : []
 
     if (!causa || !area) {
       router.replace('/causa')
@@ -24,7 +26,7 @@ export default function Loading() {
       const simRes = await fetch('/api/simular', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ causa, area, perfil }),
+        body: JSON.stringify({ causa, area, perfil, arquivos }),
       })
       if (!simRes.ok) throw new Error('Falha na simulação')
       const resultado = await simRes.json() as {
