@@ -1,39 +1,76 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function Loading() {
   const router = useRouter()
+  const started = useRef(false)
 
   useEffect(() => {
-    const causa = sessionStorage.getItem('causa')
-    if (!causa) {
+    if (started.current) return
+    started.current = true
+
+    const causa = sessionStorage.getItem('lf_causa')
+    const area = sessionStorage.getItem('lf_area')
+    const perfil = sessionStorage.getItem('lf_perfil') ?? 'leigo'
+
+    if (!causa || !area) {
       router.replace('/causa')
       return
     }
 
-    // TODO: chamar /api/simular e aguardar resposta
-    // Ao concluir: salvar resultado em sessionStorage e redirecionar para /resultado
+    async function executar() {
+      const simRes = await fetch('/api/simular', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ causa, area, perfil }),
+      })
+      if (!simRes.ok) throw new Error('Falha na simulação')
+      const resultado = await simRes.json() as {
+        peticaoFinal: string
+        sentencaFinal: string
+        rodadas: unknown[]
+        area: string
+      }
+      sessionStorage.setItem('lf_resultado', JSON.stringify(resultado))
+
+      const laudoRes = await fetch('/api/laudo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          peticaoFinal: resultado.peticaoFinal,
+          sentencaFinal: resultado.sentencaFinal,
+          area,
+          perfil,
+        }),
+      })
+      if (!laudoRes.ok) throw new Error('Falha na geração do laudo')
+      const laudo = await laudoRes.json()
+      sessionStorage.setItem('lf_laudo', JSON.stringify(laudo))
+
+      router.push('/resultado')
+    }
+
+    executar().catch((e: Error) => {
+      sessionStorage.setItem('lf_erro', e.message || 'Erro desconhecido')
+      router.replace('/causa')
+    })
   }, [router])
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-navy-deep px-6">
-
       <div className="flex flex-col items-center gap-8 text-center max-w-sm">
 
-        {/* Logotipo */}
         <span className="font-serif text-2xl font-bold tracking-tight text-white">
           Lex<span className="text-lex-cyan">Forum</span>
         </span>
 
-        {/* Spinner — TODO: substituir por animação final */}
         <div className="w-12 h-12 rounded-full border-2 border-white/10 border-t-lex-cyan animate-spin" />
 
-        {/* Mensagem */}
         <div className="space-y-2">
           <p className="font-sans text-base font-semibold text-white">
-            Simulando o fórum jurídico…
+            Simulação em andamento…
           </p>
           <p className="font-sans text-sm text-white/40 leading-relaxed">
             Agentes especializados estão analisando sua causa.
@@ -42,10 +79,7 @@ export default function Loading() {
           </p>
         </div>
 
-        {/* TODO: barra de progresso com etapas dos agentes */}
-
       </div>
-
     </main>
   )
 }
