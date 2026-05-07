@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -16,10 +16,27 @@ const chips = [
 const PLACEHOLDER =
   'Ex: minha conta de telefone está alta · fui demitido sem justa causa · perdi esta causa 3 vezes, o que estou fazendo de errado'
 
+const MAX_ARQUIVOS = 5
+const MAX_BYTES = 10 * 1024 * 1024
+
+type ArquivoItem = { id: string; nome: string; tipo: string; file: File }
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve((reader.result as string).split(',')[1])
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function Causa() {
   const router = useRouter()
   const [text, setText] = useState('')
   const [perfil, setPerfil] = useState<'leigo' | 'profissional'>('leigo')
+  const [arquivos, setArquivos] = useState<ArquivoItem[]>([])
+  const [erroArquivo, setErroArquivo] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
   function handleChip(chip: string) {
     setText((prev) => {
@@ -29,10 +46,50 @@ export default function Causa() {
     })
   }
 
-  function handleSimular() {
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? [])
+    setErroArquivo('')
+
+    const validos: ArquivoItem[] = []
+    for (const file of files) {
+      if (file.size > MAX_BYTES) {
+        setErroArquivo(`"${file.name}" excede 10 MB.`)
+        continue
+      }
+      validos.push({ id: `${Date.now()}-${Math.random()}`, nome: file.name, tipo: file.type, file })
+    }
+
+    setArquivos((prev) => {
+      const total = [...prev, ...validos]
+      if (total.length > MAX_ARQUIVOS) {
+        setErroArquivo(`Máximo de ${MAX_ARQUIVOS} arquivos permitidos.`)
+        return total.slice(0, MAX_ARQUIVOS)
+      }
+      return total
+    })
+
+    if (inputRef.current) inputRef.current.value = ''
+  }
+
+  function removeArquivo(id: string) {
+    setArquivos((prev) => prev.filter((a) => a.id !== id))
+    setErroArquivo('')
+  }
+
+  async function handleSimular() {
     if (text.trim().length <= 10) return
+
+    const arquivosBase64 = await Promise.all(
+      arquivos.map(async (a) => ({
+        nome: a.nome,
+        tipo: a.tipo,
+        base64: await fileToBase64(a.file),
+      })),
+    )
+
     sessionStorage.setItem('lf_causa', text)
     sessionStorage.setItem('lf_perfil', perfil)
+    sessionStorage.setItem('lf_arquivos', JSON.stringify(arquivosBase64))
     router.push('/confirmacao')
   }
 
@@ -126,6 +183,58 @@ export default function Causa() {
             rows={7}
             className="w-full bg-navy/60 border border-white/10 focus:border-lex-cyan/50 focus:outline-none focus:ring-2 focus:ring-lex-cyan/20 rounded-2xl px-5 py-4 font-sans text-sm text-white placeholder-white/25 leading-relaxed resize-none transition-all duration-200"
           />
+
+          {/* Upload de arquivos */}
+          <div className="space-y-3">
+            <p className="font-sans text-xs text-white/35 uppercase tracking-widest">
+              Documentos (opcional) — PDF ou imagem, máx. 5 arquivos · 10 MB cada
+            </p>
+
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              disabled={arquivos.length >= MAX_ARQUIVOS}
+              className={`font-sans text-xs px-4 py-2 rounded-lg border transition-all duration-150 ${
+                arquivos.length >= MAX_ARQUIVOS
+                  ? 'border-white/10 text-white/20 cursor-not-allowed'
+                  : 'border-white/15 text-white/60 hover:border-lex-cyan/50 hover:text-lex-cyan cursor-pointer'
+              }`}
+            >
+              + Adicionar arquivo
+            </button>
+
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/*,application/pdf"
+              multiple
+              className="hidden"
+              onChange={handleFileChange}
+            />
+
+            {erroArquivo && (
+              <p className="font-sans text-xs text-red-400">{erroArquivo}</p>
+            )}
+
+            {arquivos.length > 0 && (
+              <ul className="space-y-2">
+                {arquivos.map((arq) => (
+                  <li
+                    key={arq.id}
+                    className="flex items-center justify-between gap-3 bg-navy/60 border border-white/10 rounded-xl px-4 py-2"
+                  >
+                    <span className="font-sans text-xs text-white/70 truncate">{arq.nome}</span>
+                    <button
+                      onClick={() => removeArquivo(arq.id)}
+                      className="font-sans text-xs text-white/30 hover:text-red-400 transition-colors shrink-0"
+                    >
+                      remover
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           {/* Botão + Disclaimer */}
           <div className="flex flex-col items-stretch sm:items-end gap-3">
