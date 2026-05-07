@@ -75,7 +75,38 @@ function rotear(area: string): AgentPair {
   }
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Tipos e helpers ──────────────────────────────────────────────────────────
+
+type ArquivoInput = { nome: string; tipo: string; base64: string }
+
+const IMAGENS_SUPORTADAS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'] as const
+type ImageMime = (typeof IMAGENS_SUPORTADAS)[number]
+
+function buildUserContent(
+  texto: string,
+  arquivos: ArquivoInput[],
+): string | Anthropic.ContentBlockParam[] {
+  if (!arquivos.length) return texto
+
+  const blocks: Anthropic.ContentBlockParam[] = []
+
+  for (const arq of arquivos) {
+    if (IMAGENS_SUPORTADAS.includes(arq.tipo as ImageMime)) {
+      blocks.push({
+        type: 'image',
+        source: { type: 'base64', media_type: arq.tipo as ImageMime, data: arq.base64 },
+      } as Anthropic.ImageBlockParam)
+    } else if (arq.tipo === 'application/pdf') {
+      blocks.push({
+        type: 'document',
+        source: { type: 'base64', media_type: 'application/pdf', data: arq.base64 },
+      } as Anthropic.DocumentBlockParam)
+    }
+  }
+
+  blocks.push({ type: 'text', text: texto })
+  return blocks
+}
 
 function extractText(msg: Anthropic.Message): string {
   return msg.content
@@ -97,19 +128,26 @@ async function chamarAdvogado(
   causa: string,
   peticaoAnterior?: string,
   sentencaAnterior?: string,
+  arquivos?: ArquivoInput[],
 ): Promise<string> {
-  const userContent =
-    peticaoAnterior && sentencaAnterior
-      ? [
-          `Causa original: ${causa}`,
-          '',
-          `Sua petição anterior:\n${peticaoAnterior}`,
-          '',
-          `Sentença do juiz:\n${sentencaAnterior}`,
-          '',
-          'Reescreva uma nova petição mais forte, com argumentos aprimorados e melhor fundamentação jurídica. Escreva como se fosse a primeira e única petição — não mencione rodadas ou tentativas anteriores.',
-        ].join('\n')
-      : `Causa: ${causa}\n\nElabore a petição inicial.`
+  let userContent: string | Anthropic.ContentBlockParam[]
+
+  if (peticaoAnterior && sentencaAnterior) {
+    // Rodadas 2 e 3: só texto — advogado tem memória completa
+    userContent = [
+      `Causa original: ${causa}`,
+      '',
+      `Sua petição anterior:\n${peticaoAnterior}`,
+      '',
+      `Sentença do juiz:\n${sentencaAnterior}`,
+      '',
+      'Reescreva uma nova petição mais forte, com argumentos aprimorados e melhor fundamentação jurídica. Escreva como se fosse a primeira e única petição — não mencione rodadas ou tentativas anteriores.',
+    ].join('\n')
+  } else {
+    // Rodada 1: inclui arquivos como contexto multimodal se houver
+    const texto = `Causa: ${causa}\n\nElabore a petição inicial.`
+    userContent = arquivos?.length ? buildUserContent(texto, arquivos) : texto
+  }
 
   const msg = await client.messages.create({
     model: MODEL,
@@ -135,12 +173,7 @@ async function chamarJuiz(system: string, peticao: string): Promise<string> {
 
 // ─── Route ───────────────────────────────────────────────────────────────────
 
-type Rodada = {
-  numero: number
-  peticao: string
-  sentenca: string
-  percentual: number
-}
+type Rodada = { numero: number; peticao: string; sentenca: string; percentual: number }
 
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null)
@@ -152,11 +185,12 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { causa, area, perfil, contextoArquivos } = body as {
+  const { causa, area, perfil, contextoArquivos, arquivos } = body as {
     causa: string
     area: string
     perfil?: string
     contextoArquivos?: string
+    arquivos?: ArquivoInput[]
   }
 
   const causaCompleta = [
@@ -180,17 +214,13 @@ export async function POST(request: NextRequest) {
       causaCompleta,
       i > 1 ? peticaoAtual : undefined,
       i > 1 ? sentencaAtual : undefined,
+      i === 1 ? (arquivos ?? []) : undefined, // arquivos apenas na rodada 1
     )
 
     sentencaAtual = await chamarJuiz(juizSystem, peticaoAtual)
     percentualAtual = extractPercentual(sentencaAtual)
 
-    rodadas.push({
-      numero: i,
-      peticao: peticaoAtual,
-      sentenca: sentencaAtual,
-      percentual: percentualAtual,
-    })
+    rodadas.push({ numero: i, peticao: peticaoAtual, sentenca: sentencaAtual, percentual: percentualAtual })
 
     if (percentualAtual >= 95) break
   }
