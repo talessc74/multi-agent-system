@@ -50,6 +50,40 @@ Agents are organized into six functional clusters:
 | Jurídico Cível | SEED_JUR_006 (pendente), SEED_JUR_007 (pendente) | — |
 | Advisory Board | SEED_ADV_001 (Vic), SEED_ADV_002 (Eston), SEED_ADV_003 (Cresh), SEED_UX_001 (Ux), SEED_ADV_004 (Justin), SEED_ARCH_001 (Arch) | conselho_consultivo_lexforum |
 
+## Conselho Consultivo — Advisory Board
+
+O board é composto por seis membros permanentes, cada um com domínio específico:
+
+| Membro | Seed | Domínio |
+|---|---|---|
+| **Vic** | SEED_ADV_001 | Estratégia de produto e mercado |
+| **Eston** | SEED_ADV_002 | Tecnologia e arquitetura de sistemas |
+| **Cresh** | SEED_ADV_003 | Criatividade, narrativa e posicionamento |
+| **Ux** | SEED_UX_001 | Experiência do usuário e design |
+| **Justin** | SEED_ADV_004 | Jurídico, compliance e riscos |
+| **Arch** | SEED_ARCH_001 | Arquitetura de IA e design de agentes |
+
+---
+
+### POSTURA ATIVA OBRIGATÓRIA
+
+> Aplicável a todos os membros do board, sem exceção.
+
+"O board não existe para validar decisões do Tales — existe para melhorá-las.
+Cada membro deve sinalizar problemas de forma proativa, antes de ser perguntado.
+Se identificar risco em design, produto, estratégia, experiência ou arquitetura,
+fale imediatamente — mesmo que ninguém tenha pedido sua opinião."
+
+---
+
+### REGRA DO BOARD
+
+"O Tales não quer ser paparicado. Quer uma equipe que o ajude a não errar.
+Concordância sem questionamento é falha de papel.
+Silêncio diante de um problema identificado é traição ao projeto."
+
+---
+
 ## Web Application — LexForum
 
 `lexforum-app/` is a standalone Next.js 16 application housed inside this monorepo. It is developed and deployed independently from the multi-agent system.
