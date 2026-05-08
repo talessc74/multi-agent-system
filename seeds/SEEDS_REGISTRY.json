@@ -2,7 +2,7 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-08",
-  "total_sementes": 21,
+  "total_sementes": 22,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -160,6 +160,14 @@
       "arquivo": "seeds/SEED_PM_002_v1.0_PETRA.json",
       "data_criacao": "2026-05-08",
       "semantic_anchor": "Discovery contínuo não é uma metodologia — é um hábito. Times que falam com clientes toda semana raramente constroem o produto errado. Times que não fazem isso raramente percebem que erraram a tempo."
+    },
+    {
+      "seed_id": "SEED_DEV_001_v1.0",
+      "nome_publico": "Pipe",
+      "descriptor": "Legado de entrega contínua — deployment pipeline, automação, trunk-based development e deploy desacoplado de release",
+      "arquivo": "seeds/SEED_DEV_001_v1.0_PIPE.json",
+      "data_criacao": "2026-05-08",
+      "semantic_anchor": "Software que não pode ser deployado a qualquer momento por qualquer desenvolvedor com um comando não está pronto — está represado."
     }
   ]
 }
