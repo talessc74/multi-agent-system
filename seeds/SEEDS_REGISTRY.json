@@ -1,8 +1,8 @@
 {
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
-  "ultima_atualizacao": "2026-05-07",
-  "total_sementes": 15,
+  "ultima_atualizacao": "2026-05-08",
+  "total_sementes": 16,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -111,6 +111,14 @@
       "arquivo": "seeds/SEED_UX_002_Bald_v1_0.json",
       "data_criacao": "2026-05-07",
       "semantic_anchor": "Design é a destilação de um objeto até sua forma mais honesta — aquela que parece ter sempre existido, que não poderia ser de outro jeito, que o material pedia antes do designer chegar."
+    },
+    {
+      "seed_id": "SEED_ADV_005_v1.0",
+      "nome_publico": "Primo",
+      "descriptor": "Legado de liderança em crise — decisão com informação incompleta, dívida de gestão e cultura como vantagem competitiva",
+      "arquivo": "seeds/SEED_ADV_005_v1.0_PRIMO.json",
+      "data_criacao": "2026-05-08",
+      "semantic_anchor": "Liderar em tempos difíceis não é ter as respostas — é ser o único disposto a agir sem elas."
     }
   ]
 }

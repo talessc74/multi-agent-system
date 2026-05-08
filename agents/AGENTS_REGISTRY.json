@@ -1,8 +1,8 @@
 {
   "registry_id": "AGENTS_REGISTRY",
   "descricao": "Índice de todos os agentes criados pelo Especialista",
-  "ultima_atualizacao": "2026-05-07",
-  "total_agentes": 14,
+  "ultima_atualizacao": "2026-05-08",
+  "total_agentes": 15,
   "agentes": [
     {
       "agent_id": "consultor_ia_v1.0",
@@ -115,6 +115,14 @@
       "seed_utilizada": "SEED_UX_002_v1.0",
       "seed_complementar": "SEED_UX_001_v1.0",
       "data_criacao": "2026-05-07",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    },
+    {
+      "agent_id": "AGT_ADV_005",
+      "nome": "Primo — Conselheiro de Liderança em Crise (Kern: SEED_ADV_005)",
+      "arquivo": "agents/agt_adv_005_primo_v1_0.json",
+      "seed_utilizada": "SEED_ADV_005_v1.0",
+      "data_criacao": "2026-05-08",
       "gerado_por": "Especialista v2.6.1-INTEGRATED"
     }
   ]
