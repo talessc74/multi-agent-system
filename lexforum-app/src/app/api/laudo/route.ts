@@ -45,14 +45,15 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { peticaoFinal, sentencaFinal } = body as {
+  const { peticaoFinal, sentencaFinal, causaOriginal } = body as {
     peticaoFinal: string
     sentencaFinal: string
+    causaOriginal?: string
     area?: string
     perfil?: string
   }
 
-  const userContent = `PETIÇÃO FINAL DO ADVOGADO:\n${peticaoFinal}\n\nSENTENÇA FINAL DO JUIZ:\n${sentencaFinal}`
+  const userContent = `CAUSA ORIGINAL DO USUÁRIO:\n${causaOriginal ?? 'Não informada'}\n\nPETIÇÃO FINAL DO ADVOGADO:\n${peticaoFinal}\n\nSENTENÇA FINAL DO JUIZ:\n${sentencaFinal}`
 
   const [resultLeigo, resultProfissional] = await Promise.all([
     genAI
