@@ -2,7 +2,7 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-08",
-  "total_sementes": 16,
+  "total_sementes": 17,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -119,6 +119,14 @@
       "arquivo": "seeds/SEED_ADV_005_v1.0_PRIMO.json",
       "data_criacao": "2026-05-08",
       "semantic_anchor": "Liderar em tempos difíceis não é ter as respostas — é ser o único disposto a agir sem elas."
+    },
+    {
+      "seed_id": "SEED_ADV_006_v1.0",
+      "nome_publico": "Pedro",
+      "descriptor": "Legado de produto obsessivo — founder mode, 11-star experience, detalhe como estratégia e liderança próxima do produto",
+      "arquivo": "seeds/SEED_ADV_006_v1.0_PEDRO.json",
+      "data_criacao": "2026-05-08",
+      "semantic_anchor": "Produto extraordinário não vem de gestão extraordinária — vem de fundadores que recusam a mediocridade em cada detalhe."
     }
   ]
 }

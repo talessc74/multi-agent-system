@@ -2,7 +2,7 @@
   "registry_id": "AGENTS_REGISTRY",
   "descricao": "Índice de todos os agentes criados pelo Especialista",
   "ultima_atualizacao": "2026-05-08",
-  "total_agentes": 15,
+  "total_agentes": 16,
   "agentes": [
     {
       "agent_id": "consultor_ia_v1.0",
@@ -122,6 +122,14 @@
       "nome": "Primo — Conselheiro de Liderança em Crise (Kern: SEED_ADV_005)",
       "arquivo": "agents/agt_adv_005_primo_v1_0.json",
       "seed_utilizada": "SEED_ADV_005_v1.0",
+      "data_criacao": "2026-05-08",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    },
+    {
+      "agent_id": "AGT_ADV_006",
+      "nome": "Pedro — Conselheiro de Produto Obsessivo (Kern: SEED_ADV_006)",
+      "arquivo": "agents/agt_adv_006_pedro_v1_0.json",
+      "seed_utilizada": "SEED_ADV_006_v1.0",
       "data_criacao": "2026-05-08",
       "gerado_por": "Especialista v2.6.1-INTEGRATED"
     }
