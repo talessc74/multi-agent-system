@@ -1,8 +1,7 @@
-import { GoogleGenerativeAI, Part } from '@google/generative-ai'
+import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-const MODEL = 'gemini-2.0-flash'
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 const SYSTEM_PROMPT = `IMPORTANTE: Retorne APENAS o JSON puro. Sem markdown. Sem texto antes ou depois. Sem \`\`\`json. Comece com { e termine com }.
 
@@ -31,19 +30,30 @@ type ArquivoInput = { nome: string; tipo: string; base64: string }
 const IMAGENS_SUPORTADAS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'] as const
 type ImageMime = (typeof IMAGENS_SUPORTADAS)[number]
 
-function buildParts(causa: string, arquivos: ArquivoInput[]): string | Part[] {
+function buildUserContent(
+  causa: string,
+  arquivos: ArquivoInput[],
+): string | Anthropic.ContentBlockParam[] {
   if (!arquivos.length) return `Causa: ${causa}`
 
-  const parts: Part[] = []
+  const blocks: Anthropic.ContentBlockParam[] = []
 
   for (const arq of arquivos) {
-    if (IMAGENS_SUPORTADAS.includes(arq.tipo as ImageMime) || arq.tipo === 'application/pdf') {
-      parts.push({ inlineData: { mimeType: arq.tipo, data: arq.base64 } })
+    if (IMAGENS_SUPORTADAS.includes(arq.tipo as ImageMime)) {
+      blocks.push({
+        type: 'image',
+        source: { type: 'base64', media_type: arq.tipo as ImageMime, data: arq.base64 },
+      } as Anthropic.ImageBlockParam)
+    } else if (arq.tipo === 'application/pdf') {
+      blocks.push({
+        type: 'document',
+        source: { type: 'base64', media_type: 'application/pdf', data: arq.base64 },
+      } as Anthropic.DocumentBlockParam)
     }
   }
 
-  parts.push({ text: `Causa: ${causa}` })
-  return parts
+  blocks.push({ type: 'text', text: `Causa: ${causa}` })
+  return blocks
 }
 
 function parseJsonRobust(text: string): Record<string, unknown> | null {
@@ -81,14 +91,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Causa muito curta. Descreva com mais detalhes.' }, { status: 422 })
   }
 
-  const model = genAI.getGenerativeModel({
-    model: MODEL,
-    systemInstruction: SYSTEM_PROMPT,
+  const userContent = buildUserContent(causa, arquivos ?? [])
+
+  const message = await client.messages.create({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 512,
+    system: SYSTEM_PROMPT,
+    messages: [{ role: 'user', content: userContent }],
   })
 
-  const content = buildParts(causa, arquivos ?? [])
-  const result = await model.generateContent(content)
-  const rawText = result.response.text()
+  const rawText = message.content
+    .filter((block) => block.type === 'text')
+    .map((block) => (block as { type: 'text'; text: string }).text)
+    .join('')
 
   console.error('RAW VALIDAR:', rawText)
 

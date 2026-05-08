@@ -1,8 +1,8 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-const MODEL = 'gemini-2.0-flash'
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const MODEL = 'claude-haiku-4-5-20251001'
 const MAX_TOKENS = 1024
 
 // ─── System prompts ──────────────────────────────────────────────────────────
@@ -29,6 +29,15 @@ PONTOS_ATENCAO: [fragilidades e mitigações]
 ROTEIRO_PROCESSUAL: [passos numerados]
 Retorne APENAS o laudo, sem introdução ou explicação.`
 
+// ─── Helper ───────────────────────────────────────────────────────────────────
+
+function extractText(msg: Anthropic.Message): string {
+  return msg.content
+    .filter((b) => b.type === 'text')
+    .map((b) => (b as { type: 'text'; text: string }).text)
+    .join('')
+}
+
 // ─── Route ───────────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
@@ -54,17 +63,23 @@ export async function POST(request: NextRequest) {
 
   const userContent = `PETIÇÃO FINAL DO ADVOGADO:\n${peticaoFinal}\n\nSENTENÇA FINAL DO JUIZ:\n${sentencaFinal}`
 
-  const [resultLeigo, resultProfissional] = await Promise.all([
-    genAI
-      .getGenerativeModel({ model: MODEL, systemInstruction: SYSTEM_LEIGO, generationConfig: { maxOutputTokens: MAX_TOKENS } })
-      .generateContent(userContent),
-    genAI
-      .getGenerativeModel({ model: MODEL, systemInstruction: SYSTEM_PROFISSIONAL, generationConfig: { maxOutputTokens: MAX_TOKENS } })
-      .generateContent(userContent),
+  const [msgLeigo, msgProfissional] = await Promise.all([
+    client.messages.create({
+      model: MODEL,
+      max_tokens: MAX_TOKENS,
+      system: SYSTEM_LEIGO,
+      messages: [{ role: 'user', content: userContent }],
+    }),
+    client.messages.create({
+      model: MODEL,
+      max_tokens: MAX_TOKENS,
+      system: SYSTEM_PROFISSIONAL,
+      messages: [{ role: 'user', content: userContent }],
+    }),
   ])
 
   return NextResponse.json({
-    leigo: resultLeigo.response.text(),
-    profissional: resultProfissional.response.text(),
+    leigo: extractText(msgLeigo),
+    profissional: extractText(msgProfissional),
   })
 }
