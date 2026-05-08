@@ -2,7 +2,7 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-08",
-  "total_sementes": 20,
+  "total_sementes": 21,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -152,6 +152,14 @@
       "data_criacao": "2026-05-08",
       "nota": "v1.1 — atualização da SEED_PM_001_v1.0 com nome_publico, fontes verificáveis e refinamento de axiomas",
       "semantic_anchor": "Produto não é o que você constrói — é o problema do cliente que você resolve, medido pelo comportamento real que você muda. Times que entendem isso constroem menos e entregam mais."
+    },
+    {
+      "seed_id": "SEED_PM_002_v1.0",
+      "nome_publico": "Petra",
+      "descriptor": "Legado de discovery contínuo — Opportunity Solution Tree, entrevistas semanais, teste de suposições e cadência de aprendizado integrada",
+      "arquivo": "seeds/SEED_PM_002_v1.0_PETRA.json",
+      "data_criacao": "2026-05-08",
+      "semantic_anchor": "Discovery contínuo não é uma metodologia — é um hábito. Times que falam com clientes toda semana raramente constroem o produto errado. Times que não fazem isso raramente percebem que erraram a tempo."
     }
   ]
 }
