@@ -2,7 +2,7 @@
   "registry_id": "AGENTS_REGISTRY",
   "descricao": "Índice de todos os agentes criados pelo Especialista",
   "ultima_atualizacao": "2026-05-08",
-  "total_agentes": 16,
+  "total_agentes": 17,
   "agentes": [
     {
       "agent_id": "consultor_ia_v1.0",
@@ -130,6 +130,14 @@
       "nome": "Pedro — Conselheiro de Produto Obsessivo (Kern: SEED_ADV_006)",
       "arquivo": "agents/agt_adv_006_pedro_v1_0.json",
       "seed_utilizada": "SEED_ADV_006_v1.0",
+      "data_criacao": "2026-05-08",
+      "gerado_por": "Especialista v2.6.1-INTEGRATED"
+    },
+    {
+      "agent_id": "AGT_UX_003",
+      "nome": "Porto — Especialista em Design Centrado no Humano (Kern: SEED_UX_003)",
+      "arquivo": "agents/agt_ux_003_porto_v1_0.json",
+      "seed_utilizada": "SEED_UX_003_v1.0",
       "data_criacao": "2026-05-08",
       "gerado_por": "Especialista v2.6.1-INTEGRATED"
     }

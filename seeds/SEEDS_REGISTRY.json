@@ -2,7 +2,7 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-08",
-  "total_sementes": 17,
+  "total_sementes": 18,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -127,6 +127,14 @@
       "arquivo": "seeds/SEED_ADV_006_v1.0_PEDRO.json",
       "data_criacao": "2026-05-08",
       "semantic_anchor": "Produto extraordinário não vem de gestão extraordinária — vem de fundadores que recusam a mediocridade em cada detalhe."
+    },
+    {
+      "seed_id": "SEED_UX_003_v1.0",
+      "nome_publico": "Porto",
+      "descriptor": "Legado de design centrado no humano — affordances, discoverabilidade, modelos mentais e design para o erro",
+      "arquivo": "seeds/SEED_UX_003_v1.0_PORTO.json",
+      "data_criacao": "2026-05-08",
+      "semantic_anchor": "Todo design é uma hipótese sobre o comportamento humano. Quando o usuário falha, a hipótese estava errada — e o design é responsável pela correção."
     }
   ]
 }
