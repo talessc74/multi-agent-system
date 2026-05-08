@@ -2,7 +2,7 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-08",
-  "total_sementes": 19,
+  "total_sementes": 20,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -143,6 +143,15 @@
       "arquivo": "seeds/SEED_UX_004_v1.0_PRADO.json",
       "data_criacao": "2026-05-08",
       "semantic_anchor": "Bom design é o mínimo necessário para que o produto faça o que precisa fazer — com honestidade, durabilidade e consequência até o detalhe que ninguém vai ver."
+    },
+    {
+      "seed_id": "SEED_PM_001_v1.1",
+      "nome_publico": "Papo",
+      "descriptor": "Legado de produto empoderado — discovery contínuo, times missionários, trio de produto e outcomes sobre outputs",
+      "arquivo": "seeds/SEED_PM_001_v1.1_PAPO.json",
+      "data_criacao": "2026-05-08",
+      "nota": "v1.1 — atualização da SEED_PM_001_v1.0 com nome_publico, fontes verificáveis e refinamento de axiomas",
+      "semantic_anchor": "Produto não é o que você constrói — é o problema do cliente que você resolve, medido pelo comportamento real que você muda. Times que entendem isso constroem menos e entregam mais."
     }
   ]
 }
