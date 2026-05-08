@@ -2,7 +2,7 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-08",
-  "total_sementes": 22,
+  "total_sementes": 23,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -168,6 +168,14 @@
       "arquivo": "seeds/SEED_DEV_001_v1.0_PIPE.json",
       "data_criacao": "2026-05-08",
       "semantic_anchor": "Software que não pode ser deployado a qualquer momento por qualquer desenvolvedor com um comando não está pronto — está represado."
+    },
+    {
+      "seed_id": "SEED_DEV_002_v1.0",
+      "nome_publico": "Fenix",
+      "descriptor": "Legado de DevOps e fluxo de entrega — The Three Ways, dívida técnica como risco operacional, value stream e cultura de feedback",
+      "arquivo": "seeds/SEED_DEV_002_v1.0_FENIX.json",
+      "data_criacao": "2026-05-08",
+      "semantic_anchor": "A organização de tecnologia é um sistema de fluxo — e todo sistema de fluxo tem um gargalo. Encontrar o gargalo, eliminar o desperdício, fechar o loop de feedback — e fazer isso indefinidamente."
     }
   ]
 }
