@@ -2,7 +2,7 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-08",
-  "total_sementes": 18,
+  "total_sementes": 19,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -135,6 +135,14 @@
       "arquivo": "seeds/SEED_UX_003_v1.0_PORTO.json",
       "data_criacao": "2026-05-08",
       "semantic_anchor": "Todo design é uma hipótese sobre o comportamento humano. Quando o usuário falha, a hipótese estava errada — e o design é responsável pela correção."
+    },
+    {
+      "seed_id": "SEED_UX_004_v1.0",
+      "nome_publico": "Prado",
+      "descriptor": "Legado de design industrial rigoroso — menos mas melhor, honestidade de produto, longevidade e os Dez Princípios do Bom Design",
+      "arquivo": "seeds/SEED_UX_004_v1.0_PRADO.json",
+      "data_criacao": "2026-05-08",
+      "semantic_anchor": "Bom design é o mínimo necessário para que o produto faça o que precisa fazer — com honestidade, durabilidade e consequência até o detalhe que ninguém vai ver."
     }
   ]
 }
