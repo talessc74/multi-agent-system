@@ -1,8 +1,8 @@
-import Anthropic from '@anthropic-ai/sdk'
+import { GoogleGenerativeAI, Part } from '@google/generative-ai'
 import { NextRequest, NextResponse } from 'next/server'
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-const MODEL = 'claude-sonnet-4-20250514'
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+const MODEL = 'gemini-2.5-pro'
 const MAX_TOKENS = 1200
 
 // ─── System prompts ──────────────────────────────────────────────────────────
@@ -82,37 +82,19 @@ type ArquivoInput = { nome: string; tipo: string; base64: string }
 const IMAGENS_SUPORTADAS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'] as const
 type ImageMime = (typeof IMAGENS_SUPORTADAS)[number]
 
-function buildUserContent(
-  texto: string,
-  arquivos: ArquivoInput[],
-): string | Anthropic.ContentBlockParam[] {
+function buildParts(texto: string, arquivos: ArquivoInput[]): string | Part[] {
   if (!arquivos.length) return texto
 
-  const blocks: Anthropic.ContentBlockParam[] = []
+  const parts: Part[] = []
 
   for (const arq of arquivos) {
-    if (IMAGENS_SUPORTADAS.includes(arq.tipo as ImageMime)) {
-      blocks.push({
-        type: 'image',
-        source: { type: 'base64', media_type: arq.tipo as ImageMime, data: arq.base64 },
-      } as Anthropic.ImageBlockParam)
-    } else if (arq.tipo === 'application/pdf') {
-      blocks.push({
-        type: 'document',
-        source: { type: 'base64', media_type: 'application/pdf', data: arq.base64 },
-      } as Anthropic.DocumentBlockParam)
+    if (IMAGENS_SUPORTADAS.includes(arq.tipo as ImageMime) || arq.tipo === 'application/pdf') {
+      parts.push({ inlineData: { mimeType: arq.tipo, data: arq.base64 } })
     }
   }
 
-  blocks.push({ type: 'text', text: texto })
-  return blocks
-}
-
-function extractText(msg: Anthropic.Message): string {
-  return msg.content
-    .filter((b) => b.type === 'text')
-    .map((b) => (b as { type: 'text'; text: string }).text)
-    .join('')
+  parts.push({ text: texto })
+  return parts
 }
 
 function extractPercentual(sentenca: string): number {
@@ -130,11 +112,17 @@ async function chamarAdvogado(
   sentencaAnterior?: string,
   arquivos?: ArquivoInput[],
 ): Promise<string> {
-  let userContent: string | Anthropic.ContentBlockParam[]
+  const model = genAI.getGenerativeModel({
+    model: MODEL,
+    systemInstruction: system,
+    generationConfig: { maxOutputTokens: MAX_TOKENS },
+  })
+
+  let content: string | Part[]
 
   if (peticaoAnterior && sentencaAnterior) {
     // Rodadas 2 e 3: só texto — advogado tem memória completa
-    userContent = [
+    content = [
       `Causa original: ${causa}`,
       '',
       `Sua petição anterior:\n${peticaoAnterior}`,
@@ -146,29 +134,23 @@ async function chamarAdvogado(
   } else {
     // Rodada 1: inclui arquivos como contexto multimodal se houver
     const texto = `Causa: ${causa}\n\nElabore a petição inicial.`
-    userContent = arquivos?.length ? buildUserContent(texto, arquivos) : texto
+    content = arquivos?.length ? buildParts(texto, arquivos) : texto
   }
 
-  const msg = await client.messages.create({
-    model: MODEL,
-    max_tokens: MAX_TOKENS,
-    system,
-    messages: [{ role: 'user', content: userContent }],
-  })
-
-  return extractText(msg)
+  const result = await model.generateContent(content)
+  return result.response.text()
 }
 
 async function chamarJuiz(system: string, peticao: string): Promise<string> {
   // Juiz recebe APENAS a petição atual — sem histórico de rodadas
-  const msg = await client.messages.create({
+  const model = genAI.getGenerativeModel({
     model: MODEL,
-    max_tokens: MAX_TOKENS,
-    system,
-    messages: [{ role: 'user', content: peticao }],
+    systemInstruction: system,
+    generationConfig: { maxOutputTokens: MAX_TOKENS },
   })
 
-  return extractText(msg)
+  const result = await model.generateContent(peticao)
+  return result.response.text()
 }
 
 // ─── Route ───────────────────────────────────────────────────────────────────
