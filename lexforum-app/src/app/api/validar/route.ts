@@ -2,7 +2,7 @@ import { GoogleGenerativeAI, Part } from '@google/generative-ai'
 import { NextRequest, NextResponse } from 'next/server'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-const MODEL = 'gemini-2.0-flash'
+const MODEL = 'gemini-2.5-flash'
 
 const SYSTEM_PROMPT = `IMPORTANTE: Retorne APENAS o JSON puro. Sem markdown. Sem texto antes ou depois. Sem \`\`\`json. Comece com { e termine com }.
 
