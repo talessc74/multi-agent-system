@@ -2,7 +2,7 @@
   "registry_id": "SEEDS_REGISTRY",
   "descricao": "Índice de todas as sementes criadas pelo Semente de Shaw",
   "ultima_atualizacao": "2026-05-08",
-  "total_sementes": 23,
+  "total_sementes": 24,
   "sementes": [
     {
       "seed_id": "SEED_AI_001_v1.0",
@@ -176,6 +176,14 @@
       "arquivo": "seeds/SEED_DEV_002_v1.0_FENIX.json",
       "data_criacao": "2026-05-08",
       "semantic_anchor": "A organização de tecnologia é um sistema de fluxo — e todo sistema de fluxo tem um gargalo. Encontrar o gargalo, eliminar o desperdício, fechar o loop de feedback — e fazer isso indefinidamente."
+    },
+    {
+      "seed_id": "SEED_DEV_003_v1.0",
+      "nome_publico": "Dora",
+      "descriptor": "Legado de métricas científicas de entrega — DORA Four Keys, evidência empírica de performance, capacidades preditoras e cultura Westrum",
+      "arquivo": "seeds/SEED_DEV_003_v1.0_DORA.json",
+      "data_criacao": "2026-05-08",
+      "semantic_anchor": "Performance de software não é arte — é ciência. As quatro métricas que predizem excelência de entrega são mensuráveis, gerenciáveis e provadas empiricamente com dezenas de milhares de profissionais."
     }
   ]
 }
