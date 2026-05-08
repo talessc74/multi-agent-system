@@ -59,6 +59,9 @@ function parseLaudo(text: string): Section[] {
       locked: LOCKED.has(current.label),
     })
   }
+  if (sections.length < 3) {
+    return [{ label: 'LAUDO', content: text, locked: false }]
+  }
   return sections
 }
 
@@ -101,9 +104,9 @@ export default function Resultado() {
 
   if (!resultado || !laudo) return null
 
-  const ultimaRodada = resultado.rodadas[resultado.rodadas.length - 1]
-  const percentual = ultimaRodada?.percentual ?? 0
-  const sections = parseLaudo(modo === 'leigo' ? laudo.leigo : laudo.profissional)
+  const laudoAtivo = modo === 'leigo' ? laudo.leigo : laudo.profissional
+  const pct = parseInt(laudoAtivo?.match(/PERCENTUAL[:\s]+(\d+)/i)?.[1] || '0')
+  const sections = parseLaudo(laudoAtivo)
   const hasLocked = !unlocked && sections.some((s) => s.locked)
 
   return (
@@ -145,7 +148,7 @@ export default function Resultado() {
             </h1>
             <div className="flex flex-wrap gap-2">
               <span className="font-sans text-sm font-semibold text-lex-cyan border border-lex-cyan/30 rounded-full px-4 py-1.5">
-                {percentual}% de êxito
+                {pct}% de êxito
               </span>
               <span className="font-sans text-xs text-white/50 border border-white/10 rounded-full px-4 py-1.5">
                 {resultado.area}
