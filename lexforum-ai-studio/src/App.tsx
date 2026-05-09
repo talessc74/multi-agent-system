@@ -79,23 +79,55 @@ export default function App() {
     isUnlocked: false,
     simStep: 'IDLE',
     currentRound: 0,
-    selectedProfile: 'leigo',
-    activeAgents: [],
-    showForgeMonitor: false,
-    regionalStats: [
-      { region: "TRF1 (Norte / CO)", seeds: 412, active: 18 },
-      { region: "TRF2 (RJ / ES)", seeds: 284, active: 12 },
-      { region: "TRF3 (SP / MS)", seeds: 567, active: 31 },
-      { region: "TRF4 (Sul)", seeds: 319, active: 22 },
-      { region: "TRF5 (Nordeste)", seeds: 245, active: 9 },
-      { region: "Supremos (STJ / STF)", seeds: 88, active: 41 }
-    ]
-  });
+  selectedProfile: 'leigo',
+  activeAgents: [],
+  showForgeMonitor: false,
+  regionalStats: [
+    { region: "TRF1 (Norte / CO)", seeds: 412, active: 18 },
+    { region: "TRF2 (RJ / ES)", seeds: 284, active: 12 },
+    { region: "TRF3 (SP / MS)", seeds: 567, active: 31 },
+    { region: "TRF4 (Sul)", seeds: 319, active: 22 },
+    { region: "TRF5 (Nordeste)", seeds: 245, active: 9 },
+    { region: "Supremos (STJ / STF)", seeds: 88, active: 41 }
+  ],
+  error: null
+});
 
-  const [loading, setLoading] = useState(false);
-  const [currentRoundIndex, setCurrentRoundIndex] = useState(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+const [loading, setLoading] = useState(false);
+const [currentRoundIndex, setCurrentRoundIndex] = useState(0);
+const scrollRef = useRef<HTMLDivElement>(null);
+const fileInputRef = useRef<HTMLInputElement>(null);
+
+const handleGeminiError = (err: any) => {
+  console.error("Gemini Error Context:", err);
+  let errorMessage = 'Ocorreu um erro ao processar sua causa. Por favor, tente novamente.';
+  let isQuota = false;
+
+  // Try to parse error if it's a string containing JSON (sometimes happens with SDK)
+  let errorObj = err;
+  if (typeof err === 'string') {
+    try {
+      errorObj = JSON.parse(err);
+    } catch {}
+  }
+
+  const code = errorObj?.error?.code || errorObj?.code || errorObj?.status;
+  const message = errorObj?.error?.message || errorObj?.message || "";
+
+  if (code === 429 || message.includes('RESOURCE_EXHAUSTED') || message.includes('spending cap')) {
+    isQuota = true;
+    errorMessage = 'Limite de uso atingido (Spending Cap). O LexForum atingiu o limite mensal de processamento de AI da sua conta.';
+  }
+
+  setState(prev => ({ 
+    ...prev, 
+    error: { 
+      code: code || 500, 
+      message: errorMessage,
+      isQuota 
+    } 
+  }));
+};
 
   // Auto-scroll simulation rounds
   useEffect(() => {
@@ -154,11 +186,12 @@ export default function App() {
         step: 'confirm', 
         detectedArea: data.area || LegalArea.OTHER, 
         specificJudge: data.specificJudge,
-        caseSummary: data.summary 
+        caseSummary: data.summary,
+        selectedProfile: data.detectedProfile || prev.selectedProfile,
+        error: null
       }));
     } catch (err) {
-      console.error(err);
-      alert('Ocorreu um erro ao processar sua causa. Por favor, tente novamente.');
+      handleGeminiError(err);
     } finally {
       setLoading(false);
     }
@@ -201,6 +234,7 @@ export default function App() {
               currentRound: progressData?.round || prev.currentRound,
               regionalStats: newStats,
               activeAgents: newActiveAgents,
+              error: null,
               simulation: progressData 
                 ? { 
                     ...(prev.simulation || { area: state.detectedArea, rounds: [], finalSuccessProbability: 0 }), 
@@ -221,10 +255,9 @@ export default function App() {
         lastRound.lawyerPetition,
         lastRound.judgeJudgment
       );
-      setState(prev => ({ ...prev, step: 'result', report: reportData }));
+      setState(prev => ({ ...prev, step: 'result', report: reportData, error: null }));
     } catch (err) {
-      console.error(err);
-      alert('Ocorreu um erro durante a simulação. Por favor, tente novamente.');
+      handleGeminiError(err);
       setState(prev => ({ ...prev, step: 'input' }));
     } finally {
       setLoading(false);
@@ -290,6 +323,41 @@ export default function App() {
       <main className="flex-1 grid grid-cols-12 gap-0 overflow-hidden min-h-[calc(100vh-64px)]">
         <div className="col-span-12 lg:col-span-8 p-8 flex flex-col gap-6 lg:border-r border-white/5 overflow-y-auto print:col-span-12 print:p-0 print:border-none">
           <AnimatePresence mode="wait">
+            {state.error && (
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-8 p-6 bg-red-500/10 border border-red-500/20 rounded-sm flex items-start gap-4 shadow-2xl shadow-red-500/5"
+              >
+                <AlertCircle className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
+                <div className="space-y-2 flex-1">
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-red-500">Falha na Operação</h3>
+                  <p className="text-sm font-serif italic text-white/80">{state.error.message}</p>
+                  {state.error.isQuota && (
+                    <div className="pt-4 border-t border-red-500/10 mt-4 space-y-4">
+                      <p className="text-[10px] text-white/40 uppercase tracking-widest leading-relaxed">
+                        Este erro ocorre quando o limite financeiro configurado no Google AI Studio é atingido. Para continuar, você deve aumentar o "Spending Cap" nas configurações do seu projeto.
+                      </p>
+                      <a 
+                        href="https://ai.studio/spend" 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="inline-block px-4 py-2 border border-red-500/30 text-[9px] font-bold uppercase tracking-widest text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                      >
+                        Acessar AI Studio Spend
+                      </a>
+                    </div>
+                  )}
+                  <button 
+                    onClick={() => setState(prev => ({ ...prev, error: null }))}
+                    className="absolute top-4 right-4 text-white/20 hover:text-white"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
             {state.step === 'input' && (
               <motion.div 
                 key="input"
@@ -304,25 +372,8 @@ export default function App() {
                       Descreva sua causa para iniciar a <br /><span className="text-[#F4F4F2] font-bold">simulação de fórum.</span>
                     </h1>
                     <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
-                      Analise sua petição através de 3 rodadas de simulação entre advogados especialistas e juízes técnicos.
+                      Tecnologia de ponta para análise estratégica de petições, processada por agentes autônomos especializados.
                     </p>
-                  </div>
-
-                  <div className="flex gap-4">
-                    <button 
-                      onClick={() => setState(prev => ({ ...prev, selectedProfile: 'leigo' }))}
-                      className={`flex-1 p-4 border transition-all flex flex-col gap-1 text-left ${state.selectedProfile === 'leigo' ? 'bg-white/10 border-white/40' : 'bg-transparent border-white/5 opacity-40 hover:opacity-100'}`}
-                    >
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Perfil Leigo</span>
-                      <span className="text-[9px] font-mono leading-tight">Explicação clara, sem "juridiquês", focada no passo-a-passo e chances reais.</span>
-                    </button>
-                    <button 
-                      onClick={() => setState(prev => ({ ...prev, selectedProfile: 'profissional' }))}
-                      className={`flex-1 p-4 border transition-all flex flex-col gap-1 text-left ${state.selectedProfile === 'profissional' ? 'bg-white/10 border-white/40' : 'bg-transparent border-white/5 opacity-40 hover:opacity-100'}`}
-                    >
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Perfil Profissional</span>
-                      <span className="text-[9px] font-mono leading-tight">Fundamentação técnica, citações de artigos, súmulas e estratégia de alto nível.</span>
-                    </button>
                   </div>
 
                   <div className="bg-[#15161A] border border-white/10 relative group shadow-2xl shadow-black/50">
@@ -705,44 +756,98 @@ export default function App() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-16 print:gap-8">
-                  {/* Primary Section */}
+                  {/* Volume 1: Orientação ao Cliente */}
                   <section className="space-y-6">
                     <div className="flex items-center gap-4 border-b border-emerald-500/30 pb-4 print:border-black/10">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-emerald-500 text-black px-4 py-1.5 rounded-sm print:bg-black print:text-white">
-                        {state.selectedProfile === 'leigo' ? 'Linguagem Leiga' : 'Fundamentação Técnica'}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-emerald-500 text-black px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                          VOLUME I: ORIENTAÇÃO AO CLIENTE
+                        </span>
+                        <span className="text-[8px] font-mono text-emerald-500/50 uppercase tracking-widest pl-1">Linguagem Acessível e Prática</span>
+                      </div>
                       <div className="flex-1" />
                       <div className="flex flex-col items-end print:hidden">
                         <div className="text-[9px] font-bold uppercase tracking-widest text-emerald-500/60">Agente Responsável</div>
-                        <div className="text-[11px] font-serif italic text-white/40">{state.selectedProfile === 'leigo' ? 'Estrategista de Acessibilidade' : 'Analista Processual Sênior'}</div>
+                        <div className="text-[11px] font-serif italic text-white/40">Estrategista de Acessibilidade</div>
                       </div>
                     </div>
-                    <div className={state.selectedProfile === 'leigo'
-                      ? "prose prose-invert max-w-none font-serif text-lg leading-[1.6] text-white/90 font-light italic bg-emerald-500/[0.05] p-8 border border-emerald-500/20 shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0"
-                      : "p-10 border border-emerald-500/20 bg-[#15161A] font-mono text-[13px] leading-loose text-white/60 shadow-2xl relative overflow-hidden prose prose-invert prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0"
-                    }>
+                    <div className="prose prose-invert max-w-none font-serif text-lg leading-[1.6] text-white/90 font-light italic bg-emerald-500/[0.05] p-8 border border-emerald-500/20 shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0">
                       <ReactMarkdown>
-                        {state.selectedProfile === 'leigo' ? (state.report?.layman || '') : (state.report?.professional || '')}
+                        {state.report?.layman || ''}
                       </ReactMarkdown>
                     </div>
                   </section>
 
-                  {/* Secondary Section */}
-                  <section className="space-y-6 opacity-40 hover:opacity-100 transition-opacity no-print">
-                    <div className="flex items-center gap-4 border-b border-white/10 pb-4">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.3em] border border-white/20 px-4 py-1.5 rounded-sm text-white/50">
-                        ANEXO: {state.selectedProfile === 'leigo' ? 'Fundamentação Técnica' : 'Linguagem Leiga'}
-                      </span>
+                  {/* Volume 2: Fundamentação Técnica Estratégica */}
+                  <section className="space-y-6">
+                    <div className="flex items-center gap-4 border-b border-white/10 pb-4 print:border-black/10">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-white/10 text-white px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                          VOLUME II: LAUDO TÉCNICO ESTRATÉGICO
+                        </span>
+                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest pl-1">Fundamentação Jurídica e Normativa</span>
+                      </div>
                       <div className="flex-1" />
-                      <div className="text-[10px] font-mono text-white/10">CONTEÚDO COMPLEMENTAR</div>
+                      <div className="flex flex-col items-end print:hidden">
+                        <div className="text-[9px] font-bold uppercase tracking-widest text-white/30">Agente Responsável</div>
+                        <div className="text-[11px] font-serif italic text-white/40">Analista Processual Sênior</div>
+                      </div>
                     </div>
-                    <div className={state.selectedProfile === 'leigo'
-                      ? "p-10 border border-white/10 bg-[#0F1012] font-mono text-[11px] leading-relaxed text-white/40 prose prose-invert prose-sm max-w-none"
-                      : "prose prose-invert max-w-none font-serif text-sm leading-relaxed text-white/40 italic p-8 border border-white/5"
-                    }>
+                    <div className="p-10 border border-white/5 bg-[#15161A]/50 font-mono text-[13px] leading-loose text-white/60 shadow-2xl relative overflow-hidden prose prose-invert prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0">
                       <ReactMarkdown>
-                        {state.selectedProfile === 'leigo' ? (state.report?.professional || '') : (state.report?.layman || '')}
+                        {state.report?.professional || ''}
                       </ReactMarkdown>
+                    </div>
+                  </section>
+
+                  {/* Volume 3: Memorial Descritivo (Audit Trail) */}
+                  <section className="space-y-6 pt-8 border-t border-white/5 print:break-before-page">
+                    <div className="flex items-center gap-4 border-b border-white/5 pb-4 print:border-black/5">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40">
+                          VOLUME III: MEMORIAL DESCRITIVO DA SIMULAÇÃO
+                        </span>
+                        <span className="text-[8px] font-mono text-white/10 uppercase tracking-widest pl-1">Audit Trail de Inteligência Jurídica</span>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-8">
+                      {state.simulation?.rounds.map((round, idx) => (
+                        <div key={idx} className="border border-white/5 bg-black/20 p-8 space-y-6 print:border-black/10">
+                          <div className="flex justify-between items-center border-b border-white/5 pb-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-6 h-6 rounded-full border border-emerald-500/50 flex items-center justify-center text-[10px] font-mono text-emerald-500">
+                                {round.round}
+                              </div>
+                              <span className="text-[11px] font-bold uppercase tracking-widest text-white/70">Rodada de Debate Técnico</span>
+                            </div>
+                            <div className="text-[9px] font-mono text-white/20">
+                              PROBABILIDADE PARCIAL: {round.successProbability}%
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <Scale className="w-3 h-3 text-emerald-500" />
+                                <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Tese da Defesa (Agente Advogado)</span>
+                              </div>
+                              <div className="p-5 bg-white/[0.02] border border-white/5 text-[12px] leading-relaxed text-white/50 italic font-serif print:text-black/70">
+                                "{round.lawyerPetition}"
+                              </div>
+                            </div>
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <Gavel className="w-3 h-3 text-white/30" />
+                                <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Sentença Interlocutória (Agente Juiz)</span>
+                              </div>
+                              <div className="p-5 bg-white/[0.01] border border-dashed border-white/5 text-[12px] leading-relaxed text-white/40 font-mono print:text-black/60">
+                                {round.judgeJudgment}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </section>
                 </div>

@@ -51,4 +51,5 @@ export interface AppState {
   activeAgents: { name: string; type: string; id: string }[];
   showForgeMonitor: boolean;
   currentRound: number;
+  error?: { code: number | string; message: string; isQuota: boolean } | null;
 }
