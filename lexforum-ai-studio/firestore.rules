@@ -1,6 +1,7 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
     // Global safety net
     match /{document=**} {
       allow read, write: if false;
@@ -46,6 +47,16 @@ service cloud.firestore {
              data.lastUpdated == request.time;
     }
 
+    function isValidPayment(data) {
+      return data.keys().hasAll(['userId', 'stripePaymentIntentId', 'amount', 'currency', 'status', 'createdAt']) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.stripePaymentIntentId is string && data.stripePaymentIntentId.size() <= 64 &&
+             data.amount is int &&
+             data.currency is string && data.currency.size() == 3 &&
+             data.status is string &&
+             data.createdAt == request.time;
+    }
+
     // simulations collection
     match /simulations/{simId} {
       allow create: if isValidSimulation(incoming());
@@ -60,10 +71,19 @@ service cloud.firestore {
       allow update: if isValidGlobalStats(incoming());
     }
 
-    // regions collection (Read only for users)
+    // regions collection (read-only for users)
     match /regions/{regionId} {
       allow read: if true;
       allow write: if false;
     }
+
+    // payments collection (write only via server Admin SDK)
+    match /payments/{paymentId} {
+      allow read: if isOwner(resource.data.userId);
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
   }
 }
