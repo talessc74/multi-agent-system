@@ -11,7 +11,7 @@ const ai = new GoogleGenAI({
   }
 });
 
-const MODEL_NAME = "gemini-3-flash-preview";
+const MODEL_NAME = "gemini-2.0-flash";
 
 const dynamicAgents: Record<string, { id: string, name: string, instruction: string }> = {};
 
