@@ -1,6 +1,8 @@
 {
-  "name": "LexForum",
-  "description": "Simula um fórum jurídico real com dinâmica Lawyer vs Judge.",
+  "name": "EAI Simulation",
+  "description": "EVIDENCE-BASED ARTIFICIAL INTELLIGENCE - Simula um fórum jurídico real com dinâmica Lawyer vs Judge.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

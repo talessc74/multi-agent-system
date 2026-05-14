@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Blueprints
+    function isValidSimulation(data) {
+      return data.keys().hasAll(['caseDescription', 'area', 'finalSuccessProbability', 'createdAt', 'isWin', 'userId']) &&
+             data.keys().size() <= 15 &&
+             data.caseDescription is string && data.caseDescription.size() <= 64000 &&
+             data.area is string && data.area.size() <= 50 &&
+             data.finalSuccessProbability is number &&
+             data.isWin is bool &&
+             (data.userId == null || (data.userId is string && data.userId == request.auth.uid)) &&
+             data.createdAt == request.time;
+    }
+
+    function isValidGlobalStats(data) {
+      return data.keys().hasAll(['totalSimulations', 'totalWins', 'lastUpdated']) &&
+             data.totalSimulations is int &&
+             data.totalWins is int &&
+             data.lastUpdated == request.time;
+    }
+
+    // simulations collection
+    match /simulations/{simId} {
+      allow create: if isValidSimulation(incoming());
+      allow read: if resource.data.userId == null || isOwner(resource.data.userId);
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // stats collection
+    match /stats/{statId} {
+      allow read: if true;
+      allow create: if isValidGlobalStats(incoming());
+      allow update: if isValidGlobalStats(incoming());
+    }
+
+    // regions collection (Read only for users)
+    match /regions/{regionId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

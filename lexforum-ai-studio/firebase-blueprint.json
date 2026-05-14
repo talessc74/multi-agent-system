@@ -1,0 +1,67 @@
+{
+  "entities": {
+    "Simulation": {
+      "title": "Simulation Result",
+      "description": "Historical record of a legal simulation session",
+      "type": "object",
+      "properties": {
+        "caseDescription": { "type": "string" },
+        "caseSummary": { "type": "string" },
+        "detectedArea": { "type": "string" },
+        "finalSuccessProbability": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lawyerAgentName": { "type": "string" },
+        "judgeAgentName": { "type": "string" },
+        "rounds": { "type": "array" },
+        "report": { "type": "object" },
+        "isWin": { "type": "boolean" },
+        "userId": { "type": "string" }
+      },
+      "required": [
+        "caseDescription",
+        "detectedArea",
+        "finalSuccessProbability",
+        "createdAt"
+      ]
+    },
+    "GlobalStats": {
+      "title": "Global Statistics",
+      "description": "Aggregated statistics for the dashboard",
+      "type": "object",
+      "properties": {
+        "totalSimulations": { "type": "integer" },
+        "winRate": { "type": "number" },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "totalSimulations",
+        "winRate"
+      ]
+    },
+    "RegionalStats": {
+      "title": "Regional Statistics",
+      "description": "Stats for a specific legal region",
+      "type": "object",
+      "properties": {
+        "region": { "type": "string" },
+        "seeds": { "type": "integer" },
+        "active": { "type": "integer" }
+      },
+      "required": ["region", "seeds", "active"]
+    }
+  },
+  "firestore": {
+    "simulations": {
+      "schema": "Simulation",
+      "description": "Collection of all legal simulations"
+    },
+    "stats": {
+      "schema": "GlobalStats",
+      "description": "Global aggregate stats"
+    },
+    "regions": {
+      "schema": "RegionalStats",
+      "description": "Stats for judicial regions"
+    }
+  }
+}

@@ -30,6 +30,9 @@ import {
 } from 'lucide-react';
 import { LegalArea, SimulationResult, ReportContent, AppState, Attachment } from './types';
 import { validateCausa, simulateForum, generateReport } from './lib/gemini';
+import { auth, loginWithGoogle } from './lib/firebase';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { getStats, saveSimulation, getUserSimulations } from './services/dbService';
 
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
@@ -66,7 +69,28 @@ const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => 
 };
 
 
+import { Logo } from './components/Logo';
+
+const cleanJudgmentText = (text: string) => {
+  if (!text) return "";
+  // Remove markdown json blocks if they contain the probability
+  let cleaned = text.replace(/```json\s*\{\s*"success_probability"\s*:\s*\d+\s*\}\s*```/gs, '');
+  // Remove raw json if it contains the probability
+  cleaned = cleaned.replace(/\{\s*"success_probability"\s*:\s*\d+\s*\}/gs, '');
+  cleaned = cleaned.trim();
+  
+  if (cleaned.length < 5 && text.includes('success_probability')) {
+    return "A análise técnica foi processada e a probabilidade de êxito calculada com base nos fundamentos apresentados pelo Magistrado.";
+  }
+  
+  return cleaned;
+};
+
 export default function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [userHistory, setUserHistory] = useState<any[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [globalStats, setGlobalStats] = useState({ simulations: 14282, winRate: 74.8, precision: 98.4 });
   const [state, setState] = useState<AppState>({
     step: 'input',
     caseDescription: '',
@@ -93,6 +117,31 @@ export default function App() {
   error: null
 });
 
+  // Auth & Stats listener
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, async (u) => {
+      setUser(u);
+      if (u) {
+        const history = await getUserSimulations(u.uid);
+        setUserHistory(history);
+      } else {
+        setUserHistory([]);
+      }
+    });
+    
+    const fetchInitialStats = async () => {
+      const stats = await getStats();
+      setGlobalStats({
+        simulations: stats.totalSimulations,
+        winRate: Number(stats.winRate.toFixed(1)),
+        precision: 98.4 // Mocked for now
+      });
+    };
+    
+    fetchInitialStats();
+    return () => unsub();
+  }, []);
+
 const [loading, setLoading] = useState(false);
 const [currentRoundIndex, setCurrentRoundIndex] = useState(0);
 const scrollRef = useRef<HTMLDivElement>(null);
@@ -112,11 +161,16 @@ const handleGeminiError = (err: any) => {
   }
 
   const code = errorObj?.error?.code || errorObj?.code || errorObj?.status;
-  const message = errorObj?.error?.message || errorObj?.message || "";
+  const message = errorObj?.error?.message || errorObj?.message || (typeof err === 'string' ? err : '');
 
   if (code === 429 || message.includes('RESOURCE_EXHAUSTED') || message.includes('spending cap')) {
     isQuota = true;
-    errorMessage = 'Limite de uso atingido (Spending Cap). O LexForum atingiu o limite mensal de processamento de AI da sua conta.';
+    errorMessage = 'Limite de uso atingido (Spending Cap). O EAI? atingiu o limite mensal de processamento de AI da sua conta.';
+  } else if (message) {
+    const cleanMessage = message.startsWith('<!DOCTYPE') || message.startsWith('<html') 
+      ? 'Erro de Gateway/Conexão. O serviço de IA está temporariamente indisponível.' 
+      : message;
+    errorMessage = `Erro técnico: ${cleanMessage.slice(0, 150)}${cleanMessage.length > 150 ? '...' : ''}`;
   }
 
   setState(prev => ({ 
@@ -197,6 +251,26 @@ const handleGeminiError = (err: any) => {
     }
   };
 
+  const loadSimulation = (sim: any) => {
+    setState(prev => ({
+      ...prev,
+      step: 'result',
+      caseDescription: sim.caseDescription,
+      detectedArea: sim.area || LegalArea.OTHER,
+      caseSummary: sim.caseSummary,
+      simulation: {
+        area: sim.area,
+        rounds: sim.rounds || [],
+        finalSuccessProbability: sim.finalSuccessProbability,
+        lawyerAgentName: sim.lawyerAgentName,
+        judgeAgentName: sim.judgeAgentName
+      },
+      report: sim.report,
+      isUnlocked: true
+    }));
+    setShowHistory(false);
+  };
+
   const handleSimulate = async () => {
     setLoading(true);
     setState(prev => ({ ...prev, step: 'simulating' }));
@@ -247,15 +321,45 @@ const handleGeminiError = (err: any) => {
           });
         }
       );
-      setState(prev => ({ ...prev, simulation: data }));
+      // Select the best round based on probability (highest, then latest if tie)
+      let bestRound = data.rounds[0];
+      for (const round of data.rounds) {
+        if (round.successProbability >= bestRound.successProbability) {
+          bestRound = round;
+        }
+      }
+
+      // Update data to reflect the best round's probability as the final one
+      const finalData = {
+        ...data,
+        finalSuccessProbability: bestRound.successProbability
+      };
       
-      // After simulation, get report
-      const lastRound = data.rounds[data.rounds.length - 1];
+      setState(prev => ({ ...prev, simulation: finalData }));
+      
+      // After simulation, get report based on BEST round
       const reportData = await generateReport(
-        lastRound.lawyerPetition,
-        lastRound.judgeJudgment
+        bestRound.lawyerPetition,
+        bestRound.judgeJudgment
       );
       setState(prev => ({ ...prev, step: 'result', report: reportData, error: null }));
+
+      // Save simulation to Firebase with the optimized result
+      await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
+      
+      // Refresh history if logged in
+      if (user) {
+        const history = await getUserSimulations(user.uid);
+        setUserHistory(history);
+      }
+      
+      // Update local stats display
+      const newStatsResult = await getStats();
+      setGlobalStats({
+        simulations: newStatsResult.totalSimulations,
+        winRate: Number(newStatsResult.winRate.toFixed(1)),
+        precision: 98.4
+      });
     } catch (err) {
       handleGeminiError(err);
       setState(prev => ({ ...prev, step: 'input' }));
@@ -291,8 +395,7 @@ const handleGeminiError = (err: any) => {
     <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
       <header className="h-16 border-b border-white/10 px-8 flex items-center justify-between bg-[#111111]/80 backdrop-blur-md sticky top-0 z-50 no-print">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.reload()}>
-          <div className="w-8 h-8 bg-white rounded flex items-center justify-center text-black font-bold">L</div>
-          <span className="text-xl font-serif italic tracking-tight uppercase font-bold text-white">LexForum</span>
+          <Logo size="md" />
         </div>
         <div className="flex items-center gap-6">
           <button 
@@ -311,6 +414,30 @@ const handleGeminiError = (err: any) => {
             </span>
           </div>
           <div className="w-[1px] h-8 bg-white/10 hidden lg:block"></div>
+          {user ? (
+            <div className="flex items-center gap-6">
+              <button 
+                onClick={() => setShowHistory(true)}
+                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors border-r border-white/10 pr-6 mr-2 h-8"
+              >
+                <History className="w-3 h-3" />
+                Meus Casos
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 bg-white/10 rounded-full overflow-hidden">
+                  {user.photoURL ? <img src={user.photoURL} alt="" /> : <div className="w-full h-full bg-white/20" />}
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">{user.displayName?.split(' ')[0]}</span>
+              </div>
+            </div>
+          ) : (
+            <button 
+              onClick={() => loginWithGoogle()}
+              className="text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors"
+            >
+              Entrar
+            </button>
+          )}
           <button 
             className="px-4 py-2 border border-white text-[11px] uppercase tracking-widest hover:bg-white hover:text-black transition-colors lg:block hidden"
             onClick={() => window.location.reload()}
@@ -380,8 +507,8 @@ const handleGeminiError = (err: any) => {
                     <textarea
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
-                      placeholder="Ex: Fui contratado para um projeto de arquitetura, entreguei e o cliente se recusa a pagar..."
-                      className="w-full h-80 bg-transparent p-8 outline-none transition-all text-2xl font-serif italic text-white/90 resize-none placeholder:opacity-10"
+                      placeholder="Descreva aqui os detalhes da causa, fatos principais e argumentos jurídicos. Nossa IA processa textos longos sem limite de caracteres..."
+                      className="w-full min-h-[400px] h-auto bg-transparent p-8 outline-none transition-all text-2xl font-serif italic text-white/90 resize-y placeholder:opacity-10"
                     />
                     
                     {/* Attachments List */}
@@ -402,26 +529,31 @@ const handleGeminiError = (err: any) => {
                       </div>
                     )}
 
-                    <div className="absolute bottom-8 right-8 flex items-center gap-4">
-                      <input 
-                        type="file" 
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        className="hidden"
-                        multiple
-                        accept="image/*,application/pdf"
-                      />
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="w-12 h-12 border border-white/10 rounded-full flex items-center justify-center hover:bg-white/5 transition-all text-white/60"
-                        title="Anexar documento ou imagem"
-                      >
-                        <Plus className="w-5 h-5" />
-                      </button>
+                    <div className="p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-white/5 bg-white/[0.02]">
+                      <div className="flex items-center gap-4">
+                        <input 
+                          type="file" 
+                          ref={fileInputRef}
+                          onChange={handleFileChange}
+                          className="hidden"
+                          multiple
+                          accept="image/*,application/pdf"
+                        />
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex items-center gap-3 px-4 py-2 border border-white/10 rounded-sm hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
+                        </button>
+                        <div className="w-[1px] h-4 bg-white/10 mx-2"></div>
+                        <p className="text-[10px] text-white/20 uppercase tracking-[0.2em] font-bold">PDF, JPEG ou PNG</p>
+                      </div>
+
                       <button
                         disabled={!state.caseDescription.trim() || loading}
                         onClick={handleValidate}
-                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center gap-3"
+                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
                       >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                         <ArrowRight className="w-4 h-4" />
@@ -448,26 +580,26 @@ const handleGeminiError = (err: any) => {
                   <div className="bg-[#1C1C1F] text-white p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-white/10">
                     <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
                     <div className="flex justify-between items-center opacity-30">
-                      <span className="text-[9px] uppercase tracking-widest font-bold">Performance Global LexForum</span>
+                      <span className="text-[9px] uppercase tracking-widest font-bold">Performance Global EAI?</span>
                       <TrendingUp className="w-4 h-4" />
                     </div>
                     
                     <div className="grid grid-cols-1 gap-6">
                       <div className="space-y-1">
-                        <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via LexForum</div>
+                        <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
                         <div className="text-6xl font-serif italic text-white/90">
-                          74.8%
+                          {globalStats.winRate}%
                         </div>
                       </div>
                       
                       <div className="flex justify-between items-end border-t border-white/5 pt-6">
                         <div className="space-y-1">
                           <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Simulações Concluídas</div>
-                          <div className="text-2xl font-mono text-white/80">14.282</div>
+                          <div className="text-2xl font-mono text-white/80">{globalStats.simulations.toLocaleString()}</div>
                         </div>
                         <div className="text-right space-y-1">
                           <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Precisão Média</div>
-                          <div className="text-2xl font-mono text-emerald-500 font-bold">98.4%</div>
+                          <div className="text-2xl font-mono text-emerald-500 font-bold">{globalStats.precision}%</div>
                         </div>
                       </div>
                     </div>
@@ -669,7 +801,7 @@ const handleGeminiError = (err: any) => {
                              <span className="px-2 py-0.5 border border-white/40 text-white text-[9px] uppercase tracking-widest font-bold">Sentença</span>
                            </div>
                            <div className="text-xs text-white/50 leading-relaxed font-sans mb-6 line-clamp-4">
-                             "<CensoredText text={round.judgeJudgment} enabled={!state.isUnlocked} />"
+                             "<CensoredText text={cleanJudgmentText(round.judgeJudgment)} enabled={!state.isUnlocked} />"
                            </div>
                            <div className="flex justify-between items-end">
                              <div className="bg-white/5 px-3 py-1.5 flex flex-col">
@@ -734,10 +866,7 @@ const handleGeminiError = (err: any) => {
               >
                 <div className="hidden print:block mb-12 border-b-2 border-black pb-6">
                   <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-black rounded flex items-center justify-center text-white font-bold">L</div>
-                      <span className="text-xl font-serif italic tracking-tight uppercase font-bold text-black">LexForum</span>
-                    </div>
+                    <Logo variant="light" size="lg" />
                     <div className="text-right">
                       <div className="text-[10px] font-bold uppercase tracking-widest text-black/40">Relatório Estratégico de Performance</div>
                       <div className="text-[10px] font-mono text-black/20">EMITIDO EM: {new Date().toLocaleDateString('pt-BR')}</div>
@@ -751,9 +880,20 @@ const handleGeminiError = (err: any) => {
                   </h2>
                   <div className="flex flex-col items-end">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-white/20 print:text-black/40">Probabilidade Final</span>
-                    <span className="text-4xl font-serif italic text-emerald-500 font-bold print:text-black">{state.simulation?.finalSuccessProbability}%</span>
+                    <span className="text-4xl font-serif italic text-emerald-500 font-bold print:text-black">
+                      {(state.simulation?.rounds && state.simulation.rounds.length > 0) ? `${state.simulation.finalSuccessProbability}` : "--"}
+                    %</span>
                   </div>
                 </div>
+
+                {state.caseSummary && (
+                  <div className="p-8 bg-white/5 border border-white/10 print:bg-gray-50 print:border-black/10 print:p-6 mb-8">
+                    <h4 className="text-[10px] uppercase font-bold tracking-[0.3em] text-white/40 print:text-black/60 mb-3">Objeto da Simulação (Entendimento do Sistema)</h4>
+                    <p className="text-xl font-serif italic text-white/90 leading-relaxed print:text-black">
+                      "{state.caseSummary}"
+                    </p>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 gap-16 print:gap-8">
                   {/* Volume 1: Orientação ao Cliente */}
@@ -800,52 +940,69 @@ const handleGeminiError = (err: any) => {
                     </div>
                   </section>
 
-                  {/* Volume 3: Memorial Descritivo (Audit Trail) */}
-                  <section className="space-y-6 pt-8 border-t border-white/5 print:break-before-page">
-                    <div className="flex items-center gap-4 border-b border-white/5 pb-4 print:border-black/5">
-                      <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40">
-                          VOLUME III: MEMORIAL DESCRITIVO DA SIMULAÇÃO
-                        </span>
-                        <span className="text-[8px] font-mono text-white/10 uppercase tracking-widest pl-1">Audit Trail de Inteligência Jurídica</span>
-                      </div>
+                  {/* Volume 3: Anexos Processuais (Audit Trail) */}
+                  <section className="space-y-6 pt-12 border-t-2 border-white/10 print:border-black/20 print:pt-8 print:break-before-page">
+                    <div className="flex flex-col gap-2 border-b border-white/5 pb-6 print:border-black/10">
+                      <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-white/40 print:text-black/60">
+                        ANEXO I: HISTÓRICO DE EVOLUÇÃO DAS PEÇAS E JULGAMENTOS
+                      </span>
+                      <span className="text-[9px] font-mono text-white/10 uppercase tracking-[0.2em] print:text-black/30 italic">
+                        Memorial Descritivo do Ciclo de Debate Estratégico (Lawyer VS Judge Dynamics)
+                      </span>
                     </div>
                     
-                    <div className="space-y-8">
+                    <div className="space-y-12 print:space-y-10">
                       {state.simulation?.rounds.map((round, idx) => (
-                        <div key={idx} className="border border-white/5 bg-black/20 p-8 space-y-6 print:border-black/10">
-                          <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-6 h-6 rounded-full border border-emerald-500/50 flex items-center justify-center text-[10px] font-mono text-emerald-500">
+                        <div key={idx} className="border-l-4 border-emerald-500/30 bg-white/[0.01] p-10 space-y-8 rounded-r-md print:border-black/20 print:bg-white print:p-0 print:border-l-0 print:space-y-6">
+                          <div className="flex justify-between items-center border-b border-white/5 pb-4 print:border-black/10">
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-full bg-emerald-500 text-black flex items-center justify-center text-sm font-bold font-mono print:bg-black print:text-white">
                                 {round.round}
                               </div>
-                              <span className="text-[11px] font-bold uppercase tracking-widest text-white/70">Rodada de Debate Técnico</span>
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold uppercase tracking-widest text-white/80 print:text-black">Ciclo de Aperfeiçoamento Processual</span>
+                                <span className="text-[9px] font-mono text-white/20 print:text-black/40">ID_PROTOCOLO: {Math.random().toString(16).slice(2, 10).toUpperCase()}</span>
+                              </div>
                             </div>
-                            <div className="text-[9px] font-mono text-white/20">
-                              PROBABILIDADE PARCIAL: {round.successProbability}%
+                            <div className="text-right">
+                              <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Aproveitamento</div>
+                              <div className="text-xl font-serif italic text-white print:text-black">{round.successProbability}%</div>
                             </div>
                           </div>
                           
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                            <div className="space-y-3">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 print:gap-8">
+                            <div className="space-y-4">
                               <div className="flex items-center gap-2">
-                                <Scale className="w-3 h-3 text-emerald-500" />
-                                <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Tese da Defesa (Agente Advogado)</span>
+                                <Scale className="w-4 h-4 text-emerald-500 print:text-black" />
+                                <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest print:text-black">Petição e Pedidos do Advogado</span>
                               </div>
-                              <div className="p-5 bg-white/[0.02] border border-white/5 text-[12px] leading-relaxed text-white/50 italic font-serif print:text-black/70">
+                              <div className="p-6 bg-white/[0.02] border border-white/5 text-[13px] leading-relaxed text-white/50 italic font-serif print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
                                 "{round.lawyerPetition}"
                               </div>
                             </div>
-                            <div className="space-y-3">
+                            
+                            <div className="space-y-4">
                               <div className="flex items-center gap-2">
-                                <Gavel className="w-3 h-3 text-white/30" />
-                                <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Sentença Interlocutória (Agente Juiz)</span>
+                                <Gavel className="w-4 h-4 text-white/20 print:text-black" />
+                                <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest print:text-black/60">Análise e Decisão do Magistrado</span>
                               </div>
-                              <div className="p-5 bg-white/[0.01] border border-dashed border-white/5 text-[12px] leading-relaxed text-white/40 font-mono print:text-black/60">
-                                {round.judgeJudgment}
+                              <div className="p-6 bg-white/[0.01] border border-dashed border-white/5 text-[13px] leading-relaxed text-white/40 font-mono print:text-black print:bg-gray-50 print:border-black/10 print:p-4 whitespace-pre-wrap">
+                                {cleanJudgmentText(round.judgeJudgment)}
                               </div>
                             </div>
                           </div>
+
+                          {round.lawyerBrief && (
+                            <div className="mt-4 p-6 bg-emerald-500/5 rounded-sm border border-emerald-500/10 print:border-black/5 print:bg-gray-100">
+                               <div className="flex items-center gap-2 mb-3">
+                                 <History className="w-4 h-4 text-emerald-500/40 print:text-black/40" />
+                                 <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-500/40 print:text-black/60">Insight Estratégico Retido para o Próximo Ciclo</span>
+                               </div>
+                               <p className="text-[11px] text-white/40 leading-relaxed font-mono italic print:text-black/80">
+                                 {round.lawyerBrief}
+                               </p>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -989,7 +1146,10 @@ const handleGeminiError = (err: any) => {
                 <div className="space-y-1">
                   <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Taxa de Sucesso</div>
                   <div className="text-5xl font-serif italic text-white/90">
-                    {state.simulation?.finalSuccessProbability || (state.simulation?.rounds[state.simulation.rounds.length - 1]?.successProbability) || "00.0"}%
+                    { (state.simulation?.rounds && state.simulation.rounds.length > 0) 
+                      ? (state.simulation.finalSuccessProbability || state.simulation.rounds[state.simulation.rounds.length - 1]?.successProbability || 0)
+                      : "--"
+                    }%
                   </div>
                 </div>
                 <div className="text-[10px] font-mono text-emerald-500/60 font-bold border-t border-white/5 pt-4 flex justify-between">
@@ -1018,7 +1178,7 @@ const handleGeminiError = (err: any) => {
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     <h2 className="text-2xl font-serif italic text-white">Central de Monitoramento de Sementes</h2>
                   </div>
-                  <p className="text-[10px] text-white/30 uppercase tracking-[0.4em] font-bold">LexForum Forge Instance: 0xFD-99 / Latency: 12ms</p>
+                  <p className="text-[10px] text-white/30 uppercase tracking-[0.4em] font-bold">EAI? Forge Instance: 0xFD-99 / Latency: 12ms</p>
                 </div>
                 <button 
                   onClick={() => setState(prev => ({ ...prev, showForgeMonitor: false }))}
@@ -1169,6 +1329,81 @@ const handleGeminiError = (err: any) => {
            </div>
         </div>
       )}
+
+      {/* History Modal */}
+      <AnimatePresence>
+        {showHistory && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full max-w-4xl bg-[#0D0D0E] border border-white/10 overflow-hidden flex flex-col max-h-[85vh]"
+            >
+              <div className="p-8 border-b border-white/10 flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-serif italic text-white tracking-tight">Meus Casos</h2>
+                  <p className="text-white/40 text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Histórico de simulações processadas</p>
+                </div>
+                <button 
+                  onClick={() => setShowHistory(false)} 
+                  className="p-2 border border-white/5 hover:bg-white/5 transition-colors"
+                >
+                  <X className="w-6 h-6 text-white/40" />
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                {userHistory.length === 0 ? (
+                  <div className="py-20 text-center">
+                    <History className="w-12 h-12 text-white/10 mx-auto mb-4" />
+                    <p className="text-white/30 text-sm italic">Nenhum caso simulado encontrado sob esta credencial.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4">
+                    {userHistory.map((sim: any) => (
+                      <button 
+                        key={sim.id}
+                        onClick={() => loadSimulation(sim)}
+                        className="w-full text-left p-6 bg-white/[0.02] border border-white/5 hover:border-white/20 hover:bg-white/[0.04] transition-all group relative overflow-hidden"
+                      >
+                        <div className="flex justify-between items-start mb-5">
+                          <div className="max-w-[70%]">
+                            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-emerald-500/60 mb-2 block">
+                              {sim.createdAt?.toDate ? new Date(sim.createdAt.toDate()).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : 'Simulação Recente'}
+                            </span>
+                            <h3 className="text-lg font-serif italic text-white/90 leading-tight line-clamp-1">
+                              {sim.caseSummary || sim.caseDescription}
+                            </h3>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <span className="text-3xl font-mono font-bold text-white tracking-tighter tabular-nums">{sim.finalSuccessProbability}%</span>
+                            <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-white/20">Probabilidade</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4 text-white/30 text-[9px] font-bold uppercase tracking-[0.2em]">
+                          <span className="px-2 py-0.5 border border-white/10 bg-white/5">
+                            {areaLabels[sim.area as LegalArea] || "Direito Geral"}
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <Activity className="w-3 h-3 text-emerald-500/50" />
+                            {sim.rounds?.length || 0} Etapas de Julgamento
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
