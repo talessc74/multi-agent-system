@@ -8,3 +8,5 @@ coverage/
 !.env.example
 .vercel
 firebase-applet-config.json
+!src/lib/
+!src/lib/**
