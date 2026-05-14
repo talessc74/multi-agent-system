@@ -3,6 +3,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import dotenv from "dotenv";
 import { validateCausaServer, simulateForumServer, generateReportServer } from "./src/lib/gemini.server";
+import { constructWebhookEvent } from './src/lib/stripe.server.js';
 
 dotenv.config();
 
@@ -45,6 +46,42 @@ async function startServer() {
       res.status(500).json({ error: error.message || "Unknown error" });
     }
   });
+
+  // ── Stripe Webhook ──────────────────────────────────────────
+  app.post(
+    '/api/webhook/stripe',
+    express.raw({ type: 'application/json' }),
+    (req, res) => {
+      const signature = req.headers['stripe-signature'];
+
+      if (!signature) {
+        res.status(400).send('Missing stripe-signature header');
+        return;
+      }
+
+      try {
+        const event = constructWebhookEvent(req.body, signature as string);
+
+        switch (event.type) {
+          case 'payment_intent.succeeded':
+            console.log('[Stripe] payment_intent.succeeded:', event.data.object.id);
+            // TODO: liberar laudo completo para o userId em metadata
+            break;
+          case 'payment_intent.payment_failed':
+            console.log('[Stripe] payment_intent.payment_failed:', event.data.object.id);
+            break;
+          default:
+            console.log('[Stripe] evento ignorado:', event.type);
+        }
+
+        res.json({ received: true });
+      } catch (err) {
+        console.error('[Stripe] webhook error:', err instanceof Error ? err.message : err);
+        res.status(400).send('Webhook signature verification failed');
+      }
+    }
+  );
+  // ────────────────────────────────────────────────────────────
 
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
