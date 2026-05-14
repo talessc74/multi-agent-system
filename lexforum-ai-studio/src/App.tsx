@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { LegalArea, SimulationResult, ReportContent, AppState, Attachment } from './types';
 import { validateCausa, simulateForum, generateReport } from './lib/gemini';
-import { auth, loginWithGoogle } from './lib/firebase';
+import { auth, loginWithGoogle, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, saveSimulation, getUserSimulations } from './services/dbService';
 
@@ -116,6 +116,15 @@ export default function App() {
   ],
   error: null
 });
+
+  // Handle Google redirect result (Safari mobile compatibility)
+  useEffect(() => {
+    getGoogleRedirectResult().then((result) => {
+      if (result?.user) {
+        setUser(result.user);
+      }
+    }).catch(() => {});
+  }, []);
 
   // Auth & Stats listener
   useEffect(() => {
