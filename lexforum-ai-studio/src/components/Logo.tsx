@@ -5,10 +5,11 @@ interface LogoProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   showText?: boolean;
+  showTitle?: boolean;
   variant?: 'dark' | 'light';
 }
 
-export function Logo({ className = "", size = 'md', showText = true, variant = 'dark' }: LogoProps) {
+export function Logo({ className = "", size = 'md', showText = true, showTitle = true, variant = 'dark' }: LogoProps) {
   const sizes = {
     sm: { h: 'h-5', text: 'text-xl', sub: 'text-[5px]' },
     md: { h: 'h-6', text: 'text-2xl', sub: 'text-[7px]' },
@@ -75,9 +76,11 @@ export function Logo({ className = "", size = 'md', showText = true, variant = '
       
       {showText && (
         <div className="flex flex-col">
-          <span className={`${sizes[size].text} font-serif italic tracking-tight uppercase font-bold ${isDark ? 'text-white' : 'text-slate-900'} leading-none`}>
-            EAI?
-          </span>
+          {showTitle && (
+            <span className={`${sizes[size].text} font-serif italic tracking-tight uppercase font-bold ${isDark ? 'text-white' : 'text-slate-900'} leading-none`}>
+              EAI?
+            </span>
+          )}
           <span className={`${sizes[size].sub} uppercase tracking-[0.2em] font-bold ${isDark ? 'text-white/40' : 'text-slate-500'} mt-1 whitespace-nowrap`}>
             Evidence-Based Artificial Intelligence
           </span>
