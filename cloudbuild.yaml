@@ -1,10 +1,13 @@
+substitutions:
+  _TAG: latest  # override com SHORT_SHA no git trigger ou via --substitutions _TAG=$(git rev-parse --short HEAD)
+
 steps:
   # 1. Build da imagem Docker a partir do subdiretório lexforum-ai-studio/
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - build
       - -t
-      - gcr.io/gen-lang-client-0982741688/eai-producao:$COMMIT_SHA
+      - gcr.io/gen-lang-client-0982741688/eai-producao:$_TAG
       - -t
       - gcr.io/gen-lang-client-0982741688/eai-producao:latest
       - ./lexforum-ai-studio
@@ -23,14 +26,14 @@ steps:
       - run
       - deploy
       - eai-producao
-      - --image=gcr.io/gen-lang-client-0982741688/eai-producao:$COMMIT_SHA
+      - --image=gcr.io/gen-lang-client-0982741688/eai-producao:$_TAG
       - --region=us-east1
       - --project=gen-lang-client-0982741688
       - --platform=managed
       - --allow-unauthenticated
 
 images:
-  - gcr.io/gen-lang-client-0982741688/eai-producao:$COMMIT_SHA
+  - gcr.io/gen-lang-client-0982741688/eai-producao:$_TAG
   - gcr.io/gen-lang-client-0982741688/eai-producao:latest
 
 options:
