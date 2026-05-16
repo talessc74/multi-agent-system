@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 interface Props {
-  onEnter: () => void;
+  onEnter: (mode: number) => void;
 }
 
 const MODES = [
@@ -72,7 +72,7 @@ export default function BoardroomPage({ onEnter }: Props) {
           EAI?
         </span>
         <button
-          onClick={onEnter}
+          onClick={() => onEnter(0)}
           className="px-5 py-2 border border-amber-400/50 text-amber-400 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-amber-400 hover:text-black transition-all duration-200"
         >
           ENTRAR
@@ -116,13 +116,15 @@ export default function BoardroomPage({ onEnter }: Props) {
         {/* Mode Cards */}
         <section className="px-6 md:px-12 lg:px-20 pb-16 max-w-6xl mx-auto">
           <div className="flex flex-col gap-3">
-            {MODES.map(({ title, price, Icon, desc }, i) => (
+            {MODES.map(({ title, price, Icon, desc }, i) => {
+              const mode = i + 1;
+              return (
               <motion.div
                 key={title}
                 initial={{ opacity: 0, x: -16 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.45, delay: 0.08 * i + 0.1 }}
-                onClick={onEnter}
+                onClick={() => onEnter(mode)}
                 className="bg-[#1a1a1a] border border-white/[0.07] hover:border-amber-400/25 transition-all duration-200 group cursor-pointer"
               >
                 <div className="p-5 md:p-7 flex flex-col sm:flex-row sm:items-center gap-5 md:gap-8">
@@ -149,14 +151,15 @@ export default function BoardroomPage({ onEnter }: Props) {
 
                   {/* CTA */}
                   <button
-                    onClick={(e) => { e.stopPropagation(); onEnter(); }}
+                    onClick={(e) => { e.stopPropagation(); onEnter(mode); }}
                     className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-white/25 group-hover:text-amber-400 transition-colors duration-200 flex-shrink-0 self-end sm:self-auto whitespace-nowrap"
                   >
                     SELECIONAR MODO <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </section>
 

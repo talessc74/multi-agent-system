@@ -37,6 +37,7 @@ export interface ReportContent {
 
 export interface AppState {
   step: 'boardroom' | 'input' | 'confirm' | 'simulating' | 'result';
+  selectedMode: number;
   caseDescription: string;
   attachments: Attachment[];
   detectedArea: LegalArea;
