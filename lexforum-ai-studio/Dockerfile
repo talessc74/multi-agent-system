@@ -12,6 +12,8 @@ RUN npm run build
 # ── Stage 2: runtime ─────────────────────────────────────────────────────────
 FROM node:20-slim AS runner
 
+ENV NODE_ENV=production
+
 WORKDIR /app
 
 # Install only production dependencies (esbuild bundled with --packages=external
