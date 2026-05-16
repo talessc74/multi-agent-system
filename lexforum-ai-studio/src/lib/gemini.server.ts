@@ -133,13 +133,24 @@ async function getOrGenerateAgent(type: "lawyer" | "judge", area: string, specif
 }
 
 export async function simulateForumServer(
-  caseDescription: string, 
-  area: LegalArea, 
-  attachments: Attachment[], 
-  specificJudge: string | null
+  caseDescription: string,
+  area: LegalArea,
+  attachments: Attachment[],
+  specificJudge: string | null,
+  agentInstruction?: string
 ): Promise<SimulationResult> {
   const lawAgent = await getOrGenerateAgent("lawyer", area, null);
-  const juiAgent = await getOrGenerateAgent("judge", area, specificJudge);
+
+  let judgeInstruction: string;
+  let judgeName: string;
+  if (agentInstruction) {
+    judgeInstruction = agentInstruction;
+    judgeName = specificJudge ?? `Juiz ${area}`;
+  } else {
+    const juiAgent = await getOrGenerateAgent("judge", area, specificJudge);
+    judgeInstruction = juiAgent.instruction;
+    judgeName = juiAgent.name;
+  }
 
   const rounds: SimulationRound[] = [];
   let currentPetition = "";
@@ -165,7 +176,7 @@ export async function simulateForumServer(
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Julgue a seguinte petição: ${currentPetition}` }] }],
       config: {
-        systemInstruction: juiAgent.instruction
+        systemInstruction: judgeInstruction
       }
     });
     currentJudgment = juiRes.text || "";
@@ -192,7 +203,7 @@ export async function simulateForumServer(
     if (lastProb >= 95) break;
   }
 
-  return { area, rounds, finalSuccessProbability: lastProb, lawyerAgentName: lawAgent.name, judgeAgentName: juiAgent.name };
+  return { area, rounds, finalSuccessProbability: lastProb, lawyerAgentName: lawAgent.name, judgeAgentName: judgeName };
 }
 
 export async function generateReportServer(lastPetition: string, lastJudgment: string): Promise<ReportContent> {

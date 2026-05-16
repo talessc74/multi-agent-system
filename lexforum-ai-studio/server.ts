@@ -1,10 +1,12 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
+import fs from "fs";
 import dotenv from "dotenv";
 import { validateCausaServer, simulateForumServer, generateReportServer } from "./src/lib/gemini.server";
 import { constructWebhookEvent } from './src/lib/stripe.server.js';
 import simulationStatus from './simulation-status';
+import { resolveAgent } from './agent-resolver';
 
 dotenv.config();
 
@@ -29,7 +31,31 @@ async function startServer() {
   app.post("/api/gemini/simulate", async (req, res) => {
     try {
       const { caseDescription, area, attachments, specificJudge } = req.body;
-      const data = await simulateForumServer(caseDescription, area, attachments, specificJudge);
+
+      const areaMap: Record<string, string> = {
+        CONSUMER: 'consumerista',
+        LABOR: 'trabalhista',
+        CIVIL: 'civel',
+        FAMILY: 'familia',
+        SOCIAL_SECURITY: 'previdenciario',
+        OTHER: 'geral',
+      };
+
+      let agentInstruction: string | undefined;
+      try {
+        const entry = await resolveAgent({
+          area: areaMap[area] ?? area.toLowerCase(),
+          comarca: specificJudge ?? undefined,
+          tipo: 'juiz',
+        });
+        const agentJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
+        agentInstruction = JSON.stringify(agentJson);
+        console.log(`[AgentResolver] Usando agente do registry: ${entry.agent_id}`);
+      } catch (e) {
+        console.warn('[AgentResolver] Fallback para agente dinâmico:', e instanceof Error ? e.message : e);
+      }
+
+      const data = await simulateForumServer(caseDescription, area, attachments, specificJudge, agentInstruction);
       res.json(data);
     } catch (error: any) {
       console.error("Gemini Server Error:", error);
