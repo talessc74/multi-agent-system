@@ -70,6 +70,7 @@ const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => 
 
 
 import { Logo } from './components/Logo';
+import BoardroomPage from './pages/BoardroomPage';
 
 const cleanJudgmentText = (text: string) => {
   if (!text) return "";
@@ -92,7 +93,7 @@ export default function App() {
   const [showHistory, setShowHistory] = useState(false);
   const [globalStats, setGlobalStats] = useState({ simulations: 14282, winRate: 74.8, precision: 98.4 });
   const [state, setState] = useState<AppState>({
-    step: 'input',
+    step: 'boardroom',
     caseDescription: '',
     attachments: [],
     detectedArea: LegalArea.OTHER,
@@ -399,6 +400,14 @@ const handleGeminiError = (err: any) => {
       return <p key={i} className="mb-2">{line}</p>;
     });
   };
+
+  if (state.step === 'boardroom') {
+    return (
+      <BoardroomPage
+        onEnter={() => setState(prev => ({ ...prev, step: 'input' }))}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
