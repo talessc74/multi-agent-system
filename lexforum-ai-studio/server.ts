@@ -4,6 +4,7 @@ import path from "path";
 import dotenv from "dotenv";
 import { validateCausaServer, simulateForumServer, generateReportServer } from "./src/lib/gemini.server";
 import { constructWebhookEvent } from './src/lib/stripe.server.js';
+import simulationStatus from './simulation-status';
 
 dotenv.config();
 
@@ -46,6 +47,8 @@ async function startServer() {
       res.status(500).json({ error: error.message || "Unknown error" });
     }
   });
+
+  app.use('/simulation', simulationStatus);
 
   // ── Stripe Webhook ──────────────────────────────────────────
   app.post(
