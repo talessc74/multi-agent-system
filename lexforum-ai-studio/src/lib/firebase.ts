@@ -3,7 +3,7 @@ import {
   getAuth,
   GoogleAuthProvider,
   OAuthProvider,
-  signInWithRedirect,
+  signInWithPopup,
   getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -29,9 +29,9 @@ export const setSessionPersistence = async (remember: boolean) => {
 };
 
 // Auth functions
-export const loginWithGoogle = () => signInWithRedirect(auth, googleProvider);
+export const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
 
-export const loginWithApple = () => signInWithRedirect(auth, appleProvider);
+export const loginWithApple = () => signInWithPopup(auth, appleProvider);
 
 export const getGoogleRedirectResult = () => getRedirectResult(auth);
 
