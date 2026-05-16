@@ -504,7 +504,7 @@ const handleGeminiError = (err: any) => {
             )}
 
             {state.step === 'input' && (
-              <motion.div 
+              <motion.div
                 key="input"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -513,6 +513,13 @@ const handleGeminiError = (err: any) => {
               >
                 <div className="col-span-12 xl:col-span-8 space-y-12">
                   <div className="space-y-4">
+                    <button
+                      onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors mb-2"
+                    >
+                      <ArrowRight className="w-3 h-3 rotate-180" />
+                      Voltar
+                    </button>
                     <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
                       Descreva sua causa para iniciar a <br /><span className="text-[#F4F4F2] font-bold">simulação de fórum.</span>
                     </h1>
