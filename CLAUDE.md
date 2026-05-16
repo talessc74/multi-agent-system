@@ -97,6 +97,46 @@ Silêncio diante de um problema identificado é traição ao projeto."
 
 `lexforum-app/` is a standalone Next.js 16 application housed inside this monorepo. It is developed and deployed independently from the multi-agent system.
 
+---
+
+## EAI? Studio — lexforum-ai-studio
+
+`lexforum-ai-studio/` is a Vite + Express + TypeScript application deployed on **Google Cloud Run**.
+
+| Property | Value |
+|---|---|
+| Framework | Vite 6 + React 19 + Express 4 |
+| Language | TypeScript 5 |
+| Deploy | Cloud Run — `eai-producao`, região `us-east1` |
+| Projeto GCP | `gen-lang-client-0982741688` |
+| Dockerfile | `lexforum-ai-studio/Dockerfile` |
+| Pipeline | `cloudbuild.yaml` (raiz do repo) |
+
+**Variáveis de ambiente** — nunca commitadas. Configurar no Cloud Run Console:
+`GEMINI_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+`VITE_FIREBASE_*` (ver `.env.example` para lista completa).
+
+**Dev local:**
+```bash
+cd lexforum-ai-studio
+npm run dev        # Express + Vite em localhost:3000 (requer .env)
+npx vite --host    # Só frontend em localhost:5173 (sem backend)
+```
+
+**Deploy manual via Cloud Build:**
+```bash
+gcloud builds submit --config cloudbuild.yaml \
+  --project gen-lang-client-0982741688
+```
+
+**Build local da imagem:**
+```bash
+docker build -t eai-producao ./lexforum-ai-studio
+docker run -p 3000:8080 --env-file lexforum-ai-studio/.env eai-producao
+```
+
+---
+
 | Property | Value |
 |---|---|
 | Framework | Next.js 16 + React 18 |
