@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { createAgentFromScratch } from './agent-creator';
 
 const REGISTRY_PATH = path.join(process.cwd(), 'registry/index');
 
@@ -38,12 +39,22 @@ function findAgent(params: ResolveParams): AgentEntry | null {
 }
 
 async function createAgent(params: ResolveParams): Promise<AgentEntry> {
-  // Placeholder — Shaw + Especialista serão integrados aqui
-  // Por ora, loga a lacuna e lança erro descritivo
-  console.warn(`[AgentResolver] Lacuna detectada: ${JSON.stringify(params)}`);
-  throw new Error(
-    `Agente não encontrado para área=${params.area}, tipo=${params.tipo}, comarca=${params.comarca ?? 'genérico'}. Shaw + Especialista necessários.`
-  );
+  const areaCode = params.area.slice(0, 3).toUpperCase();
+  const sequencial = String(Date.now()).slice(-6);
+  const result = await createAgentFromScratch({
+    area: params.area,
+    comarca: params.comarca,
+    tipo: params.tipo,
+    areaCode,
+    sequencial,
+  });
+  return {
+    agent_id: result.agent_id,
+    tipo: params.tipo,
+    comarca: params.comarca ?? null,
+    arquivo: `agents/${result.agent_id}_v1.0.json`,
+    seed: result.seed_id,
+  };
 }
 
 export async function resolveAgent(params: ResolveParams): Promise<AgentEntry> {
