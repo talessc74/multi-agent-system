@@ -10,6 +10,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 2. **Apenas o Especialista cria agentes** — nenhum outro agente, assistente ou prompt pode gerar ou salvar arquivos em `agents/`.
 3. **Argus nunca cria sementes ou agentes** — o papel do Argus é auditar, atualizar registros e manter a integridade do sistema, não produzir artefatos de domínio.
 4. **Verificação pré-simulação obrigatória** — antes de qualquer simulação de agente, confirmar: (a) o agente existe no `AGENTS_REGISTRY.json`, (b) a semente de origem está registrada, (c) os contadores `total_sementes` e `total_agentes` estão corretos.
+5. **AgentResolver é o único ponto de entrada para agentes em runtime**
+   — nenhuma rota ou componente busca agentes diretamente no registry.
+   — AgentResolver consulta `registry/index/{area}.json` por chave área+tipo+comarca.
+   — Quando há lacuna, AgentResolver aciona Shaw+Especialista automaticamente.
+   — Shaw e Especialista continuam sendo os únicos criadores. O gatilho mudou de manual para automático — a governança não mudou.
+6. **Registry em dois níveis**
+   — `agents/AGENTS_REGISTRY.json` → fonte de verdade, todos os agentes.
+   — `registry/index/{area}.json` → índice de busca por área e comarca.
+   — Após criação de agente novo, ambos devem ser atualizados.
 
 ## GUARDIÃO DO CLAUDE.md
 
