@@ -1,0 +1,18 @@
+{
+  "area": "consumidor",
+  "agentes": [
+    {
+      "agent_id": "advogado_consumerista_v1.0",
+      "tipo": "advogado",
+      "arquivo": "agents/advogado_consumerista_v1.0.json",
+      "seed": "SEED_JUR_001_v1.0"
+    },
+    {
+      "agent_id": "juiz_jec_v1.0",
+      "tipo": "juiz",
+      "comarca": null,
+      "arquivo": "agents/juiz_jec_v1.0.json",
+      "seed": "SEED_JUR_001_v1.0"
+    }
+  ]
+}

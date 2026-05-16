@@ -1,0 +1,37 @@
+steps:
+  # 1. Build da imagem Docker a partir do subdiretório lexforum-ai-studio/
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - gcr.io/gen-lang-client-0982741688/eai-producao:$COMMIT_SHA
+      - -t
+      - gcr.io/gen-lang-client-0982741688/eai-producao:latest
+      - ./lexforum-ai-studio
+
+  # 2. Push para o Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - --all-tags
+      - gcr.io/gen-lang-client-0982741688/eai-producao
+
+  # 3. Deploy para Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - eai-producao
+      - --image=gcr.io/gen-lang-client-0982741688/eai-producao:$COMMIT_SHA
+      - --region=us-east1
+      - --project=gen-lang-client-0982741688
+      - --platform=managed
+      - --allow-unauthenticated
+
+images:
+  - gcr.io/gen-lang-client-0982741688/eai-producao:$COMMIT_SHA
+  - gcr.io/gen-lang-client-0982741688/eai-producao:latest
+
+options:
+  logging: CLOUD_LOGGING_ONLY

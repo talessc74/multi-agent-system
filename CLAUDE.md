@@ -10,6 +10,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 2. **Apenas o Especialista cria agentes** — nenhum outro agente, assistente ou prompt pode gerar ou salvar arquivos em `agents/`.
 3. **Argus nunca cria sementes ou agentes** — o papel do Argus é auditar, atualizar registros e manter a integridade do sistema, não produzir artefatos de domínio.
 4. **Verificação pré-simulação obrigatória** — antes de qualquer simulação de agente, confirmar: (a) o agente existe no `AGENTS_REGISTRY.json`, (b) a semente de origem está registrada, (c) os contadores `total_sementes` e `total_agentes` estão corretos.
+5. **AgentResolver é o único ponto de entrada para agentes em runtime**
+   — nenhuma rota ou componente busca agentes diretamente no registry.
+   — AgentResolver consulta `registry/index/{area}.json` por chave área+tipo+comarca.
+   — Quando há lacuna, AgentResolver aciona Shaw+Especialista automaticamente.
+   — Shaw e Especialista continuam sendo os únicos criadores. O gatilho mudou de manual para automático — a governança não mudou.
+6. **Registry em dois níveis**
+   — `agents/AGENTS_REGISTRY.json` → fonte de verdade, todos os agentes.
+   — `registry/index/{area}.json` → índice de busca por área e comarca.
+   — Após criação de agente novo, ambos devem ser atualizados.
 
 ## GUARDIÃO DO CLAUDE.md
 
@@ -87,6 +96,46 @@ Silêncio diante de um problema identificado é traição ao projeto."
 ## Web Application — LexForum
 
 `lexforum-app/` is a standalone Next.js 16 application housed inside this monorepo. It is developed and deployed independently from the multi-agent system.
+
+---
+
+## EAI? Studio — lexforum-ai-studio
+
+`lexforum-ai-studio/` is a Vite + Express + TypeScript application deployed on **Google Cloud Run**.
+
+| Property | Value |
+|---|---|
+| Framework | Vite 6 + React 19 + Express 4 |
+| Language | TypeScript 5 |
+| Deploy | Cloud Run — `eai-producao`, região `us-east1` |
+| Projeto GCP | `gen-lang-client-0982741688` |
+| Dockerfile | `lexforum-ai-studio/Dockerfile` |
+| Pipeline | `cloudbuild.yaml` (raiz do repo) |
+
+**Variáveis de ambiente** — nunca commitadas. Configurar no Cloud Run Console:
+`GEMINI_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+`VITE_FIREBASE_*` (ver `.env.example` para lista completa).
+
+**Dev local:**
+```bash
+cd lexforum-ai-studio
+npm run dev        # Express + Vite em localhost:3000 (requer .env)
+npx vite --host    # Só frontend em localhost:5173 (sem backend)
+```
+
+**Deploy manual via Cloud Build:**
+```bash
+gcloud builds submit --config cloudbuild.yaml \
+  --project gen-lang-client-0982741688
+```
+
+**Build local da imagem:**
+```bash
+docker build -t eai-producao ./lexforum-ai-studio
+docker run -p 3000:8080 --env-file lexforum-ai-studio/.env eai-producao
+```
+
+---
 
 | Property | Value |
 |---|---|
