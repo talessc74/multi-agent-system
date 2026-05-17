@@ -124,7 +124,9 @@ async function getOrGenerateAgent(type: "lawyer" | "judge", area: string, specif
   }
   const newAgent = {
     id: `DYN_${cacheKey}`,
-    name: parsed.name || (isLawyer ? "Advogado Dinâmico" : "Juiz Dinâmico"),
+    name: isLawyer
+      ? `Advogado ${area === "LABOR" ? "Trabalhista" : area === "CONSUMER" ? "Consumerista" : area === "CIVIL" ? "Civilista" : "Especializado"}`
+      : `Magistrado ${area === "LABOR" ? "Trabalhista" : area === "CONSUMER" ? "Consumerista" : area === "CIVIL" ? "Cível" : "Especializado"}`,
     instruction: parsed.instruction || ""
   };
 
