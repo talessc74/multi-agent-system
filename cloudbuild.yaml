@@ -2,6 +2,12 @@ substitutions:
   _TAG: latest  # override com SHORT_SHA no git trigger ou via --substitutions _TAG=$(git rev-parse --short HEAD)
 
 steps:
+  # 0. Copia agents/ e registry/ para dentro do contexto do Dockerfile
+  - name: 'bash'
+    args:
+      - -c
+      - 'cp -r agents lexforum-ai-studio/ && cp -r registry lexforum-ai-studio/'
+
   # 1. Build da imagem Docker a partir do subdiretório lexforum-ai-studio/
   - name: 'gcr.io/cloud-builders/docker'
     args:
