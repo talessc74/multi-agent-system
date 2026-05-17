@@ -55,7 +55,21 @@ async function startServer() {
         console.warn('[AgentResolver] Fallback para agente dinâmico:', e instanceof Error ? e.message : e);
       }
 
-      const data = await simulateForumServer(caseDescription, area, attachments, specificJudge, agentInstruction);
+      let lawyerInstruction: string | undefined;
+      try {
+        const lawyerEntry = await resolveAgent({
+          area: areaMap[area] ?? area.toLowerCase(),
+          comarca: specificJudge ?? undefined,
+          tipo: 'advogado',
+        });
+        const lawyerJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), lawyerEntry.arquivo), 'utf-8'));
+        lawyerInstruction = JSON.stringify(lawyerJson);
+        console.log(`[AgentResolver] Advogado do registry: ${lawyerEntry.agent_id}`);
+      } catch (e) {
+        console.warn('[AgentResolver] Advogado fallback dinâmico:', e instanceof Error ? e.message : e);
+      }
+
+      const data = await simulateForumServer(caseDescription, area, attachments, specificJudge, agentInstruction, lawyerInstruction);
       res.json(data);
     } catch (error: any) {
       console.error("Gemini Server Error:", error);

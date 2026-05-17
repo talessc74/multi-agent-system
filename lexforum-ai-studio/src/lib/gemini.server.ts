@@ -139,9 +139,19 @@ export async function simulateForumServer(
   area: LegalArea,
   attachments: Attachment[],
   specificJudge: string | null,
-  agentInstruction?: string
+  agentInstruction?: string,
+  lawyerInstruction?: string
 ): Promise<SimulationResult> {
-  const lawAgent = await getOrGenerateAgent("lawyer", area, null);
+  let lawAgent: { id: string; name: string; instruction: string };
+  if (lawyerInstruction) {
+    lawAgent = {
+      id: `REGISTRY_lawyer_${area}`,
+      name: `Advogado ${area === "LABOR" ? "Trabalhista" : area === "CONSUMER" ? "Consumerista" : area === "CIVIL" ? "Civilista" : "Especializado"}`,
+      instruction: lawyerInstruction,
+    };
+  } else {
+    lawAgent = await getOrGenerateAgent("lawyer", area, null);
+  }
 
   let judgeInstruction: string;
   let judgeName: string;
