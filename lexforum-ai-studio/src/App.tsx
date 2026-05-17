@@ -1064,7 +1064,7 @@ const handleGeminiError = (err: any) => {
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { n: "ÁREA IDENTIFICADA", s: areaLabels[state.detectedArea], icon: ShieldCheck },
-                  { n: "FORO / COMARCA", s: state.specificJudge || "Justiça Comum / JEC", icon: Gavel },
+                  { n: "FORO / COMARCA", s: state.specificJudge && state.specificJudge !== "null" ? state.specificJudge : "Justiça Comum / JEC", icon: Gavel },
                 ].map((m, i) => (
                   <div key={i} className="bg-white/5 p-4 border border-white/5 space-y-1">
                     <div className="text-[10px] font-bold text-white/50 uppercase tracking-tighter">{m.n}</div>
