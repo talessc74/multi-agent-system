@@ -6,14 +6,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Scale, 
-  Gavel, 
-  FileText, 
-  ShieldCheck, 
-  AlertCircle, 
-  ArrowRight, 
-  Loader2, 
+import {
+  Scale,
+  Gavel,
+  FileText,
+  ShieldCheck,
+  AlertCircle,
+  ArrowRight,
+  Loader2,
   ChevronRight,
   TrendingUp,
   Lock,
@@ -26,7 +26,8 @@ import {
   Cpu,
   Database,
   Activity,
-  History
+  History,
+  Wrench
 } from 'lucide-react';
 import { LegalArea, SimulationResult, ReportContent, AppState, Attachment } from './types';
 import { validateCausa, simulateForum, generateReport } from './lib/gemini';
@@ -513,7 +514,35 @@ const handleGeminiError = (err: any) => {
               </motion.div>
             )}
 
-            {state.step === 'input' && (
+            {state.step === 'input' && state.selectedMode >= 2 && (
+              <motion.div
+                key="under-construction"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="flex flex-col items-center justify-center min-h-[60vh] gap-8 text-center"
+              >
+                <Wrench className="w-16 h-16 text-white/20" strokeWidth={1.5} />
+                <div className="space-y-3">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-amber-400/60 border border-amber-400/20 px-3 py-1">
+                    {MODE_NAMES[state.selectedMode]}
+                  </span>
+                  <h2 className="text-4xl font-serif italic text-white/90 mt-4">Em construção.</h2>
+                  <p className="text-white/30 text-sm uppercase tracking-widest font-medium max-w-sm">
+                    Este modo está em desenvolvimento. Em breve estará disponível.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
+                  className="flex items-center gap-2 px-8 py-3 border border-white/10 text-[11px] font-bold uppercase tracking-widest text-white/50 hover:text-white hover:border-white/30 transition-colors"
+                >
+                  <ArrowRight className="w-3 h-3 rotate-180" />
+                  Voltar
+                </button>
+              </motion.div>
+            )}
+
+            {state.step === 'input' && state.selectedMode < 2 && (
               <motion.div
                 key="input"
                 initial={{ opacity: 0, y: 10 }}
