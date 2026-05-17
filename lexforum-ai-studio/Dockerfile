@@ -23,6 +23,8 @@ RUN npm ci --omit=dev
 
 # Copy compiled output from builder
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/agents ./agents
+COPY --from=builder /app/registry ./registry
 
 # Cloud Run injects PORT=8080; server.ts already reads process.env.PORT
 EXPOSE 8080
