@@ -151,6 +151,51 @@ docker run -p 3000:8080 --env-file lexforum-ai-studio/.env eai-producao
 - The `.next/` build folder and `node_modules/` are git-ignored.
 - Commit convention for app changes: use `[FEAT]`, `[FIX]`, `[DOCS]`, `[STYLE]` prefixed with `LexForum —` (e.g. `[FEAT] LexForum — homepage aprovada`).
 
+## Ciclo Canônico de Simulação — EAI?
+
+### Visão Geral
+O EAI? simula um processo jurídico em até 3 rounds. Um advogado peticiona,
+um juiz julga, e o sistema evolui a tese a cada ciclo.
+
+### Fase 1 — Preparação (acontece uma vez por simulação)
+1. Usuário descreve o caso
+2. Sistema lê e classifica o ramo do direito
+3. AgentResolver busca no registry se já existem advogado e juiz para a área
+   - SE existirem → vai direto para a Fase 2
+   - SE não existirem → AgentResolver aciona Shaw + Especialista para criar
+     os agentes, depois vai para a Fase 2
+
+### Fase 2 — O Ciclo (repete até 3 vezes)
+
+| Round | Advogado                                      | Juiz                          |
+|-------|-----------------------------------------------|-------------------------------|
+| 1     | Peticiona com base no caso do usuário         | Julga sem contexto anterior   |
+| 2     | Relê sentença do Round 1, reescreve e melhora | Julga sem lembrar do Round 1  |
+| 3     | Relê sentenças anteriores, melhora mais ainda | Julga sem lembrar de nada     |
+
+**Regra de memória — NUNCA ALTERAR:**
+Advogado acumula memória entre rounds.
+Juiz recebe cada round sem contexto anterior.
+Esta assimetria é regra de negócio — garante evolução da tese e imparcialidade do julgamento.
+
+**Gate de saída antecipada:**
+Se o sistema detectar probabilidade de ganho ≥ 95% após qualquer round,
+o ciclo encerra. Não é necessário completar os 3 rounds.
+
+### Fase 3 — Apresentação (tempo real)
+O sistema exibe cada petição e cada sentença identificadas por round.
+O usuário acompanha a evolução do caso ciclo a ciclo.
+
+### Modos e fluxos
+
+| Modo | Nome                   | Fluxo                             |
+|------|------------------------|-----------------------------------|
+| 1    | Tese Estratégica       | Ciclo completo — até 3 rounds     |
+| 2    | Defesa Sob Ataque      | Ciclo completo — até 3 rounds     |
+| 3    | Mesa Dupla — Juiz      | Julgamento direto — sem advogado  |
+| 4    | Mesa Dupla — Assistida | Ciclo completo — até 3 rounds     |
+| 5    | Revisão Pós-Conflito   | Detalhamento pendente             |
+
 ## Main Workflow
 
 **Step 1 — Create a seed** (optional)
