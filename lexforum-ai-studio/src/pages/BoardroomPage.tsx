@@ -47,7 +47,7 @@ const MODES = [
 ];
 
 const FLOW_STEPS = [
-  'Peticionando — Advogado Especialista',
+  'Peticionando — Advogado Especializado',
   'Protocolando — Barramento Digital',
   'Julgando — Magistrado Técnico',
   'Revisando — Memória & Estratégia',

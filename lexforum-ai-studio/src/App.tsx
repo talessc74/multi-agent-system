@@ -801,7 +801,7 @@ const handleGeminiError = (err: any) => {
                            <div className="flex justify-between items-center mb-6">
                              <div className="flex flex-col">
                                <span className="text-[9px] font-mono text-white/20">AGT_LAW_{state.detectedArea}</span>
-                               <span className="text-sm font-bold uppercase tracking-tight text-white/80">Advogado Especialista</span>
+                               <span className="text-sm font-bold uppercase tracking-tight text-white/80">Advogado Especializado</span>
                              </div>
                              <span className="px-2 py-0.5 bg-white text-black text-[9px] uppercase tracking-widest font-bold">Petição</span>
                            </div>
@@ -1122,7 +1122,7 @@ const handleGeminiError = (err: any) => {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-[11px] font-bold uppercase tracking-widest text-white">Peticionando</span>
-                      <span className="text-[9px] text-white/40 uppercase font-mono italic">Advogado Especialista</span>
+                      <span className="text-[9px] text-white/40 uppercase font-mono italic">Advogado Especializado</span>
                     </div>
                   </div>
 

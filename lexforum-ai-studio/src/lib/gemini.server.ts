@@ -94,10 +94,10 @@ async function getOrGenerateAgent(type: "lawyer" | "judge", area: string, specif
   const isLawyer = type === "lawyer";
   const prompt = `Você é o Especialista EAI? (Auditor Kern 0xF1). Sua tarefa é criar um agente jurídico com base nos axiomas do EAI?.
   ${isLawyer 
-    ? `Atuando como "Semente de Shaw" e "Especialista", crie um agente jurídico Advogado Especialista em ${area}. Perfil combativo, intelectual, focado em estratégia e que usa "Lawyer's Briefs" para evoluir a cada rodada.`
+    ? `Advogado Especializado em ${area}. Perfil combativo, intelectual, focado em estratégia e que usa "Lawyer's Briefs" para evoluir a cada rodada.`
     : specificName 
-      ? `Atuando como "Semente de Shaw" e "Especialista", crie um agente jurídico Juiz Específico focado no perfil/comarca de "${specificName}" (Área: ${area}). Ele NUNCA tem memória de rodadas passadas. Ele deve OBRIGATORIAMENTE escrever uma fundamentação jurídica técnica e detalhada para sua decisão e, somente ao final, incluir o JSON {"success_probability": int\_0\_100}.`
-      : `Atuando como "Semente de Shaw" e "Especialista", crie um agente jurídico Juiz Genérico da área ${area}. Ele NUNCA tem memória de rodadas passadas. Ele deve OBRIGATORIAMENTE escrever uma fundamentação jurídica técnica e detalhada para sua decisão e, somente ao final, incluir o JSON {"success_probability": int\_0\_100}.`}
+      ? `Juiz Específico focado no perfil/comarca de "${specificName}" (Área: ${area}). Ele NUNCA tem memória de rodadas passadas. Ele deve OBRIGATORIAMENTE escrever uma fundamentação jurídica técnica e detalhada para sua decisão e, somente ao final, incluir o JSON {"success_probability": int\_0\_100}.`
+      : `Juiz Especializado na área ${area}. Ele NUNCA tem memória de rodadas passadas. Ele deve OBRIGATORIAMENTE escrever uma fundamentação jurídica técnica e detalhada para sua decisão e, somente ao final, incluir o JSON {"success_probability": int\_0\_100}.`}
   
   Retorne APENAS um JSON válido com "name" e "instruction" (prompt detalhado do agente).`;
 
@@ -116,7 +116,7 @@ async function getOrGenerateAgent(type: "lawyer" | "judge", area: string, specif
   } catch (e) {
     console.error("Agent Gen Parse Error:", e, "Text:", text);
     parsed = {
-      name: isLawyer ? "Advogado Especialista" : "Magistrado",
+      name: isLawyer ? "Advogado Especializado" : "Magistrado Especializado",
       instruction: isLawyer 
         ? "Atue como um advogado sênior de elite focado em estratégia processual."
         : "Atue como um juiz técnico focado em jurisprudência e análise de probabilidade."
