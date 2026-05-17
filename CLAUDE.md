@@ -93,11 +93,18 @@ Silêncio diante de um problema identificado é traição ao projeto."
 
 ---
 
-## Web Application — LexForum
+## Histórico — LexForum App (descontinuado)
 
-`lexforum-app/` is a standalone Next.js 16 application housed inside this monorepo. It is developed and deployed independently from the multi-agent system.
+O projeto teve origem como LexForum, uma aplicação Next.js 16
+hospedada em lexforum.radiokactus.com via Vercel, com Supabase
+como banco de dados.
 
----
+Em maio de 2026 o produto foi migrado para EAI? Studio
+(lexforum-ai-studio/), stack Vite + Express + Cloud Run.
+O domínio lexforum.radiokactus.com permanece ativo mas
+não é mais o produto principal.
+
+Todo desenvolvimento ativo acontece em lexforum-ai-studio/.
 
 ## EAI? Studio — lexforum-ai-studio
 
