@@ -140,7 +140,8 @@ export async function simulateForumServer(
   attachments: Attachment[],
   specificJudge: string | null,
   agentInstruction?: string,
-  lawyerInstruction?: string
+  lawyerInstruction?: string,
+  onProgress?: (step: string, round: number) => void
 ): Promise<SimulationResult> {
   let lawAgent: { id: string; name: string; instruction: string };
   if (lawyerInstruction) {
@@ -171,7 +172,8 @@ export async function simulateForumServer(
   let lastProb = 0;
 
   for (let i = 1; i <= 3; i++) {
-    const lawPrompt = i === 1 
+    onProgress?.('WRITING', i);
+    const lawPrompt = i === 1
       ? `Peticione para o seguinte caso inicial: ${caseDescription}`
       : `Sentença anterior: ${currentJudgment}\nBreves estratégicos acumulados: ${allBriefs}\nReescreva sua petição de forma muito mais forte para o caso: ${caseDescription}`;
     
@@ -184,6 +186,8 @@ export async function simulateForumServer(
     });
     currentPetition = lawRes.text || "";
 
+    onProgress?.('DELIVERING', i);
+    onProgress?.('JUDGING', i);
     const juiRes: GenerateContentResponse = await ai.models.generateContent({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Julgue a seguinte petição: ${currentPetition}` }] }],
@@ -194,6 +198,7 @@ export async function simulateForumServer(
     currentJudgment = juiRes.text || "";
     lastProb = extractProbability(currentJudgment);
 
+    onProgress?.('REVIEWING', i);
     const briefRes: GenerateContentResponse = await ai.models.generateContent({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Analise a petição e a sentença da rodada ${i} e gere um resumo conciso de argumentos e citações para o próximo round.\nPetição: ${currentPetition}\nSentença: ${currentJudgment}\nBreves Anteriores: ${allBriefs}` }] }],

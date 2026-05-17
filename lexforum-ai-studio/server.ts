@@ -28,52 +28,66 @@ async function startServer() {
     }
   });
 
-  app.post("/api/gemini/simulate", async (req, res) => {
+  app.get("/api/gemini/simulate", async (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    const { caseDescription, area, attachments, specificJudge } =
+      JSON.parse(req.query.payload as string);
+
+    const send = (event: string, data: object) => {
+      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    };
+
+    const areaMap: Record<string, string> = {
+      CONSUMER: 'consumerista',
+      LABOR: 'trabalhista',
+      CIVIL: 'civel',
+      FAMILY: 'familia',
+      SOCIAL_SECURITY: 'previdenciario',
+      OTHER: 'geral',
+    };
+
+    let agentInstruction: string | undefined;
     try {
-      const { caseDescription, area, attachments, specificJudge } = req.body;
+      const entry = await resolveAgent({
+        area: areaMap[area] ?? area.toLowerCase(),
+        comarca: specificJudge ?? undefined,
+        tipo: 'juiz',
+      });
+      const agentJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
+      agentInstruction = JSON.stringify(agentJson);
+      console.log(`[AgentResolver] Usando agente do registry: ${entry.agent_id}`);
+    } catch (e) {
+      console.warn('[AgentResolver] Fallback para agente dinâmico:', e instanceof Error ? e.message : e);
+    }
 
-      const areaMap: Record<string, string> = {
-        CONSUMER: 'consumerista',
-        LABOR: 'trabalhista',
-        CIVIL: 'civel',
-        FAMILY: 'familia',
-        SOCIAL_SECURITY: 'previdenciario',
-        OTHER: 'geral',
-      };
+    let lawyerInstruction: string | undefined;
+    try {
+      const lawyerEntry = await resolveAgent({
+        area: areaMap[area] ?? area.toLowerCase(),
+        comarca: specificJudge ?? undefined,
+        tipo: 'advogado',
+      });
+      const lawyerJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), lawyerEntry.arquivo), 'utf-8'));
+      lawyerInstruction = JSON.stringify(lawyerJson);
+      console.log(`[AgentResolver] Advogado do registry: ${lawyerEntry.agent_id}`);
+    } catch (e) {
+      console.warn('[AgentResolver] Advogado fallback dinâmico:', e instanceof Error ? e.message : e);
+    }
 
-      let agentInstruction: string | undefined;
-      try {
-        const entry = await resolveAgent({
-          area: areaMap[area] ?? area.toLowerCase(),
-          comarca: specificJudge ?? undefined,
-          tipo: 'juiz',
-        });
-        const agentJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
-        agentInstruction = JSON.stringify(agentJson);
-        console.log(`[AgentResolver] Usando agente do registry: ${entry.agent_id}`);
-      } catch (e) {
-        console.warn('[AgentResolver] Fallback para agente dinâmico:', e instanceof Error ? e.message : e);
-      }
-
-      let lawyerInstruction: string | undefined;
-      try {
-        const lawyerEntry = await resolveAgent({
-          area: areaMap[area] ?? area.toLowerCase(),
-          comarca: specificJudge ?? undefined,
-          tipo: 'advogado',
-        });
-        const lawyerJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), lawyerEntry.arquivo), 'utf-8'));
-        lawyerInstruction = JSON.stringify(lawyerJson);
-        console.log(`[AgentResolver] Advogado do registry: ${lawyerEntry.agent_id}`);
-      } catch (e) {
-        console.warn('[AgentResolver] Advogado fallback dinâmico:', e instanceof Error ? e.message : e);
-      }
-
-      const data = await simulateForumServer(caseDescription, area, attachments, specificJudge, agentInstruction, lawyerInstruction);
-      res.json(data);
+    try {
+      const data = await simulateForumServer(
+        caseDescription, area, attachments, specificJudge,
+        agentInstruction, lawyerInstruction,
+        (step, round) => send('progress', { step, round })
+      );
+      send('done', data);
     } catch (error: any) {
-      console.error("Gemini Server Error:", error);
-      res.status(500).json({ error: error.message || "Unknown error" });
+      send('error', { message: error.message || 'Unknown error' });
+    } finally {
+      res.end();
     }
   });
 
