@@ -60,7 +60,7 @@ function safeParseJSON(text: string) {
 
 async function identifyReference(description: string) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.0-flash-lite",
     systemInstruction: JSON.stringify(SHAW_V2),
     contents: [{
       role: "user",
@@ -84,7 +84,7 @@ async function identifyReference(description: string) {
 
 async function generateSeed(legacyData: any, seedId: string) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.0-flash-lite",
     systemInstruction: JSON.stringify(SHAW_V2),
     contents: [{
       role: "user",
@@ -104,7 +104,7 @@ async function generateSeed(legacyData: any, seedId: string) {
 
 async function generateAgent(seed: any, request: string, agentId: string) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.0-flash-lite",
     systemInstruction: JSON.stringify(ESPECIALISTA_V2),
     contents: [{
       role: "user",
