@@ -879,7 +879,7 @@ const handleGeminiError = (err: any) => {
                              </div>
                              <span className="px-2 py-0.5 border border-white/40 text-white text-[9px] uppercase tracking-widest font-bold">Sentença</span>
                            </div>
-                           <div className="text-xs text-white/50 leading-relaxed font-sans mb-6 line-clamp-4">
+                           <div className="text-xs text-white/50 leading-relaxed font-sans mb-6">
                              "<CensoredText text={cleanJudgmentText(round.judgeJudgment) || round.judgeJudgment || ''} enabled={!state.isUnlocked} />"
                            </div>
                            <div className="flex justify-between items-end">
