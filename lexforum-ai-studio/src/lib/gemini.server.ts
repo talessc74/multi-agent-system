@@ -140,6 +140,7 @@ export async function simulateForumServer(
   attachments: Attachment[],
   specificJudge: string | null,
   agentInstruction?: string,
+  agentName?: string,
   lawyerInstruction?: string,
   onProgress?: (step: string, round: number) => void
 ): Promise<SimulationResult> {
@@ -158,7 +159,7 @@ export async function simulateForumServer(
   let judgeName: string;
   if (agentInstruction) {
     judgeInstruction = agentInstruction;
-    judgeName = specificJudge ?? `Juiz ${area}`;
+    judgeName = agentName ?? specificJudge ?? `Juiz ${area}`;
   } else {
     const juiAgent = await getOrGenerateAgent("judge", area, specificJudge);
     judgeInstruction = juiAgent.instruction;

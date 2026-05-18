@@ -50,6 +50,7 @@ async function startServer() {
     };
 
     let agentInstruction: string | undefined;
+    let judgeNameFromRegistry: string | undefined;
     try {
       const entry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
@@ -58,6 +59,7 @@ async function startServer() {
       });
       const agentJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
       agentInstruction = JSON.stringify(agentJson);
+      judgeNameFromRegistry = `Magistrado ${area === 'LABOR' ? 'Trabalhista' : area === 'CONSUMER' ? 'Consumerista' : area === 'CIVIL' ? 'Cível' : area === 'FAMILY' ? 'de Família' : area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'}`;
       console.log(`[AgentResolver] Usando agente do registry: ${entry.agent_id}`);
     } catch (e) {
       console.warn('[AgentResolver] Fallback para agente dinâmico:', e instanceof Error ? e.message : e);
@@ -80,7 +82,9 @@ async function startServer() {
     try {
       const data = await simulateForumServer(
         caseDescription, area, attachments, specificJudge,
-        agentInstruction, lawyerInstruction,
+        agentInstruction,
+        judgeNameFromRegistry,
+        lawyerInstruction,
         (step, round) => send('progress', { step, round })
       );
       send('done', data);
