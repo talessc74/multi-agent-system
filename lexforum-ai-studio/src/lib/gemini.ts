@@ -22,10 +22,11 @@ export function simulateForum(
   specificJudge: string | null,
   onProgress: (step: SimStep, data?: { lawyerName?: string; judgeName?: string; round?: number; rounds?: any; regionIndex?: number }) => void,
   mode: number = 1,
-  defenseDescription: string = ''
+  defenseDescription: string = '',
+  defenseAttachments: Attachment[] = []
 ): Promise<SimulationResult> {
   return new Promise((resolve, reject) => {
-    const payload = JSON.stringify({ caseDescription, area, attachments, specificJudge, mode, defenseDescription });
+    const payload = JSON.stringify({ caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments });
     const url = `/api/gemini/simulate?payload=${encodeURIComponent(payload)}`;
     const eventSource = new EventSource(url);
 

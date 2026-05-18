@@ -144,6 +144,7 @@ export async function simulateForumServer(
   lawyerInstruction?: string,
   mode: number = 1,
   defenseDescription: string = '',
+  defenseAttachments: Attachment[] = [],
   onProgress?: (step: string, round: number, roundData?: SimulationRound) => void
 ): Promise<SimulationResult> {
   let lawAgent: { id: string; name: string; instruction: string };
@@ -182,9 +183,11 @@ export async function simulateForumServer(
     if (mode === 3) {
       onProgress?.('JUDGING', i);
       const juiPrompt = `Você recebeu a petição do Autor e a contestação do Réu. Analise ambos os lados de forma imparcial e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${caseDescription}\n\nCONTESTAÇÃO DO RÉU:\n${defenseDescription}\n\nAo final inclua o JSON {"success_probability": int_0_100} representando a chance de procedência do Autor.`;
+      const authorParts = prepareParts(juiPrompt, attachments);
+      const defenseParts = defenseAttachments.length > 0 ? prepareParts('', defenseAttachments).slice(1) : [];
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
-        contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
+        contents: [{ role: 'user', parts: [...authorParts, ...defenseParts] }],
         config: { systemInstruction: judgeInstruction }
       });
       currentJudgment = juiRes.text || '';

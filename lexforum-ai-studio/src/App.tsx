@@ -99,6 +99,7 @@ export default function App() {
     caseDescription: '',
     defenseDescription: '',
     attachments: [],
+    defenseAttachments: [],
     detectedArea: LegalArea.OTHER,
     caseSummary: null,
     specificJudge: null,
@@ -345,7 +346,8 @@ const handleGeminiError = (err: any) => {
           });
         },
         state.selectedMode,
-        state.defenseDescription
+        state.defenseDescription,
+        state.defenseAttachments
       );
       // Select the best round based on probability (highest, then latest if tie)
       let bestRound = data.rounds[0];
@@ -581,8 +583,34 @@ const handleGeminiError = (err: any) => {
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a petição inicial do autor..."
-                      className="w-full min-h-[300px] bg-transparent px-8 pb-8 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
                     />
+                    {state.attachments.length > 0 && (
+                      <div className="px-8 pb-2 flex flex-wrap gap-2">
+                        {state.attachments.map((file, i) => (
+                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
+                            <FileIcon className="w-3 h-3 text-white/40" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                      <input type="file" id="author-file" className="hidden" multiple accept="image/*,application/pdf"
+                        onChange={async (e) => {
+                          const files = Array.from(e.target.files || []);
+                          const newAtts = await Promise.all(files.map(async file => {
+                            const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
+                            return { name: file.name, type: file.type, size: file.size, data };
+                          }));
+                          setState(prev => ({ ...prev, attachments: [...prev.attachments, ...newAtts] }));
+                        }}
+                      />
+                      <label htmlFor="author-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <Plus className="w-3 h-3" /> Anexar Provas do Autor
+                      </label>
+                    </div>
                   </div>
 
                   <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
@@ -594,8 +622,34 @@ const handleGeminiError = (err: any) => {
                       value={state.defenseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a contestação do réu..."
-                      className="w-full min-h-[300px] bg-transparent px-8 pb-8 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
                     />
+                    {state.defenseAttachments.length > 0 && (
+                      <div className="px-8 pb-2 flex flex-wrap gap-2">
+                        {state.defenseAttachments.map((file, i) => (
+                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
+                            <FileIcon className="w-3 h-3 text-white/40" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                      <input type="file" id="defense-file" className="hidden" multiple accept="image/*,application/pdf"
+                        onChange={async (e) => {
+                          const files = Array.from(e.target.files || []);
+                          const newAtts = await Promise.all(files.map(async file => {
+                            const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
+                            return { name: file.name, type: file.type, size: file.size, data };
+                          }));
+                          setState(prev => ({ ...prev, defenseAttachments: [...prev.defenseAttachments, ...newAtts] }));
+                        }}
+                      />
+                      <label htmlFor="defense-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <Plus className="w-3 h-3" /> Anexar Provas do Réu
+                      </label>
+                    </div>
                   </div>
                 </div>
 
