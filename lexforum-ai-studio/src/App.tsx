@@ -155,7 +155,6 @@ export default function App() {
   }, []);
 
 const [loading, setLoading] = useState(false);
-const [currentRoundIndex, setCurrentRoundIndex] = useState(0);
 const scrollRef = useRef<HTMLDivElement>(null);
 const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -307,11 +306,15 @@ const handleGeminiError = (err: any) => {
             }
 
             // Update agents list when they transition to visible roles
-            if (progressData?.lawyerName && !newActiveAgents.find(a => a.name === progressData.lawyerName)) {
+            if (progressData?.lawyerName && !newActiveAgents.find(a => a.type === 'Advogado')) {
               newActiveAgents.push({ name: progressData.lawyerName, type: 'Advogado', id: `LAW_${Date.now()}` });
+            } else if (progressData?.lawyerName) {
+              newActiveAgents = newActiveAgents.map(a => a.type === 'Advogado' ? { ...a, name: progressData.lawyerName! } : a);
             }
-            if (progressData?.judgeName && !newActiveAgents.find(a => a.name === progressData.judgeName)) {
+            if (progressData?.judgeName && !newActiveAgents.find(a => a.type === 'Magistrado')) {
               newActiveAgents.push({ name: progressData.judgeName, type: 'Magistrado', id: `JUI_${Date.now()}` });
+            } else if (progressData?.judgeName) {
+              newActiveAgents = newActiveAgents.map(a => a.type === 'Magistrado' ? { ...a, name: progressData.judgeName! } : a);
             }
 
             const incomingRounds = progressData?.rounds || [];
@@ -395,20 +398,6 @@ const handleGeminiError = (err: any) => {
     [LegalArea.SOCIAL_SECURITY]: "Direito Previdenciário",
     [LegalArea.FAMILY]: "Direito de Família",
     [LegalArea.OTHER]: "Geral / Outros"
-  };
-
-  const redact = (text: string | undefined, isUnlocked: boolean) => {
-    if (!text) return "";
-    if (isUnlocked) return text;
-    
-    // Simple mock redaction: wrap some parts in black spans
-    const lines = text.split('\n');
-    return lines.map((line, i) => {
-      if (i > 3 && i < 8) {
-        return <span key={i} className="bg-black text-black select-none px-2 rounded-sm block w-full mb-1">REDACTED</span>;
-      }
-      return <p key={i} className="mb-2">{line}</p>;
-    });
   };
 
   const MODE_NAMES: Record<number, string> = {
