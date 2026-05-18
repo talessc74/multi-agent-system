@@ -79,6 +79,15 @@ async function startServer() {
       console.warn('[AgentResolver] Advogado fallback dinâmico:', e instanceof Error ? e.message : e);
     }
 
+    const lawyerDisplayName = `Advogado ${
+      area === 'LABOR' ? 'Trabalhista' :
+      area === 'CONSUMER' ? 'Consumerista' :
+      area === 'CIVIL' ? 'Civilista' :
+      area === 'FAMILY' ? 'de Família' :
+      area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'
+    }`;
+    send('agents', { lawyerName: lawyerDisplayName, judgeName: judgeNameFromRegistry ?? `Magistrado Especializado` });
+
     try {
       const data = await simulateForumServer(
         caseDescription, area, attachments, specificJudge,

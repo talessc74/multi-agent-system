@@ -35,6 +35,11 @@ export function simulateForum(
       onProgress(step as SimStep, { round });
     });
 
+    eventSource.addEventListener('agents', (e) => {
+      const { lawyerName, judgeName } = JSON.parse(e.data);
+      onProgress('SEED_CREATED', { lawyerName, judgeName });
+    });
+
     eventSource.addEventListener('round', (e) => {
       const roundData = JSON.parse(e.data);
       onProgress('REVIEWING', { round: roundData.round, rounds: [roundData] });
