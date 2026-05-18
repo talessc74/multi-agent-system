@@ -97,6 +97,7 @@ export default function App() {
     step: 'boardroom',
     selectedMode: 0,
     caseDescription: '',
+    defenseDescription: '',
     attachments: [],
     detectedArea: LegalArea.OTHER,
     caseSummary: null,
@@ -343,7 +344,8 @@ const handleGeminiError = (err: any) => {
             };
           });
         },
-        state.selectedMode
+        state.selectedMode,
+        state.defenseDescription
       );
       // Select the best round based on probability (highest, then latest if tie)
       let bestRound = data.rounds[0];
@@ -512,7 +514,7 @@ const handleGeminiError = (err: any) => {
               </motion.div>
             )}
 
-            {state.step === 'input' && state.selectedMode >= 3 && (
+            {state.step === 'input' && state.selectedMode >= 4 && (
               <motion.div
                 key="under-construction"
                 initial={{ opacity: 0, y: 10 }}
@@ -537,6 +539,76 @@ const handleGeminiError = (err: any) => {
                   <ArrowRight className="w-3 h-3 rotate-180" />
                   Voltar
                 </button>
+              </motion.div>
+            )}
+
+            {state.step === 'input' && state.selectedMode === 3 && (
+              <motion.div
+                key="input-modo3"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-8"
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                    >
+                      <ArrowRight className="w-3 h-3 rotate-180" />
+                      Voltar
+                    </button>
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-amber-400/60 border border-amber-400/20 px-2 py-0.5">
+                      Mesa Dupla — Juiz
+                    </span>
+                  </div>
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
+                    Insira os dois lados para o <br /><span className="text-[#F4F4F2] font-bold">julgamento direto.</span>
+                  </h1>
+                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                    O magistrado analisa a petição e a contestação sem intervenção de advogado.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                    <div className="px-8 pt-6 pb-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
+                    </div>
+                    <textarea
+                      value={state.caseDescription}
+                      onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
+                      placeholder="Cole ou descreva a petição inicial do autor..."
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-8 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                    />
+                  </div>
+
+                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
+                    <div className="px-8 pt-6 pb-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
+                    </div>
+                    <textarea
+                      value={state.defenseDescription}
+                      onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
+                      placeholder="Cole ou descreva a contestação do réu..."
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-8 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || loading}
+                    onClick={handleValidate}
+                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                  >
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </motion.div>
             )}
 

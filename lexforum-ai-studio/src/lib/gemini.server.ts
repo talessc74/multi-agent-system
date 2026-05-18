@@ -143,6 +143,7 @@ export async function simulateForumServer(
   agentName?: string,
   lawyerInstruction?: string,
   mode: number = 1,
+  defenseDescription: string = '',
   onProgress?: (step: string, round: number, roundData?: SimulationRound) => void
 ): Promise<SimulationResult> {
   let lawAgent: { id: string; name: string; instruction: string };
@@ -173,8 +174,26 @@ export async function simulateForumServer(
   let allBriefs = "";
   let lastProb = 0;
 
-  for (let i = 1; i <= 3; i++) {
+  const maxRounds = mode === 3 ? 1 : 3;
+
+  for (let i = 1; i <= maxRounds; i++) {
     onProgress?.('WRITING', i);
+
+    if (mode === 3) {
+      onProgress?.('JUDGING', i);
+      const juiPrompt = `Você recebeu a petição do Autor e a contestação do Réu. Analise ambos os lados de forma imparcial e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${caseDescription}\n\nCONTESTAÇÃO DO RÉU:\n${defenseDescription}\n\nAo final inclua o JSON {"success_probability": int_0_100} representando a chance de procedência do Autor.`;
+      const juiRes = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
+        config: { systemInstruction: judgeInstruction }
+      });
+      currentJudgment = juiRes.text || '';
+      lastProb = extractProbability(currentJudgment);
+      onProgress?.('REVIEWING', i);
+      rounds.push({ round: i, lawyerPetition: caseDescription, judgeJudgment: currentJudgment, successProbability: lastProb });
+      break;
+    }
+
     const lawPrompt = mode === 2
       ? i === 1
         ? `Você é um advogado de defesa. Crie uma contestação técnica e robusta contra a seguinte acusação recebida pelo seu cliente: ${caseDescription}`
