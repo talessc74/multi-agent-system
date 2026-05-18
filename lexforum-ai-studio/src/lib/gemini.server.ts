@@ -142,7 +142,7 @@ export async function simulateForumServer(
   agentInstruction?: string,
   agentName?: string,
   lawyerInstruction?: string,
-  onProgress?: (step: string, round: number) => void
+  onProgress?: (step: string, round: number, roundData?: SimulationRound) => void
 ): Promise<SimulationResult> {
   let lawAgent: { id: string; name: string; instruction: string };
   if (lawyerInstruction) {
@@ -217,6 +217,8 @@ export async function simulateForumServer(
       successProbability: lastProb,
       lawyerBrief: currentBrief
     });
+
+    onProgress?.('ROUND_DONE', i, rounds[rounds.length - 1]);
 
     if (lastProb >= 95) break;
   }

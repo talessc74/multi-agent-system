@@ -314,6 +314,14 @@ const handleGeminiError = (err: any) => {
               newActiveAgents.push({ name: progressData.judgeName, type: 'Magistrado', id: `JUI_${Date.now()}` });
             }
 
+            const incomingRounds = progressData?.rounds || [];
+            const existingRounds = prev.simulation?.rounds || [];
+            const mergedRounds = incomingRounds.length === 1
+              ? [...existingRounds.filter(r => r.round !== incomingRounds[0].round), ...incomingRounds]
+              : incomingRounds.length > 1
+                ? incomingRounds
+                : existingRounds;
+
             return {
               ...prev,
               simStep: step,
@@ -321,12 +329,12 @@ const handleGeminiError = (err: any) => {
               regionalStats: newStats,
               activeAgents: newActiveAgents,
               error: null,
-              simulation: progressData 
-                ? { 
-                    ...(prev.simulation || { area: state.detectedArea, rounds: [], finalSuccessProbability: 0 }), 
+              simulation: progressData
+                ? {
+                    ...(prev.simulation || { area: state.detectedArea, rounds: [], finalSuccessProbability: 0 }),
                     lawyerAgentName: progressData.lawyerName || prev.simulation?.lawyerAgentName,
                     judgeAgentName: progressData.judgeName || prev.simulation?.judgeAgentName,
-                    rounds: progressData.rounds || prev.simulation?.rounds || []
+                    rounds: mergedRounds
                   } as SimulationResult
                 : prev.simulation
             };

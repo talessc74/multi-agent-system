@@ -85,7 +85,10 @@ async function startServer() {
         agentInstruction,
         judgeNameFromRegistry,
         lawyerInstruction,
-        (step, round) => send('progress', { step, round })
+        (step, round, roundData) => {
+          send('progress', { step, round });
+          if (roundData) send('round', roundData);
+        }
       );
       send('done', data);
     } catch (error: any) {

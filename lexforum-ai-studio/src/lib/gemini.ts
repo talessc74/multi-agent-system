@@ -35,6 +35,11 @@ export function simulateForum(
       onProgress(step as SimStep, { round });
     });
 
+    eventSource.addEventListener('round', (e) => {
+      const roundData = JSON.parse(e.data);
+      onProgress('REVIEWING', { round: roundData.round, rounds: [roundData] });
+    });
+
     eventSource.addEventListener('done', (e) => {
       const data = JSON.parse(e.data);
       onProgress('IDLE', {
