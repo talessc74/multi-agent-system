@@ -342,7 +342,8 @@ const handleGeminiError = (err: any) => {
                 : prev.simulation
             };
           });
-        }
+        },
+        state.selectedMode
       );
       // Select the best round based on probability (highest, then latest if tie)
       let bestRound = data.rounds[0];

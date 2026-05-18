@@ -33,7 +33,7 @@ async function startServer() {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
-    const { caseDescription, area, attachments, specificJudge } =
+    const { caseDescription, area, attachments, specificJudge, mode } =
       JSON.parse(req.query.payload as string);
 
     const send = (event: string, data: object) => {
@@ -94,6 +94,7 @@ async function startServer() {
         agentInstruction,
         judgeNameFromRegistry,
         lawyerInstruction,
+        mode ?? 1,
         (step, round, roundData) => {
           send('progress', { step, round });
           if (roundData) send('round', roundData);

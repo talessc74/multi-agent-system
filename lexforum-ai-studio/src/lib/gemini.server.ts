@@ -142,6 +142,7 @@ export async function simulateForumServer(
   agentInstruction?: string,
   agentName?: string,
   lawyerInstruction?: string,
+  mode: number = 1,
   onProgress?: (step: string, round: number, roundData?: SimulationRound) => void
 ): Promise<SimulationResult> {
   let lawAgent: { id: string; name: string; instruction: string };
@@ -174,9 +175,13 @@ export async function simulateForumServer(
 
   for (let i = 1; i <= 3; i++) {
     onProgress?.('WRITING', i);
-    const lawPrompt = i === 1
-      ? `Peticione para o seguinte caso inicial: ${caseDescription}`
-      : `Sentença anterior: ${currentJudgment}\nBreves estratégicos acumulados: ${allBriefs}\nReescreva sua petição de forma muito mais forte para o caso: ${caseDescription}`;
+    const lawPrompt = mode === 2
+      ? i === 1
+        ? `Você é um advogado de defesa. Crie uma contestação técnica e robusta contra a seguinte acusação recebida pelo seu cliente: ${caseDescription}`
+        : `Sentença anterior: ${currentJudgment}\nBreves estratégicos acumulados: ${allBriefs}\nRefine e fortaleça a contestação contra a acusação inicial: ${caseDescription}`
+      : i === 1
+        ? `Peticione para o seguinte caso inicial: ${caseDescription}`
+        : `Sentença anterior: ${currentJudgment}\nBreves estratégicos acumulados: ${allBriefs}\nReescreva sua petição de forma muito mais forte para o caso: ${caseDescription}`;
     
     const lawRes: GenerateContentResponse = await ai.models.generateContent({
       model: MODEL_NAME,
