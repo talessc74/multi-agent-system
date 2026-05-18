@@ -512,7 +512,7 @@ const handleGeminiError = (err: any) => {
               </motion.div>
             )}
 
-            {state.step === 'input' && state.selectedMode >= 2 && (
+            {state.step === 'input' && state.selectedMode >= 3 && (
               <motion.div
                 key="under-construction"
                 initial={{ opacity: 0, y: 10 }}
@@ -540,7 +540,7 @@ const handleGeminiError = (err: any) => {
               </motion.div>
             )}
 
-            {state.step === 'input' && state.selectedMode < 2 && (
+            {state.step === 'input' && state.selectedMode < 3 && (
               <motion.div
                 key="input"
                 initial={{ opacity: 0, y: 10 }}
