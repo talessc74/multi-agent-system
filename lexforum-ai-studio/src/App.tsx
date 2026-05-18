@@ -1090,6 +1090,39 @@ const handleGeminiError = (err: any) => {
                   </div>
                 )}
 
+                {state.selectedMode === 3 && state.simulation?.rounds[0] && (
+                  <div className="space-y-6 mb-8">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-6 bg-white/5 border border-white/10">
+                        <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-3">Argumento do Autor</div>
+                        <p className="text-sm font-serif italic text-white/70 leading-relaxed">{state.simulation.rounds[0].authorSummary || '—'}</p>
+                      </div>
+                      <div className="p-6 bg-white/5 border border-amber-500/20">
+                        <div className="text-[9px] font-bold uppercase tracking-widest text-amber-500/60 mb-3">Argumento do Réu</div>
+                        <p className="text-sm font-serif italic text-white/70 leading-relaxed">{state.simulation.rounds[0].defenseSummary || '—'}</p>
+                      </div>
+                    </div>
+                    <div className="p-6 bg-white/5 border border-white/10 space-y-4">
+                      <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Veredito Imparcial</div>
+                      <div className="flex items-center gap-0 h-8 rounded-sm overflow-hidden">
+                        <div className="h-full bg-white/40 flex items-center justify-end pr-3 transition-all" style={{ width: `${state.simulation.finalSuccessProbability}%` }}>
+                          <span className="text-[10px] font-bold text-black whitespace-nowrap">{state.simulation.finalSuccessProbability}% AUTOR</span>
+                        </div>
+                        <div className="h-full bg-amber-500/60 flex items-center justify-start pl-3 transition-all" style={{ width: `${100 - state.simulation.finalSuccessProbability}%` }}>
+                          <span className="text-[10px] font-bold text-black whitespace-nowrap">RÉU {100 - state.simulation.finalSuccessProbability}%</span>
+                        </div>
+                      </div>
+                      <p className="text-lg font-serif italic text-white/80">
+                        {state.simulation.finalSuccessProbability >= 55
+                          ? `O Autor vence com ${state.simulation.finalSuccessProbability}% de probabilidade de procedência.`
+                          : state.simulation.finalSuccessProbability <= 45
+                          ? `O Réu vence — probabilidade de procedência do Autor é de apenas ${state.simulation.finalSuccessProbability}%.`
+                          : `Resultado equilibrado — ${state.simulation.finalSuccessProbability}% para o Autor, ${100 - state.simulation.finalSuccessProbability}% para o Réu.`}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 gap-16 print:gap-8">
                   {/* Volume 1: Orientação ao Cliente */}
                   <section className="space-y-6">

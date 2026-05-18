@@ -182,18 +182,21 @@ export async function simulateForumServer(
 
     if (mode === 3) {
       onProgress?.('JUDGING', i);
-      const juiPrompt = `Você recebeu a petição do Autor e a contestação do Réu. Analise ambos os lados de forma imparcial e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${caseDescription}\n\nCONTESTAÇÃO DO RÉU:\n${defenseDescription}\n\nAo final inclua o JSON {"success_probability": int_0_100} representando a chance de procedência do Autor.`;
+      const juiPrompt = `Você recebeu a petição do Autor e a contestação do Réu. Analise ambos os lados de forma imparcial e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${caseDescription}\n\nCONTESTAÇÃO DO RÉU:\n${defenseDescription}\n\nRetorne um JSON com o seguinte formato:\n{\n  "success_probability": <0-100, chance de procedência do AUTOR>,\n  "author_summary": "<resumo em 1-2 frases do argumento central do Autor>",\n  "defense_summary": "<resumo em 1-2 frases do argumento central do Réu>",\n  "judgment": "<veredito técnico completo fundamentado em lei>"\n}`;
       const authorParts = prepareParts(juiPrompt, attachments);
       const defenseParts = defenseAttachments.length > 0 ? prepareParts('', defenseAttachments).slice(1) : [];
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: [...authorParts, ...defenseParts] }],
-        config: { systemInstruction: judgeInstruction }
+        config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
       });
-      currentJudgment = juiRes.text || '';
-      lastProb = extractProbability(currentJudgment);
+      const juiText = juiRes.text || '{}';
+      let juiParsed: any = {};
+      try { juiParsed = JSON.parse(juiText); } catch {}
+      currentJudgment = juiParsed.judgment || juiText;
+      lastProb = juiParsed.success_probability ?? extractProbability(juiText);
       onProgress?.('REVIEWING', i);
-      rounds.push({ round: i, lawyerPetition: caseDescription, judgeJudgment: currentJudgment, successProbability: lastProb });
+      rounds.push({ round: i, lawyerPetition: caseDescription, judgeJudgment: currentJudgment, successProbability: lastProb, authorSummary: juiParsed.author_summary, defenseSummary: juiParsed.defense_summary });
       break;
     }
 

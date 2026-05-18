@@ -20,6 +20,8 @@ export interface SimulationRound {
   judgeJudgment: string;
   successProbability: number;
   lawyerBrief?: string;
+  authorSummary?: string;
+  defenseSummary?: string;
 }
 
 export interface SimulationResult {
