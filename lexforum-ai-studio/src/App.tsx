@@ -1075,9 +1075,20 @@ const handleGeminiError = (err: any) => {
                   </h2>
                   <div className="flex flex-col items-end">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-white/20 print:text-black/40">Probabilidade Final</span>
-                    <span className="text-4xl font-serif italic text-emerald-500 font-bold print:text-black">
-                      {(state.simulation?.rounds && state.simulation.rounds.length > 0) ? `${state.simulation.finalSuccessProbability}` : "--"}
-                    %</span>
+                    {state.selectedMode === 3 && state.simulation ? (
+                      <>
+                        <span className="text-[10px] uppercase font-bold tracking-widest text-white/40 mt-1">
+                          {state.simulation.finalSuccessProbability >= 55 ? '↓ AUTOR FAVORECIDO' : state.simulation.finalSuccessProbability <= 45 ? '↓ RÉU FAVORECIDO' : '↓ RESULTADO EQUILIBRADO'}
+                        </span>
+                        <span className="text-4xl font-serif italic text-emerald-500 font-bold print:text-black">
+                          {state.simulation.finalSuccessProbability >= 55 ? state.simulation.finalSuccessProbability : 100 - state.simulation.finalSuccessProbability}%
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-4xl font-serif italic text-emerald-500 font-bold print:text-black">
+                        {(state.simulation?.rounds && state.simulation.rounds.length > 0) ? `${state.simulation.finalSuccessProbability}` : "--"}%
+                      </span>
+                    )}
                   </div>
                 </div>
 
