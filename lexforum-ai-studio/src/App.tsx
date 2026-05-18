@@ -769,7 +769,7 @@ const handleGeminiError = (err: any) => {
                 )}
                 
                 <p className="text-white/40 text-sm font-sans uppercase tracking-widest leading-relaxed mt-8 max-w-lg mx-auto">
-                  {state.specificJudge ? `Juiz/Comarca identificado: ${state.specificJudge}. ` : ''}Agentes especializados escalados. Deseja iniciar o fórum?
+                  {state.specificJudge && state.specificJudge !== 'null' ? `Juiz/Comarca identificado: ${state.specificJudge}. ` : ''}Agentes especializados escalados. Deseja iniciar o fórum?
                 </p>
                 <div className="flex justify-center gap-4 pt-6">
                   <button 
