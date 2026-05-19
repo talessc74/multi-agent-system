@@ -123,56 +123,60 @@ async function startServer() {
   });
 
   app.post("/api/gemini/mode5", async (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    const { mode5Input, area, attachments, specificJudge } = req.body;
+
+    const send = (event: string, data: object) => {
+      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    };
+
+    const areaMap: Record<string, string> = {
+      CONSUMER: 'consumerista',
+      LABOR: 'trabalhista',
+      CIVIL: 'civel',
+      FAMILY: 'familia',
+      SOCIAL_SECURITY: 'previdenciario',
+      OTHER: 'geral',
+    };
+
+    let agentInstruction: string | undefined;
+    let agentName: string | undefined;
     try {
-      const { mode5Input, area, attachments, specificJudge } = req.body;
+      const entry = await resolveAgent({
+        area: areaMap[area] ?? area.toLowerCase(),
+        comarca: specificJudge ?? undefined,
+        tipo: 'juiz',
+      });
+      const agentJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
+      agentInstruction = JSON.stringify(agentJson);
+      agentName = `Magistrado ${area === 'LABOR' ? 'Trabalhista' : area === 'CONSUMER' ? 'Consumerista' : area === 'CIVIL' ? 'Cível' : area === 'FAMILY' ? 'de Família' : area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'}`;
+      console.log(`[Mode5] Agente do registry: ${entry.agent_id}`);
+    } catch (e) {
+      console.warn('[Mode5] Fallback para Juiz Estrategista dinâmico:', e instanceof Error ? e.message : e);
+    }
 
-      console.log('[Mode5] payload recebido:', JSON.stringify({
-        subCase: mode5Input?.subCase,
-        caseDescLength: mode5Input?.caseDescription?.length,
-        sentencaLength: mode5Input?.sentencaOuProposta?.length,
-        area,
-        specificJudge
-      }));
-
-      const areaMap: Record<string, string> = {
-        CONSUMER: 'consumerista',
-        LABOR: 'trabalhista',
-        CIVIL: 'civel',
-        FAMILY: 'familia',
-        SOCIAL_SECURITY: 'previdenciario',
-        OTHER: 'geral',
-      };
-
-      let agentInstruction: string | undefined;
-      let agentName: string | undefined;
-      try {
-        const entry = await resolveAgent({
-          area: areaMap[area] ?? area.toLowerCase(),
-          comarca: specificJudge ?? undefined,
-          tipo: 'juiz',
-        });
-        const agentJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
-        agentInstruction = JSON.stringify(agentJson);
-        agentName = `Magistrado ${area === 'LABOR' ? 'Trabalhista' : area === 'CONSUMER' ? 'Consumerista' : area === 'CIVIL' ? 'Cível' : area === 'FAMILY' ? 'de Família' : area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'}`;
-        console.log(`[Mode5] Agente do registry: ${entry.agent_id}`);
-      } catch (e) {
-        console.warn('[Mode5] Fallback para Juiz Estrategista dinâmico:', e instanceof Error ? e.message : e);
-      }
-
-      const data = await simulateMode5Server(
+    try {
+      await simulateMode5Server(
         mode5Input,
         area,
         attachments ?? [],
         specificJudge ?? null,
         agentInstruction,
         agentName,
-        (step: string) => console.log(`[Mode5] ${step}`)
+        (step: string, data?: any) => {
+          console.log(`[Mode5] ${step}`);
+          send('progress', { step });
+          if (step === 'DONE' && data) send('done', data);
+        }
       );
-
-      res.json(data);
     } catch (error: any) {
       console.error('[Mode5] Erro:', error);
-      res.status(500).json({ error: error.message || 'Unknown error' });
+      send('error', { message: error.message || 'Unknown error' });
+    } finally {
+      res.end();
     }
   });
 
