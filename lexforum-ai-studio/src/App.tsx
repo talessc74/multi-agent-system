@@ -29,8 +29,8 @@ import {
   History,
   Wrench
 } from 'lucide-react';
-import { LegalArea, SimulationResult, ReportContent, AppState, Attachment } from './types';
-import { validateCausa, simulateForum, generateReport } from './lib/gemini';
+import { LegalArea, SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode5Result } from './types';
+import { validateCausa, simulateForum, generateReport, simulateMode5 } from './lib/gemini';
 import { auth, loginWithGoogle, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, saveSimulation, getUserSimulations } from './services/dbService';
