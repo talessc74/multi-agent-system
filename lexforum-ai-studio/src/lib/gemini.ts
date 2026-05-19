@@ -25,50 +25,87 @@ export function simulateForum(
   defenseDescription: string = '',
   defenseAttachments: Attachment[] = []
 ): Promise<SimulationResult> {
-  return new Promise((resolve, reject) => {
-    const payload = JSON.stringify({ caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments });
-    const url = `/api/gemini/simulate?payload=${encodeURIComponent(payload)}`;
-    const eventSource = new EventSource(url);
-
+  return new Promise(async (resolve, reject) => {
     const regionIndex = Math.floor(Math.random() * 6);
     onProgress('SEED_CREATED', { regionIndex });
 
-    eventSource.addEventListener('progress', (e) => {
-      const { step, round } = JSON.parse(e.data);
-      onProgress(step as SimStep, { round });
-    });
-
-    eventSource.addEventListener('agents', (e) => {
-      const { lawyerName, judgeName } = JSON.parse(e.data);
-      onProgress('SEED_CREATED', { lawyerName, judgeName });
-    });
-
-    eventSource.addEventListener('round', (e) => {
-      const roundData = JSON.parse(e.data);
-      onProgress('REVIEWING', { round: roundData.round, rounds: [roundData] });
-    });
-
-    eventSource.addEventListener('done', (e) => {
-      const data = JSON.parse(e.data);
-      onProgress('IDLE', {
-        lawyerName: data.lawyerAgentName,
-        judgeName: data.judgeAgentName,
-        round: data.rounds.length,
-        rounds: data.rounds
+    let response: Response;
+    try {
+      response = await fetch('/api/gemini/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments }),
       });
-      eventSource.close();
-      resolve(data);
-    });
+    } catch (err: any) {
+      reject(new Error(err.message || 'Erro na simulação SSE'));
+      return;
+    }
 
-    eventSource.addEventListener('error', (e: any) => {
-      eventSource.close();
-      try {
-        const err = JSON.parse(e.data);
-        reject(new Error(err.message));
-      } catch {
-        reject(new Error('Erro na simulação SSE'));
+    if (!response.ok || !response.body) {
+      reject(new Error('Erro na simulação SSE'));
+      return;
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let settled = false;
+
+    const processBlock = (block: string) => {
+      let eventName = 'message';
+      let dataStr = '';
+      for (const line of block.split('\n')) {
+        if (line.startsWith('event: ')) eventName = line.slice(7);
+        else if (line.startsWith('data: ')) dataStr = line.slice(6);
       }
-    });
+      if (!dataStr) return;
+
+      try {
+        const data = JSON.parse(dataStr);
+        if (eventName === 'progress') {
+          const { step, round } = data;
+          onProgress(step as SimStep, { round });
+        } else if (eventName === 'agents') {
+          onProgress('SEED_CREATED', { lawyerName: data.lawyerName, judgeName: data.judgeName });
+        } else if (eventName === 'round') {
+          onProgress('REVIEWING', { round: data.round, rounds: [data] });
+        } else if (eventName === 'done') {
+          onProgress('IDLE', {
+            lawyerName: data.lawyerAgentName,
+            judgeName: data.judgeAgentName,
+            round: data.rounds.length,
+            rounds: data.rounds,
+          });
+          settled = true;
+          resolve(data);
+        } else if (eventName === 'error') {
+          settled = true;
+          reject(new Error(data.message || 'Erro na simulação SSE'));
+        }
+      } catch {
+        if (!settled) {
+          settled = true;
+          reject(new Error('Erro na simulação SSE'));
+        }
+      }
+    };
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let boundary: number;
+        while ((boundary = buffer.indexOf('\n\n')) !== -1) {
+          const block = buffer.slice(0, boundary);
+          buffer = buffer.slice(boundary + 2);
+          if (block.trim()) processBlock(block);
+        }
+      }
+    } catch (err: any) {
+      if (!settled) reject(new Error(err.message || 'Erro na simulação SSE'));
+    }
   });
 }
 
