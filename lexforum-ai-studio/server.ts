@@ -28,13 +28,13 @@ async function startServer() {
     }
   });
 
-  app.get("/api/gemini/simulate", async (req, res) => {
+  app.post("/api/gemini/simulate", async (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
     const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments } =
-      JSON.parse(req.query.payload as string);
+      req.body;
 
     const send = (event: string, data: object) => {
       res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
