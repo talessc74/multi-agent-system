@@ -1,4 +1,4 @@
-import { LegalArea, SimulationResult, ReportContent, Attachment } from "../types";
+import { LegalArea, SimulationResult, ReportContent, Attachment, Mode5Input, Mode5Result } from "../types";
 
 export type SimStep = 'WRITING' | 'DELIVERING' | 'JUDGING' | 'REVIEWING' | 'IDLE' | 'SEED_CREATED';
 
@@ -115,6 +115,24 @@ export async function generateReport(lastPetition: string, lastJudgment: string)
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ lastPetition, lastJudgment })
+  });
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(JSON.stringify(err));
+  }
+  return response.json();
+}
+
+export async function simulateMode5(
+  mode5Input: Mode5Input,
+  area: LegalArea,
+  attachments: Attachment[],
+  specificJudge: string | null
+): Promise<Mode5Result> {
+  const response = await fetch('/api/gemini/mode5', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode5Input, area, attachments, specificJudge })
   });
   if (!response.ok) {
     const err = await response.json();
