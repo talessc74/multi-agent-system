@@ -1337,12 +1337,49 @@ const handleGeminiError = (err: any) => {
             )}
 
             {state.step === 'result' && state.isUnlocked && (
-              <motion.div 
+              <motion.div
                 key="full-result"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="space-y-12 pb-32"
               >
+                {state.mode5Result && (
+                  <div className="space-y-8 mb-12">
+                    <div className="flex items-center justify-between border-b border-white/10 pb-8">
+                      <h2 className="text-5xl font-serif italic tracking-tight text-white/90">
+                        Laudo <span className="text-white font-bold">Estratégico</span>
+                      </h2>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-[10px] uppercase font-bold tracking-widest text-white/20">Recomendação</span>
+                        <span className={`text-2xl font-bold font-serif italic ${state.mode5Result.recommendation === 'RECORRER' ? 'text-red-400' : state.mode5Result.recommendation === 'ACEITAR' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                          {state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}
+                        </span>
+                        <span className="text-[10px] font-mono text-white/30">{state.mode5Result.confidenceLevel}% de confiança</span>
+                      </div>
+                    </div>
+
+                    <div className="p-8 bg-white/5 border border-white/10 space-y-4">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
+                      <p className="text-lg font-serif italic text-white/80 leading-relaxed">{state.mode5Result.strategistAnalysis}</p>
+                    </div>
+
+                    <div className="p-8 bg-[#15161A] border border-white/10 space-y-4">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Fundamentação Jurídica</span>
+                      <p className="text-sm font-mono text-white/60 leading-relaxed">{state.mode5Result.reasoning}</p>
+                    </div>
+
+                    {state.mode5Result.tokenCount && (
+                      <div className="text-[9px] font-mono text-white/20 text-right">
+                        Tokens consumidos nesta análise: {state.mode5Result.tokenCount.toLocaleString()}
+                      </div>
+                    )}
+
+                    <div className="p-4 bg-amber-500/5 border border-amber-500/20 text-[10px] text-amber-400/60 uppercase tracking-widest font-bold">
+                      ⚠️ Simulação educativa — não substitui consultoria jurídica real. Consulte um advogado habilitado.
+                    </div>
+                  </div>
+                )}
+
                 <div className="hidden print:block mb-12 border-b-2 border-black pb-6">
                   <div className="flex justify-between items-center">
                     <Logo variant="light" size="lg" />
