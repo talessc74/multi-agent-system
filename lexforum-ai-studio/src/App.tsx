@@ -1428,12 +1428,16 @@ const handleGeminiError = (err: any) => {
 
                     <div className="p-8 bg-white/5 border border-white/10 space-y-4">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-serif italic text-white/80 leading-relaxed">{state.mode5Result.strategistAnalysis}</p>
+                      <p className="text-lg font-serif italic text-white/80 leading-relaxed">
+                        <CensoredText text={state.mode5Result.strategistAnalysis} enabled={!state.isUnlocked} />
+                      </p>
                     </div>
 
                     <div className="p-8 bg-[#15161A] border border-white/10 space-y-4">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Fundamentação Jurídica</span>
-                      <p className="text-sm font-mono text-white/60 leading-relaxed">{state.mode5Result.reasoning}</p>
+                      <p className="text-sm font-mono text-white/60 leading-relaxed">
+                        <CensoredText text={state.mode5Result.reasoning} enabled={!state.isUnlocked} />
+                      </p>
                     </div>
 
                     {state.mode5Result.tokenCount && (
