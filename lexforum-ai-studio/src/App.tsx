@@ -1401,6 +1401,27 @@ const handleGeminiError = (err: any) => {
                     </div>
                   </motion.div>
                 )}
+
+                {state.step === 'result' && !state.isUnlocked && state.selectedMode === 5 && state.mode5Result && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-8 space-y-6"
+                  >
+                    <div className="p-6 bg-white/5 border border-white/10 space-y-4">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
+                      <p className="text-lg font-serif italic text-white/80 leading-relaxed">
+                        <CensoredText text={state.mode5Result.strategistAnalysis} enabled={true} />
+                      </p>
+                    </div>
+                    <div className="p-6 bg-[#15161A] border border-white/10 space-y-4">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Fundamentação Jurídica</span>
+                      <p className="text-sm font-mono text-white/60 leading-relaxed">
+                        <CensoredText text={state.mode5Result.reasoning} enabled={true} />
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             )}
 
@@ -1462,6 +1483,7 @@ const handleGeminiError = (err: any) => {
                   </div>
                 </div>
 
+                {state.selectedMode !== 5 && (
                 <div className="flex items-center justify-between border-b border-white/10 pb-8 print:border-black/10">
                   <h2 className="text-5xl font-serif italic tracking-tight text-white/90 print:text-black">
                     Laudo <span className="text-white font-bold print:text-black">Estratégico</span>
@@ -1484,8 +1506,9 @@ const handleGeminiError = (err: any) => {
                     )}
                   </div>
                 </div>
+                )}
 
-                {state.caseSummary && (
+                {state.selectedMode !== 5 && state.caseSummary && (
                   <div className="p-8 bg-white/5 border border-white/10 print:bg-gray-50 print:border-black/10 print:p-6 mb-8">
                     <h4 className="text-[10px] uppercase font-bold tracking-[0.3em] text-white/40 print:text-black/60 mb-3">Objeto da Simulação (Entendimento do Sistema)</h4>
                     <p className="text-xl font-serif italic text-white/90 leading-relaxed print:text-black">
