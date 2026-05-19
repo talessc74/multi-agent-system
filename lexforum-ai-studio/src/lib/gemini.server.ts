@@ -332,3 +332,101 @@ export async function generateReportServer(lastPetition: string, lastJudgment: s
 
   return { layman: laymanRes.text || "", professional: profRes.text || "" };
 }
+
+export async function simulateMode5Server(
+  mode5Input: { subCase: 'RECURSO' | 'ACORDO'; caseDescription: string; sentencaOuProposta: string },
+  area: LegalArea,
+  attachments: Attachment[],
+  specificJudge: string | null,
+  agentInstruction?: string,
+  agentName?: string,
+  onProgress?: (step: string) => void
+): Promise<{ subCase: 'RECURSO' | 'ACORDO'; strategistAnalysis: string; recommendation: 'RECORRER' | 'ACEITAR' | 'NEGOCIAR'; confidenceLevel: number; reasoning: string; judgeAgentName: string; tokenCount?: number }> {
+
+  onProgress?.('ANALYZING');
+
+  // Reutiliza o juiz da sessão ou gera um Juiz Estrategista
+  let judgeInstruction: string;
+  let judgeName: string;
+  if (agentInstruction) {
+    judgeInstruction = agentInstruction;
+    judgeName = agentName ?? 'Juiz Estrategista';
+  } else {
+    const juiAgent = await getOrGenerateAgent('judge', area, specificJudge);
+    judgeInstruction = juiAgent.instruction;
+    judgeName = juiAgent.name;
+  }
+
+  const isRecurso = mode5Input.subCase === 'RECURSO';
+
+  const systemPrompt = isRecurso
+    ? `Você é um Juiz Estrategista sênior do EAI?. Analise a sentença apresentada e avalie tecnicamente se vale recorrer.
+       Considere: probabilidade de reforma, fundamentos jurídicos sólidos, custo-benefício processual.
+       ATENÇÃO: Esta é uma simulação educativa — deixe isso explícito na sua análise.
+       Retorne APENAS JSON válido.`
+    : `Você é um Juiz Estrategista sênior do EAI?. Analise a proposta de acordo apresentada e avalie tecnicamente se deve ser aceita, negociada ou rejeitada em favor do julgamento.
+       Considere: probabilidade de êxito em julgamento, valor da proposta vs risco, custo-benefício processual.
+       ATENÇÃO: Esta é uma simulação educativa — deixe isso explícito na sua análise.
+       Retorne APENAS JSON válido.`;
+
+  const userPrompt = isRecurso
+    ? `ÁREA JURÍDICA: ${area}
+       RELATO DO CASO: ${mode5Input.caseDescription}
+       SENTENÇA RECEBIDA: ${mode5Input.sentencaOuProposta}
+
+       Analise e retorne JSON:
+       {
+         "recommendation": "RECORRER" | "NAO_RECORRER",
+         "confidenceLevel": <0-100>,
+         "strategistAnalysis": "<análise completa em linguagem clara>",
+         "reasoning": "<fundamentação jurídica técnica>",
+         "simulationDisclaimer": "<aviso de que é simulação>"
+       }`
+    : `ÁREA JURÍDICA: ${area}
+       RELATO DO CASO: ${mode5Input.caseDescription}
+       PROPOSTA DE ACORDO: ${mode5Input.sentencaOuProposta}
+
+       Analise e retorne JSON:
+       {
+         "recommendation": "ACEITAR" | "NEGOCIAR" | "RECORRER",
+         "confidenceLevel": <0-100>,
+         "strategistAnalysis": "<análise completa em linguagem clara>",
+         "reasoning": "<fundamentação jurídica técnica>",
+         "simulationDisclaimer": "<aviso de que é simulação>"
+       }`;
+
+  onProgress?.('JUDGING');
+
+  const response = await ai.models.generateContent({
+    model: MODEL_NAME,
+    contents: [{ role: 'user', parts: prepareParts(userPrompt, attachments) }],
+    config: {
+      systemInstruction: systemPrompt,
+      responseMimeType: 'application/json'
+    }
+  });
+
+  const text = response.text || '{}';
+  let parsed: any = {};
+  try { parsed = JSON.parse(text); } catch (e) {
+    console.error('Mode5 Parse Error:', e, 'Text:', text);
+  }
+
+  onProgress?.('DONE');
+
+  // Normaliza recommendation para os tipos esperados
+  const rawRec = (parsed.recommendation || '').toUpperCase();
+  const recommendation: 'RECORRER' | 'ACEITAR' | 'NEGOCIAR' =
+    rawRec === 'ACEITAR' ? 'ACEITAR' :
+    rawRec === 'NEGOCIAR' ? 'NEGOCIAR' : 'RECORRER';
+
+  return {
+    subCase: mode5Input.subCase,
+    strategistAnalysis: parsed.strategistAnalysis || '',
+    recommendation,
+    confidenceLevel: parsed.confidenceLevel ?? 50,
+    reasoning: parsed.reasoning || '',
+    judgeAgentName: judgeName,
+    tokenCount: response.usageMetadata?.totalTokenCount
+  };
+}
