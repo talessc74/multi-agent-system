@@ -752,6 +752,7 @@ const handleGeminiError = (err: any) => {
                         >
                           <Plus className="w-4 h-4" />
                           <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
+                          <span className="text-[8px] text-white/20 normal-case tracking-normal">máx 10MB por arquivo · total 20MB</span>
                         </button>
                         <div className="w-[1px] h-4 bg-white/10 mx-2"></div>
                         <p className="text-[10px] text-white/20 uppercase tracking-[0.2em] font-bold">PDF, JPEG ou PNG</p>
