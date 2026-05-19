@@ -612,10 +612,12 @@ const handleGeminiError = (err: any) => {
                           setState(prev => ({ ...prev, attachments: [...prev.attachments, ...newAtts] }));
                         }}
                       />
-                      <label htmlFor="author-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
-                        <Plus className="w-3 h-3" /> Anexar Provas do Autor
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal">máx 10MB por arquivo</span>
-                      </label>
+                      <div className="flex flex-col gap-1">
+                        <label htmlFor="author-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                          <Plus className="w-3 h-3" /> Anexar Provas do Autor
+                        </label>
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                      </div>
                     </div>
                   </div>
 
@@ -657,10 +659,12 @@ const handleGeminiError = (err: any) => {
                           setState(prev => ({ ...prev, defenseAttachments: [...prev.defenseAttachments, ...newAtts] }));
                         }}
                       />
-                      <label htmlFor="defense-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
-                        <Plus className="w-3 h-3" /> Anexar Provas do Réu
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal">máx 10MB por arquivo</span>
-                      </label>
+                      <div className="flex flex-col gap-1">
+                        <label htmlFor="defense-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                          <Plus className="w-3 h-3" /> Anexar Provas do Réu
+                        </label>
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -746,14 +750,16 @@ const handleGeminiError = (err: any) => {
                           multiple
                           accept="image/*,application/pdf"
                         />
-                        <button
-                          onClick={() => fileInputRef.current?.click()}
-                          className="flex items-center gap-3 px-4 py-2 border border-white/10 rounded-sm hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
-                        >
-                          <Plus className="w-4 h-4" />
-                          <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
-                          <span className="text-[8px] text-white/20 normal-case tracking-normal">máx 10MB por arquivo · total 20MB</span>
-                        </button>
+                        <div className="flex flex-col gap-1">
+                          <button
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex items-center gap-3 px-4 py-2 border border-white/10 rounded-sm hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
+                          >
+                            <Plus className="w-4 h-4" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
+                          </button>
+                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        </div>
                         <div className="w-[1px] h-4 bg-white/10 mx-2"></div>
                         <p className="text-[10px] text-white/20 uppercase tracking-[0.2em] font-bold">PDF, JPEG ou PNG</p>
                       </div>
