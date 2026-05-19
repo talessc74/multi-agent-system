@@ -44,6 +44,7 @@ export interface AppState {
   defenseDescription: string;
   attachments: Attachment[];
   defenseAttachments: Attachment[];
+  userSide?: 'AUTHOR' | 'DEFENSE';
   detectedArea: LegalArea;
   caseSummary: string | null;
   specificJudge: string | null;
