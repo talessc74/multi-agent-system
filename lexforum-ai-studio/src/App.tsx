@@ -100,6 +100,7 @@ export default function App() {
     defenseDescription: '',
     attachments: [],
     defenseAttachments: [],
+    userSide: undefined,
     detectedArea: LegalArea.OTHER,
     caseSummary: null,
     specificJudge: null,
@@ -516,7 +517,160 @@ const handleGeminiError = (err: any) => {
               </motion.div>
             )}
 
-            {state.step === 'input' && state.selectedMode >= 4 && (
+            {state.step === 'input' && state.selectedMode === 4 && (
+              <motion.div
+                key="input-modo4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-8"
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                    >
+                      <ArrowRight className="w-3 h-3 rotate-180" />
+                      Voltar
+                    </button>
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-amber-400/60 border border-amber-400/20 px-2 py-0.5">
+                      Mesa Dupla — Assistida
+                    </span>
+                  </div>
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
+                    Insira os dois lados e <br /><span className="text-[#F4F4F2] font-bold">escolha o seu.</span>
+                  </h1>
+                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                    O advogado do seu lado recebe assistência da IA em cada rodada.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                    <div className="px-8 pt-6 pb-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
+                    </div>
+                    <textarea
+                      value={state.caseDescription}
+                      onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
+                      placeholder="Cole ou descreva a petição inicial do autor..."
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                    />
+                    {state.attachments.length > 0 && (
+                      <div className="px-8 pb-2 flex flex-wrap gap-2">
+                        {state.attachments.map((file, i) => (
+                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
+                            <FileIcon className="w-3 h-3 text-white/40" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                      <input type="file" id="author-file-m4" className="hidden" multiple accept="image/*,application/pdf"
+                        onChange={async (e) => {
+                          const files = Array.from(e.target.files || []);
+                          const newAtts: Attachment[] = [];
+                          for (const file of files) {
+                            if (file.size > 10 * 1024 * 1024) {
+                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              continue;
+                            }
+                            const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
+                            newAtts.push({ name: file.name, type: file.type, size: file.size, data });
+                          }
+                          setState(prev => ({ ...prev, attachments: [...prev.attachments, ...newAtts] }));
+                        }}
+                      />
+                      <div className="flex flex-col gap-1">
+                        <label htmlFor="author-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                          <Plus className="w-3 h-3" /> Anexar Provas do Autor
+                        </label>
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
+                    <div className="px-8 pt-6 pb-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
+                    </div>
+                    <textarea
+                      value={state.defenseDescription}
+                      onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
+                      placeholder="Cole ou descreva a contestação do réu..."
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                    />
+                    {state.defenseAttachments.length > 0 && (
+                      <div className="px-8 pb-2 flex flex-wrap gap-2">
+                        {state.defenseAttachments.map((file, i) => (
+                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
+                            <FileIcon className="w-3 h-3 text-white/40" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                      <input type="file" id="defense-file-m4" className="hidden" multiple accept="image/*,application/pdf"
+                        onChange={async (e) => {
+                          const files = Array.from(e.target.files || []);
+                          const newAtts: Attachment[] = [];
+                          for (const file of files) {
+                            if (file.size > 10 * 1024 * 1024) {
+                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              continue;
+                            }
+                            const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
+                            newAtts.push({ name: file.name, type: file.type, size: file.size, data });
+                          }
+                          setState(prev => ({ ...prev, defenseAttachments: [...prev.defenseAttachments, ...newAtts] }));
+                        }}
+                      />
+                      <div className="flex flex-col gap-1">
+                        <label htmlFor="defense-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                          <Plus className="w-3 h-3" /> Anexar Provas do Réu
+                        </label>
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 justify-center">
+                  <button
+                    onClick={() => setState(prev => ({ ...prev, userSide: 'AUTHOR' }))}
+                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'AUTHOR' ? 'bg-white text-black border-white' : 'border-white/20 text-white/40 hover:border-white/40'}`}
+                  >
+                    Sou o Autor
+                  </button>
+                  <button
+                    onClick={() => setState(prev => ({ ...prev, userSide: 'DEFENSE' }))}
+                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'DEFENSE' ? 'bg-amber-500 text-black border-amber-500' : 'border-white/20 text-white/40 hover:border-white/40'}`}
+                  >
+                    Sou o Réu
+                  </button>
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading}
+                    onClick={handleValidate}
+                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                  >
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {state.step === 'input' && state.selectedMode >= 5 && (
               <motion.div
                 key="under-construction"
                 initial={{ opacity: 0, y: 10 }}
