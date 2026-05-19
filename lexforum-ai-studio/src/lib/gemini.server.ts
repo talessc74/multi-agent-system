@@ -359,15 +359,19 @@ export async function simulateMode5Server(
 
   const isRecurso = mode5Input.subCase === 'RECURSO';
 
-  const systemPrompt = isRecurso
-    ? `Você é um Juiz Estrategista sênior do EAI?. Analise a sentença apresentada e avalie tecnicamente se vale recorrer.
-       Considere: probabilidade de reforma, fundamentos jurídicos sólidos, custo-benefício processual.
-       ATENÇÃO: Esta é uma simulação educativa — deixe isso explícito na sua análise.
-       Retorne APENAS JSON válido.`
-    : `Você é um Juiz Estrategista sênior do EAI?. Analise a proposta de acordo apresentada e avalie tecnicamente se deve ser aceita, negociada ou rejeitada em favor do julgamento.
-       Considere: probabilidade de êxito em julgamento, valor da proposta vs risco, custo-benefício processual.
-       ATENÇÃO: Esta é uma simulação educativa — deixe isso explícito na sua análise.
-       Retorne APENAS JSON válido.`;
+  const basePrompt = isRecurso
+    ? `Analise a sentença apresentada e avalie tecnicamente se vale recorrer.
+     Considere: probabilidade de reforma, fundamentos jurídicos sólidos, custo-benefício processual.
+     ATENÇÃO: Esta é uma simulação educativa — deixe isso explícito na sua análise.
+     Retorne APENAS JSON válido.`
+    : `Analise a proposta de acordo apresentada e avalie tecnicamente se deve ser aceita, negociada ou rejeitada em favor do julgamento.
+     Considere: probabilidade de êxito em julgamento, valor da proposta vs risco, custo-benefício processual.
+     ATENÇÃO: Esta é uma simulação educativa — deixe isso explícito na sua análise.
+     Retorne APENAS JSON válido.`;
+
+  const systemPrompt = judgeInstruction
+    ? `${judgeInstruction}\n\n${basePrompt}`
+    : `Você é um Juiz Estrategista sênior do EAI?.\n\n${basePrompt}`;
 
   const userPrompt = isRecurso
     ? `ÁREA JURÍDICA: ${area}
