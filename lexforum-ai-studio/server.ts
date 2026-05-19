@@ -3,7 +3,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
-import { validateCausaServer, simulateForumServer, generateReportServer } from "./src/lib/gemini.server";
+import { validateCausaServer, simulateForumServer, generateReportServer, simulateMode5Server } from "./src/lib/gemini.server";
 import { constructWebhookEvent } from './src/lib/stripe.server.js';
 import simulationStatus from './simulation-status';
 import { resolveAgent } from './agent-resolver';
@@ -119,6 +119,52 @@ async function startServer() {
     } catch (error: any) {
       console.error("Gemini Server Error:", error);
       res.status(500).json({ error: error.message || "Unknown error" });
+    }
+  });
+
+  app.post("/api/gemini/mode5", async (req, res) => {
+    try {
+      const { mode5Input, area, attachments, specificJudge } = req.body;
+
+      const areaMap: Record<string, string> = {
+        CONSUMER: 'consumerista',
+        LABOR: 'trabalhista',
+        CIVIL: 'civel',
+        FAMILY: 'familia',
+        SOCIAL_SECURITY: 'previdenciario',
+        OTHER: 'geral',
+      };
+
+      let agentInstruction: string | undefined;
+      let agentName: string | undefined;
+      try {
+        const entry = await resolveAgent({
+          area: areaMap[area] ?? area.toLowerCase(),
+          comarca: specificJudge ?? undefined,
+          tipo: 'juiz',
+        });
+        const agentJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
+        agentInstruction = JSON.stringify(agentJson);
+        agentName = `Magistrado ${area === 'LABOR' ? 'Trabalhista' : area === 'CONSUMER' ? 'Consumerista' : area === 'CIVIL' ? 'Cível' : area === 'FAMILY' ? 'de Família' : area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'}`;
+        console.log(`[Mode5] Agente do registry: ${entry.agent_id}`);
+      } catch (e) {
+        console.warn('[Mode5] Fallback para Juiz Estrategista dinâmico:', e instanceof Error ? e.message : e);
+      }
+
+      const data = await simulateMode5Server(
+        mode5Input,
+        area,
+        attachments ?? [],
+        specificJudge ?? null,
+        agentInstruction,
+        agentName,
+        (step: string) => console.log(`[Mode5] ${step}`)
+      );
+
+      res.json(data);
+    } catch (error: any) {
+      console.error('[Mode5] Erro:', error);
+      res.status(500).json({ error: error.message || 'Unknown error' });
     }
   });
 
