@@ -750,6 +750,59 @@ const handleGeminiError = (err: any) => {
                       />
                     </div>
 
+                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
+                      <div className="px-8 pt-6 pb-2">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                          Anexar Documentos
+                        </span>
+                      </div>
+                      <div className="px-8 pb-6 pt-2">
+                        <input
+                          type="file"
+                          id="mode5-file"
+                          className="hidden"
+                          multiple
+                          accept="image/*,application/pdf"
+                          onChange={async (e) => {
+                            const files = Array.from(e.target.files || []);
+                            const newAtts: Attachment[] = [];
+                            for (const file of files) {
+                              if (file.size > 10 * 1024 * 1024) {
+                                alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                                continue;
+                              }
+                              const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
+                              newAtts.push({ name: file.name, type: file.type, size: file.size, data });
+                            }
+                            setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, attachments: [...(prev.mode5Input?.attachments || []), ...newAtts] } }));
+                          }}
+                        />
+                        {(state.mode5Input?.attachments || []).length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {(state.mode5Input?.attachments || []).map((file, i) => (
+                              <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 border border-white/5">
+                                <FileIcon className="w-3 h-3 text-white/40" />
+                                <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
+                                <button
+                                  onClick={() => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, attachments: (prev.mode5Input?.attachments || []).filter((_, j) => j !== i) } }))}
+                                  className="text-white/30 hover:text-red-500"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        <div className="flex flex-col gap-1">
+                          <label htmlFor="mode5-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                            <Plus className="w-3 h-3" /> Anexar Sentença ou Documentos
+                          </label>
+                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB · PDF, JPEG ou PNG</span>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="p-4 bg-amber-500/5 border border-amber-500/20 text-[10px] text-amber-400/60 uppercase tracking-widest font-bold">
                       ⚠️ Simulação educativa — os agentes são IAs simulando papéis jurídicos. Não substitui advogado real.
                     </div>
