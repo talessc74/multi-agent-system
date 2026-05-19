@@ -304,7 +304,10 @@ const handleGeminiError = (err: any) => {
           state.mode5Input,
           state.detectedArea,
           state.mode5Input.attachments || [],
-          state.specificJudge
+          state.specificJudge,
+          (step: string) => {
+            setState(prev => ({ ...prev, simStep: step as any }));
+          }
         );
         setState(prev => ({ ...prev, step: 'result', mode5Result: result, isUnlocked: false, simStep: 'IDLE' }));
       } catch (err) {
