@@ -26,8 +26,7 @@ import {
   Cpu,
   Database,
   Activity,
-  History,
-  Wrench
+  History
 } from 'lucide-react';
 import { LegalArea, SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode5Result } from './types';
 import { validateCausa, simulateForum, generateReport, simulateMode5 } from './lib/gemini';
