@@ -299,6 +299,12 @@ const handleGeminiError = (err: any) => {
       }
       setLoading(true);
       setState(prev => ({ ...prev, step: 'simulating', simStep: 'JUDGING' }));
+      setState(prev => ({
+        ...prev,
+        activeAgents: [
+          { name: 'Juiz Estrategista', type: 'Magistrado', id: `MODE5_JUDGE_${Date.now()}` }
+        ]
+      }));
       try {
         const result = await simulateMode5(
           state.mode5Input,
