@@ -212,7 +212,7 @@ const handleGeminiError = (err: any) => {
     
     for (const file of fileList) {
       if (file.size > 10 * 1024 * 1024) {
-        alert(`Arquivo ${file.name} é muito grande (máx 10MB)`);
+        alert(`Arquivo muito grande. Limite: 10MB por arquivo (total de anexos: 20MB)`);
         continue;
       }
 
@@ -600,15 +600,21 @@ const handleGeminiError = (err: any) => {
                       <input type="file" id="author-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
-                          const newAtts = await Promise.all(files.map(async file => {
+                          const newAtts: Attachment[] = [];
+                          for (const file of files) {
+                            if (file.size > 10 * 1024 * 1024) {
+                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              continue;
+                            }
                             const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
-                            return { name: file.name, type: file.type, size: file.size, data };
-                          }));
+                            newAtts.push({ name: file.name, type: file.type, size: file.size, data });
+                          }
                           setState(prev => ({ ...prev, attachments: [...prev.attachments, ...newAtts] }));
                         }}
                       />
                       <label htmlFor="author-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
                         <Plus className="w-3 h-3" /> Anexar Provas do Autor
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal">máx 10MB por arquivo</span>
                       </label>
                     </div>
                   </div>
@@ -639,15 +645,21 @@ const handleGeminiError = (err: any) => {
                       <input type="file" id="defense-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
-                          const newAtts = await Promise.all(files.map(async file => {
+                          const newAtts: Attachment[] = [];
+                          for (const file of files) {
+                            if (file.size > 10 * 1024 * 1024) {
+                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              continue;
+                            }
                             const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
-                            return { name: file.name, type: file.type, size: file.size, data };
-                          }));
+                            newAtts.push({ name: file.name, type: file.type, size: file.size, data });
+                          }
                           setState(prev => ({ ...prev, defenseAttachments: [...prev.defenseAttachments, ...newAtts] }));
                         }}
                       />
                       <label htmlFor="defense-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
                         <Plus className="w-3 h-3" /> Anexar Provas do Réu
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal">máx 10MB por arquivo</span>
                       </label>
                     </div>
                   </div>
