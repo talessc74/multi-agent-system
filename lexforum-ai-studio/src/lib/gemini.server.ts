@@ -340,7 +340,7 @@ export async function simulateMode5Server(
   specificJudge: string | null,
   agentInstruction?: string,
   agentName?: string,
-  onProgress?: (step: string) => void
+  onProgress?: (step: string, data?: any) => void
 ): Promise<{ subCase: 'RECURSO' | 'ACORDO'; strategistAnalysis: string; recommendation: 'RECORRER' | 'ACEITAR' | 'NEGOCIAR'; confidenceLevel: number; reasoning: string; judgeAgentName: string; tokenCount?: number }> {
 
   onProgress?.('ANALYZING');
@@ -416,13 +416,21 @@ export async function simulateMode5Server(
     console.error('Mode5 Parse Error:', e, 'Text:', text);
   }
 
-  onProgress?.('DONE');
-
   // Normaliza recommendation para os tipos esperados
   const rawRec = (parsed.recommendation || '').toUpperCase();
   const recommendation: 'RECORRER' | 'ACEITAR' | 'NEGOCIAR' =
     rawRec === 'ACEITAR' ? 'ACEITAR' :
     rawRec === 'NEGOCIAR' ? 'NEGOCIAR' : 'RECORRER';
+
+  onProgress?.('DONE', {
+    subCase: mode5Input.subCase,
+    strategistAnalysis: parsed.strategistAnalysis || '',
+    recommendation,
+    confidenceLevel: parsed.confidenceLevel ?? 50,
+    reasoning: parsed.reasoning || '',
+    judgeAgentName: judgeName,
+    tokenCount: response.usageMetadata?.totalTokenCount
+  });
 
   return {
     subCase: mode5Input.subCase,
