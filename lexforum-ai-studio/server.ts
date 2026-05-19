@@ -126,6 +126,14 @@ async function startServer() {
     try {
       const { mode5Input, area, attachments, specificJudge } = req.body;
 
+      console.log('[Mode5] payload recebido:', JSON.stringify({
+        subCase: mode5Input?.subCase,
+        caseDescLength: mode5Input?.caseDescription?.length,
+        sentencaLength: mode5Input?.sentencaOuProposta?.length,
+        area,
+        specificJudge
+      }));
+
       const areaMap: Record<string, string> = {
         CONSUMER: 'consumerista',
         LABOR: 'trabalhista',
