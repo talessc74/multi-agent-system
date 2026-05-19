@@ -285,6 +285,26 @@ const handleGeminiError = (err: any) => {
   };
 
   const handleSimulate = async () => {
+    if (state.selectedMode === 5) {
+      if (!state.mode5Input) return;
+      setLoading(true);
+      setState(prev => ({ ...prev, step: 'simulating', simStep: 'JUDGING' }));
+      try {
+        const result = await simulateMode5(
+          state.mode5Input,
+          state.detectedArea,
+          state.mode5Input.attachments || [],
+          state.specificJudge
+        );
+        setState(prev => ({ ...prev, step: 'result', mode5Result: result, isUnlocked: false, simStep: 'IDLE' }));
+      } catch (err) {
+        handleGeminiError(err);
+        setState(prev => ({ ...prev, step: 'input', simStep: 'IDLE' }));
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
     setLoading(true);
     setState(prev => ({ ...prev, step: 'simulating' }));
     try {
@@ -810,25 +830,7 @@ const handleGeminiError = (err: any) => {
                     <div className="flex justify-end">
                       <button
                         disabled={!state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
-                        onClick={async () => {
-                          if (!state.mode5Input) return;
-                          setLoading(true);
-                          setState(prev => ({ ...prev, step: 'simulating', simStep: 'JUDGING' }));
-                          try {
-                            const result = await simulateMode5(
-                              state.mode5Input,
-                              state.detectedArea,
-                              state.mode5Input.attachments || [],
-                              state.specificJudge
-                            );
-                            setState(prev => ({ ...prev, step: 'result', mode5Result: result, isUnlocked: false, simStep: 'IDLE' }));
-                          } catch (err) {
-                            handleGeminiError(err);
-                            setState(prev => ({ ...prev, step: 'input', simStep: 'IDLE' }));
-                          } finally {
-                            setLoading(false);
-                          }
-                        }}
+                        onClick={handleValidate}
                         className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
                       >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Consultar Juiz Estrategista'}
