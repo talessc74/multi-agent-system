@@ -145,7 +145,8 @@ export async function simulateForumServer(
   mode: number = 1,
   defenseDescription: string = '',
   defenseAttachments: Attachment[] = [],
-  onProgress?: (step: string, round: number, roundData?: SimulationRound) => void
+  onProgress?: (step: string, round: number, roundData?: SimulationRound) => void,
+  userSide?: 'AUTHOR' | 'DEFENSE'
 ): Promise<SimulationResult> {
   let lawAgent: { id: string; name: string; instruction: string };
   if (lawyerInstruction) {
@@ -174,6 +175,61 @@ export async function simulateForumServer(
   let currentJudgment = "";
   let allBriefs = "";
   let lastProb = 0;
+
+  if (mode === 4) {
+    for (let i = 1; i <= 3; i++) {
+      onProgress?.('WRITING', i);
+
+      const userPetition = userSide === 'DEFENSE' ? defenseDescription : caseDescription;
+      const staticSide = userSide === 'DEFENSE' ? caseDescription : defenseDescription;
+      const userAtts = userSide === 'DEFENSE' ? defenseAttachments : attachments;
+
+      const lawPrompt = i === 1
+        ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente: ${userPetition}`
+        : `Sentença anterior: ${currentJudgment}\nMelhore ainda mais: ${userPetition}`;
+
+      const lawRes = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: [{ role: 'user', parts: prepareParts(lawPrompt, userAtts) }],
+        config: { systemInstruction: lawAgent.instruction }
+      });
+      currentPetition = lawRes.text || '';
+
+      onProgress?.('JUDGING', i);
+
+      const authorText = userSide === 'DEFENSE' ? staticSide : currentPetition;
+      const defenseText = userSide === 'DEFENSE' ? currentPetition : staticSide;
+
+      const juiPrompt = `Analise ambos os lados e emita veredito.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100>,"author_summary":"<resumo>","defense_summary":"<resumo>","judgment":"<veredito>"}`;
+
+      const juiRes = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
+        config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
+      });
+
+      const juiText = juiRes.text || '{}';
+      let juiParsed: any = {};
+      try { juiParsed = JSON.parse(juiText); } catch {}
+      currentJudgment = juiParsed.judgment || juiText;
+      lastProb = juiParsed.success_probability ?? extractProbability(juiText);
+
+      onProgress?.('REVIEWING', i);
+      rounds.push({
+        round: i,
+        lawyerPetition: currentPetition,
+        judgeJudgment: currentJudgment,
+        successProbability: lastProb,
+        authorSummary: juiParsed.author_summary,
+        defenseSummary: juiParsed.defense_summary
+      });
+
+      onProgress?.('ROUND_DONE', i, rounds[rounds.length - 1]);
+      if (lastProb >= 95) break;
+    }
+    return { area, rounds, finalSuccessProbability: lastProb,
+             lawyerAgentName: lawAgent.name, judgeAgentName: judgeName };
+  }
 
   const maxRounds = mode === 3 ? 1 : 3;
 
