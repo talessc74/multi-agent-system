@@ -1249,7 +1249,7 @@ const handleGeminiError = (err: any) => {
                   </h2>
                   <div className="flex flex-col items-end">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-white/20 print:text-black/40">Probabilidade Final</span>
-                    {state.selectedMode === 3 && state.simulation ? (
+                    {(state.selectedMode === 3 || state.selectedMode === 4) && state.simulation ? (
                       <>
                         <span className="text-[10px] uppercase font-bold tracking-widest text-white/40 mt-1">
                           {state.simulation.finalSuccessProbability >= 55 ? '↓ AUTOR FAVORECIDO' : state.simulation.finalSuccessProbability <= 45 ? '↓ RÉU FAVORECIDO' : '↓ RESULTADO EQUILIBRADO'}
@@ -1275,7 +1275,7 @@ const handleGeminiError = (err: any) => {
                   </div>
                 )}
 
-                {state.selectedMode === 3 && state.simulation?.rounds[0] && (
+                {(state.selectedMode === 3 || state.selectedMode === 4) && state.simulation?.rounds[0] && (
                   <div className="space-y-6 mb-8">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-6 bg-white/5 border border-white/10">
