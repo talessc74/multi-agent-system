@@ -33,7 +33,7 @@ async function startServer() {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
-    const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments } =
+    const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide } =
       req.body;
 
     const send = (event: string, data: object) => {
@@ -100,7 +100,8 @@ async function startServer() {
         (step, round, roundData) => {
           send('progress', { step, round });
           if (roundData) send('round', roundData);
-        }
+        },
+        userSide
       );
       send('done', data);
     } catch (error: any) {
