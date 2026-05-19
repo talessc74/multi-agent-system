@@ -1122,6 +1122,21 @@ const handleGeminiError = (err: any) => {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Modo 4: lado estático */}
+                        {state.selectedMode === 4 && (
+                          <div className="bg-[#15161A] border border-white/5 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden opacity-50">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-white/10"></div>
+                            <div className="flex justify-between items-center mb-4">
+                              <span className="text-sm font-bold uppercase tracking-tight text-white/40">
+                                {state.userSide === 'AUTHOR' ? 'Contestação do Réu' : 'Petição do Autor'}
+                              </span>
+                              <span className="px-2 py-0.5 border border-white/10 text-white/30 text-[9px] uppercase tracking-widest font-bold">Estático</span>
+                            </div>
+                            <p className="text-xs text-white/20 italic font-serif line-clamp-4">
+                              {state.userSide === 'AUTHOR' ? state.defenseDescription : state.caseDescription}
+                            </p>
+                          </div>
+                        )}
                         {/* Agent: Lawyer */}
                         <div className="bg-[#15161A] border border-white/10 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden">
                            <div className="absolute top-0 left-0 w-1 h-full bg-white/40"></div>
@@ -1130,7 +1145,14 @@ const handleGeminiError = (err: any) => {
                                <span className="text-[9px] font-mono text-white/20">AGT_LAW_{state.detectedArea}</span>
                                <span className="text-sm font-bold uppercase tracking-tight text-white/80">Advogado Especializado</span>
                              </div>
-                             <span className="px-2 py-0.5 bg-white text-black text-[9px] uppercase tracking-widest font-bold">Petição</span>
+                             <div className="flex flex-col items-end gap-1">
+                               <span className="px-2 py-0.5 bg-white text-black text-[9px] uppercase tracking-widest font-bold">Petição</span>
+                               {state.selectedMode === 4 && (
+                                 <span className="px-2 py-0.5 bg-amber-500 text-black text-[9px] uppercase tracking-widest font-bold">
+                                   {state.userSide === 'AUTHOR' ? 'IA Assistindo Autor' : 'IA Assistindo Réu'}
+                                 </span>
+                               )}
+                             </div>
                            </div>
                            <div className="text-xs text-white/50 leading-relaxed italic font-serif mb-6 line-clamp-4">
                              "<CensoredText text={round.lawyerPetition} enabled={!state.isUnlocked} />"
