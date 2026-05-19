@@ -58,4 +58,24 @@ export interface AppState {
   showForgeMonitor: boolean;
   currentRound: number;
   error?: { code: number | string; message: string; isQuota: boolean } | null;
+  mode5Input?: Mode5Input;
+  mode5Result?: Mode5Result;
+}
+
+export type Mode5SubCase = 'RECURSO' | 'ACORDO';
+
+export interface Mode5Input {
+  subCase: Mode5SubCase;
+  caseDescription: string;
+  sentencaOuProposta: string;
+  attachments: Attachment[];
+}
+
+export interface Mode5Result {
+  subCase: Mode5SubCase;
+  strategistAnalysis: string;
+  recommendation: 'RECORRER' | 'ACEITAR' | 'NEGOCIAR';
+  confidenceLevel: number;
+  reasoning: string;
+  tokenCount?: number;
 }
