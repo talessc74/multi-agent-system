@@ -292,7 +292,11 @@ const handleGeminiError = (err: any) => {
 
   const handleSimulate = async () => {
     if (state.selectedMode === 5) {
-      if (!state.mode5Input) return;
+      if (!state.mode5Input) {
+        console.error('[Mode5] state.mode5Input está undefined no handleSimulate');
+        handleGeminiError(new Error('Dados do Modo 5 não encontrados. Tente novamente.'));
+        return;
+      }
       setLoading(true);
       setState(prev => ({ ...prev, step: 'simulating', simStep: 'JUDGING' }));
       try {
