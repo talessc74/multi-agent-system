@@ -1525,6 +1525,7 @@ const handleGeminiError = (err: any) => {
 
                 <div className="grid grid-cols-1 gap-16 print:gap-8">
                   {/* Volume 1: Orientação ao Cliente */}
+                  {state.selectedMode !== 5 && (
                   <section className="space-y-6">
                     <div className="flex items-center gap-4 border-b border-emerald-500/30 pb-4 print:border-black/10">
                       <div className="flex flex-col gap-1">
@@ -1545,8 +1546,10 @@ const handleGeminiError = (err: any) => {
                       </ReactMarkdown>
                     </div>
                   </section>
+                  )}
 
                   {/* Volume 2: Fundamentação Técnica Estratégica */}
+                  {state.selectedMode !== 5 && (
                   <section className="space-y-6">
                     <div className="flex items-center gap-4 border-b border-white/10 pb-4 print:border-black/10">
                       <div className="flex flex-col gap-1">
@@ -1567,8 +1570,10 @@ const handleGeminiError = (err: any) => {
                       </ReactMarkdown>
                     </div>
                   </section>
+                  )}
 
                   {/* Volume 3: Anexos Processuais (Audit Trail) */}
+                  {state.selectedMode !== 5 && (
                   <section className="space-y-6 pt-12 border-t-2 border-white/10 print:border-black/20 print:pt-8 print:break-before-page">
                     <div className="flex flex-col gap-2 border-b border-white/5 pb-6 print:border-black/10">
                       <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-white/40 print:text-black/60">
@@ -1635,6 +1640,7 @@ const handleGeminiError = (err: any) => {
                       ))}
                     </div>
                   </section>
+                  )}
                 </div>
               </motion.div>
             )}
