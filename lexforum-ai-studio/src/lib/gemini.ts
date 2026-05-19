@@ -23,7 +23,8 @@ export function simulateForum(
   onProgress: (step: SimStep, data?: { lawyerName?: string; judgeName?: string; round?: number; rounds?: any; regionIndex?: number }) => void,
   mode: number = 1,
   defenseDescription: string = '',
-  defenseAttachments: Attachment[] = []
+  defenseAttachments: Attachment[] = [],
+  userSide?: 'AUTHOR' | 'DEFENSE'
 ): Promise<SimulationResult> {
   return new Promise(async (resolve, reject) => {
     const regionIndex = Math.floor(Math.random() * 6);
@@ -34,7 +35,7 @@ export function simulateForum(
       response = await fetch('/api/gemini/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments }),
+        body: JSON.stringify({ caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide }),
       });
     } catch (err: any) {
       reject(new Error(err.message || 'Erro na simulação SSE'));
