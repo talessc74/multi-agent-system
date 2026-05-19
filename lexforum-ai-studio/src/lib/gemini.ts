@@ -123,20 +123,77 @@ export async function generateReport(lastPetition: string, lastJudgment: string)
   return response.json();
 }
 
-export async function simulateMode5(
+export function simulateMode5(
   mode5Input: Mode5Input,
   area: LegalArea,
   attachments: Attachment[],
-  specificJudge: string | null
+  specificJudge: string | null,
+  onProgress?: (step: string) => void
 ): Promise<Mode5Result> {
-  const response = await fetch('/api/gemini/mode5', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ mode5Input, area, attachments, specificJudge })
+  return new Promise(async (resolve, reject) => {
+    let response: Response;
+    try {
+      response = await fetch('/api/gemini/mode5', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode5Input, area, attachments, specificJudge })
+      });
+    } catch (err: any) {
+      reject(new Error(err.message || 'Erro no Modo 5'));
+      return;
+    }
+
+    if (!response.ok || !response.body) {
+      reject(new Error('Erro no Modo 5'));
+      return;
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let settled = false;
+
+    const processBlock = (block: string) => {
+      let eventName = 'message';
+      let dataStr = '';
+      for (const line of block.split('\n')) {
+        if (line.startsWith('event: ')) eventName = line.slice(7);
+        else if (line.startsWith('data: ')) dataStr = line.slice(6);
+      }
+      if (!dataStr) return;
+      try {
+        const data = JSON.parse(dataStr);
+        if (eventName === 'progress') {
+          onProgress?.(data.step);
+        } else if (eventName === 'done') {
+          settled = true;
+          resolve(data);
+        } else if (eventName === 'error') {
+          settled = true;
+          reject(new Error(data.message || 'Erro no Modo 5'));
+        }
+      } catch {
+        if (!settled) {
+          settled = true;
+          reject(new Error('Erro no Modo 5'));
+        }
+      }
+    };
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        let boundary: number;
+        while ((boundary = buffer.indexOf('\n\n')) !== -1) {
+          const block = buffer.slice(0, boundary);
+          buffer = buffer.slice(boundary + 2);
+          if (block.trim()) processBlock(block);
+        }
+      }
+    } catch (err: any) {
+      if (!settled) reject(new Error(err.message || 'Erro no Modo 5'));
+    }
   });
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(JSON.stringify(err));
-  }
-  return response.json();
 }
