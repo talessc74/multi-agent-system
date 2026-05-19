@@ -244,10 +244,16 @@ const handleGeminiError = (err: any) => {
   };
 
   const handleValidate = async () => {
-    if (!state.caseDescription.trim()) return;
+    const descToValidate = state.selectedMode === 5
+      ? state.mode5Input?.caseDescription || ''
+      : state.caseDescription;
+    const attsToValidate = state.selectedMode === 5
+      ? state.mode5Input?.attachments || []
+      : state.attachments;
+    if (!descToValidate.trim()) return;
     setLoading(true);
     try {
-      const data = await validateCausa(state.caseDescription, state.attachments);
+      const data = await validateCausa(descToValidate, attsToValidate);
       setState(prev => ({ 
         ...prev, 
         step: 'confirm', 
