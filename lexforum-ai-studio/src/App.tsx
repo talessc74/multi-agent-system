@@ -671,31 +671,120 @@ const handleGeminiError = (err: any) => {
               </motion.div>
             )}
 
-            {state.step === 'input' && state.selectedMode >= 5 && (
+            {state.step === 'input' && state.selectedMode === 5 && (
               <motion.div
-                key="under-construction"
+                key="input-modo5"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="flex flex-col items-center justify-center min-h-[60vh] gap-8 text-center"
+                className="space-y-8"
               >
-                <Wrench className="w-16 h-16 text-white/20" strokeWidth={1.5} />
-                <div className="space-y-3">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-amber-400/60 border border-amber-400/20 px-3 py-1">
-                    {MODE_NAMES[state.selectedMode]}
-                  </span>
-                  <h2 className="text-4xl font-serif italic text-white/90 mt-4">Em construção.</h2>
-                  <p className="text-white/30 text-sm uppercase tracking-widest font-medium max-w-sm">
-                    Este modo está em desenvolvimento. Em breve estará disponível.
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                    >
+                      <ArrowRight className="w-3 h-3 rotate-180" />
+                      Voltar
+                    </button>
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-amber-400/60 border border-amber-400/20 px-2 py-0.5">
+                      Revisão Pós-Conflito
+                    </span>
+                  </div>
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
+                    Sentença ou proposta? <br /><span className="text-[#F4F4F2] font-bold">O Juiz Estrategista avalia.</span>
+                  </h1>
+                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                    Simulação educativa — não substitui consultoria jurídica real.
                   </p>
                 </div>
-                <button
-                  onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                  className="flex items-center gap-2 px-8 py-3 border border-white/10 text-[11px] font-bold uppercase tracking-widest text-white/50 hover:text-white hover:border-white/30 transition-colors"
-                >
-                  <ArrowRight className="w-3 h-3 rotate-180" />
-                  Voltar
-                </button>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'RECURSO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: [] } }))}
+                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'RECURSO' ? 'bg-white text-black border-white' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-widest block">⚖️ Tenho uma Sentença</span>
+                    <span className="text-xs opacity-60">Quero saber se vale recorrer</span>
+                  </button>
+                  <button
+                    onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'ACORDO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: [] } }))}
+                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'ACORDO' ? 'bg-amber-500 text-black border-amber-500' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-widest block">🤝 Tenho uma Proposta de Acordo</span>
+                    <span className="text-xs opacity-60">Quero saber se aceito ou vou a julgamento</span>
+                  </button>
+                </div>
+
+                {state.mode5Input?.subCase && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-6"
+                  >
+                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                      <div className="px-8 pt-6 pb-2">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Relato do Caso</span>
+                      </div>
+                      <textarea
+                        value={state.mode5Input?.caseDescription || ''}
+                        onChange={(e) => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, caseDescription: e.target.value } }))}
+                        placeholder="Descreva o contexto do conflito, o que aconteceu e qual é sua posição..."
+                        className="w-full min-h-[180px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      />
+                    </div>
+
+                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
+                      <div className="px-8 pt-6 pb-2">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                          {state.mode5Input.subCase === 'RECURSO' ? 'Sentença Recebida' : 'Proposta de Acordo'}
+                        </span>
+                      </div>
+                      <textarea
+                        value={state.mode5Input?.sentencaOuProposta || ''}
+                        onChange={(e) => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, sentencaOuProposta: e.target.value } }))}
+                        placeholder={state.mode5Input.subCase === 'RECURSO' ? 'Cole aqui o texto da sentença ou decisão recebida...' : 'Descreva os termos da proposta de acordo recebida...'}
+                        className="w-full min-h-[180px] bg-transparent px-8 pb-6 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      />
+                    </div>
+
+                    <div className="p-4 bg-amber-500/5 border border-amber-500/20 text-[10px] text-amber-400/60 uppercase tracking-widest font-bold">
+                      ⚠️ Simulação educativa — os agentes são IAs simulando papéis jurídicos. Não substitui advogado real.
+                    </div>
+
+                    <div className="flex justify-end">
+                      <button
+                        disabled={!state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
+                        onClick={async () => {
+                          if (!state.mode5Input) return;
+                          setLoading(true);
+                          setState(prev => ({ ...prev, step: 'simulating', simStep: 'JUDGING' }));
+                          try {
+                            const result = await simulateMode5(
+                              state.mode5Input,
+                              state.detectedArea,
+                              state.mode5Input.attachments || [],
+                              state.specificJudge
+                            );
+                            setState(prev => ({ ...prev, step: 'result', mode5Result: result, isUnlocked: false, simStep: 'IDLE' }));
+                          } catch (err) {
+                            handleGeminiError(err);
+                            setState(prev => ({ ...prev, step: 'input', simStep: 'IDLE' }));
+                          } finally {
+                            setLoading(false);
+                          }
+                        }}
+                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                      >
+                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Consultar Juiz Estrategista'}
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             )}
 
