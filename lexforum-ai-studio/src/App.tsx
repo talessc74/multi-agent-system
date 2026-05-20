@@ -1475,7 +1475,44 @@ const handleGeminiError = (err: any) => {
                         <span className={`text-2xl font-bold font-serif italic ${state.mode5Result.recommendation === 'RECORRER' ? 'text-red-400' : state.mode5Result.recommendation === 'ACEITAR' ? 'text-emerald-400' : 'text-amber-400'}`}>
                           {state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}
                         </span>
-                        <span className="text-[10px] font-mono text-white/30">{state.mode5Result.confidenceLevel}% de confiança</span>
+                        {(() => {
+                          const pct = state.mode5Result.confidenceLevel;
+                          const isRecurso = state.mode5Result.subCase === 'RECURSO';
+
+                          const getLabel = (p: number) => {
+                            if (isRecurso) {
+                              if (p <= 20) return { label: 'Reforma improvável', color: 'bg-red-500' };
+                              if (p <= 50) return { label: 'Recorrer com cautela', color: 'bg-amber-500' };
+                              if (p <= 75) return { label: 'Bons fundamentos', color: 'bg-emerald-400' };
+                              return { label: 'Recurso é o caminho', color: 'bg-emerald-500' };
+                            } else {
+                              if (p <= 30) return { label: 'Aceitar o acordo', color: 'bg-red-500' };
+                              if (p <= 55) return { label: 'Negociar melhores termos', color: 'bg-amber-500' };
+                              if (p <= 80) return { label: 'Julgamento favorável', color: 'bg-emerald-400' };
+                              return { label: 'Vantagem clara — rejeitar', color: 'bg-emerald-500' };
+                            }
+                          };
+
+                          const { label, color } = getLabel(pct);
+
+                          return (
+                            <div className="space-y-2 w-full max-w-xs">
+                              <div className="flex justify-between items-center">
+                                <span className="text-[10px] font-mono text-white/30">
+                                  {isRecurso ? 'Chance de reforma' : 'Êxito em julgamento'}
+                                </span>
+                                <span className="text-[10px] font-bold text-white/60">{pct}%</span>
+                              </div>
+                              <div className="h-2 bg-white/10 rounded-full overflow-hidden w-full">
+                                <div
+                                  className={`h-full rounded-full transition-all ${color}`}
+                                  style={{ width: `${pct}%` }}
+                                />
+                              </div>
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">{label}</span>
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
 

@@ -375,29 +375,41 @@ export async function simulateMode5Server(
 
   const userPrompt = isRecurso
     ? `ÁREA JURÍDICA: ${area}
-       RELATO DO CASO: ${mode5Input.caseDescription}
-       SENTENÇA RECEBIDA: ${mode5Input.sentencaOuProposta}
+RELATO DO CASO: ${mode5Input.caseDescription}
+SENTENÇA RECEBIDA: ${mode5Input.sentencaOuProposta}
 
-       Analise e retorne JSON:
-       {
-         "recommendation": "RECORRER" | "NAO_RECORRER",
-         "confidenceLevel": <0-100>,
-         "strategistAnalysis": "<análise completa em linguagem clara>",
-         "reasoning": "<fundamentação jurídica técnica>",
-         "simulationDisclaimer": "<aviso de que é simulação>"
-       }`
+Analise e retorne JSON:
+{
+  "recommendation": "RECORRER" | "NAO_RECORRER",
+  "successProbability": <0-100, probabilidade de reforma da sentença em recurso>,
+  "strategistAnalysis": "<análise completa em linguagem clara para leigos>",
+  "reasoning": "<fundamentação jurídica técnica detalhada>",
+  "simulationDisclaimer": "<aviso de que é simulação educativa>"
+}
+
+ESCALA DE REFERÊNCIA para successProbability:
+0-20: reforma improvável — recomendar não recorrer
+21-50: reforma possível com ressalvas — recorrer com cautela
+51-75: bons fundamentos — recorrer
+76-100: alta probabilidade de reforma — recurso é o caminho certo`
     : `ÁREA JURÍDICA: ${area}
-       RELATO DO CASO: ${mode5Input.caseDescription}
-       PROPOSTA DE ACORDO: ${mode5Input.sentencaOuProposta}
+RELATO DO CASO: ${mode5Input.caseDescription}
+PROPOSTA DE ACORDO: ${mode5Input.sentencaOuProposta}
 
-       Analise e retorne JSON:
-       {
-         "recommendation": "ACEITAR" | "NEGOCIAR" | "RECORRER",
-         "confidenceLevel": <0-100>,
-         "strategistAnalysis": "<análise completa em linguagem clara>",
-         "reasoning": "<fundamentação jurídica técnica>",
-         "simulationDisclaimer": "<aviso de que é simulação>"
-       }`;
+Analise e retorne JSON:
+{
+  "recommendation": "ACEITAR" | "NEGOCIAR" | "RECORRER",
+  "successProbability": <0-100, probabilidade de êxito em julgamento caso rejeite o acordo>,
+  "strategistAnalysis": "<análise completa em linguagem clara para leigos>",
+  "reasoning": "<fundamentação jurídica técnica detalhada>",
+  "simulationDisclaimer": "<aviso de que é simulação educativa>"
+}
+
+ESCALA DE REFERÊNCIA para successProbability (ACORDO):
+0-30: julgamento desfavorável — aceitar o acordo
+31-55: resultado incerto — negociar melhores termos
+56-80: julgamento favorável — rejeitar e ir a julgamento
+81-100: julgamento muito favorável — rejeitar, vantagem clara`;
 
   onProgress?.('JUDGING');
 
@@ -426,7 +438,7 @@ export async function simulateMode5Server(
     subCase: mode5Input.subCase,
     strategistAnalysis: parsed.strategistAnalysis || '',
     recommendation,
-    confidenceLevel: parsed.confidenceLevel ?? 50,
+    confidenceLevel: parsed.successProbability ?? 50,
     reasoning: parsed.reasoning || '',
     judgeAgentName: judgeName,
     tokenCount: response.usageMetadata?.totalTokenCount
@@ -436,7 +448,7 @@ export async function simulateMode5Server(
     subCase: mode5Input.subCase,
     strategistAnalysis: parsed.strategistAnalysis || '',
     recommendation,
-    confidenceLevel: parsed.confidenceLevel ?? 50,
+    confidenceLevel: parsed.successProbability ?? 50,
     reasoning: parsed.reasoning || '',
     judgeAgentName: judgeName,
     tokenCount: response.usageMetadata?.totalTokenCount
