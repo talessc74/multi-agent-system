@@ -79,7 +79,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
       {/* Fixed Header */}
       <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-[#111111]/95 backdrop-blur-md border-b border-white/10 px-8 flex items-center justify-between">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.reload()}>
-          <Logo size="md" showTitle={true} />
+          <Logo size="md" showTitle={false} />
         </div>
         <div className="flex items-center gap-6">
           {user && (
