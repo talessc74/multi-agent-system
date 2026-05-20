@@ -11,6 +11,7 @@ import {
 
 interface Props {
   onEnter: (mode: number) => void;
+  onLogin: () => void;
 }
 
 const MODES = [
@@ -60,7 +61,7 @@ const FOOTER_STATS = [
   { label: 'Versão', value: 'V.2.4' },
 ];
 
-export default function BoardroomPage({ onEnter }: Props) {
+export default function BoardroomPage({ onEnter, onLogin }: Props) {
   return (
     <div className="min-h-screen bg-[#111111] text-white overflow-x-hidden selection:bg-amber-400/20">
       {/* Fixed Header */}
@@ -72,7 +73,7 @@ export default function BoardroomPage({ onEnter }: Props) {
           EAI?
         </span>
         <button
-          onClick={() => onEnter(0)}
+          onClick={onLogin}
           className="px-5 py-2 border border-amber-400/50 text-amber-400 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-amber-400 hover:text-black transition-all duration-200"
         >
           ENTRAR
