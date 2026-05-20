@@ -91,6 +91,13 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [userHistory, setUserHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setShowUserMenu(false);
+    if (showUserMenu) document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, [showUserMenu]);
   const [globalStats, setGlobalStats] = useState({ simulations: 14282, winRate: 74.8, precision: 98.4 });
   const [state, setState] = useState<AppState>({
     step: 'boardroom',
@@ -498,21 +505,26 @@ const handleGeminiError = (err: any) => {
                 <History className="w-3 h-3" />
                 Meus Casos
               </button>
-              <div className="relative group">
-                <div className="flex items-center gap-3 cursor-pointer">
+              <div className="relative">
+                <div
+                  className="flex items-center gap-3 cursor-pointer"
+                  onClick={(e) => { e.stopPropagation(); setShowUserMenu(prev => !prev); }}
+                >
                   <div className="w-5 h-5 bg-white/10 rounded-full overflow-hidden">
                     {user.photoURL ? <img src={user.photoURL} alt="" /> : <div className="w-full h-full bg-white/20" />}
                   </div>
                   <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">{user.displayName?.split(' ')[0]}</span>
                 </div>
-                <div className="absolute right-0 top-8 hidden group-hover:flex flex-col bg-[#1C1C1F] border border-white/10 shadow-xl z-50 min-w-[120px]">
-                  <button
-                    onClick={() => logoutUser()}
-                    className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 transition-colors text-left"
-                  >
-                    Sair
-                  </button>
-                </div>
+                {showUserMenu && (
+                  <div className="absolute right-0 top-8 flex flex-col bg-[#1C1C1F] border border-white/10 shadow-xl z-50 min-w-[120px]">
+                    <button
+                      onClick={() => { logoutUser(); setShowUserMenu(false); }}
+                      className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 transition-colors text-left"
+                    >
+                      Sair
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
