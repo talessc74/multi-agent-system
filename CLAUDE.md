@@ -36,9 +36,9 @@ Nenhuma sessão com decisões relevantes pode ser encerrada sem que este arquivo
 This repository contains two distinct components:
 
 1. **Multi-Agent System** — JSON-based, no executable code. All artifacts are configuration files and Markdown prompts consumed by AI platforms (Claude, Gemini, Copilot).
-2. **LexForum App** (`lexforum-app/`) — Next.js 16 web application, deployed at [lexforum.radiokactus.com](https://lexforum.radiokactus.com) via Vercel.
+2. **EAI? App** (`lexforum-ai-studio/`) — Vite + Express + TypeScript application deployed at [eai.radiokactus.com](https://eai.radiokactus.com) via Cloud Run.
 
-**Current scale (v3.5.0):** 14 seeds · 13 agents · 2 core config agents · 1 advisory board framework · 1 web application
+**Current scale (v5.0.0):** 14 seeds · 13 agents · 2 core config agents · 1 advisory board framework · 1 web application
 
 Three layers make up the multi-agent system:
 
@@ -93,18 +93,18 @@ Silêncio diante de um problema identificado é traição ao projeto."
 
 ---
 
-## Histórico — LexForum App (descontinuado)
+## Histórico — Origem LexForum (descontinuado)
 
 O projeto teve origem como LexForum, uma aplicação Next.js 16
 hospedada em lexforum.radiokactus.com via Vercel, com Supabase
 como banco de dados.
 
 Em maio de 2026 o produto foi migrado para EAI? Studio
-(lexforum-ai-studio/), stack Vite + Express + Cloud Run.
+(`lexforum-ai-studio/`), stack Vite + Express + Firebase + Cloud Run.
 O domínio lexforum.radiokactus.com permanece ativo mas
 não é mais o produto principal.
 
-Todo desenvolvimento ativo acontece em lexforum-ai-studio/.
+Todo desenvolvimento ativo acontece em `lexforum-ai-studio/`.
 
 ## EAI? Studio — lexforum-ai-studio
 
@@ -114,8 +114,11 @@ Todo desenvolvimento ativo acontece em lexforum-ai-studio/.
 |---|---|
 | Framework | Vite 6 + React 19 + Express 4 |
 | Language | TypeScript 5 |
+| Auth & DB | Firebase Auth + Firestore |
+| AI Model | Gemini 2.5 Flash (`gemini-2.5-flash`) |
 | Deploy | Cloud Run — `eai-producao`, região `us-east1` |
 | Projeto GCP | `gen-lang-client-0982741688` |
+| URL | eai.radiokactus.com |
 | Dockerfile | `lexforum-ai-studio/Dockerfile` |
 | Pipeline | `cloudbuild.yaml` (raiz do repo) |
 
@@ -142,21 +145,29 @@ docker build -t eai-producao ./lexforum-ai-studio
 docker run -p 3000:8080 --env-file lexforum-ai-studio/.env eai-producao
 ```
 
----
+## Modelo de Preços — EAI?
 
-| Property | Value |
+| Produto | Preço |
 |---|---|
-| Framework | Next.js 16 + React 18 |
-| Styling | Tailwind CSS 3 |
-| Language | TypeScript 5 (strict mode) |
-| Deploy | Vercel — `lexforum.radiokactus.com` |
-| Entry point | `lexforum-app/src/app/page.tsx` |
-| Design system | Navy/ciano palette defined in `tailwind.config.ts` |
+| Laudo — Modos 1, 2, 4 (Tese Estratégica / Defesa sob Ataque / Mesa Dupla Assistida) | R$ 9,90 |
+| Laudo — Modo 3 (Mesa Dupla Juiz) | R$ 5,90 |
+| Laudo — Modo 5 (Revisão Pós-Conflito) | R$ 5,90 |
+| Chat pós-sessão — 3 perguntas | R$ 2,99 |
+| Bundle — Modos 1, 2 ou 4 + Chat | R$ 12,89 |
+| Bundle — Modo 3 + Chat | R$ 8,89 |
+| Bundle — Modo 5 + Chat | R$ 8,89 |
+| Chat em sessão histórica | R$ 2,99 |
 
-**Working inside `lexforum-app/`:**
-- Run `npm run dev` from `lexforum-app/` to start the dev server.
-- The `.next/` build folder and `node_modules/` are git-ignored.
-- Commit convention for app changes: use `[FEAT]`, `[FIX]`, `[DOCS]`, `[STYLE]` prefixed with `LexForum —` (e.g. `[FEAT] LexForum — homepage aprovada`).
+## Chat Pós-Sessão — Arquitetura
+
+**Opção B aprovada** — transcript bruto em memória durante a sessão viva.
+
+Regras de funcionamento:
+- Durante a sessão ativa: transcript completo (petições + sentenças + análises) mantido em memória no cliente.
+- Ao encerrar o chat ou salvar a sessão: anonimização automática antes de qualquer persistência.
+- Firebase salva apenas o transcript anonimizado — nunca dados pessoais identificáveis.
+- Chat disponível também em sessões históricas (o usuário compra acesso a uma sessão já salva).
+- Limite: 3 perguntas por sessão de chat.
 
 ## Ciclo Canônico de Simulação — EAI?
 
@@ -201,7 +212,7 @@ O usuário acompanha a evolução do caso ciclo a ciclo.
 | 2    | Defesa Sob Ataque      | Ciclo completo — até 3 rounds     |
 | 3    | Mesa Dupla — Juiz      | Julgamento direto — sem advogado  |
 | 4    | Mesa Dupla — Assistida | Ciclo completo — até 3 rounds     |
-| 5    | Revisão Pós-Conflito   | Detalhamento pendente             |
+| 5    | Revisão Pós-Conflito   | Análise estratégica pós-decisão   |
 
 ## Main Workflow
 
@@ -232,7 +243,7 @@ Jurisprudential seeds (`seed_tipo: "jurisprudencial"`) replace `kernel_logic` wi
 The `logicaDatas` block is **exclusive to the Especialista** and must never appear in generated agent files.
 
 ### Structural conformance
-All agents in `agents/` follow the same field schema. The legacy anomaly in `agente_claude_code_expert_v1.0` (non-standard `semente_origem`, `BORIS_CHERNY_LEGACY_KERNEL`, extra blocks `logicaDatas` and `referencias_semente`) was corrected in v3.1.1.
+All agents in `agents/` follow the same field schema. The legacy anomaly in `agente_claude_code_expert_v1.0` (non-standard `semente_origem`, `BORIS_CHERNY_LEGACY_KERNEL`, extra blocks `logicaDatas` e `referencias_semente`) was corrected in v3.1.1.
 
 ## Versioning
 
@@ -247,7 +258,7 @@ Both `SEEDS_REGISTRY.json` and `AGENTS_REGISTRY.json` must be updated whenever a
 ## Commit Convention
 
 ```
-[FEAT]       new feature (multi-agent system or LexForum app)
+[FEAT]       new feature (multi-agent system or EAI? app)
 [SEMENTE]    name_seed v1.0 criada
 [AGENTE]     name_agent v1.0 gerado
 [SECURITY]   security fix or ethics enforcement
