@@ -12,6 +12,7 @@ import {
 interface Props {
   onEnter: (mode: number) => void;
   onLogin: () => void;
+  user: import('firebase/auth').User | null;
 }
 
 const MODES = [
@@ -61,7 +62,7 @@ const FOOTER_STATS = [
   { label: 'Versão', value: 'V.2.4' },
 ];
 
-export default function BoardroomPage({ onEnter, onLogin }: Props) {
+export default function BoardroomPage({ onEnter, onLogin, user }: Props) {
   return (
     <div className="min-h-screen bg-[#111111] text-white overflow-x-hidden selection:bg-amber-400/20">
       {/* Fixed Header */}
@@ -72,12 +73,21 @@ export default function BoardroomPage({ onEnter, onLogin }: Props) {
         >
           EAI?
         </span>
-        <button
-          onClick={onLogin}
-          className="px-5 py-2 border border-amber-400/50 text-amber-400 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-amber-400 hover:text-black transition-all duration-200"
-        >
-          ENTRAR
-        </button>
+        {user ? (
+          <div className="flex items-center gap-3">
+            {user.photoURL && <img src={user.photoURL} className="w-6 h-6 rounded-full" alt="" />}
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-amber-400">
+              {user.displayName?.split(' ')[0]}
+            </span>
+          </div>
+        ) : (
+          <button
+            onClick={onLogin}
+            className="px-5 py-2 border border-amber-400/50 text-amber-400 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-amber-400 hover:text-black transition-all duration-200"
+          >
+            ENTRAR
+          </button>
+        )}
       </header>
 
       {/* Page content — offset by header height */}
