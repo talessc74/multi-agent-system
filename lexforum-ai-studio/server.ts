@@ -4,7 +4,21 @@ import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
 import { validateCausaServer, simulateForumServer, generateReportServer, simulateMode5Server } from "./src/lib/gemini.server";
-import { constructWebhookEvent } from './src/lib/stripe.server.js';
+import { constructWebhookEvent, stripe } from './src/lib/stripe.server.js';
+import admin from 'firebase-admin';
+import Stripe from 'stripe';
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    }),
+  });
+}
+
+const adminDb = admin.firestore();
 import simulationStatus from './simulation-status';
 import { resolveAgent } from './agent-resolver';
 
@@ -182,11 +196,61 @@ async function startServer() {
 
   app.use('/simulation', simulationStatus);
 
+  // ── Stripe Checkout Session ────────────────────────────────────
+  app.post('/api/stripe/create-checkout-session', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    try {
+      const token = authHeader.split('Bearer ')[1];
+      const decoded = await admin.auth().verifyIdToken(token);
+      const uid = decoded.uid;
+
+      const { simulationId } = req.body;
+      if (!simulationId) {
+        res.status(400).json({ error: 'simulationId required' });
+        return;
+      }
+
+      const simRef = adminDb.collection('simulations').doc(simulationId);
+      const simSnap = await simRef.get();
+      if (!simSnap.exists || simSnap.data()?.userId !== uid) {
+        res.status(403).json({ error: 'Forbidden' });
+        return;
+      }
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: 'brl',
+            product_data: { name: 'Laudo Estratégico EAI?' },
+            unit_amount: 990,
+          },
+          quantity: 1,
+        }],
+        mode: 'payment',
+        success_url: `${process.env.APP_URL}/?session_id={CHECKOUT_SESSION_ID}&sim=${simulationId}`,
+        cancel_url: `${process.env.APP_URL}/`,
+        metadata: { uid, simulationId },
+      });
+
+      res.json({ url: session.url });
+    } catch (err: any) {
+      console.error('[Stripe] create-checkout-session error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  // ────────────────────────────────────────────────────────────
+
   // ── Stripe Webhook ──────────────────────────────────────────
   app.post(
     '/api/webhook/stripe',
     express.raw({ type: 'application/json' }),
-    (req, res) => {
+    async (req, res) => {
       const signature = req.headers['stripe-signature'];
 
       if (!signature) {
@@ -198,10 +262,25 @@ async function startServer() {
         const event = constructWebhookEvent(req.body, signature as string);
 
         switch (event.type) {
-          case 'payment_intent.succeeded':
-            console.log('[Stripe] payment_intent.succeeded:', event.data.object.id);
-            // TODO: liberar laudo completo para o userId em metadata
+          case 'checkout.session.completed': {
+            const session = event.data.object as Stripe.Checkout.Session;
+            const { uid, simulationId } = session.metadata || {};
+            if (uid && simulationId) {
+              await adminDb
+                .collection('users')
+                .doc(uid)
+                .collection('payments')
+                .doc(simulationId)
+                .set({
+                  paidAt: admin.firestore.FieldValue.serverTimestamp(),
+                  amount: session.amount_total,
+                  currency: session.currency,
+                  stripeSessionId: session.id,
+                });
+              console.log(`[Stripe] Pagamento liberado — uid: ${uid}, sim: ${simulationId}`);
+            }
             break;
+          }
           case 'payment_intent.payment_failed':
             console.log('[Stripe] payment_intent.payment_failed:', event.data.object.id);
             break;

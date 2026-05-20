@@ -85,5 +85,21 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && incoming().keys().hasOnly(['email', 'createdAt', 'accessLevel'])
+        && incoming().accessLevel == 'free'
+        && incoming().createdAt == request.time;
+      allow update: if false;
+      allow delete: if false;
+
+      match /payments/{simulationId} {
+        allow read: if isOwner(userId);
+        allow write: if false;
+      }
+    }
+
   }
 }

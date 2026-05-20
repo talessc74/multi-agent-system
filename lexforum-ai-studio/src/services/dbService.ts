@@ -1,12 +1,12 @@
-import { 
-  collection, 
-  addDoc, 
-  serverTimestamp, 
-  doc, 
-  getDoc, 
-  setDoc, 
-  updateDoc, 
-  increment, 
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  increment,
   getDocs,
   query,
   limit,
@@ -56,7 +56,7 @@ export const saveSimulation = async (
   result: SimulationResult,
   caseSummary: string | null = null,
   report: any = null
-) => {
+): Promise<string | null> => {
   const isWin = result.finalSuccessProbability >= 50;
 
   const anon = anonymizeSimulation({
@@ -79,9 +79,10 @@ export const saveSimulation = async (
     return obj;
   };
 
+  let simulationId: string | null = null;
+
   try {
-    // Save simulation record
-    await addDoc(collection(db, 'simulations'), sanitize({
+    const docRef = await addDoc(collection(db, 'simulations'), sanitize({
       userId,
       caseDescription: anon.caseDescription,
       caseSummary: anon.caseSummary,
@@ -94,15 +95,14 @@ export const saveSimulation = async (
       isWin,
       createdAt: serverTimestamp()
     }));
+    simulationId = docRef.id;
   } catch (error) {
     handleFirestoreError(error, OperationType.CREATE, 'simulations');
   }
 
   try {
-    // Update global stats
     const statsRef = doc(db, 'stats', 'global');
     const statsSnap = await getDoc(statsRef);
-
     if (!statsSnap.exists()) {
       await setDoc(statsRef, {
         totalSimulations: 1,
@@ -118,6 +118,53 @@ export const saveSimulation = async (
     }
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, 'stats/global');
+  }
+
+  return simulationId;
+};
+
+export const createOrUpdateUser = async (uid: string, email: string | null) => {
+  const path = `users/${uid}`;
+  try {
+    const userRef = doc(db, 'users', uid);
+    const userSnap = await getDoc(userRef);
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        email: email || null,
+        createdAt: serverTimestamp(),
+        accessLevel: 'free'
+      });
+    }
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, path);
+  }
+};
+
+export const hasUserPaidForSession = async (
+  uid: string,
+  simulationId: string
+): Promise<boolean> => {
+  try {
+    const paymentRef = doc(db, 'users', uid, 'payments', simulationId);
+    const paymentSnap = await getDoc(paymentRef);
+    return paymentSnap.exists();
+  } catch (error) {
+    console.error('[hasUserPaidForSession]', error);
+    return false;
+  }
+};
+
+export const getUserAccessLevel = async (uid: string): Promise<string> => {
+  try {
+    const userRef = doc(db, 'users', uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      return userSnap.data()?.accessLevel || 'free';
+    }
+    return 'free';
+  } catch (error) {
+    console.error('[getUserAccessLevel]', error);
+    return 'free';
   }
 };
 
@@ -155,16 +202,16 @@ export const getStats = async (): Promise<GlobalStats> => {
   } catch (error) {
     handleFirestoreError(error, OperationType.GET, path);
   }
-  return { totalSimulations: 14282, totalWins: 10682, winRate: 74.8 }; // Mock fallback
+  return { totalSimulations: 14282, totalWins: 10682, winRate: 74.8 };
 };
 
 export const getRegionalStats = async () => {
-   try {
-     const snap = await getDocs(collection(db, 'regions'));
-     if (snap.empty) return null;
-     return snap.docs.map(doc => doc.data());
-   } catch (e) {
-     console.error(e);
-     return null;
-   }
-}
+  try {
+    const snap = await getDocs(collection(db, 'regions'));
+    if (snap.empty) return null;
+    return snap.docs.map(doc => doc.data());
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};

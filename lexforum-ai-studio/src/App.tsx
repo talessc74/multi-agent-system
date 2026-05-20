@@ -32,7 +32,7 @@ import { LegalArea, SimulationResult, ReportContent, AppState, Attachment, Mode5
 import { validateCausa, simulateForum, generateReport, simulateMode5 } from './lib/gemini';
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { getStats, saveSimulation, getUserSimulations } from './services/dbService';
+import { getStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel } from './services/dbService';
 
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
@@ -113,6 +113,7 @@ export default function App() {
     simulation: null,
     report: null,
     isUnlocked: false,
+  simulationId: null as string | null,
     simStep: 'IDLE',
     currentRound: 0,
   selectedProfile: 'leigo',
@@ -143,6 +144,7 @@ export default function App() {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (u) {
+        await createOrUpdateUser(u.uid, u.email);
         const history = await getUserSimulations(u.uid);
         setUserHistory(history);
       } else {
@@ -420,7 +422,10 @@ const handleGeminiError = (err: any) => {
       setState(prev => ({ ...prev, step: 'result', report: reportData, error: null }));
 
       // Save simulation to Firebase with the optimized result
-      await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
+      const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
+      if (simId) {
+        setState(prev => ({ ...prev, simulationId: simId }));
+      }
       
       // Refresh history if logged in
       if (user) {
@@ -460,6 +465,51 @@ const handleGeminiError = (err: any) => {
     4: 'Mesa Dupla — Assistida',
     5: 'Revisão Pós-Conflito',
   };
+
+  // Redireciona para o Stripe Checkout
+  const handleCheckout = async () => {
+    if (!user) {
+      await loginWithGoogle();
+      return;
+    }
+    if (!state.simulationId) {
+      console.error('[Checkout] simulationId não encontrado');
+      return;
+    }
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('/api/stripe/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ simulationId: state.simulationId }),
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('[Checkout] URL não retornada:', data);
+      }
+    } catch (err) {
+      console.error('[Checkout] Erro:', err);
+    }
+  };
+
+  // Verifica pagamento ao retornar do Stripe
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const simId = params.get('sim');
+    if (!simId || !user) return;
+    hasUserPaidForSession(user.uid, simId).then(paid => {
+      if (paid) {
+        setState(prev => ({ ...prev, isUnlocked: true, simulationId: simId }));
+        // Limpa URL sem recarregar
+        window.history.replaceState({}, '', '/');
+      }
+    });
+  }, [user]);
 
   if (state.step === 'boardroom') {
     return (
@@ -1420,7 +1470,7 @@ const handleGeminiError = (err: any) => {
                         O laudo estratégico completo com fundamentos técnicos, valor estimado da causa e próximos passos processuais foi gerado.
                       </p>
                       <button 
-                        onClick={() => setState(prev => ({ ...prev, isUnlocked: true }))}
+                        onClick={handleCheckout}
                         className="bg-white text-black px-12 py-5 text-sm font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-2xl shadow-black"
                       >
                         Liberar Laudo Completo — R$ 9,90
@@ -2030,7 +2080,7 @@ const handleGeminiError = (err: any) => {
               <p className="text-xs text-white/30 font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via PIX. Estratégia técnica detalhada.</p>
             </div>
             <button 
-               onClick={() => setState(prev => ({ ...prev, isUnlocked: true }))}
+               onClick={handleCheckout}
                className="px-10 py-5 bg-white text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:scale-[1.02] transition-transform shrink-0 shadow-2xl shadow-black flex flex-col items-center leading-none"
             >
               <span>ADQUIRIR R$ 9,90</span>
