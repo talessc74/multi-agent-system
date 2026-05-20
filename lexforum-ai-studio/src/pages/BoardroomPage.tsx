@@ -8,6 +8,7 @@ import {
   History,
   ArrowRight,
 } from 'lucide-react';
+import { Logo } from '../components/Logo';
 
 interface Props {
   onEnter: (mode: number) => void;
@@ -66,28 +67,38 @@ export default function BoardroomPage({ onEnter, onLogin, user }: Props) {
   return (
     <div className="min-h-screen bg-[#111111] text-white overflow-x-hidden selection:bg-amber-400/20">
       {/* Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-[#111111]/95 backdrop-blur-md border-b border-white/8 px-6 md:px-12 flex items-center justify-between">
-        <span
-          className="font-playfair italic text-xl tracking-wide text-amber-400"
-          style={{ letterSpacing: '0.02em' }}
-        >
-          EAI?
-        </span>
-        {user ? (
-          <div className="flex items-center gap-3">
-            {user.photoURL && <img src={user.photoURL} className="w-6 h-6 rounded-full" alt="" />}
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-amber-400">
-              {user.displayName?.split(' ')[0]}
-            </span>
-          </div>
-        ) : (
-          <button
-            onClick={onLogin}
-            className="px-5 py-2 border border-amber-400/50 text-amber-400 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-amber-400 hover:text-black transition-all duration-200"
-          >
-            ENTRAR
-          </button>
-        )}
+      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-[#111111]/95 backdrop-blur-md border-b border-white/10 px-8 flex items-center justify-between">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.reload()}>
+          <Logo size="md" showTitle={true} />
+        </div>
+        <div className="flex items-center gap-6">
+          {user && (
+            <button
+              onClick={() => {/* Meus Casos virá com o histórico */}}
+              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors border-r border-white/10 pr-6 h-8"
+            >
+              <History className="w-3 h-3" />
+              Meus Casos
+            </button>
+          )}
+          {user ? (
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-5 bg-white/10 rounded-full overflow-hidden">
+                {user.photoURL ? <img src={user.photoURL} alt="" /> : <div className="w-full h-full bg-white/20" />}
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">
+                {user.displayName?.split(' ')[0]}
+              </span>
+            </div>
+          ) : (
+            <button
+              onClick={onLogin}
+              className="px-4 py-2 border border-white text-[11px] uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+            >
+              ENTRAR
+            </button>
+          )}
+        </div>
       </header>
 
       {/* Page content — offset by header height */}
