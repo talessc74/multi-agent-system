@@ -13,6 +13,7 @@ import { Logo } from '../components/Logo';
 interface Props {
   onEnter: (mode: number) => void;
   onLogin: () => void;
+  onShowHistory: () => void;
   user: import('firebase/auth').User | null;
 }
 
@@ -63,7 +64,7 @@ const FOOTER_STATS = [
   { label: 'Versão', value: 'V.2.4' },
 ];
 
-export default function BoardroomPage({ onEnter, onLogin, user }: Props) {
+export default function BoardroomPage({ onEnter, onLogin, onShowHistory, user }: Props) {
   return (
     <div className="min-h-screen bg-[#111111] text-white overflow-x-hidden selection:bg-amber-400/20">
       {/* Fixed Header */}
@@ -74,7 +75,7 @@ export default function BoardroomPage({ onEnter, onLogin, user }: Props) {
         <div className="flex items-center gap-6">
           {user && (
             <button
-              onClick={() => {/* Meus Casos virá com o histórico */}}
+              onClick={() => user ? onShowHistory() : onLogin()}
               className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors border-r border-white/10 pr-6 h-8"
             >
               <History className="w-3 h-3" />

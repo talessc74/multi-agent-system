@@ -459,6 +459,7 @@ const handleGeminiError = (err: any) => {
       <BoardroomPage
         onEnter={(mode) => setState(prev => ({ ...prev, step: 'input', selectedMode: mode }))}
         onLogin={() => loginWithGoogle()}
+        onShowHistory={() => setShowHistory(true)}
         user={user}
       />
     );
