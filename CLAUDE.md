@@ -272,6 +272,29 @@ Both `SEEDS_REGISTRY.json` and `AGENTS_REGISTRY.json` must be updated whenever a
 
 All changes must be recorded in `versions/CHANGELOG.md`.
 
+## Sessão 20/05/2026 — O que foi entregue
+
+- Login Google funcionando nas duas páginas (BoardroomPage + App)
+- `authDomain` corrigido para `eairadiokactus.firebaseapp.com`
+- Header consistente entre BoardroomPage e App (Logo, Meus Casos, dropdown de usuário)
+- Logout via dropdown — clique no nome/foto abre menu com botão "Sair"
+- Meus Casos funcional — abre login se deslogado, histórico se logado
+- Anonimização automática antes de salvar no Firebase (`anonymizer.ts` — CPF, CNPJ, e-mail, telefone, endereço, nº processo)
+- Modo 5 calibrado — `successProbability` substitui `confidenceLevel`; barra visual com faixas semânticas por subcaso (RECURSO / ACORDO)
+- Modelo de preços definido e documentado no CLAUDE.md
+
+## Pendências conhecidas
+
+- **Bug Modo 1** — Round 3 não transiciona para resultado (não reproduzido; monitorar)
+- **Stats de segundo plano** — valores de simulações, win rate e precisão são estáticos; devem ser zerados e substituídos por contagens reais do Firestore
+- **Modo 5 ACORDO** — label "Vantagem clara — rejeitar" precisa de ajuste de texto
+
+## Próximas etapas (em ordem)
+
+1. Stripe — integração de pagamento
+2. Chat pós-sessão ao vivo
+3. Chat no histórico
+
 ## Ethics & Security
 
 The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with agent JSONs:
