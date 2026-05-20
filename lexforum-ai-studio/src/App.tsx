@@ -497,15 +497,22 @@ const handleGeminiError = (err: any) => {
     }
   };
 
-  // Verifica pagamento ao retornar do Stripe
+  // Verifica accessLevel beta e pagamento ao retornar do Stripe
   useEffect(() => {
+    if (!user) return;
+    // Usuário beta — libera tudo sem pagar
+    getUserAccessLevel(user.uid).then(level => {
+      if (level === 'beta') {
+        setState(prev => ({ ...prev, isUnlocked: true }));
+      }
+    });
+    // Verifica retorno do Stripe
     const params = new URLSearchParams(window.location.search);
     const simId = params.get('sim');
-    if (!simId || !user) return;
+    if (!simId) return;
     hasUserPaidForSession(user.uid, simId).then(paid => {
       if (paid) {
         setState(prev => ({ ...prev, isUnlocked: true, simulationId: simId }));
-        // Limpa URL sem recarregar
         window.history.replaceState({}, '', '/');
       }
     });
