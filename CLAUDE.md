@@ -124,6 +124,7 @@ Todo desenvolvimento ativo acontece em `lexforum-ai-studio/`.
 
 **Variáveis de ambiente** — nunca commitadas. Configurar no Cloud Run Console:
 `GEMINI_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+`FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`,
 `VITE_FIREBASE_*` (ver `.env.example` para lista completa).
 
 **Dev local:**
@@ -272,6 +273,27 @@ Both `SEEDS_REGISTRY.json` and `AGENTS_REGISTRY.json` must be updated whenever a
 
 All changes must be recorded in `versions/CHANGELOG.md`.
 
+## Sessão 20/05/2026 — Stripe + Paywall (tarde)
+
+**Integração Stripe completa — paywall real substituindo setState fictício**
+
+- `firebase-admin` instalado — Admin SDK disponível no servidor
+- `dbService.ts` — `saveSimulation` retorna `simulationId`; novas funções `createOrUpdateUser`, `hasUserPaidForSession`, `getUserAccessLevel`
+- `firestore.rules` — collection `users` protegida; subcollection `payments/{simulationId}` somente Admin SDK
+- `server.ts` — Admin SDK inicializado com credenciais via env vars; rota `POST /api/stripe/create-checkout-session` com validação de token Firebase; webhook `checkout.session.completed` grava pagamento no Firestore via Admin SDK
+- `App.tsx` — `handleCheckout` chama o Stripe; retorno via `?sim=ID` verifica pagamento e libera laudo; `createOrUpdateUser` chamado no login
+- `types.ts` — `simulationId` adicionado ao `AppState`
+
+**Arquitetura de segurança do paywall:**
+- `userId` sempre extraído do token Firebase server-side — nunca do body
+- `accessLevel` só gravável via Admin SDK — cliente não pode se autopromover
+- Subcollection `users/{uid}/payments/{simulationId}` como prova de pagamento
+- Betatesters: editar `accessLevel: "beta"` manualmente no Console do Firebase
+
+**Commit:** `593d267` — [FEAT] Stripe — checkout session, webhook, paywall e controle de acesso beta
+
+---
+
 ## Sessão 20/05/2026 — O que foi entregue
 
 - Login Google funcionando nas duas páginas (BoardroomPage + App)
@@ -291,7 +313,7 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 
 ## Próximas etapas (em ordem)
 
-1. Stripe — integração de pagamento
+1. Stripe — testar fluxo end-to-end com compra real (modo live)
 2. Chat pós-sessão ao vivo
 3. Chat no histórico
 
