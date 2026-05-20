@@ -66,9 +66,22 @@ export const saveSimulation = async (
     report,
   });
 
+  const sanitize = (obj: any): any => {
+    if (obj === null || obj === undefined) return null;
+    if (Array.isArray(obj)) return obj.map(sanitize);
+    if (typeof obj === 'object') {
+      return Object.fromEntries(
+        Object.entries(obj)
+          .filter(([_, v]) => v !== undefined)
+          .map(([k, v]) => [k, sanitize(v)])
+      );
+    }
+    return obj;
+  };
+
   try {
     // Save simulation record
-    await addDoc(collection(db, 'simulations'), {
+    await addDoc(collection(db, 'simulations'), sanitize({
       userId,
       caseDescription: anon.caseDescription,
       caseSummary: anon.caseSummary,
@@ -80,7 +93,7 @@ export const saveSimulation = async (
       report: anon.report,
       isWin,
       createdAt: serverTimestamp()
-    });
+    }));
   } catch (error) {
     handleFirestoreError(error, OperationType.CREATE, 'simulations');
   }
