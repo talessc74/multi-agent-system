@@ -4,6 +4,7 @@ import {
   GoogleAuthProvider,
   OAuthProvider,
   signInWithPopup,
+  signOut,
   getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -40,3 +41,5 @@ export const loginWithEmail = (email: string, password: string) =>
 
 export const registerWithEmail = (email: string, password: string) =>
   createUserWithEmailAndPassword(auth, email, password);
+
+export const logoutUser = () => signOut(auth);

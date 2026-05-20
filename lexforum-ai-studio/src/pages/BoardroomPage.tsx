@@ -13,6 +13,7 @@ import { Logo } from '../components/Logo';
 interface Props {
   onEnter: (mode: number) => void;
   onLogin: () => void;
+  onLogout: () => void;
   onShowHistory: () => void;
   user: import('firebase/auth').User | null;
 }
@@ -64,7 +65,7 @@ const FOOTER_STATS = [
   { label: 'Versão', value: 'V.2.4' },
 ];
 
-export default function BoardroomPage({ onEnter, onLogin, onShowHistory, user }: Props) {
+export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistory, user }: Props) {
   return (
     <div className="min-h-screen bg-[#111111] text-white overflow-x-hidden selection:bg-amber-400/20">
       {/* Fixed Header */}
@@ -83,13 +84,23 @@ export default function BoardroomPage({ onEnter, onLogin, onShowHistory, user }:
             </button>
           )}
           {user ? (
-            <div className="flex items-center gap-3">
-              <div className="w-5 h-5 bg-white/10 rounded-full overflow-hidden">
-                {user.photoURL ? <img src={user.photoURL} alt="" /> : <div className="w-full h-full bg-white/20" />}
+            <div className="relative group">
+              <div className="flex items-center gap-3 cursor-pointer">
+                <div className="w-5 h-5 bg-white/10 rounded-full overflow-hidden">
+                  {user.photoURL ? <img src={user.photoURL} alt="" /> : <div className="w-full h-full bg-white/20" />}
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">
+                  {user.displayName?.split(' ')[0]}
+                </span>
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">
-                {user.displayName?.split(' ')[0]}
-              </span>
+              <div className="absolute right-0 top-8 hidden group-hover:flex flex-col bg-[#1C1C1F] border border-white/10 shadow-xl z-50 min-w-[120px]">
+                <button
+                  onClick={() => onLogout()}
+                  className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 transition-colors text-left"
+                >
+                  Sair
+                </button>
+              </div>
             </div>
           ) : (
             <button

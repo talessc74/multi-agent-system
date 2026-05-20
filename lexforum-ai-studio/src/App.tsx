@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { LegalArea, SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode5Result } from './types';
 import { validateCausa, simulateForum, generateReport, simulateMode5 } from './lib/gemini';
-import { auth, loginWithGoogle, getGoogleRedirectResult } from './lib/firebase';
+import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, saveSimulation, getUserSimulations } from './services/dbService';
 
@@ -459,6 +459,7 @@ const handleGeminiError = (err: any) => {
       <BoardroomPage
         onEnter={(mode) => setState(prev => ({ ...prev, step: 'input', selectedMode: mode }))}
         onLogin={() => loginWithGoogle()}
+        onLogout={() => logoutUser()}
         onShowHistory={() => setShowHistory(true)}
         user={user}
       />
@@ -497,11 +498,21 @@ const handleGeminiError = (err: any) => {
                 <History className="w-3 h-3" />
                 Meus Casos
               </button>
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 bg-white/10 rounded-full overflow-hidden">
-                  {user.photoURL ? <img src={user.photoURL} alt="" /> : <div className="w-full h-full bg-white/20" />}
+              <div className="relative group">
+                <div className="flex items-center gap-3 cursor-pointer">
+                  <div className="w-5 h-5 bg-white/10 rounded-full overflow-hidden">
+                    {user.photoURL ? <img src={user.photoURL} alt="" /> : <div className="w-full h-full bg-white/20" />}
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">{user.displayName?.split(' ')[0]}</span>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">{user.displayName?.split(' ')[0]}</span>
+                <div className="absolute right-0 top-8 hidden group-hover:flex flex-col bg-[#1C1C1F] border border-white/10 shadow-xl z-50 min-w-[120px]">
+                  <button
+                    onClick={() => logoutUser()}
+                    className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 transition-colors text-left"
+                  >
+                    Sair
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
