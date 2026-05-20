@@ -15,6 +15,7 @@ import {
 } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
 import { SimulationResult, LegalArea } from '../types';
+import { anonymizeSimulation } from '../lib/anonymizer';
 
 enum OperationType {
   CREATE = 'create',
@@ -57,19 +58,26 @@ export const saveSimulation = async (
   report: any = null
 ) => {
   const isWin = result.finalSuccessProbability >= 50;
-  
+
+  const anon = anonymizeSimulation({
+    caseDescription,
+    caseSummary,
+    rounds: result.rounds,
+    report,
+  });
+
   try {
     // Save simulation record
     await addDoc(collection(db, 'simulations'), {
       userId,
-      caseDescription,
-      caseSummary,
+      caseDescription: anon.caseDescription,
+      caseSummary: anon.caseSummary,
       area: result.area,
       finalSuccessProbability: result.finalSuccessProbability,
       lawyerAgentName: result.lawyerAgentName,
       judgeAgentName: result.judgeAgentName,
-      rounds: result.rounds,
-      report, // Store full report
+      rounds: anon.rounds,
+      report: anon.report,
       isWin,
       createdAt: serverTimestamp()
     });
