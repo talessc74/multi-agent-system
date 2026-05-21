@@ -25,7 +25,7 @@ const SHAW_V2: Record<string, any> = {
 };
 
 const ESPECIALISTA_V2: Record<string, any> = {
-  "nomeAgente": "Arquiteto Especialista (Auditor Kern 0xF1)",
+  "nomeAgente": "Arquiteto Especialista",
   "versao": { "numero": "2.6.0-INTEGRATED", "data": "2026-04-20", "kernel": "SHAW_AUDITOR_KERN_0XF1", "tipo": "Interface Consultiva de Alta Integridade e Otimização" },
   "kernel_logic": {
     "philosophy": "Project Zero Mindset (Zatko & Ormandy)",
