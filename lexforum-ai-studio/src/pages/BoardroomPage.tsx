@@ -77,18 +77,18 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
   return (
     <div className="min-h-screen bg-[#111111] text-white overflow-x-hidden selection:bg-amber-400/20">
       {/* Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-[#111111]/95 backdrop-blur-md border-b border-white/10 px-8 flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-[#111111]/95 backdrop-blur-md border-b border-white/10 px-4 md:px-8 flex items-center justify-between">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.reload()}>
           <Logo size="md" showTitle={false} />
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 md:gap-6">
           {user && (
             <button
               onClick={() => user ? onShowHistory() : onLogin()}
-              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors border-r border-white/10 pr-6 h-8"
+              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors border-r border-white/10 pr-3 md:pr-6 h-8"
             >
               <History className="w-3 h-3" />
-              Meus Casos
+              <span className="hidden md:inline">Meus Casos</span>
             </button>
           )}
           {user ? (
