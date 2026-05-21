@@ -532,12 +532,12 @@ const handleGeminiError = (err: any) => {
 
   return (
     <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
-      <header className="h-16 border-b border-white/10 px-8 flex items-center justify-between bg-[#111111]/80 backdrop-blur-md sticky top-0 z-50 no-print">
+      <header className="h-16 border-b border-white/10 px-4 md:px-8 flex items-center justify-between bg-[#111111]/80 backdrop-blur-md sticky top-0 z-50 no-print">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.reload()}>
           <Logo size="md" showTitle={false} />
         </div>
-        <div className="flex items-center gap-6">
-          <button 
+        <div className="flex items-center gap-3 md:gap-6">
+          <button
             onClick={() => setState(prev => ({ ...prev, showForgeMonitor: !prev.showForgeMonitor }))}
             className={`flex items-center gap-2 px-3 py-1.5 border transition-all lg:flex hidden ${state.showForgeMonitor ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-white/10 text-white/40 hover:text-white hover:border-white/20'}`}
           >
@@ -557,10 +557,10 @@ const handleGeminiError = (err: any) => {
             <div className="flex items-center gap-6">
               <button 
                 onClick={() => setShowHistory(true)}
-                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors border-r border-white/10 pr-6 mr-2 h-8"
+                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors border-r border-white/10 pr-3 md:pr-6 mr-2 h-8"
               >
                 <History className="w-3 h-3" />
-                Meus Casos
+                <span className="hidden md:inline">Meus Casos</span>
               </button>
               <div className="relative">
                 <div
