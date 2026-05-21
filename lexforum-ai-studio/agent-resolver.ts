@@ -11,6 +11,7 @@ interface AgentEntry {
   comarca: string | null;
   arquivo: string;
   seed: string;
+  conteudo?: Record<string, any>;
 }
 
 interface ResolveParams {
@@ -77,6 +78,7 @@ async function createAndSaveAgent(params: ResolveParams): Promise<AgentEntry> {
     comarca: params.comarca ?? null,
     arquivo: `agents/${result.agent_id}_v1.0.json`,
     seed: result.seed_id,
+    conteudo: result.agente,
   };
 
   try {

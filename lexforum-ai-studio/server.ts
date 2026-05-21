@@ -71,7 +71,7 @@ async function startServer() {
         comarca: specificJudge ?? undefined,
         tipo: 'juiz',
       });
-      const agentJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
+      const agentJson = entry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
       agentInstruction = JSON.stringify(agentJson);
       judgeNameFromRegistry = `Magistrado ${area === 'LABOR' ? 'Trabalhista' : area === 'CONSUMER' ? 'Consumerista' : area === 'CIVIL' ? 'Cível' : area === 'FAMILY' ? 'de Família' : area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'}`;
       console.log(`[AgentResolver] Usando agente do registry: ${entry.agent_id}`);
@@ -86,7 +86,7 @@ async function startServer() {
         comarca: specificJudge ?? undefined,
         tipo: 'advogado',
       });
-      const lawyerJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), lawyerEntry.arquivo), 'utf-8'));
+      const lawyerJson = lawyerEntry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), lawyerEntry.arquivo), 'utf-8'));
       lawyerInstruction = JSON.stringify(lawyerJson);
       console.log(`[AgentResolver] Advogado do registry: ${lawyerEntry.agent_id}`);
     } catch (e) {
@@ -164,7 +164,7 @@ async function startServer() {
         comarca: specificJudge ?? undefined,
         tipo: 'juiz',
       });
-      const agentJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
+      const agentJson = entry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
       agentInstruction = JSON.stringify(agentJson);
       agentName = `Magistrado ${area === 'LABOR' ? 'Trabalhista' : area === 'CONSUMER' ? 'Consumerista' : area === 'CIVIL' ? 'Cível' : area === 'FAMILY' ? 'de Família' : area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'}`;
       console.log(`[Mode5] Agente do registry: ${entry.agent_id}`);
