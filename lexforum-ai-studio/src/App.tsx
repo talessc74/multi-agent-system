@@ -324,7 +324,7 @@ const handleGeminiError = (err: any) => {
             setState(prev => ({ ...prev, simStep: step as any }));
           }
         );
-        setState(prev => ({ ...prev, step: 'result', mode5Result: result, isUnlocked: false, simStep: 'IDLE' }));
+        setState(prev => ({ ...prev, step: 'result', mode5Result: result, simStep: 'IDLE' }));
       } catch (err) {
         handleGeminiError(err);
         setState(prev => ({ ...prev, step: 'input', simStep: 'IDLE' }));
