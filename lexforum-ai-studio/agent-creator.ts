@@ -130,10 +130,11 @@ export interface CreateAgentParams {
   tipo: "juiz" | "advogado" | "desembargadora";
   areaCode: string;
   sequencial: string;
+  userSide?: 'AUTHOR' | 'DEFENSE';
 }
 
 export async function createAgentFromScratch(params: CreateAgentParams) {
-  const description = `${params.tipo} especializado em direito ${params.area}${params.comarca ? ` da comarca de ${params.comarca}` : " — genérico"}`;
+  const description = `${params.tipo} especializado em direito ${params.area}${params.comarca ? ` da comarca de ${params.comarca}` : " — genérico"}${params.userSide === 'DEFENSE' ? ', atuando pela defesa do réu' : ', atuando pelo autor'}`;
   const seedId = `SEED_${params.areaCode}_${params.sequencial}`;
   const agentId = `${params.tipo}_${params.area}_${params.sequencial}`;
 

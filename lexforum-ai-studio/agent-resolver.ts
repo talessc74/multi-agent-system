@@ -18,6 +18,7 @@ interface ResolveParams {
   area: string;
   comarca?: string;
   tipo: 'juiz' | 'advogado' | 'desembargadora';
+  userSide?: 'AUTHOR' | 'DEFENSE';
 }
 
 function findAgentLocal(params: ResolveParams): AgentEntry | null {
@@ -70,6 +71,7 @@ async function createAndSaveAgent(params: ResolveParams): Promise<AgentEntry> {
     tipo: params.tipo,
     areaCode,
     sequencial,
+    userSide: params.userSide,
   });
 
   const entry: AgentEntry = {
