@@ -331,7 +331,14 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 
 ## Pendências conhecidas (atualizado 20/05/2026 noite)
 
-- Bug 3 parcial: inversão de lado no Modo 4 só funciona para agentes criados dinamicamente
+- Bug 3 — Modo 4 advogado do lado errado: NÃO resolvido. Exige trabalho de sessão completa.
+  Diagnóstico: o problema não é só instrução de lado — é que advogado do autor e advogado do réu são perfis distintos, com axiomas e estratégias opostas. O mesmo agente com instrução invertida não resolve.
+  O que falta:
+  1. Sementes separadas por lado (advogado_autor / advogado_reu) para cada área jurídica
+  2. Registry com tipo: 'advogado_autor' e tipo: 'advogado_reu'
+  3. gemini.server.ts usando o agente correto baseado no userSide
+  4. Ver gemini.server.ts — função simulateForumServer — antes de qualquer correção
+  Arquivo para trazer na próxima sessão: lexforum-ai-studio/src/lib/gemini.server.ts
 - Stats de segundo plano ainda estáticos (simulações, win rate, precisão)
 - Modo 5 ACORDO: label "Vantagem clara — rejeitar" precisa ajuste de texto
 - Stripe: testar fluxo end-to-end com compra real (modo live)
