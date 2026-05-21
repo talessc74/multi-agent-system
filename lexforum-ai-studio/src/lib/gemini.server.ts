@@ -188,10 +188,14 @@ export async function simulateForumServer(
         ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente: ${userPetition}`
         : `Sentença anterior: ${currentJudgment}\nMelhore ainda mais: ${userPetition}`;
 
+      const sideContext = userSide === 'DEFENSE'
+        ? '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do RÉU (DEFESA). Sua função é defender os interesses do réu, contestar os argumentos do autor e construir a melhor estratégia de defesa possível. Nunca argumente pelo lado do autor.'
+        : '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do AUTOR. Sua função é defender os interesses do autor e construir a melhor estratégia para procedência do pedido.';
+
       const lawRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: prepareParts(lawPrompt, userAtts) }],
-        config: { systemInstruction: lawAgent.instruction }
+        config: { systemInstruction: lawAgent.instruction + sideContext }
       });
       currentPetition = lawRes.text || '';
 
