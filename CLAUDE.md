@@ -305,17 +305,38 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 - Modo 5 calibrado — `successProbability` substitui `confidenceLevel`; barra visual com faixas semânticas por subcaso (RECURSO / ACORDO)
 - Modelo de preços definido e documentado no CLAUDE.md
 
-## Pendências conhecidas
+## Sessão 20/05/2026 — Correção de Bugs (noite)
 
-- **Bug Modo 1** — Round 3 não transiciona para resultado (não reproduzido; monitorar)
-- **Stats de segundo plano** — valores de simulações, win rate e precisão são estáticos; devem ser zerados e substituídos por contagens reais do Firestore
-- **Modo 5 ACORDO** — label "Vantagem clara — rejeitar" precisa de ajuste de texto
+**4 bugs corrigidos — sistema estável para testes beta**
 
-## Próximas etapas (em ordem)
+### Bug 1 — Modo 5 ignorava status beta [FIX] commit 7c7656e
+- App.tsx linha 327: `isUnlocked: false` hardcoded sobrescrevia o estado beta ao fim da simulação do Modo 5
+- Correção: removido `isUnlocked: false` do setState — estado beta preservado via spread
 
-1. Stripe — testar fluxo end-to-end com compra real (modo live)
-2. Chat pós-sessão ao vivo
-3. Chat no histórico
+### Bug 2 — Nome interno vazando na simulação [FIX] commit 721ff64
+- agent-creator.ts: ESPECIALISTA_V2 expunha "Auditor Kern 0xF1" como nomeAgente
+- Gemini recebia o nome interno no contexto e reproduzia no output do advogado
+- Correção: nomeAgente alterado para "Arquiteto Especialista"
+
+### Bug 3 — Advogado do lado errado no Modo 4 [FIX] commit fd9bfcb
+- server.ts: resolveAgent sempre buscava tipo 'advogado' independente do userSide
+- userSide não era propagado pela cadeia server.ts → agent-resolver.ts → agent-creator.ts
+- Correção: userSide adicionado à interface ResolveParams e CreateAgentParams, propagado até a description do agente criado dinamicamente
+- Limitação conhecida: inversão só afeta agentes criados do zero — agentes já no registry não são afetados. Pendência futura.
+
+### Bug 4 — "null" literal nas sentenças [FIX] commit 3f71a07
+- server.ts: specificJudge chegava como string "null" do cliente
+- Operador ?? não captura string "null" — valor passava direto para o agente
+- Correção: guard explícito `specificJudge && specificJudge !== 'null'` nas 3 ocorrências
+
+## Pendências conhecidas (atualizado 20/05/2026 noite)
+
+- Bug 3 parcial: inversão de lado no Modo 4 só funciona para agentes criados dinamicamente
+- Stats de segundo plano ainda estáticos (simulações, win rate, precisão)
+- Modo 5 ACORDO: label "Vantagem clara — rejeitar" precisa ajuste de texto
+- Stripe: testar fluxo end-to-end com compra real (modo live)
+- Chat pós-sessão ao vivo
+- Chat no histórico
 
 ## Ethics & Security
 
