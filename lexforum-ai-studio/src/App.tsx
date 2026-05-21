@@ -534,7 +534,7 @@ const handleGeminiError = (err: any) => {
     <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
       <header className="h-16 border-b border-white/10 px-4 md:px-8 flex items-center justify-between bg-[#111111]/80 backdrop-blur-md sticky top-0 z-50 no-print">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.reload()}>
-          <Logo size="md" showTitle={false} />
+          <Logo size="sm" showText={false} />
         </div>
         <div className="flex items-center gap-3 md:gap-6">
           <button
