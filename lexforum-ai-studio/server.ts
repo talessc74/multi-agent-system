@@ -68,7 +68,7 @@ async function startServer() {
     try {
       const entry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
-        comarca: specificJudge ?? undefined,
+        comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
         tipo: 'juiz',
       });
       const agentJson = entry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
@@ -83,7 +83,7 @@ async function startServer() {
     try {
       const lawyerEntry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
-        comarca: specificJudge ?? undefined,
+        comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
         tipo: 'advogado',
       });
       const lawyerJson = lawyerEntry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), lawyerEntry.arquivo), 'utf-8'));
@@ -161,7 +161,7 @@ async function startServer() {
     try {
       const entry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
-        comarca: specificJudge ?? undefined,
+        comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
         tipo: 'juiz',
       });
       const agentJson = entry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
