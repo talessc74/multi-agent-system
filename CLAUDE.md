@@ -329,21 +329,35 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 - Operador ?? não captura string "null" — valor passava direto para o agente
 - Correção: guard explícito `specificJudge && specificJudge !== 'null'` nas 3 ocorrências
 
-## Pendências conhecidas (atualizado 20/05/2026 noite)
+## Sessão 21/05/2026 — Correções Mobile e Bug 3
 
-- Bug 3 — Modo 4 advogado do lado errado: NÃO resolvido. Exige trabalho de sessão completa.
-  Diagnóstico: o problema não é só instrução de lado — é que advogado do autor e advogado do réu são perfis distintos, com axiomas e estratégias opostas. O mesmo agente com instrução invertida não resolve.
-  O que falta:
-  1. Sementes separadas por lado (advogado_autor / advogado_reu) para cada área jurídica
-  2. Registry com tipo: 'advogado_autor' e tipo: 'advogado_reu'
-  3. gemini.server.ts usando o agente correto baseado no userSide
-  4. Ver gemini.server.ts — função simulateForumServer — antes de qualquer correção
-  Arquivo para trazer na próxima sessão: lexforum-ai-studio/src/lib/gemini.server.ts
-- Stats de segundo plano ainda estáticos (simulações, win rate, precisão)
-- Modo 5 ACORDO: label "Vantagem clara — rejeitar" precisa ajuste de texto
-- Stripe: testar fluxo end-to-end com compra real (modo live)
+**3 fixes aplicados — sistema estável**
+
+### Fix 1 — Header mobile cortado [FIX] commit a6f3cdd
+- BoardroomPage.tsx: px-8 → px-4 md:px-8, gap-6 → gap-3 md:gap-6
+- Botão "Meus Casos" oculta texto em mobile: hidden md:inline
+- Corrige logo cortada em telas pequenas
+
+### Fix 2 — Header mobile App.tsx [FIX] commit ba0328d
+- Mesmo padrão aplicado ao header das telas de simulação
+- px-8 → px-4 md:px-8, gap-6 → gap-3 md:gap-6
+- Botão "Meus Casos" com hidden md:inline
+
+### Fix 3 — Bug 3 resolvido: advogado do lado correto no Modo 4 [FIX] commit a686815
+- gemini.server.ts: sideContext injetado na systemInstruction do advogado
+- Quando userSide === 'DEFENSE': advogado recebe instrução explícita de defender o réu
+- Quando userSide === 'AUTHOR': advogado recebe instrução explícita de defender o autor
+- Solução cirúrgica — sem criar novos agentes, sem mexer no registry
+- Complementa as correções de ontem na cadeia server.ts → agent-resolver.ts → agent-creator.ts
+
+## Pendências conhecidas (atualizado 21/05/2026)
+
+- Stripe — testar fluxo end-to-end com compra real (modo live)
 - Chat pós-sessão ao vivo
 - Chat no histórico
+- Stats estáticos — win rate e simulações precisam vir do Firestore
+- Modo 5 ACORDO — label "Vantagem clara — rejeitar" precisa ajuste de texto
+- Deploy e teste em produção — eai.radiokactus.com
 
 ## Ethics & Security
 
