@@ -445,7 +445,7 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 - Chat no histórico
 - Stats estáticos — win rate e simulações precisam vir do Firestore
 - Modo 5 ACORDO — label "Vantagem clara — rejeitar" precisa ajuste
-- "Auditor Kern 0xF1" vazando no laudo — generateReportServer em gemini.server.ts
+- ✅ "Auditor Kern 0xF1" removido — prompt de getOrGenerateAgent corrigido (commit 7ecc144)
 - Cadastro público aberto — controle de accessLevel beta ainda manual no Firebase Console
 - Deletar 4 agentes órfãos restantes no Firestore (advogado_civel, advogado_familia, juiz_civel, juiz_familia)
 - ✅ Índice Firestore agents (area ASC + tipo ASC) confirmado como Ativado via Console Firebase
