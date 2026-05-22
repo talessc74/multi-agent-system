@@ -447,7 +447,7 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 - ✅ Modo 5 ACORDO — label corrigido para "Vantagem clara — rejeitar o acordo" (commit 64865d8)
 - ✅ "Auditor Kern 0xF1" removido — prompt de getOrGenerateAgent corrigido (commit 7ecc144)
 - Cadastro público aberto — controle de accessLevel beta ainda manual no Firebase Console
-- Deletar 4 agentes órfãos restantes no Firestore (advogado_civel, advogado_familia, juiz_civel, juiz_familia)
+- ✅ Agentes órfãos deletados — coleção agents contém apenas agentes válidos criados em produção (7 documentos ativos confirmados em 22/05/2026)
 - ✅ Índice Firestore agents (area ASC + tipo ASC) confirmado como Ativado via Console Firebase
 - Tarefa 6 — Consistência entre execuções: dependente do deploy do índice acima
 - ✅ Tom reflexivo aplicado — 3 pontos corrigidos em gemini.server.ts (commits 14409b5, 2316aa7, f33bfb8): Juiz pondera, Advogado constrói argumentos, Modo 5 reflete
