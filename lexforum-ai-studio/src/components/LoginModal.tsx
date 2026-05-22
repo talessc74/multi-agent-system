@@ -107,7 +107,9 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
 
         {/* Title */}
         <h2 className="font-playfair italic text-2xl text-white mb-8">
-          {mode === 'login' ? 'Acesse o EAI?' : 'Crie sua conta'}
+          {mode === 'login' && 'Acesse o EAI?'}
+          {mode === 'register' && 'Crie sua conta'}
+          {mode === 'forgot' && 'Recuperar senha'}
         </h2>
 
         {/* Login mode */}
