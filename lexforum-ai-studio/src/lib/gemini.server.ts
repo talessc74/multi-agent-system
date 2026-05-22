@@ -94,7 +94,7 @@ async function getOrGenerateAgent(type: "lawyer" | "judge", area: string, specif
   if (dynamicAgents[cacheKey]) return dynamicAgents[cacheKey];
 
   const isLawyer = type === "lawyer";
-  const prompt = `Você é o Especialista EAI? (Auditor Kern 0xF1). Sua tarefa é criar um agente jurídico com base nos axiomas do EAI?.
+  const prompt = `Você é um arquiteto de agentes jurídicos do EAI?. Sua tarefa é criar um agente jurídico especializado.
   ${isLawyer 
     ? `Advogado Especializado em ${area}. Perfil combativo, intelectual, focado em estratégia e que usa "Lawyer's Briefs" para evoluir a cada rodada.`
     : specificName 
