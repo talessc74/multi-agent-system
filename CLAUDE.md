@@ -444,7 +444,7 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 - Chat pós-sessão ao vivo
 - Chat no histórico
 - Stats estáticos — win rate e simulações precisam vir do Firestore
-- Modo 5 ACORDO — label "Vantagem clara — rejeitar" precisa ajuste
+- ✅ Modo 5 ACORDO — label corrigido para "Vantagem clara — rejeitar o acordo" (commit 64865d8)
 - ✅ "Auditor Kern 0xF1" removido — prompt de getOrGenerateAgent corrigido (commit 7ecc144)
 - Cadastro público aberto — controle de accessLevel beta ainda manual no Firebase Console
 - Deletar 4 agentes órfãos restantes no Firestore (advogado_civel, advogado_familia, juiz_civel, juiz_familia)
