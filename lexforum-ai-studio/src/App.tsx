@@ -1567,6 +1567,12 @@ const handleGeminiError = (err: any) => {
                                 />
                               </div>
                               <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">{label}</span>
+                              <p className="text-[10px] uppercase tracking-widest text-white/30 mt-2 font-bold print:text-black/40">
+                                Índice de força argumentativa — não probabilidade estatística.
+                              </p>
+                              <p className="text-[9px] text-white/20 uppercase tracking-widest mt-1 print:text-black/30">
+                                Estimativa baseada na sua descrição. Resultados reais variam.
+                              </p>
                             </div>
                           );
                         })()}
@@ -1630,6 +1636,12 @@ const handleGeminiError = (err: any) => {
                         {(state.simulation?.rounds && state.simulation.rounds.length > 0) ? `${state.simulation.finalSuccessProbability}` : "--"}%
                       </span>
                     )}
+                    <p className="text-[10px] uppercase tracking-widest text-white/30 mt-2 font-bold print:text-black/40">
+                      Índice de força argumentativa — não probabilidade estatística.
+                    </p>
+                    <p className="text-[9px] text-white/20 uppercase tracking-widest mt-1 print:text-black/30">
+                      Estimativa baseada na sua descrição. Resultados reais variam.
+                    </p>
                   </div>
                 </div>
                 )}
