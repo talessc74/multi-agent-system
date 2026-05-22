@@ -186,6 +186,56 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
           </>
         )}
 
+        {/* Forgot mode */}
+        {mode === 'forgot' && (
+          <>
+            {resetSent ? (
+              <div className="flex flex-col gap-6">
+                <p className="text-[12px] text-white/60 leading-relaxed">
+                  Se esse e-mail estiver cadastrado, você receberá um link de recuperação em instantes. Verifique também sua caixa de spam.
+                </p>
+                <button
+                  onClick={() => switchMode('login')}
+                  className="w-full bg-white text-black text-[11px] font-bold uppercase tracking-widest py-3 hover:bg-white/90 transition-colors"
+                >
+                  Voltar para o login
+                </button>
+              </div>
+            ) : (
+              <>
+                <form onSubmit={handleForgot} className="flex flex-col gap-3">
+                  <input
+                    type="email"
+                    placeholder="E-mail cadastrado"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full bg-transparent border border-white/10 px-4 py-3 text-[12px] text-white placeholder-white/25 focus:outline-none focus:border-white/30 transition-colors"
+                  />
+                  {error && (
+                    <p className="text-[10px] text-red-400 leading-relaxed">{error}</p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-white text-black text-[11px] font-bold uppercase tracking-widest py-3 hover:bg-white/90 transition-colors disabled:opacity-50 mt-1"
+                  >
+                    Enviar link de recuperação
+                  </button>
+                </form>
+                <p className="mt-6 text-[10px] text-white/30 text-center">
+                  <button
+                    onClick={() => switchMode('login')}
+                    className="text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+                  >
+                    Voltar para o login
+                  </button>
+                </p>
+              </>
+            )}
+          </>
+        )}
+
         {/* Register mode */}
         {mode === 'register' && (
           <>
