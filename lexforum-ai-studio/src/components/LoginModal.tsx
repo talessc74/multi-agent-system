@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { loginWithGoogle, loginWithEmail, registerWithEmail } from '../lib/firebase';
+import { loginWithGoogle, loginWithEmail, registerWithEmail, resetPassword } from '../lib/firebase';
 import { X } from 'lucide-react';
 
 interface Props {
@@ -69,6 +69,20 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
       onSuccess();
     } catch (e: any) {
       setError(e.message ?? 'Erro ao criar conta.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgot = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await resetPassword(email);
+      setResetSent(true);
+    } catch (e: any) {
+      setError(e.message ?? 'Erro ao enviar e-mail de recuperação.');
     } finally {
       setLoading(false);
     }
