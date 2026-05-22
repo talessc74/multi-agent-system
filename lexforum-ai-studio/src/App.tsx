@@ -465,7 +465,7 @@ const handleGeminiError = (err: any) => {
     }
   };
 
-  const areaLabels: Record<LegalArea, string> = {
+  const areaLabels: Record<string, string> = {
     [LegalArea.CONSUMER]: "Direito do Consumidor",
     [LegalArea.LABOR]: "Direito do Trabalho",
     [LegalArea.CIVIL]: "Direito Cível",
