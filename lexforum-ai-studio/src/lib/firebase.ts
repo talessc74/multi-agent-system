@@ -11,6 +11,7 @@ import {
   browserSessionPersistence,
   browserLocalPersistence,
   setPersistence,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
@@ -43,3 +44,5 @@ export const registerWithEmail = (email: string, password: string) =>
   createUserWithEmailAndPassword(auth, email, password);
 
 export const logoutUser = () => signOut(auth);
+
+export const resetPassword = (email: string) => sendPasswordResetEmail(auth, email);
