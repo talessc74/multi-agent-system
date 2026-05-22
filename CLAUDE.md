@@ -373,16 +373,75 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 - Link de alternância entre modos
 - Cadastro testado e funcionando — usuários aparecem no Firebase Console
 
-## Pendências conhecidas (atualizado 21/05/2026 noite)
+## Sessão 21/05/2026 — EAI? Evoluções UX, SSE e Consistência (noite)
 
-- Prioridades do Board (Arch) — 8 tarefas documentadas, nenhuma iniciada
+**8 entregas + decisões arquiteturais**
+
+### Tarefa 1 — Remove exibição de comarca e nome do juiz [FIX] commit 81b7a87
+- App.tsx: card "FORO / COMARCA" substituído por "ESPECIALIZAÇÃO" com texto dinâmico baseado na área detectada
+- Tela confirm: referência condicional ao specificJudge removida — texto fixo
+
+### Tarefa 2 — Temperatura por tipo de agente [FIX] commit 709eff7
+- gemini.server.ts: 11 temperatures aplicadas conforme tipo de agente
+- Juiz: 0.3 / Advogado: 0.65 / Brief: 0.5 / Validação e Relatório: 0.2 / Geração de agente: 0.4
+
+### DOCS — Critérios de temperatura documentados [DOCS] commit e57ef5a
+- Criado lexforum-ai-studio/docs/agent-temperature-rationale.md
+- Filosofia, tabela completa, princípio orientador e data de revisão (agosto/2026)
+- 11 comentários inline adicionados no gemini.server.ts
+
+### Tarefa 3 — Camada de incerteza ao índice [FEAT] commit a2cdada
+- App.tsx: dois textos adicionados abaixo do percentual em todos os modos
+- "Índice de força argumentativa — não probabilidade estatística."
+- "Estimativa baseada na sua descrição. Resultados reais variam."
+- Cobertos: Modos 0–4 e Modo 5
+
+### Tarefa 4 — Disclaimers padronizados [FIX] commit a586dd5
+- App.tsx: 3 disclaimers diferentes unificados em texto único
+- Texto padrão: "O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado."
+
+### Tarefa 5 — Área sensível com recursos de apoio [FEAT] commit 13a59f5
+- App.tsx: bloco condicional exibido quando detectedArea === FAMILY ou SOCIAL_SECURITY
+- Recursos: 180 (Central de Atendimento à Mulher), 188 (CVV), Defensoria Pública, CRAS
+- Inserido em 3 pontos: resultado bloqueado, resultado desbloqueado e Modo 5
+
+### SSE — Retry automático com aviso e preservação de estado [FEAT] commit 005c553
+- types.ts: isRetryable?: boolean adicionado ao tipo error
+- gemini.ts: simulateForum reescrita com MAX_RETRIES=3, backoff 1.5s × tentativa
+- App.tsx: banner âmbar "Reconectando... tentativa X de 3" durante retry
+- App.tsx: mensagem de falha final com botão "Tentar Novamente" — state preservado
+- Resolve problema de queda de conexão no Safari mobile
+
+### Limpeza — Agentes órfãos deletados (Firestore)
+- Coleção agents: juiz_consumerista_546876 e advogado_consumerista_572121 deletados
+- Criados pelo EspecialistaV1 antes do framework atual — não referenciados em nenhum ponto do código
+- Restam 4 documentos na coleção — também órfãos, deleção pendente
+
+### Decisão arquitetural — Registry local descartado
+- registry/index/ não existe dentro de lexforum-ai-studio/ e nunca foi copiado para o container
+- findAgentLocal() sempre falha graciosamente — sistema cai no Firestore
+- Decisão: NÃO criar registry local com agentes pré-fabricados
+- A dupla Shaw+Especialista cria agentes sob demanda — essa é a joia do sistema. Intocável.
+- Consistência garantida pelo Firestore: primeira simulação cria o agente, segunda reutiliza
+- Índice composto agents: area ASC + tipo ASC confirmado no firestore.indexes.json
+- Pendência: deploy do índice em produção via firebase deploy --only firestore:indexes
+
+## Pendências conhecidas (atualizado 21/05/2026 noite — pós sessão EAI?)
+
 - Stripe — testar fluxo end-to-end com compra real (modo live)
 - Chat pós-sessão ao vivo
 - Chat no histórico
 - Stats estáticos — win rate e simulações precisam vir do Firestore
 - Modo 5 ACORDO — label "Vantagem clara — rejeitar" precisa ajuste
-- "Auditor Kern 0xF1" vazando no laudo — correção pendente
+- "Auditor Kern 0xF1" vazando no laudo — generateReportServer em gemini.server.ts
 - Cadastro público aberto — controle de accessLevel beta ainda manual no Firebase Console
+- Deletar 4 agentes órfãos restantes no Firestore (advogado_civel, advogado_familia, juiz_civel, juiz_familia)
+- Deploy do índice Firestore em produção: firebase deploy --only firestore:indexes --project eairadiokactus
+- Tarefa 6 — Consistência entre execuções: dependente do deploy do índice acima
+- Tarefa 7 — Tom reflexivo nos prompts (gemini.server.ts)
+- SSE mobile — SSE retry implementado; monitorar reconexão Safari em produção
+- Dark/light mode — fila futura, não é MVP
+- Renomear pasta lexforum-ai-studio/ — avaliar impacto no Dockerfile e cloudbuild.yaml
 
 ## Ethics & Security
 
