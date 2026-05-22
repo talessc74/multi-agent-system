@@ -43,7 +43,7 @@ function prepareParts(text: string, attachments: Attachment[] = []) {
 export async function validateCausaServer(caseDescription: string, attachments: Attachment[]) {
   const contents = prepareParts(
     `Analise a seguinte causa jurídica (incluindo documentos anexos).
-    1. Classifique a área como uma de: CONSUMER, LABOR, CIVIL, SOCIAL_SECURITY, FAMILY, OTHER.
+    1. Identifique o ramo do direito brasileiro mais específico aplicável ao caso. Exemplos: CONSUMER, LABOR, CIVIL, FAMILY, SOCIAL_SECURITY, MARITIME, CRIMINAL, TAX, ENVIRONMENTAL, ADMINISTRATIVE, CORPORATE — ou qualquer outro ramo pertinente. Retorne em inglês, maiúsculas, sem espaços.
     2. Verifique se o usuário mencionou um juiz, vara ou comarca específica no relato ou nos documentos. Se sim, extraia, senão null.
     3. Crie um resumo conciso em um ou dois parágrafos do que você entendeu ser o núcleo central do problema/causa.
     
@@ -61,7 +61,7 @@ export async function validateCausaServer(caseDescription: string, attachments: 
       responseSchema: {
         type: Type.OBJECT,
         properties: {
-          area: { type: Type.STRING, description: "One of: CONSUMER, LABOR, CIVIL, SOCIAL_SECURITY, FAMILY, OTHER" },
+          area: { type: Type.STRING, description: "Brazilian legal branch in English uppercase (e.g. CONSUMER, LABOR, CIVIL, MARITIME, CRIMINAL, TAX, ENVIRONMENTAL, ADMINISTRATIVE, CORPORATE, FAMILY, SOCIAL_SECURITY, or any other)" },
           specificJudge: { type: Type.STRING },
           summary: { type: Type.STRING },
           detectedProfile: { type: Type.STRING }
