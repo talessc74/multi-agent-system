@@ -28,7 +28,7 @@ import {
   Activity,
   History
 } from 'lucide-react';
-import { LegalArea, SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode5Result } from './types';
+import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode5Result } from './types';
 import { validateCausa, simulateForum, generateReport, simulateMode5 } from './lib/gemini';
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -107,7 +107,7 @@ export default function App() {
     attachments: [],
     defenseAttachments: [],
     userSide: undefined,
-    detectedArea: LegalArea.OTHER,
+    detectedArea: 'OTHER',
     caseSummary: null,
     specificJudge: null,
     simulation: null,
@@ -282,7 +282,7 @@ const handleGeminiError = (err: any) => {
       setState(prev => ({ 
         ...prev, 
         step: 'confirm', 
-        detectedArea: data.area || LegalArea.OTHER, 
+        detectedArea: data.area || 'OTHER', 
         specificJudge: data.specificJudge,
         caseSummary: data.summary,
         selectedProfile: data.detectedProfile || prev.selectedProfile,
@@ -300,7 +300,7 @@ const handleGeminiError = (err: any) => {
       ...prev,
       step: 'result',
       caseDescription: sim.caseDescription,
-      detectedArea: sim.area || LegalArea.OTHER,
+      detectedArea: sim.area || 'OTHER',
       caseSummary: sim.caseSummary,
       simulation: {
         area: sim.area,
@@ -469,12 +469,18 @@ const handleGeminiError = (err: any) => {
     areaLabels[area] ?? area.charAt(0).toUpperCase() + area.slice(1).toLowerCase().replace(/_/g, " ");
 
   const areaLabels: Record<string, string> = {
-    [LegalArea.CONSUMER]: "Direito do Consumidor",
-    [LegalArea.LABOR]: "Direito do Trabalho",
-    [LegalArea.CIVIL]: "Direito Cível",
-    [LegalArea.SOCIAL_SECURITY]: "Direito Previdenciário",
-    [LegalArea.FAMILY]: "Direito de Família",
-    [LegalArea.OTHER]: "Geral / Outros"
+    CONSUMER: "Direito do Consumidor",
+    LABOR: "Direito do Trabalho",
+    CIVIL: "Direito Cível",
+    SOCIAL_SECURITY: "Direito Previdenciário",
+    FAMILY: "Direito de Família",
+    MARITIME: "Direito Marítimo",
+    CRIMINAL: "Direito Penal",
+    TAX: "Direito Tributário",
+    ENVIRONMENTAL: "Direito Ambiental",
+    ADMINISTRATIVE: "Direito Administrativo",
+    CORPORATE: "Direito Empresarial",
+    OTHER: "Geral / Outros"
   };
 
   const MODE_NAMES: Record<number, string> = {
@@ -960,8 +966,8 @@ const handleGeminiError = (err: any) => {
                       ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
 
-                    {(state.detectedArea === LegalArea.FAMILY ||
-                      state.detectedArea === LegalArea.SOCIAL_SECURITY) && (
+                    {(state.detectedArea === 'FAMILY' ||
+                      state.detectedArea === 'SOCIAL_SECURITY') && (
                       <div className="p-6 bg-amber-500/5 border border-amber-500/20 space-y-3 mt-4">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/80 block">
                           🤝 Recursos de Apoio
@@ -1555,8 +1561,8 @@ const handleGeminiError = (err: any) => {
                   </motion.div>
                 )}
 
-                {(state.detectedArea === LegalArea.FAMILY ||
-                  state.detectedArea === LegalArea.SOCIAL_SECURITY) && (
+                {(state.detectedArea === 'FAMILY' ||
+                  state.detectedArea === 'SOCIAL_SECURITY') && (
                   <div className="p-6 bg-amber-500/5 border border-amber-500/20 space-y-3 mt-4">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/80 block">
                       🤝 Recursos de Apoio
@@ -1689,8 +1695,8 @@ const handleGeminiError = (err: any) => {
                       ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
 
-                    {(state.detectedArea === LegalArea.FAMILY ||
-                      state.detectedArea === LegalArea.SOCIAL_SECURITY) && (
+                    {(state.detectedArea === 'FAMILY' ||
+                      state.detectedArea === 'SOCIAL_SECURITY') && (
                       <div className="p-6 bg-amber-500/5 border border-amber-500/20 space-y-3 mt-4">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/80 block">
                           🤝 Recursos de Apoio
@@ -2295,7 +2301,7 @@ const handleGeminiError = (err: any) => {
                         </div>
                         <div className="flex items-center gap-4 text-white/30 text-[9px] font-bold uppercase tracking-[0.2em]">
                           <span className="px-2 py-0.5 border border-white/10 bg-white/5">
-                            {areaLabels[sim.area as LegalArea] || "Direito Geral"}
+                            {formatAreaLabel(sim.area) || "Direito Geral"}
                           </span>
                           <span className="flex items-center gap-1.5">
                             <Activity className="w-3 h-3 text-emerald-500/50" />
