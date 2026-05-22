@@ -2124,7 +2124,7 @@ const handleGeminiError = (err: any) => {
                       <History className="w-4 h-4" />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Sessões Totais</span>
                     </div>
-                    <div className="text-4xl font-serif italic text-white/60">14.282</div>
+                    <div className="text-4xl font-serif italic text-white/60">{globalStats.simulations.toLocaleString()}</div>
                     <div className="text-[9px] text-white/20 leading-relaxed uppercase font-bold tracking-tighter">
                       Cargas de treinamento processadas desde a v1.0
                     </div>
