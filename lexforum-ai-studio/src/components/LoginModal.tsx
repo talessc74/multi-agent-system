@@ -166,15 +166,23 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
               </button>
             </form>
 
-            <p className="mt-6 text-[10px] text-white/30 text-center">
-              Não tem conta?{' '}
+            <div className="mt-6 flex flex-col items-center gap-2">
               <button
-                onClick={() => switchMode('register')}
-                className="text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+                onClick={() => switchMode('forgot')}
+                className="text-[10px] text-white/30 hover:text-white/60 underline underline-offset-2 transition-colors"
               >
-                Cadastre-se
+                Esqueci minha senha
               </button>
-            </p>
+              <p className="text-[10px] text-white/30">
+                Não tem conta?{' '}
+                <button
+                  onClick={() => switchMode('register')}
+                  className="text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+                >
+                  Cadastre-se
+                </button>
+              </p>
+            </div>
           </>
         )}
 
