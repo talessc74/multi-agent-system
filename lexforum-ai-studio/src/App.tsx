@@ -1629,7 +1629,7 @@ const handleGeminiError = (err: any) => {
                               if (p <= 30) return { label: 'Aceitar o acordo', color: 'bg-red-500' };
                               if (p <= 55) return { label: 'Negociar melhores termos', color: 'bg-amber-500' };
                               if (p <= 80) return { label: 'Julgamento favorável', color: 'bg-emerald-400' };
-                              return { label: 'Vantagem clara — rejeitar', color: 'bg-emerald-500' };
+                              return { label: 'Vantagem clara — rejeitar o acordo', color: 'bg-emerald-500' };
                             }
                           };
 
