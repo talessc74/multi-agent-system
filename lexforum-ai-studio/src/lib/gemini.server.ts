@@ -381,11 +381,11 @@ export async function simulateMode5Server(
   const isRecurso = mode5Input.subCase === 'RECURSO';
 
   const basePrompt = isRecurso
-    ? `Analise a sentença apresentada e avalie tecnicamente se vale recorrer.
+    ? `Reflita sobre a sentença apresentada e avalie tecnicamente se vale recorrer.
      Considere: probabilidade de reforma, fundamentos jurídicos sólidos, custo-benefício processual.
      ATENÇÃO: Esta é uma simulação educativa — deixe isso explícito na sua análise.
      Retorne APENAS JSON válido.`
-    : `Analise a proposta de acordo apresentada e avalie tecnicamente se deve ser aceita, negociada ou rejeitada em favor do julgamento.
+    : `Reflita sobre a proposta de acordo apresentada e avalie tecnicamente se deve ser aceita, negociada ou rejeitada em favor do julgamento.
      Considere: probabilidade de êxito em julgamento, valor da proposta vs risco, custo-benefício processual.
      ATENÇÃO: Esta é uma simulação educativa — deixe isso explícito na sua análise.
      Retorne APENAS JSON válido.`;
