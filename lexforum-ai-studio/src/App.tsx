@@ -98,7 +98,7 @@ export default function App() {
     if (showUserMenu) document.addEventListener('click', handler);
     return () => document.removeEventListener('click', handler);
   }, [showUserMenu]);
-  const [globalStats, setGlobalStats] = useState({ simulations: 14282, winRate: 74.8, precision: 98.4 });
+  const [globalStats, setGlobalStats] = useState({ simulations: 0, winRate: 0, precision: 98.4 });
   const [state, setState] = useState<AppState>({
     step: 'boardroom',
     selectedMode: 0,
