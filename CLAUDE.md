@@ -468,4 +468,4 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 - `validateCausa` — prompt de classificação liberado: Gemini identifica qualquer ramo do direito brasileiro
 - `areaLabels` expandido com MARITIME, CRIMINAL, TAX, ENVIRONMENTAL, ADMINISTRATIVE, CORPORATE + `formatAreaLabel()` para fallback de áreas desconhecidas
 - AgentResolver já cria advogado+juiz sob demanda para qualquer área não encontrada na prateleira
-- Commits: 325f114, 49ea734, 024d321, 8f004bc, 2cc2cb1
+- Commits: 325f114, 49ea734, 024d321, 8f004bc, 2cc2cb1, d487dff (fix esbuild — import type)
