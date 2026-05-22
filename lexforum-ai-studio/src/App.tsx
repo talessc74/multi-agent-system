@@ -929,6 +929,28 @@ const handleGeminiError = (err: any) => {
                       ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
 
+                    {(state.detectedArea === LegalArea.FAMILY ||
+                      state.detectedArea === LegalArea.SOCIAL_SECURITY) && (
+                      <div className="p-6 bg-amber-500/5 border border-amber-500/20 space-y-3 mt-4">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/80 block">
+                          🤝 Recursos de Apoio
+                        </span>
+                        <p className="text-sm text-white/60 leading-relaxed">
+                          Se você está em situação de violência, ligue{' '}
+                          <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                        </p>
+                        <p className="text-sm text-white/60 leading-relaxed">
+                          Em sofrimento emocional, ligue{' '}
+                          <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                        </p>
+                        <p className="text-sm text-white/60 leading-relaxed">
+                          Para apoio jurídico gratuito, procure a{' '}
+                          <strong className="text-white">Defensoria Pública</strong> ou o{' '}
+                          <strong className="text-white">CRAS</strong> da sua cidade.
+                        </p>
+                      </div>
+                    )}
+
                     <div className="flex justify-end">
                       <button
                         disabled={!state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
@@ -1491,6 +1513,28 @@ const handleGeminiError = (err: any) => {
                   </motion.div>
                 )}
 
+                {(state.detectedArea === LegalArea.FAMILY ||
+                  state.detectedArea === LegalArea.SOCIAL_SECURITY) && (
+                  <div className="p-6 bg-amber-500/5 border border-amber-500/20 space-y-3 mt-4">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/80 block">
+                      🤝 Recursos de Apoio
+                    </span>
+                    <p className="text-sm text-white/60 leading-relaxed">
+                      Se você está em situação de violência, ligue{' '}
+                      <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                    </p>
+                    <p className="text-sm text-white/60 leading-relaxed">
+                      Em sofrimento emocional, ligue{' '}
+                      <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                    </p>
+                    <p className="text-sm text-white/60 leading-relaxed">
+                      Para apoio jurídico gratuito, procure a{' '}
+                      <strong className="text-white">Defensoria Pública</strong> ou o{' '}
+                      <strong className="text-white">CRAS</strong> da sua cidade.
+                    </p>
+                  </div>
+                )}
+
                 {state.step === 'result' && !state.isUnlocked && state.selectedMode === 5 && state.mode5Result && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -1602,6 +1646,28 @@ const handleGeminiError = (err: any) => {
                     <div className="p-4 bg-amber-500/5 border border-amber-500/20 text-[10px] text-amber-400/60 uppercase tracking-widest font-bold">
                       ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
+
+                    {(state.detectedArea === LegalArea.FAMILY ||
+                      state.detectedArea === LegalArea.SOCIAL_SECURITY) && (
+                      <div className="p-6 bg-amber-500/5 border border-amber-500/20 space-y-3 mt-4">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/80 block">
+                          🤝 Recursos de Apoio
+                        </span>
+                        <p className="text-sm text-white/60 leading-relaxed">
+                          Se você está em situação de violência, ligue{' '}
+                          <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                        </p>
+                        <p className="text-sm text-white/60 leading-relaxed">
+                          Em sofrimento emocional, ligue{' '}
+                          <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                        </p>
+                        <p className="text-sm text-white/60 leading-relaxed">
+                          Para apoio jurídico gratuito, procure a{' '}
+                          <strong className="text-white">Defensoria Pública</strong> ou o{' '}
+                          <strong className="text-white">CRAS</strong> da sua cidade.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 
