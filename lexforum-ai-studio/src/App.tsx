@@ -166,6 +166,7 @@ export default function App() {
   }, []);
 
 const [loading, setLoading] = useState(false);
+const [retryCount, setRetryCount] = useState(0);
 const scrollRef = useRef<HTMLDivElement>(null);
 const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -195,13 +196,28 @@ const handleGeminiError = (err: any) => {
     errorMessage = `Erro técnico: ${cleanMessage.slice(0, 150)}${cleanMessage.length > 150 ? '...' : ''}`;
   }
 
-  setState(prev => ({ 
-    ...prev, 
-    error: { 
-      code: code || 500, 
+  if (err?.message === 'MAX_RETRIES_EXCEEDED') {
+    setState(prev => ({
+      ...prev,
+      step: 'input',
+      error: {
+        code: 503,
+        message: 'Sua conexão caiu durante a simulação. Tentamos reconectar 3 vezes sem sucesso. Seus dados estão preservados — clique em Tentar Novamente.',
+        isQuota: false,
+        isRetryable: true
+      }
+    }));
+    setRetryCount(0);
+    return;
+  }
+
+  setState(prev => ({
+    ...prev,
+    error: {
+      code: code || 500,
       message: errorMessage,
-      isQuota 
-    } 
+      isQuota
+    }
   }));
 };
 
@@ -396,7 +412,8 @@ const handleGeminiError = (err: any) => {
         state.selectedMode,
         state.defenseDescription,
         state.defenseAttachments,
-        state.userSide
+        state.userSide,
+        (attempt) => { setRetryCount(attempt); }
       );
       // Select the best round based on probability (highest, then latest if tie)
       let bestRound = data.rounds[0];
@@ -628,6 +645,17 @@ const handleGeminiError = (err: any) => {
                         Acessar AI Studio Spend
                       </a>
                     </div>
+                  )}
+                  {state.error?.isRetryable && (
+                    <button
+                      onClick={() => {
+                        setState(prev => ({ ...prev, error: null }));
+                        handleSimulate();
+                      }}
+                      className="mt-4 px-6 py-3 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-[#F4F4F2] transition-all"
+                    >
+                      Tentar Novamente
+                    </button>
                   )}
                   <button 
                     onClick={() => setState(prev => ({ ...prev, error: null }))}
@@ -1473,6 +1501,17 @@ const handleGeminiError = (err: any) => {
                     </div>
                   ))}
                   
+                  {retryCount > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex items-center gap-3 px-4 py-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-widest"
+                    >
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      Reconectando... tentativa {retryCount} de 3
+                    </motion.div>
+                  )}
+
                   {loading && (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                       <div className="relative">
