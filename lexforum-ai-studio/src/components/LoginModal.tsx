@@ -21,9 +21,10 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
     setPassword('');
     setConfirm('');
     setError('');
+    setResetSent(false);
   };
 
-  const switchMode = (next: 'login' | 'register') => {
+  const switchMode = (next: 'login' | 'register' | 'forgot') => {
     resetForm();
     setMode(next);
   };
