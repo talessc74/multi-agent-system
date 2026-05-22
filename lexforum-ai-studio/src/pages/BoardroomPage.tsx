@@ -9,6 +9,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { Logo } from '../components/Logo';
+import LoginModal from '../components/LoginModal';
 
 interface Props {
   onEnter: (mode: number) => void;
@@ -67,6 +68,7 @@ const FOOTER_STATS = [
 
 export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistory, user }: Props) {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const handler = () => setShowUserMenu(false);
@@ -117,7 +119,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
             </div>
           ) : (
             <button
-              onClick={onLogin}
+              onClick={() => setShowLoginModal(true)}
               className="px-4 py-2 border border-white text-[11px] uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
             >
               ENTRAR
@@ -283,6 +285,13 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
         </div>
 
       </div>
+
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={() => { setShowLoginModal(false); onLogin(); }}
+        />
+      )}
     </div>
   );
 }
