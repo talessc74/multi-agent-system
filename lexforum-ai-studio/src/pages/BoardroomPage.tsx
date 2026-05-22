@@ -289,7 +289,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
       {showLoginModal && (
         <LoginModal
           onClose={() => setShowLoginModal(false)}
-          onSuccess={() => { setShowLoginModal(false); onLogin(); }}
+          onSuccess={() => setShowLoginModal(false)}
         />
       )}
     </div>
