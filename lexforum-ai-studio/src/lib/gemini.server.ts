@@ -96,7 +96,7 @@ async function getOrGenerateAgent(type: "lawyer" | "judge", area: string, specif
   const isLawyer = type === "lawyer";
   const prompt = `Você é um arquiteto de agentes jurídicos do EAI?. Sua tarefa é criar um agente jurídico especializado.
   ${isLawyer 
-    ? `Advogado Especializado em ${area}. Perfil combativo, intelectual, focado em estratégia e que usa "Lawyer's Briefs" para evoluir a cada rodada.`
+    ? `Advogado Especializado em ${area}. Perfil intelectual, focado em construir argumentos sólidos e desenvolver a tese jurídica a cada rodada, usando "Lawyer's Briefs" para evoluir sua estratégia.`
     : specificName 
       ? `Juiz Específico focado no perfil/comarca de "${specificName}" (Área: ${area}). Ele NUNCA tem memória de rodadas passadas. Ele deve OBRIGATORIAMENTE escrever uma fundamentação jurídica técnica e detalhada, ponderando os argumentos apresentados, e somente ao final incluir o JSON {"success_probability": int\_0\_100}.`
       : `Juiz Especializado na área ${area}. Ele NUNCA tem memória de rodadas passadas. Ele deve OBRIGATORIAMENTE escrever uma fundamentação jurídica técnica e detalhada, avaliando e ponderando os argumentos apresentados, e somente ao final incluir o JSON {"success_probability": int\_0\_100}.`}
