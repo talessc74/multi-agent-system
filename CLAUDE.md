@@ -373,6 +373,18 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 - Link de alternância entre modos
 - Cadastro testado e funcionando — usuários aparecem no Firebase Console
 
+## Sessão 22/05/2026 — Recuperação de senha
+
+### Feat — Esqueci minha senha [FEAT] commits aff30e2 → f1efed5
+- firebase.ts: sendPasswordResetEmail importado, resetPassword exportado
+- LoginModal.tsx: modo 'forgot' adicionado ao union type
+- resetForm e switchMode atualizados para suportar 'forgot'
+- handleForgot implementado com resetPassword do Firebase
+- Título do modal adaptado ao modo ativo
+- Link "Esqueci minha senha" adicionado ao modo login
+- Bloco visual forgot: formulário + tela de confirmação pós-envio
+- Implementação cirúrgica — 7 commits atômicos, zero substituição de arquivo
+
 ## Sessão 21/05/2026 — EAI? Evoluções UX, SSE e Consistência (noite)
 
 **8 entregas + decisões arquiteturais**
