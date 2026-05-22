@@ -1312,7 +1312,7 @@ const handleGeminiError = (err: any) => {
                 )}
                 
                 <p className="text-white/40 text-sm font-sans uppercase tracking-widest leading-relaxed mt-8 max-w-lg mx-auto">
-                  {state.specificJudge && state.specificJudge !== 'null' ? `Juiz/Comarca identificado: ${state.specificJudge}. ` : ''}Agentes especializados escalados. Deseja iniciar o fórum?
+                  Agentes especializados escalados. Deseja iniciar o fórum?
                 </p>
                 <div className="flex justify-center gap-4 pt-6">
                   <button 
@@ -1809,7 +1809,7 @@ const handleGeminiError = (err: any) => {
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { n: "ÁREA IDENTIFICADA", s: areaLabels[state.detectedArea], icon: ShieldCheck },
-                  { n: "FORO / COMARCA", s: state.specificJudge && state.specificJudge !== "null" ? state.specificJudge : "Justiça Comum / JEC", icon: Gavel },
+                  { n: "ESPECIALIZAÇÃO", s: "Juiz de IA especializado em " + areaLabels[state.detectedArea], icon: Gavel },
                 ].map((m, i) => (
                   <div key={i} className="bg-white/5 p-4 border border-white/5 space-y-1">
                     <div className="text-[10px] font-bold text-white/50 uppercase tracking-tighter">{m.n}</div>
