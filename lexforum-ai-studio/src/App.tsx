@@ -817,7 +817,7 @@ const handleGeminiError = (err: any) => {
                     Sentença ou proposta? <br /><span className="text-[#F4F4F2] font-bold">O Juiz Estrategista avalia.</span>
                   </h1>
                   <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
-                    Simulação educativa — não substitui consultoria jurídica real.
+                    ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                   </p>
                 </div>
 
@@ -926,7 +926,7 @@ const handleGeminiError = (err: any) => {
                     </div>
 
                     <div className="p-4 bg-amber-500/5 border border-amber-500/20 text-[10px] text-amber-400/60 uppercase tracking-widest font-bold">
-                      ⚠️ Simulação educativa — os agentes são IAs simulando papéis jurídicos. Não substitui advogado real.
+                      ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
 
                     <div className="flex justify-end">
@@ -1600,7 +1600,7 @@ const handleGeminiError = (err: any) => {
                     )}
 
                     <div className="p-4 bg-amber-500/5 border border-amber-500/20 text-[10px] text-amber-400/60 uppercase tracking-widest font-bold">
-                      ⚠️ Simulação educativa — não substitui consultoria jurídica real. Consulte um advogado habilitado.
+                      ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
                   </div>
                 )}
