@@ -350,14 +350,39 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 - Solução cirúrgica — sem criar novos agentes, sem mexer no registry
 - Complementa as correções de ontem na cadeia server.ts → agent-resolver.ts → agent-creator.ts
 
-## Pendências conhecidas (atualizado 21/05/2026)
+## Sessão 21/05/2026 — Login, Cadastro e Deploy (noite)
 
+**4 entregas em produção**
+
+### Fix 1 — Logo compacta no header mobile [FIX] commit 66ce141
+- BoardroomPage.tsx e App.tsx: size="md" showTitle={false} → size="sm" showText={false}
+- Logo EAI✓? aparece limpa e compacta em mobile sem texto lateral
+
+### Feat 1 — LoginModal com Google e email/senha [FEAT] commit 096be16
+- Criado lexforum-ai-studio/src/components/LoginModal.tsx
+- Modal com botão Google + formulário email/senha
+- BoardroomPage.tsx: botão "Entrar" abre modal em vez de chamar loginWithGoogle direto
+
+### Fix 2 — onSuccess do LoginModal corrigido [FIX] commit d45484c
+- BoardroomPage.tsx: onSuccess não chama onLogin() desnecessariamente
+- Firebase onAuthStateChanged já cuida do estado do usuário
+
+### Feat 2 — Cadastro com email/senha [FEAT] commit 41abd68
+- LoginModal.tsx: dois modos — login e register
+- Modo register: email + senha + confirmar senha com validação local
+- Link de alternância entre modos
+- Cadastro testado e funcionando — usuários aparecem no Firebase Console
+
+## Pendências conhecidas (atualizado 21/05/2026 noite)
+
+- Prioridades do Board (Arch) — 8 tarefas documentadas, nenhuma iniciada
 - Stripe — testar fluxo end-to-end com compra real (modo live)
 - Chat pós-sessão ao vivo
 - Chat no histórico
 - Stats estáticos — win rate e simulações precisam vir do Firestore
-- Modo 5 ACORDO — label "Vantagem clara — rejeitar" precisa ajuste de texto
-- Deploy e teste em produção — eai.radiokactus.com
+- Modo 5 ACORDO — label "Vantagem clara — rejeitar" precisa ajuste
+- "Auditor Kern 0xF1" vazando no laudo — correção pendente
+- Cadastro público aberto — controle de accessLevel beta ainda manual no Firebase Console
 
 ## Ethics & Security
 
