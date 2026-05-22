@@ -14,7 +14,7 @@ import {
   where
 } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
-import { SimulationResult, LegalArea } from '../types';
+import type { SimulationResult, LegalArea } from '../types';
 import { anonymizeSimulation } from '../lib/anonymizer';
 
 enum OperationType {

@@ -1,4 +1,4 @@
-import { LegalArea, SimulationResult, ReportContent, Attachment, Mode5Input, Mode5Result } from "../types";
+import type { LegalArea, SimulationResult, ReportContent, Attachment, Mode5Input, Mode5Result } from "../types";
 
 export type SimStep = 'WRITING' | 'DELIVERING' | 'JUDGING' | 'REVIEWING' | 'IDLE' | 'SEED_CREATED';
 

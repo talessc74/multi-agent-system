@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
-import { LegalArea, SimulationRound, SimulationResult, ReportContent, Attachment } from "../types";
+import type { LegalArea, SimulationRound, SimulationResult, ReportContent, Attachment } from "../types";
 
 // server-side only
 const ai = new GoogleGenAI({ 
