@@ -465,6 +465,9 @@ const handleGeminiError = (err: any) => {
     }
   };
 
+  const formatAreaLabel = (area: string): string =>
+    areaLabels[area] ?? area.charAt(0).toUpperCase() + area.slice(1).toLowerCase().replace(/_/g, " ");
+
   const areaLabels: Record<string, string> = {
     [LegalArea.CONSUMER]: "Direito do Consumidor",
     [LegalArea.LABOR]: "Direito do Trabalho",
