@@ -448,7 +448,7 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 - "Auditor Kern 0xF1" vazando no laudo — generateReportServer em gemini.server.ts
 - Cadastro público aberto — controle de accessLevel beta ainda manual no Firebase Console
 - Deletar 4 agentes órfãos restantes no Firestore (advogado_civel, advogado_familia, juiz_civel, juiz_familia)
-- Deploy do índice Firestore em produção: firebase deploy --only firestore:indexes --project eairadiokactus
+- ✅ Índice Firestore agents (area ASC + tipo ASC) confirmado como Ativado via Console Firebase
 - Tarefa 6 — Consistência entre execuções: dependente do deploy do índice acima
 - Tarefa 7 — Tom reflexivo nos prompts (gemini.server.ts)
 - SSE mobile — SSE retry implementado; monitorar reconexão Safari em produção
