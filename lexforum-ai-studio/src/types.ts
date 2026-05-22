@@ -1,11 +1,4 @@
-export enum LegalArea {
-  CONSUMER = "CONSUMER",
-  LABOR = "LABOR",
-  CIVIL = "CIVIL",
-  SOCIAL_SECURITY = "SOCIAL_SECURITY",
-  FAMILY = "FAMILY",
-  OTHER = "OTHER",
-}
+export type LegalArea = string;
 
 export interface Attachment {
   name: string;
