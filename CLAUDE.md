@@ -450,7 +450,7 @@ All changes must be recorded in `versions/CHANGELOG.md`.
 - Deletar 4 agentes órfãos restantes no Firestore (advogado_civel, advogado_familia, juiz_civel, juiz_familia)
 - ✅ Índice Firestore agents (area ASC + tipo ASC) confirmado como Ativado via Console Firebase
 - Tarefa 6 — Consistência entre execuções: dependente do deploy do índice acima
-- Tarefa 7 — Tom reflexivo nos prompts (gemini.server.ts)
+- ✅ Tom reflexivo aplicado — 3 pontos corrigidos em gemini.server.ts (commits 14409b5, 2316aa7, f33bfb8): Juiz pondera, Advogado constrói argumentos, Modo 5 reflete
 - SSE mobile — SSE retry implementado; monitorar reconexão Safari em produção
 - Dark/light mode — fila futura, não é MVP
 - Renomear pasta lexforum-ai-studio/ — avaliar impacto no Dockerfile e cloudbuild.yaml
