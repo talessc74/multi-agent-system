@@ -215,3 +215,14 @@ export const getRegionalStats = async () => {
     return null;
   }
 };
+
+export const getSimulationById = async (simulationId: string) => {
+  try {
+    const snap = await getDoc(doc(db, 'simulations', simulationId));
+    if (snap.exists()) return { id: snap.id, ...snap.data() };
+    return null;
+  } catch (error) {
+    console.error('[getSimulationById]', error);
+    return null;
+  }
+};

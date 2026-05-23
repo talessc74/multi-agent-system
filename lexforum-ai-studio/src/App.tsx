@@ -32,7 +32,7 @@ import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode
 import { validateCausa, simulateForum, generateReport, simulateMode5 } from './lib/gemini';
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { getStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel } from './services/dbService';
+import { getStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById } from './services/dbService';
 
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
@@ -538,7 +538,10 @@ const handleGeminiError = (err: any) => {
     if (!simId) return;
     hasUserPaidForSession(user.uid, simId).then(paid => {
       if (paid) {
-        setState(prev => ({ ...prev, isUnlocked: true, simulationId: simId }));
+        getSimulationById(simId).then(sim => {
+          if (sim) loadSimulation(sim);
+          else setState(prev => ({ ...prev, isUnlocked: true, simulationId: simId }));
+        });
         window.history.replaceState({}, '', '/');
       }
     });
