@@ -25,7 +25,10 @@ import { resolveAgent } from './agent-resolver';
 dotenv.config();
 
 const app = express();
-app.use(express.json({ limit: '50mb' }));
+app.use((req, res, next) => {
+  if (req.path === '/api/webhook/stripe') return next();
+  express.json({ limit: '50mb' })(req, res, next);
+});
 const PORT = process.env.PORT || 3000;
 
 async function startServer() {
