@@ -469,3 +469,25 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 - `areaLabels` expandido com MARITIME, CRIMINAL, TAX, ENVIRONMENTAL, ADMINISTRATIVE, CORPORATE + `formatAreaLabel()` para fallback de áreas desconhecidas
 - AgentResolver já cria advogado+juiz sob demanda para qualquer área não encontrada na prateleira
 - Commits: 325f114, 49ea734, 024d321, 8f004bc, 2cc2cb1, d487dff (fix esbuild — import type)
+
+## Sessão 23/05/2026 — Stripe end-to-end + Firebase Auth
+
+**3 fixes aplicados — pagamento live funcionando**
+
+### Fix 1 — Webhook Stripe com body raw [FIX] commit 6bf94aa
+- server.ts: `express.json()` global consumia o body antes do `express.raw()` do webhook
+- Correção: middleware JSON exclui o path `/api/webhook/stripe`
+- Webhook passou a retornar 200 e gravar pagamento no Firestore corretamente
+
+### Fix 2 — Laudo carregado do Firestore após pagamento [FIX] commit c8fbc09
+- App.tsx: `useEffect([user])` saía antes de verificar pagamento quando Auth ainda inicializando
+- dbService.ts: função `getSimulationById` adicionada — busca simulação por ID específico
+- App.tsx: importado `getSimulationById`, substituído `setState isUnlocked` por `loadSimulation(sim)`
+- Laudo agora carrega automaticamente ao retornar do Stripe sem interação do usuário
+
+### Fix 3 — Auth Firebase permanente no Codespace [CONFIG]
+- 3 vars Admin SDK adicionadas ao `.env` local: `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`
+- 3 Codespace Secrets criados no GitHub para persistência entre sessões
+- Arquivo JSON da Service Account deletado do Codespace após uso
+
+**Resultado:** fluxo Stripe end-to-end validado com cartão real em modo live.
