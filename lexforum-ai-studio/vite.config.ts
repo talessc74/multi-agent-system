@@ -10,7 +10,7 @@ export default defineConfig(({mode}) => {
     plugins: [react(), tailwindcss()],
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(process.env.GEMINI_API_KEY || env.GEMINI_API_KEY),
-      '__APP_VERSION__': JSON.stringify((() => { try { return execSync('git rev-parse --short HEAD').toString().trim(); } catch { return 'unknown'; } })()),
+      '__APP_VERSION__': JSON.stringify(execSync('git rev-parse --short HEAD').toString().trim()),
     },
     resolve: {
       alias: {
