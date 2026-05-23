@@ -19,7 +19,6 @@ function extractProbability(text: string): number {
   if (!text) return 50;
   const match = text.match(/{\s*"success_probability"\s*:\s*(\d+)\s*}/);
   if (match) return parseInt(match[1]);
-  console.log('[DEBUG extractProbability] regex falhou. texto bruto:', text?.slice(0, 500));
   return 50;
 }
 
