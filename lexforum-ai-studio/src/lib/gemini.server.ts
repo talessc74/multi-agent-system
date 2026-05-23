@@ -199,8 +199,7 @@ export async function simulateForumServer(
       const lawRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: prepareParts(lawPrompt, userAtts) }],
-        // Advogado: criatividade argumentativa
-        config: { temperature: 0.65, systemInstruction: lawAgent.instruction + sideContext }
+        config: { systemInstruction: lawAgent.instruction + sideContext }
       });
       currentPetition = lawRes.text || '';
 
@@ -214,8 +213,7 @@ export async function simulateForumServer(
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
-        // Juiz: consistência técnica
-        config: { temperature: 0.3, systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
+        config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
       });
 
       const juiText = juiRes.text || '{}';
@@ -254,8 +252,7 @@ export async function simulateForumServer(
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: [...authorParts, ...defenseParts] }],
-        // Juiz: consistência técnica
-        config: { temperature: 0.3, systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
+        config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
       });
       const juiText = juiRes.text || '{}';
       let juiParsed: any = {};
@@ -279,8 +276,6 @@ export async function simulateForumServer(
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: prepareParts(lawPrompt, attachments) }],
       config: {
-        // Advogado: criatividade argumentativa
-        temperature: 0.65,
         systemInstruction: lawAgent.instruction
       }
     });
@@ -292,8 +287,6 @@ export async function simulateForumServer(
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Julgue a seguinte petição: ${currentPetition}` }] }],
       config: {
-        // Juiz: consistência técnica
-        temperature: 0.3,
         systemInstruction: judgeInstruction
       }
     });
@@ -305,8 +298,6 @@ export async function simulateForumServer(
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Analise a petição e a sentença da rodada ${i} e gere um resumo conciso de argumentos e citações para o próximo round.\nPetição: ${currentPetition}\nSentença: ${currentJudgment}\nBreves Anteriores: ${allBriefs}` }] }],
       config: {
-        // Brief: síntese equilibrada
-        temperature: 0.5,
         systemInstruction: `Você é um Estrategista Jurídico. Sua tarefa é analisar o progresso de um caso e gerar um "Lawyer's Brief": um resumo conciso dos argumentos chave e citações recorrentes que foram bem-sucedidos ou que precisam ser reforçados. Este resumo será usado pelo advogado na próxima rodada.`
       }
     });
@@ -335,8 +326,6 @@ export async function generateReportServer(lastPetition: string, lastJudgment: s
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nSentença: ${lastJudgment}` }] }],
       config: {
-        // Validação/Relatório: máxima previsibilidade
-        temperature: 0.2,
         systemInstruction: "Você é um Consultor Jurídico sênior. Gere um laudo em linguagem LEIGA seguindo: 1. Veredito. 2. Pontos Fortes. 3. Riscos. 4. Passo a passo prático."
       }
     }),
@@ -344,8 +333,6 @@ export async function generateReportServer(lastPetition: string, lastJudgment: s
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nSentença: ${lastJudgment}` }] }],
       config: {
-        // Validação/Relatório: máxima previsibilidade
-        temperature: 0.2,
         systemInstruction: "Você é um Chief Legal Officer. Gere um LAUDO ESTRATÉGICO seguindo: 1. Resultados. 2. Fundamentação. 3. Riscos. 4. Plano Estratégico."
       }
     })
@@ -438,8 +425,6 @@ ESCALA DE REFERÊNCIA para successProbability (ACORDO):
     model: MODEL_NAME,
     contents: [{ role: 'user', parts: prepareParts(userPrompt, attachments) }],
     config: {
-      // Juiz: consistência técnica
-      temperature: 0.3,
       systemInstruction: systemPrompt,
       responseMimeType: 'application/json'
     }
