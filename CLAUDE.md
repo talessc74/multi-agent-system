@@ -491,3 +491,34 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 - Arquivo JSON da Service Account deletado do Codespace após uso
 
 **Resultado:** fluxo Stripe end-to-end validado com cartão real em modo live.
+
+## Sessão 23/05/2026 — Alertas e UX de Erro (tarde)
+
+**3 fixes + 1 feat em produção**
+
+### Fix 1 — Log de diagnóstico removido [FIX] commit f7434fc
+- gemini.server.ts: console.log('[DEBUG extractProbability]') removido
+- Petições dos usuários não vazam mais nos logs do GCP
+
+### Fix 2 — Mensagem de erro humanizada [FIX] commit d622375
+- App.tsx: bloco isQuota reescrito em linguagem humana
+- Removido: jargão técnico, link "Acessar AI Studio Spend", menção ao Google AI Studio
+- Novo texto: "O sistema está temporariamente indisponível. Tente novamente em alguns minutos."
+- errorMessage do handleGeminiError também corrigido
+
+### Feat — Alerta por email via Resend [FEAT] commits 08e2c07 + fa5186d
+- Dependência resend instalada em lexforum-ai-studio/
+- Função notifySpendingCap() adicionada em server.ts — instanciação lazy do Resend
+- Disparo automático quando RESOURCE_EXHAUSTED detectado nas 4 rotas: validate, simulate, report, mode5
+- Variáveis configuradas: RESEND_API_KEY e ALERT_EMAIL nos dois ambientes (Codespace + Cloud Run)
+- Email de alerta enviado para talessc@mac.com com rota, horário e ação necessária
+- Fix de startup: Resend v6 lança exceção com string vazia — instanciação movida para dentro da função
+
+## Pendências conhecidas (atualizado 23/05/2026 tarde)
+
+- 🔴 Alerta email — aguardando primeiro erro real de quota para confirmar funcionamento
+- 🟡 Versionamento na UI — footer mostra V.2.4 hardcoded
+- 🟡 Chat pós-sessão ao vivo — 3 perguntas por R$2,99
+- 🟡 Chat no histórico — mesmo fluxo, transcript já salvo
+- 🟡 "Meus Casos" só carrega no segundo clique — timing do Auth
+- 🟡 Trigger automático do Cloud Build — deploys ainda manuais
