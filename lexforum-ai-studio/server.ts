@@ -22,7 +22,6 @@ const adminDb = admin.firestore();
 import simulationStatus from './simulation-status';
 import { resolveAgent } from './agent-resolver';
 import { Resend } from 'resend';
-const resend = new Resend(process.env.RESEND_API_KEY || '');
 
 dotenv.config();
 
@@ -35,6 +34,7 @@ const PORT = process.env.PORT || 3000;
 
 async function notifySpendingCap(route: string) {
   if (!process.env.RESEND_API_KEY || !process.env.ALERT_EMAIL) return;
+  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
