@@ -285,7 +285,7 @@ export async function simulateForumServer(
     onProgress?.('JUDGING', i);
     const juiRes: GenerateContentResponse = await ai.models.generateContent({
       model: MODEL_NAME,
-      contents: [{ role: 'user', parts: [{ text: `Julgue a seguinte petição e ao final da sua decisão inclua OBRIGATORIAMENTE o seguinte JSON: {"success_probability": <0-100>} onde o número representa sua estimativa da chance de êxito do autor.\n\nPetição: ${currentPetition}` }] }],
+      contents: [{ role: 'user', parts: [{ text: `Avalie tecnicamente a solidez dos argumentos apresentados e ao final da sua decisão inclua OBRIGATORIAMENTE o seguinte JSON: {"success_probability": <0-100>} onde o número representa sua estimativa da chance de êxito do autor.\n\nPetição: ${currentPetition}` }] }],
       config: {
         systemInstruction: judgeInstruction
       }

@@ -1488,7 +1488,7 @@ const handleGeminiError = (err: any) => {
                                <span className="text-[9px] font-mono text-white/20">AGT_JUDGE_{state.detectedArea}</span>
                                <span className="text-sm font-bold uppercase tracking-tight text-white/80">Magistrado Técnico</span>
                              </div>
-                             <span className="px-2 py-0.5 border border-white/40 text-white text-[9px] uppercase tracking-widest font-bold">Sentença</span>
+                             <span className="px-2 py-0.5 border border-white/40 text-white text-[9px] uppercase tracking-widest font-bold">{(state.selectedMode === 1 || state.selectedMode === 2) ? 'Avaliação Técnica' : 'Sentença'}</span>
                            </div>
                            <div className="text-xs text-white/50 leading-relaxed font-sans mb-6">
                              "<CensoredText text={cleanJudgmentText(round.judgeJudgment) || round.judgeJudgment || ''} enabled={!state.isUnlocked} />"
@@ -1723,6 +1723,15 @@ const handleGeminiError = (err: any) => {
                     </div>
                   </div>
                 </div>
+
+                {(state.selectedMode === 1 || state.selectedMode === 2) && (
+                  <div className="p-6 bg-white/5 border border-white/10 mb-8">
+                    <p className="text-sm text-white/60 leading-relaxed">
+                      Esta análise avalia a força dos seus argumentos de forma independente.
+                      Para simular o contraditório com a outra parte, continue abaixo.
+                    </p>
+                  </div>
+                )}
 
                 {state.selectedMode !== 5 && (
                 <div className="flex items-center justify-between border-b border-white/10 pb-8 print:border-black/10">
