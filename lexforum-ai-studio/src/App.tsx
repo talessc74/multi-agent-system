@@ -483,6 +483,14 @@ const handleGeminiError = (err: any) => {
     OTHER: "Geral / Outros"
   };
 
+  const handleShowHistory = async () => {
+    if (user) {
+      const history = await getUserSimulations(user.uid);
+      setUserHistory(history);
+    }
+    setShowHistory(true);
+  };
+
   const MODE_NAMES: Record<number, string> = {
     0: 'Modo Livre',
     1: 'Tese Estratégica',
@@ -553,7 +561,7 @@ const handleGeminiError = (err: any) => {
         onEnter={(mode) => setState(prev => ({ ...prev, step: 'input', selectedMode: mode }))}
         onLogin={() => loginWithGoogle()}
         onLogout={() => logoutUser()}
-        onShowHistory={() => setShowHistory(true)}
+        onShowHistory={handleShowHistory}
         user={user}
       />
     );
@@ -585,7 +593,7 @@ const handleGeminiError = (err: any) => {
           {user ? (
             <div className="flex items-center gap-6">
               <button 
-                onClick={() => setShowHistory(true)}
+                onClick={handleShowHistory}
                 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors border-r border-white/10 pr-3 md:pr-6 mr-2 h-8"
               >
                 <History className="w-3 h-3" />
