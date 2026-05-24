@@ -167,6 +167,7 @@ export default function App() {
 
 const [loading, setLoading] = useState(false);
 const [retryCount, setRetryCount] = useState(0);
+const [isExpandingHypothesis, setIsExpandingHypothesis] = useState(false);
 const scrollRef = useRef<HTMLDivElement>(null);
 const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -1795,30 +1796,44 @@ const handleGeminiError = (err: any) => {
                         <p className="text-[9px] text-white/30 uppercase tracking-widest italic mb-4">
                           Estas são hipóteses baseadas nos fatos narrados. Escolha a que melhor representa o que você espera do outro lado.
                         </p>
-                        {state.counterHypotheses.map((hyp, i) => (
-                          <button
-                            key={i}
-                            onClick={async () => {
-                              setState(prev => ({ ...prev, selectedHypothesis: hyp }));
-                              const expanded = await expandHypothesis(
-                                state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '',
-                                hyp,
-                                state.detectedArea
-                              );
-                              setState(prev => ({ ...prev, expandedHypothesis: expanded }));
-                            }}
-                            className="w-full p-4 border border-white/10 text-left hover:border-white/30 hover:bg-white/5 transition-all space-y-1"
-                          >
-                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">
-                              Opção {String.fromCharCode(65 + i)}
-                            </span>
-                            <p className="text-sm text-white/70 leading-relaxed">{hyp}</p>
-                          </button>
-                        ))}
+                        {isExpandingHypothesis ? (
+                          <div className="flex items-center gap-3 py-6 px-4">
+                            <svg className="animate-spin h-4 w-4 text-white/40 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                            </svg>
+                            <span className="text-[10px] uppercase tracking-widest text-white/40">Desenvolvendo argumento do outro lado...</span>
+                          </div>
+                        ) : (
+                          state.counterHypotheses.map((hyp, i) => (
+                            <button
+                              key={i}
+                              disabled={isExpandingHypothesis}
+                              onClick={async () => {
+                                setState(prev => ({ ...prev, selectedHypothesis: hyp }));
+                                setIsExpandingHypothesis(true);
+                                const expanded = await expandHypothesis(
+                                  state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '',
+                                  hyp,
+                                  state.detectedArea
+                                );
+                                setState(prev => ({ ...prev, expandedHypothesis: expanded }));
+                                setIsExpandingHypothesis(false);
+                              }}
+                              className="w-full p-4 border border-white/10 text-left hover:border-white/30 hover:bg-white/5 transition-all space-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">
+                                Opção {String.fromCharCode(65 + i)}
+                              </span>
+                              <p className="text-sm text-white/70 leading-relaxed">{hyp}</p>
+                            </button>
+                          ))
+                        )}
                         <div className="border border-white/10">
                           <button
+                            disabled={isExpandingHypothesis}
                             onClick={() => setState(prev => ({ ...prev, selectedHypothesis: 'D' }))}
-                            className="w-full p-4 text-left hover:bg-white/5 transition-all"
+                            className="w-full p-4 text-left hover:bg-white/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">Opção D</span>
                             <p className="text-sm text-white/50">Eu sei o que o outro lado vai alegar</p>
@@ -1831,16 +1846,19 @@ const handleGeminiError = (err: any) => {
                                 onChange={(e) => setState(prev => ({ ...prev, expandedHypothesis: e.target.value }))}
                               />
                               <button
+                                disabled={isExpandingHypothesis}
                                 onClick={async () => {
                                   if (!state.expandedHypothesis?.trim()) return;
+                                  setIsExpandingHypothesis(true);
                                   const expanded = await expandHypothesis(
                                     state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '',
                                     state.expandedHypothesis,
                                     state.detectedArea
                                   );
                                   setState(prev => ({ ...prev, expandedHypothesis: expanded }));
+                                  setIsExpandingHypothesis(false);
                                 }}
-                                className="px-6 py-2 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white/90 transition-all"
+                                className="px-6 py-2 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 Usar este argumento →
                               </button>
