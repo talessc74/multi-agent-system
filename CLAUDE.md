@@ -514,11 +514,33 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 - Email de alerta enviado para talessc@mac.com com rota, horário e ação necessária
 - Fix de startup: Resend v6 lança exceção com string vazia — instanciação movida para dentro da função
 
-## Pendências conhecidas (atualizado 23/05/2026 tarde)
+## Roadmap de Melhorias (atualizado 23/05/2026 tarde)
 
-- 🔴 Alerta email — aguardando primeiro erro real de quota para confirmar funcionamento
-- 🟡 Versionamento na UI — footer mostra V.2.4 hardcoded
-- 🟡 Chat pós-sessão ao vivo — 3 perguntas por R$2,99
-- 🟡 Chat no histórico — mesmo fluxo, transcript já salvo
-- 🟡 "Meus Casos" só carrega no segundo clique — timing do Auth
-- 🟡 Trigger automático do Cloud Build — deploys ainda manuais
+### Prioridade 1 — Executar agora (baixa complexidade, alto ganho)
+
+1. **Bug — Percentual invisível antes do pagamento** — usuário não vê o índice de sucesso, coberto pela tarja de pagar
+2. **Campo de email para contato** — reembolso, dúvidas, sugestões — canal de suporte e confiança
+3. **"Meus Casos" — data da consulta** — dado básico ausente; futuro: qtd de sessões de chat por caso
+4. **Bug — "Meus Casos" carrega só no segundo clique** — timing do Auth
+
+### Prioridade 2 — Próxima sessão (baixa/média complexidade)
+
+5. **Migração de domínio para eaijuridico.com.br** — identidade do produto, URL profissional
+6. **Versionamento na UI** — footer público v2.x + hash do commit no Boardroom
+7. **Trigger automático Cloud Build** — deploys ainda manuais, eliminar trabalho operacional
+
+### Prioridade 3 — Quando tiver base de usuários (média complexidade)
+
+8. **Manual do usuário** — glossário, como preencher, o que não fazer — reduz abandono, aumenta conversão
+9. **Forge Monitor com dados reais** — hoje 100% mockado — credibilidade do produto
+10. **Disponibilidade de Sementes com dados reais** — hoje 100% mockado
+
+### Prioridade 4 — Após MVP estável (alta complexidade, nova receita)
+
+11. **Chat pós-sessão ao vivo** — 3 perguntas por R$2,99 — nova fonte de receita
+12. **Chat no histórico** — mesmo fluxo, transcript já salvo — retenção
+
+### Pendências técnicas em aberto
+
+- 🔴 Alerta email Resend — aguardando primeiro erro real de quota para confirmar funcionamento
+- 🟡 Índice Firestore agents (area ASC + tipo ASC) — confirmar deploy em produção
