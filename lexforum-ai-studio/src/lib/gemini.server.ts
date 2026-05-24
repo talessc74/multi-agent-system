@@ -321,7 +321,7 @@ export async function simulateForumServer(
 }
 
 export async function generateReportServer(lastPetition: string, lastJudgment: string): Promise<ReportContent> {
-  const [laymanRes, profRes] = await Promise.all([
+  const [laymanRes, profRes, summaryRes] = await Promise.all([
     ai.models.generateContent({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nSentença: ${lastJudgment}` }] }],
@@ -335,10 +335,17 @@ export async function generateReportServer(lastPetition: string, lastJudgment: s
       config: {
         systemInstruction: "Você é um Chief Legal Officer. Gere um LAUDO ESTRATÉGICO seguindo: 1. Resultados. 2. Fundamentação. 3. Riscos. 4. Plano Estratégico."
       }
+    }),
+    ai.models.generateContent({
+      model: MODEL_NAME,
+      contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nAvaliação técnica: ${lastJudgment}` }] }],
+      config: {
+        systemInstruction: "Você é um organizador de informações jurídicas. Com base na petição e na avaliação técnica, organize um resumo claro e objetivo da causa para que o usuário possa apresentar a um advogado real. Use linguagem simples. Não use linguagem de petição ou peça processual. Estruture em: Situação relatada, Argumentos identificados, Pontos de atenção, Área jurídica identificada, Próximos passos."
+      }
     })
   ]);
 
-  return { layman: laymanRes.text || "", professional: profRes.text || "" };
+  return { layman: laymanRes.text || "", professional: profRes.text || "", causeSummary: summaryRes.text || "" };
 }
 
 export async function simulateMode5Server(

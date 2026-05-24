@@ -37,7 +37,7 @@ export function anonymizeSimulation(data: {
   caseDescription: string;
   caseSummary: string | null;
   rounds: any[];
-  report: { layman: string; professional: string } | null;
+  report: { layman: string; professional: string; causeSummary?: string } | null;
 }) {
   return {
     caseDescription: anonymizeText(data.caseDescription),
@@ -46,6 +46,7 @@ export function anonymizeSimulation(data: {
     report: data.report ? {
       layman: anonymizeText(data.report.layman || ''),
       professional: anonymizeText(data.report.professional || ''),
+      causeSummary: data.report.causeSummary ? anonymizeText(data.report.causeSummary) : undefined,
     } : null,
   };
 }

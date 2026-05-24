@@ -1855,6 +1855,43 @@ const handleGeminiError = (err: any) => {
                   </section>
                   )}
 
+                  {/* Resumo da Causa — Modos 1 e 2 */}
+                  {(state.selectedMode === 1 || state.selectedMode === 2) && state.report?.causeSummary && (
+                  <section className="space-y-6 pt-12 border-t-2 border-white/10 print:border-black/20 print:pt-8">
+                    <div className="flex items-center gap-4 border-b border-white/10 pb-4 print:border-black/10">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-white/10 text-white px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                          RESUMO DA SUA CAUSA
+                        </span>
+                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest pl-1">Para apresentar a um advogado — não é peça processual</span>
+                      </div>
+                      <div className="flex-1" />
+                      <button
+                        onClick={() => {
+                          const blob = new Blob([state.report?.causeSummary || ''], { type: 'text/plain;charset=utf-8' });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = 'resumo-da-causa.txt';
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        }}
+                        className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest border border-white/20 text-white/60 hover:bg-white/5 transition-colors print:hidden"
+                      >
+                        Baixar Resumo da Causa
+                      </button>
+                    </div>
+                    <div className="p-8 bg-white/5 border border-white/10 font-sans text-[13px] leading-loose text-white/70 print:bg-gray-50 print:border-black/10 print:text-black prose prose-invert prose-sm max-w-none">
+                      <ReactMarkdown>
+                        {state.report.causeSummary}
+                      </ReactMarkdown>
+                    </div>
+                    <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold print:text-black/40">
+                      ⚠️ Este resumo não é uma peça processual. Não substitui consulta com advogado.
+                    </p>
+                  </section>
+                  )}
+
                   {/* Volume 3: Anexos Processuais (Audit Trail) */}
                   {state.selectedMode !== 5 && (
                   <section className="space-y-6 pt-12 border-t-2 border-white/10 print:border-black/20 print:pt-8 print:break-before-page">

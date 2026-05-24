@@ -28,6 +28,7 @@ export interface SimulationResult {
 export interface ReportContent {
   layman: string;
   professional: string;
+  causeSummary?: string;
 }
 
 export interface AppState {
