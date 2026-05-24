@@ -1991,7 +1991,7 @@ const handleGeminiError = (err: any) => {
         <div className="col-span-12 lg:col-span-4 bg-[#0F1012] p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print">
           <section>
             <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-white/10 pb-3 flex items-center justify-between text-white/60">
-              Boardroom <span className="text-[8px] font-mono opacity-20">V.2.4</span>
+              Boardroom <span className="text-[8px] font-mono opacity-20">{`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}</span>
             </h3>
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">

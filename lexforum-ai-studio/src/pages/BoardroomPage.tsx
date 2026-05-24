@@ -63,7 +63,7 @@ const FOOTER_STATS = [
   { label: 'Base de dados', value: '1.9M+ Precedentes Injetados' },
   { label: 'Processamento', value: 'EAI_CORES_GEN_3_ANALYSIS' },
   { label: 'Privacidade', value: 'Criptografia RSA-4096' },
-  { label: 'Versão', value: 'V.2.4' },
+  { label: 'Versão', value: `v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}` },
 ];
 
 export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistory, user }: Props) {
