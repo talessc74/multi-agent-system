@@ -29,7 +29,7 @@ import {
   History
 } from 'lucide-react';
 import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode5Result } from './types';
-import { validateCausa, simulateForum, generateReport, simulateMode5 } from './lib/gemini';
+import { validateCausa, simulateForum, generateReport, simulateMode5, generateCounterHypotheses, expandHypothesis } from './lib/gemini';
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById } from './services/dbService';
@@ -1751,6 +1751,133 @@ const handleGeminiError = (err: any) => {
                       Esta análise avalia a força dos seus argumentos de forma independente.
                       Para simular o contraditório com a outra parte, continue abaixo.
                     </p>
+                  </div>
+                )}
+
+                {(state.selectedMode === 1 || state.selectedMode === 2) && state.isUnlocked && (
+                  <div className="space-y-6 mb-8">
+
+                    {!state.showHypotheses && !state.counterHypotheses?.length && (
+                      <button
+                        onClick={async () => {
+                          const lastPetition = state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '';
+                          setState(prev => ({ ...prev, showHypotheses: true }));
+                          const hypotheses = await generateCounterHypotheses(lastPetition, state.detectedArea, state.selectedMode);
+                          setState(prev => ({ ...prev, counterHypotheses: hypotheses.length ? hypotheses : [] }));
+                        }}
+                        className="w-full p-4 border border-white/20 text-[11px] font-bold uppercase tracking-widest text-white/60 hover:border-white/40 hover:text-white transition-all text-left flex items-center justify-between"
+                      >
+                        <span>
+                          {state.selectedMode === 1
+                            ? '⚖️ Quer ver como a outra parte vai reagir?'
+                            : '⚔️ Quer ver como o outro lado vai contra-atacar?'}
+                        </span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    )}
+
+                    {state.showHypotheses && !state.counterHypotheses?.length && (
+                      <div className="flex items-center gap-3 p-4 bg-white/5 border border-white/10">
+                        <Loader2 className="w-4 h-4 animate-spin text-white/40" />
+                        <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold">
+                          Gerando hipóteses do outro lado...
+                        </span>
+                      </div>
+                    )}
+
+                    {state.counterHypotheses && state.counterHypotheses.length > 0 && !state.expandedHypothesis && (
+                      <div className="space-y-4 p-6 bg-white/5 border border-white/10">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-4">
+                          {state.selectedMode === 1
+                            ? 'Hipóteses de defesa do Réu — escolha a mais provável:'
+                            : 'Hipóteses de ataque do Autor — escolha a mais provável:'}
+                        </div>
+                        <p className="text-[9px] text-white/30 uppercase tracking-widest italic mb-4">
+                          Estas são hipóteses baseadas nos fatos narrados. Escolha a que melhor representa o que você espera do outro lado.
+                        </p>
+                        {state.counterHypotheses.map((hyp, i) => (
+                          <button
+                            key={i}
+                            onClick={async () => {
+                              setState(prev => ({ ...prev, selectedHypothesis: hyp }));
+                              const expanded = await expandHypothesis(
+                                state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '',
+                                hyp,
+                                state.detectedArea
+                              );
+                              setState(prev => ({ ...prev, expandedHypothesis: expanded }));
+                            }}
+                            className="w-full p-4 border border-white/10 text-left hover:border-white/30 hover:bg-white/5 transition-all space-y-1"
+                          >
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">
+                              Opção {String.fromCharCode(65 + i)}
+                            </span>
+                            <p className="text-sm text-white/70 leading-relaxed">{hyp}</p>
+                          </button>
+                        ))}
+                        <div className="border border-white/10">
+                          <button
+                            onClick={() => setState(prev => ({ ...prev, selectedHypothesis: 'D' }))}
+                            className="w-full p-4 text-left hover:bg-white/5 transition-all"
+                          >
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">Opção D</span>
+                            <p className="text-sm text-white/50">Eu sei o que o outro lado vai alegar</p>
+                          </button>
+                          {state.selectedHypothesis === 'D' && (
+                            <div className="px-4 pb-4 space-y-3">
+                              <textarea
+                                placeholder="Descreva o argumento do outro lado..."
+                                className="w-full min-h-[120px] bg-transparent border border-white/10 p-3 text-sm font-serif italic text-white/80 outline-none resize-y placeholder:opacity-30"
+                                onChange={(e) => setState(prev => ({ ...prev, expandedHypothesis: e.target.value }))}
+                              />
+                              <button
+                                onClick={async () => {
+                                  if (!state.expandedHypothesis?.trim()) return;
+                                  const expanded = await expandHypothesis(
+                                    state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '',
+                                    state.expandedHypothesis,
+                                    state.detectedArea
+                                  );
+                                  setState(prev => ({ ...prev, expandedHypothesis: expanded }));
+                                }}
+                                className="px-6 py-2 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white/90 transition-all"
+                              >
+                                Usar este argumento →
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {state.expandedHypothesis && (
+                      <div className="space-y-4 p-6 bg-white/5 border border-white/20">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                          Argumento do outro lado — expandido
+                        </div>
+                        <p className="text-sm font-serif italic text-white/70 leading-relaxed">
+                          {state.expandedHypothesis}
+                        </p>
+                        <button
+                          onClick={() => setState(prev => ({
+                            ...prev,
+                            step: 'input',
+                            selectedMode: 4,
+                            defenseDescription: state.selectedMode === 1 ? state.expandedHypothesis! : state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '',
+                            caseDescription: state.selectedMode === 1 ? state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '' : state.expandedHypothesis!,
+                            userSide: state.selectedMode === 1 ? 'AUTHOR' : 'DEFENSE',
+                          }))}
+                          className="w-full py-4 bg-white text-black text-[11px] font-bold uppercase tracking-widest hover:bg-white/90 transition-all flex items-center justify-center gap-3"
+                        >
+                          Simular o contraditório no Modo 4
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                        <p className="text-[9px] text-white/20 text-center uppercase tracking-widest">
+                          Você será direcionado para a Mesa Dupla Assistida com os campos pré-carregados.
+                        </p>
+                      </div>
+                    )}
+
                   </div>
                 )}
 
