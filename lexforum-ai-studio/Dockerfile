@@ -7,6 +7,8 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+ARG VITE_GIT_HASH=dev
+ENV VITE_GIT_HASH=$VITE_GIT_HASH
 RUN npm run build
 
 # ── Stage 2: runtime ─────────────────────────────────────────────────────────

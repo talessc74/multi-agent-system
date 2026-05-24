@@ -12,6 +12,8 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - build
+      - --build-arg
+      - VITE_GIT_HASH=$SHORT_SHA
       - -t
       - gcr.io/gen-lang-client-0982741688/eai-producao:$_TAG
       - -t
