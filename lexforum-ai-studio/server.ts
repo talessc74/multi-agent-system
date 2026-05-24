@@ -3,7 +3,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
-import { validateCausaServer, simulateForumServer, generateReportServer, simulateMode5Server } from "./src/lib/gemini.server";
+import { validateCausaServer, simulateForumServer, generateReportServer, simulateMode5Server, generateCounterHypothesesServer, expandHypothesisServer } from "./src/lib/gemini.server";
 import { constructWebhookEvent, stripe } from './src/lib/stripe.server.js';
 import admin from 'firebase-admin';
 import Stripe from 'stripe';
@@ -168,6 +168,37 @@ async function startServer() {
         await notifySpendingCap('/api/gemini/report');
       }
       console.error("Gemini Server Error:", error);
+      res.status(500).json({ error: error.message || "Unknown error" });
+    }
+  });
+
+  app.post("/api/counter-hypotheses", async (req, res) => {
+    try {
+      const { petition, area, mode } = req.body;
+      if (!petition || !area) {
+        return res.status(400).json({ error: "petition e area são obrigatórios" });
+      }
+      if (mode !== 1 && mode !== 2) {
+        return res.status(400).json({ error: "mode deve ser 1 ou 2" });
+      }
+      const hypotheses = await generateCounterHypothesesServer(petition, area, mode);
+      res.json({ hypotheses });
+    } catch (error: any) {
+      console.error("[counter-hypotheses] Erro:", error);
+      res.status(500).json({ error: error.message || "Unknown error" });
+    }
+  });
+
+  app.post("/api/expand-hypothesis", async (req, res) => {
+    try {
+      const { petition, hypothesis, area } = req.body;
+      if (!petition || !hypothesis || !area) {
+        return res.status(400).json({ error: "petition, hypothesis e area são obrigatórios" });
+      }
+      const expanded = await expandHypothesisServer(petition, hypothesis, area);
+      res.json({ expanded });
+    } catch (error: any) {
+      console.error("[expand-hypothesis] Erro:", error);
       res.status(500).json({ error: error.message || "Unknown error" });
     }
   });

@@ -144,6 +144,44 @@ export async function generateReport(lastPetition: string, lastJudgment: string)
   return response.json();
 }
 
+export async function generateCounterHypotheses(
+  petition: string,
+  area: string,
+  mode: number
+): Promise<string[]> {
+  try {
+    const response = await fetch('/api/counter-hypotheses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ petition, area, mode })
+    });
+    if (!response.ok) return [];
+    const data = await response.json();
+    return Array.isArray(data.hypotheses) ? data.hypotheses : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function expandHypothesis(
+  petition: string,
+  hypothesis: string,
+  area: string
+): Promise<string> {
+  try {
+    const response = await fetch('/api/expand-hypothesis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ petition, hypothesis, area })
+    });
+    if (!response.ok) return '';
+    const data = await response.json();
+    return typeof data.expanded === 'string' ? data.expanded : '';
+  } catch {
+    return '';
+  }
+}
+
 export function simulateMode5(
   mode5Input: Mode5Input,
   area: LegalArea,
