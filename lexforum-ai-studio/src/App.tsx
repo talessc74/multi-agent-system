@@ -1545,6 +1545,19 @@ const handleGeminiError = (err: any) => {
                       <Lock className="text-white/5 w-24 h-24 -rotate-12" />
                     </div>
                     <div className="relative z-10 flex flex-col items-center text-center space-y-6">
+                      {state.simulation?.finalSuccessProbability !== undefined && (
+                        <div className="flex flex-col items-center mb-4">
+                          <span className="text-7xl font-serif italic font-bold text-white">
+                            {state.simulation.finalSuccessProbability}%
+                          </span>
+                          <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold mt-1">
+                            Índice de força argumentativa
+                          </span>
+                          <span className="text-[9px] text-white/20 uppercase tracking-widest mt-1">
+                            Estimativa baseada na sua descrição. Resultados reais variam.
+                          </span>
+                        </div>
+                      )}
                       <h3 className="text-3xl font-serif italic text-white">Simulação de Rodadas Concluída.</h3>
                       <p className="text-sm text-white/40 max-w-lg leading-relaxed uppercase tracking-widest font-medium">
                         O laudo estratégico completo com fundamentos técnicos, valor estimado da causa e próximos passos processuais foi gerado.
