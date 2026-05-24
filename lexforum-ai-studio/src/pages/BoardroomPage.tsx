@@ -64,6 +64,7 @@ const FOOTER_STATS = [
   { label: 'Processamento', value: 'EAI_CORES_GEN_3_ANALYSIS' },
   { label: 'Privacidade', value: 'Criptografia RSA-4096' },
   { label: 'Versão', value: `v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}` },
+  { label: 'Contato', value: 'eaijuridico@icloud.com' },
 ];
 
 export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistory, user }: Props) {

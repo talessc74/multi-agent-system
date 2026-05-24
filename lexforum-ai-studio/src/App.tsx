@@ -2295,12 +2295,19 @@ const handleGeminiError = (err: any) => {
                 Exportar PDF
              </button>
              <div className="w-px bg-white/10"></div>
-             <button 
+             <button
               onClick={() => window.location.reload()}
               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
              >
                 Reiniciar
              </button>
+             <div className="w-px bg-white/10"></div>
+             <a
+               href="mailto:eaijuridico@icloud.com"
+               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+             >
+               Contato
+             </a>
            </div>
         </div>
       )}
