@@ -544,3 +544,26 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 
 - 🔴 Alerta email Resend — aguardando primeiro erro real de quota para confirmar funcionamento
 - 🟡 Índice Firestore agents (area ASC + tipo ASC) — confirmar deploy em produção
+
+## Sessão 24/05/2026 — Grupo 1 zerado + início Evolução C
+
+**8 entregas em produção — deploy automático validado**
+
+### Grupo 1 — concluído
+- [FIX] 87d575a — Modos 1/2: linguagem de julgamento substituída por "avaliação técnica". Prompt do Juiz ajustado no gemini.server.ts.
+- [FEAT] c4831cb — Resumo da Causa: terceiro output paralelo no generateReportServer. Campo causeSummary em ReportContent. Anonimização incluída no anonymizer.ts.
+- [FIX] afe3210 — Meus Casos: race condition do Auth resolvida. handleShowHistory busca histórico sob demanda no clique.
+- [FIX] 694b831 — Percentual de êxito visível antes do paywall. Exibido no topo do card de bloqueio em text-7xl.
+- [FEAT] 3af0f2f — Email de contato eaijuridico@icloud.com no FOOTER_STATS e no pill do resultado desbloqueado.
+- [FEAT] 2c6e0bb + 7be1d84 — Versionamento dinâmico: v2.4.0 · {hash} via VITE_GIT_HASH=$SHORT_SHA injetado no cloudbuild.yaml.
+- Trigger automático Cloud Build validado de ponta a ponta — todo push em main deploya automaticamente em produção.
+
+### Evolução C — em andamento (branch: feature/evolucao-c)
+- [FEAT] d7134e3 — Parte 1/3: tipos e funções server-side. AppState recebe counterHypotheses, selectedHypothesis, expandedHypothesis, showHypotheses. gemini.server.ts recebe generateCounterHypothesesServer (parser robusto + regex fallback) e expandHypothesisServer (sanitização contra prompt injection).
+- Parte 2/3 pendente: rotas server.ts + funções cliente gemini.ts
+- Parte 3/3 pendente: UI em App.tsx — tela de seleção de hipóteses
+
+### Estado atual
+- Branch main: produção estável
+- Branch feature/evolucao-c: Evolução C em desenvolvimento
+- Próximo após Evolução C: Evolução D → cadeia mobile (Sprints 1-6)
