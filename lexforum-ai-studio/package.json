@@ -26,6 +26,7 @@
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "react-markdown": "^10.1.0",
+    "resend": "^6.12.3",
     "stripe": "^22.1.1",
     "vite": "^6.2.3"
   },

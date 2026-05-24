@@ -21,6 +21,8 @@ if (!admin.apps.length) {
 const adminDb = admin.firestore();
 import simulationStatus from './simulation-status';
 import { resolveAgent } from './agent-resolver';
+import { Resend } from 'resend';
+const resend = new Resend(process.env.RESEND_API_KEY || '');
 
 dotenv.config();
 
@@ -31,6 +33,28 @@ app.use((req, res, next) => {
 });
 const PORT = process.env.PORT || 3000;
 
+async function notifySpendingCap(route: string) {
+  if (!process.env.RESEND_API_KEY || !process.env.ALERT_EMAIL) return;
+  try {
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: process.env.ALERT_EMAIL,
+      subject: '🚨 EAI? — Limite de IA atingido',
+      html: `
+        <h2>Alerta crítico — EAI?</h2>
+        <p><strong>Erro:</strong> RESOURCE_EXHAUSTED (Spending Cap)</p>
+        <p><strong>Rota:</strong> ${route}</p>
+        <p><strong>Horário:</strong> ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</p>
+        <p><strong>Ação necessária:</strong> Aumentar Spending Cap no GCP</p>
+        <hr/>
+        <p style="color:#999;font-size:12px">EAI? — eai.radiokactus.com</p>
+      `
+    });
+  } catch (e) {
+    console.error('[ALERT] Falha ao enviar email de alerta:', e);
+  }
+}
+
 async function startServer() {
   console.log("Starting server...");
   // API routes FIRST
@@ -40,6 +64,9 @@ async function startServer() {
       const data = await validateCausaServer(caseDescription, attachments);
       res.json(data);
     } catch (error: any) {
+      if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
+        await notifySpendingCap('/api/gemini/validate');
+      }
       console.error("Gemini Server Error:", error);
       res.status(500).json({ error: error.message || "Unknown error" });
     }
@@ -122,6 +149,9 @@ async function startServer() {
       );
       send('done', data);
     } catch (error: any) {
+      if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
+        await notifySpendingCap('/api/gemini/simulate');
+      }
       send('error', { message: error.message || 'Unknown error' });
     } finally {
       res.end();
@@ -134,6 +164,9 @@ async function startServer() {
       const data = await generateReportServer(lastPetition, lastJudgment);
       res.json(data);
     } catch (error: any) {
+      if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
+        await notifySpendingCap('/api/gemini/report');
+      }
       console.error("Gemini Server Error:", error);
       res.status(500).json({ error: error.message || "Unknown error" });
     }
@@ -190,6 +223,9 @@ async function startServer() {
         }
       );
     } catch (error: any) {
+      if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
+        await notifySpendingCap('/api/gemini/mode5');
+      }
       console.error('[Mode5] Erro:', error);
       send('error', { message: error.message || 'Unknown error' });
     } finally {
