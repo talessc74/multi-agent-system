@@ -348,6 +348,66 @@ export async function generateReportServer(lastPetition: string, lastJudgment: s
   return { layman: laymanRes.text || "", professional: profRes.text || "", causeSummary: summaryRes.text || "" };
 }
 
+export async function generateCounterHypothesesServer(
+  petition: string,
+  area: string,
+  mode: number
+): Promise<string[]> {
+  const systemInstruction = mode === 2
+    ? "Com base na defesa construída pelo Réu e nos argumentos identificados, gere 3 hipóteses plausíveis de contra-ataque que o Autor poderia apresentar. Cada hipótese deve ter no máximo 2 linhas em linguagem simples. Retorne APENAS um JSON válido com array de 3 strings, sem markdown, sem explicação, sem backticks."
+    : "Com base nos fatos narrados pelo Autor e nos argumentos identificados, gere 3 hipóteses plausíveis de defesa que o Réu poderia apresentar. Cada hipótese deve ter no máximo 2 linhas em linguagem simples. Retorne APENAS um JSON válido com array de 3 strings, sem markdown, sem explicação, sem backticks. Exemplo: [\"hipótese 1\",\"hipótese 2\",\"hipótese 3\"]";
+
+  const res = await ai.models.generateContent({
+    model: MODEL_NAME,
+    contents: [{ role: 'user', parts: [{ text: `Área: ${area}\n\nPetição/argumentos: ${petition}` }] }],
+    config: { systemInstruction }
+  });
+
+  const raw = (res.text || '').trim();
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed.slice(0, 3);
+  } catch {
+    // JSON parse failed — try regex extraction
+    const matches = raw.match(/"([^"]+)"/g);
+    if (matches && matches.length >= 3) {
+      return matches.slice(0, 3).map(s => s.replace(/^"|"$/g, ''));
+    }
+  }
+
+  return [];
+}
+
+export async function expandHypothesisServer(
+  petition: string,
+  hypothesis: string,
+  area: string
+): Promise<string> {
+  const BLOCKED = [
+    'ignore previous instructions',
+    'system:',
+    'assistant:',
+    'user:',
+    '<|',
+    ']]',
+  ];
+  const sanitized = BLOCKED.reduce(
+    (acc, token) => acc.split(token).join(''),
+    hypothesis
+  );
+
+  const res = await ai.models.generateContent({
+    model: MODEL_NAME,
+    contents: [{ role: 'user', parts: [{ text: `Área: ${area}\n\nFatos do caso: ${petition}\n\nHipótese escolhida: ${sanitized}` }] }],
+    config: {
+      systemInstruction: "Com base nos fatos do caso e na hipótese escolhida pelo usuário, desenvolva o argumento completo do lado oposto para ser usado como Lado B na simulação bilateral. Linguagem jurídica clara. 2-3 parágrafos."
+    }
+  });
+
+  return res.text || '';
+}
+
 export async function simulateMode5Server(
   mode5Input: { subCase: 'RECURSO' | 'ACORDO'; caseDescription: string; sentencaOuProposta: string },
   area: LegalArea,

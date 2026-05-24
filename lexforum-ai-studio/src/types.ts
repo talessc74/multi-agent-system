@@ -55,6 +55,10 @@ export interface AppState {
   error?: { code: number | string; message: string; isQuota: boolean; isRetryable?: boolean } | null;
   mode5Input?: Mode5Input;
   mode5Result?: Mode5Result;
+  counterHypotheses?: string[];
+  selectedHypothesis?: string;
+  expandedHypothesis?: string;
+  showHypotheses?: boolean;
 }
 
 export type Mode5SubCase = 'RECURSO' | 'ACORDO';
