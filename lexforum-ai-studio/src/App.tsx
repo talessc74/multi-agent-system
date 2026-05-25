@@ -557,20 +557,18 @@ const handleGeminiError = (err: any) => {
     });
   }, [user]);
 
-  if (state.step === 'boardroom') {
-    return (
-      <BoardroomPage
-        onEnter={(mode) => setState(prev => ({ ...prev, step: 'input', selectedMode: mode }))}
-        onLogin={() => loginWithGoogle()}
-        onLogout={() => logoutUser()}
-        onShowHistory={handleShowHistory}
-        user={user}
-      />
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
+    <>
+      {state.step === 'boardroom' ? (
+        <BoardroomPage
+          onEnter={(mode) => setState(prev => ({ ...prev, step: 'input', selectedMode: mode }))}
+          onLogin={() => loginWithGoogle()}
+          onLogout={() => logoutUser()}
+          onShowHistory={handleShowHistory}
+          user={user}
+        />
+      ) : (
+        <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
       <header className="h-16 border-b border-white/10 px-4 md:px-8 flex items-center justify-between bg-[#111111]/80 backdrop-blur-md sticky top-0 z-50 no-print">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.reload()}>
           <Logo size="sm" showText={false} />
@@ -2466,16 +2464,19 @@ const handleGeminiError = (err: any) => {
         </div>
       )}
 
+        </div>
+      )}
+
       {/* History Modal */}
       <AnimatePresence>
         {showHistory && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -2486,14 +2487,14 @@ const handleGeminiError = (err: any) => {
                   <h2 className="text-2xl font-serif italic text-white tracking-tight">Meus Casos</h2>
                   <p className="text-white/40 text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Histórico de simulações processadas</p>
                 </div>
-                <button 
-                  onClick={() => setShowHistory(false)} 
+                <button
+                  onClick={() => setShowHistory(false)}
                   className="p-2 border border-white/5 hover:bg-white/5 transition-colors"
                 >
                   <X className="w-6 h-6 text-white/40" />
                 </button>
               </div>
-              
+
               <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                 {userHistory.length === 0 ? (
                   <div className="py-20 text-center">
@@ -2503,7 +2504,7 @@ const handleGeminiError = (err: any) => {
                 ) : (
                   <div className="grid grid-cols-1 gap-4">
                     {userHistory.map((sim: any) => (
-                      <button 
+                      <button
                         key={sim.id}
                         onClick={() => loadSimulation(sim)}
                         className="w-full text-left p-6 bg-white/[0.02] border border-white/5 hover:border-white/20 hover:bg-white/[0.04] transition-all group relative overflow-hidden"
@@ -2540,6 +2541,6 @@ const handleGeminiError = (err: any) => {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
