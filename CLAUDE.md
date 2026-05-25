@@ -582,9 +582,51 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 - Stats Performance Global: win rate e precisão média são mockados. "98.4% Precisão Média" é hardcoded em App.tsx. "Ganhos de causa via EAI?" é média dos percentuais de simulação — não dados reais de processos ganhos. Substituir por dados reais do Firestore quando houver volume de usuários.
 
 ### Próximo
-- Sprint 1 Mobile — Fundação CSS (branch: feature/mobile-first)
+- ~~Sprint 1 Mobile — Fundação CSS (branch: feature/mobile-first)~~ ✅ entregue em 25/05/2026
 
 ### Estado final
 - main: estável, e869fe5 em produção
 - Zero bugs conhecidos abertos
 - Próximo: Sprint 1 Mobile (novo chat)
+
+## Sessão 25/05/2026 — Sprint 1 Mobile: Fundação CSS
+
+**Sprint 1 Mobile concluída — 5 commits + merge em main**
+
+Branch: `feature/mobile-first` → merge `191c912` em main.
+Deploy automático Cloud Build disparado pelo push.
+
+### Entregas
+
+#### [FEAT] 1c6ae17 — Tokens CSS custom properties dark/light mobile
+- `index.css`: bloco `:root, [data-theme='dark']` com 13 tokens completos
+- `--bg-primary`, `--bg-secondary`, `--bg-card`, `--text-primary`, `--text-secondary`, `--text-muted`, `--accent`, `--accent-press`, `--accent-muted`, `--border`, `--border-active`, `--price`, `--success`, `--danger`
+- Bloco `[data-theme='light']` com overrides para modo claro
+
+#### [FEAT] 9f5e01b — Script anti-flash no index.html
+- `index.html`: script inline no `<head>` lê `localStorage('theme')` antes do React montar
+- Elimina flash de tema incorreto no carregamento inicial (FOUC)
+
+#### [FEAT] ac63921 — Navbar: mobile sticky com toggle de tema e safe areas
+- Novo componente `Navbar.tsx` — sticky, altura 56px, backdrop-filter blur(12px)
+- Hook `useTheme.ts` — persiste tema em localStorage, aplica `data-theme` no `<html>`
+- Ícones SunIcon/MoonIcon inline — sem dependência externa
+- `App.tsx` e `BoardroomPage.tsx` refatorados para usar Navbar
+- Slot `children` para conteúdo desktop-only (Forge Monitor, status)
+
+#### [FIX] a7122c1 — Navbar: substituir cores hardcoded por tokens CSS
+- Remove 6 variáveis JS de cor computadas por `isLight`
+- Todos os `style={{}}` agora usam `var(--bg-primary)`, `var(--text-primary)`, `var(--text-secondary)`, `var(--accent)`, `var(--accent-muted)`, `var(--bg-card)`, `var(--border)`
+- `index.css` completado: `--text-secondary`, `--accent-muted` e `--border` adicionados ao bloco `[data-theme='light']`
+
+#### [FIX] a64b4be — Logo: ajustar peso visual do glifo ✓?
+- `Logo.tsx`: glifo ✓? era SVG com `strokeWidth="14"` — sem `font-size` nem `font-weight` comparável ao "EAI"
+- Substituído por `<span>` com `${sizes[size].text} font-playfair font-bold` — propriedades idênticas ao span "EAI"
+- Remove dependência `motion/react` e chave `h` morta no objeto `sizes`
+- Cores via `var(--text-primary)` e `var(--accent)`
+
+### Estado final
+- main: estável, `191c912` em produção (deploy automático em andamento)
+- Branch `feature/mobile-first` mergeada e encerrada
+- Zero bugs conhecidos abertos
+- Próximo: Sprint 2 Mobile (a definir)
