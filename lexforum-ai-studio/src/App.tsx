@@ -2280,7 +2280,7 @@ const handleGeminiError = (err: any) => {
                   <TrendingUp className="w-4 h-4" />
                 </div>
                 <div className="space-y-1">
-                  <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Taxa de Sucesso</div>
+                  <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Índice de Força Argumentativa</div>
                   <div className="text-5xl font-serif italic text-white/90">
                     { (state.simulation?.rounds && state.simulation.rounds.length > 0) 
                       ? (state.simulation.finalSuccessProbability || state.simulation.rounds[state.simulation.rounds.length - 1]?.successProbability || 0)
