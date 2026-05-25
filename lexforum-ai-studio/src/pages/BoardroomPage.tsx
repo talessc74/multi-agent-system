@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import {
   FileText,
@@ -8,7 +8,7 @@ import {
   History,
   ArrowRight,
 } from 'lucide-react';
-import { Logo } from '../components/Logo';
+import { Navbar } from '../components/Navbar';
 import LoginModal from '../components/LoginModal';
 
 interface Props {
@@ -68,69 +68,19 @@ const FOOTER_STATS = [
 ];
 
 export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistory, user }: Props) {
-  const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-
-  useEffect(() => {
-    const handler = () => setShowUserMenu(false);
-    if (showUserMenu) document.addEventListener('click', handler);
-    return () => document.removeEventListener('click', handler);
-  }, [showUserMenu]);
 
   return (
     <div className="min-h-screen bg-[#111111] text-white overflow-x-hidden selection:bg-amber-400/20">
-      {/* Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-[#111111]/95 backdrop-blur-md border-b border-white/10 px-4 md:px-8 flex items-center justify-between">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.reload()}>
-          <Logo size="sm" showText={false} />
-        </div>
-        <div className="flex items-center gap-3 md:gap-6">
-          {user && (
-            <button
-              onClick={() => user ? onShowHistory() : onLogin()}
-              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors border-r border-white/10 pr-3 md:pr-6 h-8"
-            >
-              <History className="w-3 h-3" />
-              <span className="hidden md:inline">Meus Casos</span>
-            </button>
-          )}
-          {user ? (
-            <div className="relative">
-              <div
-                className="flex items-center gap-3 cursor-pointer"
-                onClick={(e) => { e.stopPropagation(); setShowUserMenu(prev => !prev); }}
-              >
-                <div className="w-5 h-5 bg-white/10 rounded-full overflow-hidden">
-                  {user.photoURL ? <img src={user.photoURL} alt="" /> : <div className="w-full h-full bg-white/20" />}
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">
-                  {user.displayName?.split(' ')[0]}
-                </span>
-              </div>
-              {showUserMenu && (
-                <div className="absolute right-0 top-8 flex flex-col bg-[#1C1C1F] border border-white/10 shadow-xl z-50 min-w-[120px]">
-                  <button
-                    onClick={() => { onLogout(); setShowUserMenu(false); }}
-                    className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 transition-colors text-left"
-                  >
-                    Sair
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <button
-              onClick={() => setShowLoginModal(true)}
-              className="px-4 py-2 border border-white text-[11px] uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
-            >
-              ENTRAR
-            </button>
-          )}
-        </div>
-      </header>
+      <Navbar
+        user={user}
+        onLogin={() => setShowLoginModal(true)}
+        onLogout={onLogout}
+        onShowHistory={onShowHistory}
+      />
 
-      {/* Page content — offset by header height */}
-      <div className="pt-16">
+      {/* Page content */}
+      <div>
 
         {/* Hero */}
         <section className="px-6 md:px-12 lg:px-20 pt-20 pb-12 max-w-6xl mx-auto">
