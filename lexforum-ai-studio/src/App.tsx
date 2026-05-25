@@ -70,6 +70,7 @@ const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => 
 
 
 import { Logo } from './components/Logo';
+import { Navbar } from './components/Navbar';
 import BoardroomPage from './pages/BoardroomPage';
 
 const cleanJudgmentText = (text: string) => {
@@ -91,13 +92,6 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [userHistory, setUserHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-
-  useEffect(() => {
-    const handler = () => setShowUserMenu(false);
-    if (showUserMenu) document.addEventListener('click', handler);
-    return () => document.removeEventListener('click', handler);
-  }, [showUserMenu]);
   const [globalStats, setGlobalStats] = useState({ simulations: 0, winRate: 0, precision: 98.4 });
   const [state, setState] = useState<AppState>({
     step: 'boardroom',
@@ -570,74 +564,35 @@ const handleGeminiError = (err: any) => {
         />
       ) : (
         <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
-      <header className="h-16 border-b border-white/10 px-4 md:px-8 flex items-center justify-between bg-[#111111]/80 backdrop-blur-md sticky top-0 z-50 no-print">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.reload()}>
-          <Logo size="sm" showText={false} />
+      <Navbar
+        user={user}
+        onLogin={() => loginWithGoogle()}
+        onLogout={logoutUser}
+        onShowHistory={handleShowHistory}
+      >
+        <button
+          onClick={() => setState(prev => ({ ...prev, showForgeMonitor: !prev.showForgeMonitor }))}
+          className={`flex items-center gap-2 px-3 py-1.5 border transition-all ${state.showForgeMonitor ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-white/10 text-white/40 hover:text-white hover:border-white/20'}`}
+        >
+          <Cpu className="w-3 h-3" />
+          <span className="text-[9px] font-bold uppercase tracking-widest">Forge Monitor</span>
+        </button>
+        <div className="flex flex-col items-end">
+          <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold">Status da Simulação</span>
+          <span className={`text-xs font-mono font-bold ${state.step === 'simulating' ? 'text-amber-500' : 'text-emerald-500'}`}>
+            {state.step === 'input' ? 'AGUARDANDO CAUSA' :
+             state.step === 'confirm' ? 'ANALISANDO ÁREA' :
+             state.step === 'simulating' ? 'SIMULAÇÃO EM CURSO' : 'SIMULAÇÃO CONCLUÍDA'}
+          </span>
         </div>
-        <div className="flex items-center gap-3 md:gap-6">
-          <button
-            onClick={() => setState(prev => ({ ...prev, showForgeMonitor: !prev.showForgeMonitor }))}
-            className={`flex items-center gap-2 px-3 py-1.5 border transition-all lg:flex hidden ${state.showForgeMonitor ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-white/10 text-white/40 hover:text-white hover:border-white/20'}`}
-          >
-            <Cpu className="w-3 h-3" />
-            <span className="text-[9px] font-bold uppercase tracking-widest">Forge Monitor</span>
-          </button>
-          <div className="flex flex-col items-end lg:flex hidden">
-            <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold">Status da Simulação</span>
-            <span className={`text-xs font-mono font-bold ${state.step === 'simulating' ? 'text-amber-500' : 'text-emerald-500'}`}>
-              {state.step === 'input' ? 'AGUARDANDO CAUSA' : 
-               state.step === 'confirm' ? 'ANALISANDO ÁREA' :
-               state.step === 'simulating' ? 'SIMULAÇÃO EM CURSO' : 'SIMULAÇÃO CONCLUÍDA'}
-            </span>
-          </div>
-          <div className="w-[1px] h-8 bg-white/10 hidden lg:block"></div>
-          {user ? (
-            <div className="flex items-center gap-6">
-              <button 
-                onClick={handleShowHistory}
-                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors border-r border-white/10 pr-3 md:pr-6 mr-2 h-8"
-              >
-                <History className="w-3 h-3" />
-                <span className="hidden md:inline">Meus Casos</span>
-              </button>
-              <div className="relative">
-                <div
-                  className="flex items-center gap-3 cursor-pointer"
-                  onClick={(e) => { e.stopPropagation(); setShowUserMenu(prev => !prev); }}
-                >
-                  <div className="w-5 h-5 bg-white/10 rounded-full overflow-hidden">
-                    {user.photoURL ? <img src={user.photoURL} alt="" /> : <div className="w-full h-full bg-white/20" />}
-                  </div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">{user.displayName?.split(' ')[0]}</span>
-                </div>
-                {showUserMenu && (
-                  <div className="absolute right-0 top-8 flex flex-col bg-[#1C1C1F] border border-white/10 shadow-xl z-50 min-w-[120px]">
-                    <button
-                      onClick={() => { logoutUser(); setShowUserMenu(false); }}
-                      className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 transition-colors text-left"
-                    >
-                      Sair
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <button 
-              onClick={() => loginWithGoogle()}
-              className="text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors"
-            >
-              Entrar
-            </button>
-          )}
-          <button 
-            className="px-4 py-2 border border-white text-[11px] uppercase tracking-widest hover:bg-white hover:text-black transition-colors lg:block hidden"
-            onClick={() => window.location.reload()}
-          >
-            Nova Consulta
-          </button>
-        </div>
-      </header>
+        <div className="w-[1px] h-8 bg-white/10" />
+        <button
+          className="px-4 py-2 border border-white text-[11px] uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+          onClick={() => window.location.reload()}
+        >
+          Nova Consulta
+        </button>
+      </Navbar>
 
       <main className="flex-1 grid grid-cols-12 gap-0 overflow-hidden min-h-[calc(100vh-64px)]">
         <div className="col-span-12 lg:col-span-8 p-8 flex flex-col gap-6 lg:border-r border-white/5 overflow-y-auto print:col-span-12 print:p-0 print:border-none">
