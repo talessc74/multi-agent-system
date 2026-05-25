@@ -558,12 +558,18 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 - [FEAT] 2c6e0bb + 7be1d84 — Versionamento dinâmico: v2.4.0 · {hash} via VITE_GIT_HASH=$SHORT_SHA injetado no cloudbuild.yaml.
 - Trigger automático Cloud Build validado de ponta a ponta — todo push em main deploya automaticamente em produção.
 
-### Evolução C — em andamento (branch: feature/evolucao-c)
-- [FEAT] d7134e3 — Parte 1/3: tipos e funções server-side. AppState recebe counterHypotheses, selectedHypothesis, expandedHypothesis, showHypotheses. gemini.server.ts recebe generateCounterHypothesesServer (parser robusto + regex fallback) e expandHypothesisServer (sanitização contra prompt injection).
-- Parte 2/3 pendente: rotas server.ts + funções cliente gemini.ts
-- Parte 3/3 pendente: UI em App.tsx — tela de seleção de hipóteses
+### Evolução C — concluída
+- [FEAT] d7134e3 — Parte 1/3: tipos e funções server-side
+- [FEAT] 3f74e63 — Parte 2/3: rotas server e funções cliente
+- [FEAT] 41a10c8 — Parte 3/3: UI de hipóteses de contraditório
+- [FIX]  8b780c3 — Feedback visual ao expandir hipótese
+
+### Evolução D — concluída
+- [FEAT] 5fb0d69 — Modo 4 pré-carregado com mensagem de continuação e campos somente leitura
+- Desconto R$4,90 → fila futura (aguarda dados reais de uso)
+
+### Próximo
+- Sprint 1 Mobile — Fundação CSS (branch: feature/mobile-first)
 
 ### Estado atual
 - Branch main: produção estável
-- Branch feature/evolucao-c: Evolução C em desenvolvimento
-- Próximo após Evolução C: Evolução D → cadeia mobile (Sprints 1-6)
