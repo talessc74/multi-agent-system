@@ -24,7 +24,7 @@ const MODES = [
     title: 'Tese Estratégica',
     price: 'R$ 9,90',
     Icon: FileText,
-    desc: 'VOCÊ TRAZ UM FATO (STORYTELLING). O SISTEMA CRIA O MELHOR ADVOGADO PARA PETICIONAR E O JUIZ JULGA EM 3 CICLOS.',
+    desc: 'DESCREVA SUA SITUAÇÃO. DESCUBRA SE VOCÊ TEM RAZÃO E QUAL SUA CHANCE REAL DE GANHAR — E SE QUISER, TESTE SUA TESE CONTRA A DEFESA DO OUTRO LADO.',
   },
   {
     title: 'Defesa sob Ataque',
