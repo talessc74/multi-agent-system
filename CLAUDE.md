@@ -579,6 +579,7 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 - Desconto R$4,90 Modo 1→4: implementar junto com validação server-side anti-abuso (simulationId de origem)
 - Botão editar no argumento expandido (Modo 1 → antes do Modo 4)
 - Comunicação clara da jornada Modo 1 → hipóteses → Modo 4 com preço explícito
+- Stats Performance Global: win rate e precisão média são mockados. "98.4% Precisão Média" é hardcoded em App.tsx. "Ganhos de causa via EAI?" é média dos percentuais de simulação — não dados reais de processos ganhos. Substituir por dados reais do Firestore quando houver volume de usuários.
 
 ### Próximo
 - Sprint 1 Mobile — Fundação CSS (branch: feature/mobile-first)
