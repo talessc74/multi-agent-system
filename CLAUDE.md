@@ -568,8 +568,22 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 - [FEAT] 5fb0d69 — Modo 4 pré-carregado com mensagem de continuação e campos somente leitura
 - Desconto R$4,90 → fila futura (aguarda dados reais de uso)
 
+### Correções e melhorias pós-Evolução C/D
+- [FIX] 54068c4 — Meus Casos: modal disponível em qualquer step, incluindo Boardroom. Abre na primeira vez.
+- [FIX] 40fcc0a — Descrição Modo 1 atualizada
+- [FIX] 7f094a0 — Descrição Modo 1 simplificada — versão final: "Descreva sua situação. Descubra se você tem razão e qual sua chance real de ganhar."
+- [FEAT] 66ef4fc — Modo 4: botão "Editar campos" protege campos pré-carregados de edição acidental. Livre quando entrada direta.
+- [FIX] e869fe5 — Boardroom lateral: "Taxa de Sucesso" substituído por "Índice de Força Argumentativa"
+
+### Fila futura (decisões tomadas hoje)
+- Desconto R$4,90 Modo 1→4: implementar junto com validação server-side anti-abuso (simulationId de origem)
+- Botão editar no argumento expandido (Modo 1 → antes do Modo 4)
+- Comunicação clara da jornada Modo 1 → hipóteses → Modo 4 com preço explícito
+
 ### Próximo
 - Sprint 1 Mobile — Fundação CSS (branch: feature/mobile-first)
 
-### Estado atual
-- Branch main: produção estável
+### Estado final
+- main: estável, e869fe5 em produção
+- Zero bugs conhecidos abertos
+- Próximo: Sprint 1 Mobile (novo chat)
