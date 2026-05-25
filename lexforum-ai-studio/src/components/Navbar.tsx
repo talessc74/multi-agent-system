@@ -47,13 +47,6 @@ export function Navbar({ user, onLogin, onLogout, onShowHistory, className = '',
   const [showUserMenu, setShowUserMenu] = useState(false);
   const isLight = theme === 'light';
 
-  const navBg = isLight ? 'rgba(245, 243, 238, 0.92)' : 'rgba(10, 12, 15, 0.90)';
-  const navBorder = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.07)';
-  const textPrimary = isLight ? '#0A1628' : '#F0F2F5';
-  const textMuted = isLight ? 'rgba(10, 22, 40, 0.55)' : 'rgba(240, 242, 245, 0.5)';
-  const accentGlyph = isLight ? '#0A1628' : '#00FFEF';
-  const menuBg = isLight ? '#FFFFFF' : '#1A1E26';
-
   useEffect(() => {
     if (!showUserMenu) return;
     const close = () => setShowUserMenu(false);
@@ -68,8 +61,8 @@ export function Navbar({ user, onLogin, onLogout, onShowHistory, className = '',
         height: '56px',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        backgroundColor: navBg,
-        borderBottom: `1px solid ${navBorder}`,
+        backgroundColor: 'var(--bg-primary)',
+        borderBottom: '1px solid var(--border)',
       }}
     >
       <div className="h-full px-4 md:px-8 flex items-center justify-between">
@@ -82,13 +75,13 @@ export function Navbar({ user, onLogin, onLogout, onShowHistory, className = '',
         >
           <span
             className="font-playfair leading-none"
-            style={{ fontSize: '21px', fontWeight: 700, color: textPrimary }}
+            style={{ fontSize: '21px', fontWeight: 700, color: 'var(--text-primary)' }}
           >
             EAI
           </span>
           <span
             className="font-playfair leading-none"
-            style={{ fontSize: '21px', fontWeight: 700, color: accentGlyph }}
+            style={{ fontSize: '21px', fontWeight: 700, color: 'var(--accent)' }}
           >
             ✓?
           </span>
@@ -114,7 +107,7 @@ export function Navbar({ user, onLogin, onLogout, onShowHistory, className = '',
                 minWidth: '44px',
                 minHeight: '44px',
                 padding: '0 8px',
-                color: textMuted,
+                color: 'var(--text-secondary)',
                 opacity: 0.8,
               }}
             >
@@ -135,7 +128,7 @@ export function Navbar({ user, onLogin, onLogout, onShowHistory, className = '',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: textMuted,
+              color: 'var(--text-secondary)',
               borderRadius: '4px',
               flexShrink: 0,
             }}
@@ -153,16 +146,16 @@ export function Navbar({ user, onLogin, onLogout, onShowHistory, className = '',
               >
                 <div
                   className="w-6 h-6 rounded-full overflow-hidden shrink-0"
-                  style={{ background: 'rgba(255, 255, 255, 0.1)' }}
+                  style={{ background: 'var(--accent-muted)' }}
                 >
                   {user.photoURL
                     ? <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
-                    : <div className="w-full h-full" style={{ background: 'rgba(255,255,255,0.2)' }} />
+                    : <div className="w-full h-full" style={{ background: 'var(--accent-muted)' }} />
                   }
                 </div>
                 <span
                   className="hidden md:inline text-[10px] font-bold uppercase tracking-widest"
-                  style={{ color: textMuted }}
+                  style={{ color: 'var(--text-secondary)' }}
                 >
                   {user.displayName?.split(' ')[0]}
                 </span>
@@ -172,14 +165,14 @@ export function Navbar({ user, onLogin, onLogout, onShowHistory, className = '',
                   className="absolute right-0 top-10 flex flex-col shadow-xl z-50"
                   style={{
                     minWidth: '120px',
-                    background: menuBg,
-                    border: `1px solid ${navBorder}`,
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border)',
                   }}
                 >
                   <button
                     onClick={() => { onLogout(); setShowUserMenu(false); }}
                     className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors text-left"
-                    style={{ color: textMuted }}
+                    style={{ color: 'var(--text-secondary)' }}
                   >
                     Sair
                   </button>
@@ -194,8 +187,8 @@ export function Navbar({ user, onLogin, onLogout, onShowHistory, className = '',
                 minWidth: '44px',
                 minHeight: '44px',
                 padding: '0 12px',
-                border: `1px solid ${isLight ? 'rgba(10,22,40,0.4)' : 'rgba(255,255,255,0.3)'}`,
-                color: isLight ? '#0A1628' : 'rgba(240,242,245,0.85)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
               }}
             >
               Entrar

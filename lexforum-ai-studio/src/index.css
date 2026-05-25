@@ -29,7 +29,10 @@
   --bg-primary: #F5F3EE;
   --bg-card: #FFFFFF;
   --text-primary: #0A1628;
+  --text-secondary: rgba(10, 22, 40, 0.55);
   --accent: #0A1628;
+  --accent-muted: rgba(10, 22, 40, 0.08);
+  --border: rgba(0, 0, 0, 0.08);
   --price: #1A3A6B;
 }
 
