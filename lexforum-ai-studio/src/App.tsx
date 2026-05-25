@@ -168,6 +168,7 @@ export default function App() {
 const [loading, setLoading] = useState(false);
 const [retryCount, setRetryCount] = useState(0);
 const [isExpandingHypothesis, setIsExpandingHypothesis] = useState(false);
+const fromPreviousSimulation = !!(state.caseDescription && state.defenseDescription && state.userSide);
 const scrollRef = useRef<HTMLDivElement>(null);
 const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -701,6 +702,12 @@ const handleGeminiError = (err: any) => {
                       Mesa Dupla — Assistida
                     </span>
                   </div>
+                  {fromPreviousSimulation && (
+                    <div className="p-4 bg-white/5 border border-white/20 text-[10px] font-bold uppercase tracking-widest text-white/60 flex items-center gap-3">
+                      <ArrowRight className="w-3 h-3 rotate-180" />
+                      Continuando a partir da sua simulação anterior.
+                    </div>
+                  )}
                   <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
                     Insira os dois lados e <br /><span className="text-[#F4F4F2] font-bold">escolha o seu.</span>
                   </h1>
@@ -719,7 +726,8 @@ const handleGeminiError = (err: any) => {
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a petição inicial do autor..."
-                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      readOnly={fromPreviousSimulation}
+                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10${fromPreviousSimulation ? ' opacity-60 cursor-not-allowed' : ''}`}
                     />
                     {state.attachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
@@ -766,7 +774,8 @@ const handleGeminiError = (err: any) => {
                       value={state.defenseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a contestação do réu..."
-                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      readOnly={fromPreviousSimulation}
+                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10${fromPreviousSimulation ? ' opacity-60 cursor-not-allowed' : ''}`}
                     />
                     {state.defenseAttachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
