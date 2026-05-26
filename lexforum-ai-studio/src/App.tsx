@@ -559,7 +559,7 @@ const handleGeminiError = (err: any) => {
     <>
       {/* ── MODO 5 — Revisão Pós-Conflito ───────────────────────── */}
       {state.step === 'input' && state.selectedMode === 5 && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
+        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[5].headline}
@@ -680,7 +680,7 @@ const handleGeminiError = (err: any) => {
 
       {/* ── MODO 4 — Mesa Dupla: Assistida ──────────────────────── */}
       {state.step === 'input' && state.selectedMode === 4 && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
+        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[4].headline}
@@ -773,7 +773,7 @@ const handleGeminiError = (err: any) => {
 
       {/* ── MODO 3 — Mesa Dupla: Juiz ────────────────────────────── */}
       {state.step === 'input' && state.selectedMode === 3 && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
+        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[3].headline}
@@ -839,7 +839,7 @@ const handleGeminiError = (err: any) => {
 
       {/* ── MODO 2 — Defesa sob Ataque ───────────────────────────── */}
       {state.step === 'input' && state.selectedMode === 2 && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
+        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[2].headline}
@@ -912,7 +912,7 @@ const handleGeminiError = (err: any) => {
 
       {/* ── MODO 1 — Tese Estratégica ────────────────────────────── */}
       {state.step === 'input' && state.selectedMode === 1 && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
+        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[1].headline}
@@ -1545,7 +1545,7 @@ const handleGeminiError = (err: any) => {
               </motion.div>
             )}
 
-            {state.step === 'input' && state.selectedMode === 0 && (
+            {state.step === 'input' && state.selectedMode < 3 && (
               <motion.div
                 key="input"
                 initial={{ opacity: 0, y: 10 }}
