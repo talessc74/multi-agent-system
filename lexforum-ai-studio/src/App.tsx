@@ -565,7 +565,7 @@ const handleGeminiError = (err: any) => {
             modeName={MODE_CONFIG[5].headline}
             color={MODE_CONFIG[5].color}
           />
-          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
@@ -686,7 +686,7 @@ const handleGeminiError = (err: any) => {
             modeName={MODE_CONFIG[4].headline}
             color={MODE_CONFIG[4].color}
           />
-          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
@@ -779,7 +779,7 @@ const handleGeminiError = (err: any) => {
             modeName={MODE_CONFIG[3].headline}
             color={MODE_CONFIG[3].color}
           />
-          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
