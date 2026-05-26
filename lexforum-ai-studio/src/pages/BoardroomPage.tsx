@@ -123,7 +123,6 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[16px] font-bold text-white leading-none">{cfg.headline}</p>
-                    <p className="text-[12px] font-mono mt-1" style={{ color: cfg.color }}>{price}</p>
                   </div>
                   <ArrowRight
                     style={{ width: '18px', height: '18px', color: 'var(--text-secondary)', flexShrink: 0, transform: isOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}
@@ -138,6 +137,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                     <p className="text-[11px] font-bold uppercase tracking-[0.15em] mb-4" style={{ color: cfg.color }}>
                       Ideal para: <span className="normal-case font-normal tracking-normal">{cfg.tagline}</span>
                     </p>
+                    <p className="text-[13px] font-mono mb-3" style={{ color: cfg.color }}>{price}</p>
                     <button
                       onClick={() => onEnter(mode)}
                       className="w-full font-bold text-[13px] flex items-center justify-center"
