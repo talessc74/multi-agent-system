@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import LoginModal from '../components/LoginModal';
+import { MODE_CONFIG } from '../config/modeConfig';
 
 interface Props {
   onEnter: (mode: number) => void;
@@ -52,6 +53,14 @@ const MODES = [
   },
 ];
 
+const MOBILE_MODES = [
+  { mode: 1, Icon: FileText,    price: 'R$ 9,90' },
+  { mode: 2, Icon: ShieldCheck, price: 'R$ 9,90' },
+  { mode: 3, Icon: Gavel,       price: 'R$ 5,90' },
+  { mode: 4, Icon: Scale,       price: 'R$ 9,90' },
+  { mode: 5, Icon: History,     price: 'R$ 5,90' },
+];
+
 const FLOW_STEPS = [
   'Peticionando — Advogado Especializado',
   'Protocolando — Barramento Digital',
@@ -69,6 +78,7 @@ const FOOTER_STATS = [
 
 export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistory, user }: Props) {
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [openMode, setOpenMode] = useState<number | null>(null);
 
   return (
     <div className="min-h-screen bg-[#111111] text-white overflow-x-hidden selection:bg-amber-400/20">
@@ -94,27 +104,52 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
         </p>
 
         <div className="mt-10 flex flex-col" style={{ gap: '12px' }}>
-          {[
-            { mode: 1, name: 'Tese Estratégica',      price: 'R$ 9,90', color: '#00FFEF' },
-            { mode: 2, name: 'Defesa Sob Ataque',      price: 'R$ 9,90', color: '#FF6B6B' },
-            { mode: 3, name: 'Mesa Dupla — Juiz',      price: 'R$ 5,90', color: '#A882FF' },
-            { mode: 4, name: 'Mesa Dupla — Assistida', price: 'R$ 9,90', color: '#FFB800' },
-            { mode: 5, name: 'Revisão Pós-Conflito',   price: 'R$ 5,90', color: '#00CC88' },
-          ].map(({ mode, name, price, color }) => (
-            <div key={mode} className="flex items-center justify-between">
-              <div>
-                <p className="text-[13px] font-bold text-white leading-none">{name}</p>
-                <p className="text-[11px] font-mono mt-1" style={{ color }}>{price}</p>
+          {MOBILE_MODES.map(({ mode, Icon, price }) => {
+            const cfg = MODE_CONFIG[mode];
+            const isOpen = openMode === mode;
+            return (
+              <div key={mode} style={{ border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden' }}>
+                {/* Header */}
+                <button
+                  onClick={() => setOpenMode(isOpen ? null : mode)}
+                  className="w-full flex items-center gap-3 text-left"
+                  style={{ padding: '20px', background: 'none', border: 'none', cursor: 'pointer' }}
+                >
+                  <div
+                    className="flex items-center justify-center shrink-0"
+                    style={{ width: '32px', height: '32px', background: `rgba(${cfg.colorRgb}, 0.12)`, borderRadius: '8px' }}
+                  >
+                    <Icon style={{ width: '16px', height: '16px', color: cfg.color }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[16px] font-bold text-white leading-none">{cfg.headline}</p>
+                    <p className="text-[12px] font-mono mt-1" style={{ color: cfg.color }}>{price}</p>
+                  </div>
+                  <ArrowRight
+                    style={{ width: '18px', height: '18px', color: 'var(--text-secondary)', flexShrink: 0, transform: isOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}
+                  />
+                </button>
+                {/* Expanded */}
+                {isOpen && (
+                  <div style={{ padding: '0 20px 20px' }}>
+                    <p className="text-[13px] text-white/60 leading-relaxed mb-3">
+                      {cfg.description}
+                    </p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.15em] mb-4" style={{ color: cfg.color }}>
+                      Ideal para: <span className="normal-case font-normal tracking-normal">{cfg.tagline}</span>
+                    </p>
+                    <button
+                      onClick={() => onEnter(mode)}
+                      className="w-full font-bold text-[13px] flex items-center justify-center"
+                      style={{ height: '48px', background: cfg.color, color: '#0A1628', borderRadius: '12px', border: 'none', cursor: 'pointer' }}
+                    >
+                      Começar →
+                    </button>
+                  </div>
+                )}
               </div>
-              <button
-                onClick={() => onEnter(mode)}
-                className="font-bold text-[12px] flex items-center justify-center shrink-0"
-                style={{ background: color, color: '#0A1628', height: '48px', width: '120px', borderRadius: '12px' }}
-              >
-                Começar →
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-auto pt-8 text-center space-y-1">
