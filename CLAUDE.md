@@ -619,7 +619,34 @@ Modos 3, 4, 5: `padding-bottom: 100px` no container scrollável para conteúdo n
 
 ### Próximo
 
-- Sprint 3 Mobile (a definir)
+- ~~Sprint 3 Mobile (a definir)~~ ✅ entregue em 26/05/2026
+
+## Sessão 26/05/2026 — Sprint 3 Mobile: Home mobile e accordion de modos
+
+**8 commits direto em main — deploy automático disparado**
+
+### Correções de base (Sprint 2 → Sprint 3)
+
+- [FIX] 2f3bed1 — Overlays dos modos 1–5 restritos a mobile (`md:hidden`). Desktop mantém layout original. Condição `selectedMode < 3` restaurada no AnimatePresence.
+- [FIX] 3d7771c — ModeNavbar: toggle de tema sol/lua adicionado ao lado do EAI✓? (mesmo padrão do Navbar.tsx do Sprint 1).
+
+### Home mobile — nova tela de entrada
+
+- [FEAT] 7db4c6e — Tela de entrada mobile substituindo a BoardroomPage em viewport < 768px. Conteúdo desktop envolto em `hidden md:block` com `id="modos"`. Bloco `md:hidden`: label SIMULADOR JURÍDICO, headline Playfair 44px, subtítulo 15px, botão cyan full-width 56px (`onEnter(1)`), link discreto com scroll para `#modos`, disclaimer com preço e aviso legal.
+- [FIX] 5c6eac6 — Remove link "Sou profissional" do bloco mobile.
+- [FIX] 0196c7b — Substitui botão CTA único pelos 5 modos coloridos: cards full-width com nome, preço e "Começar →" nas cores #00FFEF / #FF6B6B / #A882FF / #FFB800 / #00CC88.
+
+### Accordion de modos
+
+- [FIX] 67f4e88 — Cards flat substituídos por accordion. Fechado: ícone 32px + nome 16px + chevron →. Aberto: descrição + "Ideal para:" + tagline + preço + botão "Começar →" 48px. Um card aberto por vez via `openMode` state. Dados via `MODE_CONFIG`.
+- [FIX] ad5329c — Preço removido do header fechado. No bloco expandido: preço font-mono 13px na cor do modo acima do botão "Começar →".
+- [FIX] 8540e56 — Rodapé mobile: `v2.4.0 · {hash}` abaixo do disclaimer de preço.
+
+### Estado final
+
+- main: estável, `8540e56` em produção
+- Zero bugs conhecidos abertos
+- Próximo: Sprint 4 Mobile (a definir)
 
 ## Sessão 25/05/2026 — Sprint 1 Mobile: Fundação CSS
 
