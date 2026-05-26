@@ -689,3 +689,24 @@ Deploy automático Cloud Build disparado pelo push.
 - Branch `feature/mobile-first` mergeada e encerrada
 - Zero bugs conhecidos abertos
 - Próximo: Sprint 2 Mobile (a definir)
+
+## Sessão 26/05/2026 — Sprint 4 Mobile (manhã)
+
+**2 entregas + 1 pendência registrada**
+
+### Fix — Sobreposição do título no resultado mobile [FIX] commit c92f607
+- App.tsx: bloco "Laudo Estratégico" alterado de `flex items-center justify-between` para `flex flex-col md:flex-row md:items-center md:justify-between gap-6`
+- App.tsx: h2 alterado de `text-5xl` para `text-3xl md:text-5xl`
+- Em mobile: título empilha acima do número. Desktop: mantém layout lado a lado. Zero regressão.
+- Bug identificado via screenshot do iPhone — "Laudo Estratégico" em Playfair sobrepunha o bloco do 90% por ausência de quebra de coluna em mobile
+
+### Deploy — Índice Firestore ativo em produção [CONFIG]
+- `firebase deploy --only firestore:indexes --project gen-lang-client-0982741688` executado com sucesso
+- Índice composto `agents: area ASC + tipo ASC` confirmado ativo em produção
+- Queries compostas de busca de agentes agora têm índice — consistência entre execuções garantida
+
+### Pendência registrada
+- `firestore.rules` contém warnings: funções declaradas mas não usadas e variáveis com nomes reservados — não bloqueiam funcionamento, mas requerem limpeza futura
+
+### Fix descartado
+- Legibilidade textos secundários mobile (label/subtítulo/disclaimer) — aprovado visualmente pelo Tales sem alteração necessária
