@@ -557,6 +557,99 @@ const handleGeminiError = (err: any) => {
 
   return (
     <>
+      {/* ── MODO 4 — Mesa Dupla: Assistida ──────────────────────── */}
+      {state.step === 'input' && state.selectedMode === 4 && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
+          <ModeNavbar
+            onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
+            modeName={MODE_CONFIG[4].headline}
+            color={MODE_CONFIG[4].color}
+          />
+          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
+            {state.error && (
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
+                <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
+                  <X style={{ width: '16px', height: '16px' }} />
+                </button>
+              </div>
+            )}
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[4].color, marginBottom: '12px' }}>
+              {MODE_CONFIG[4].tagline}
+            </p>
+            <ContextZone
+              color={MODE_CONFIG[4].color}
+              colorRgb={MODE_CONFIG[4].colorRgb}
+              description={MODE_CONFIG[4].description}
+              bring={MODE_CONFIG[4].bring}
+              receive={MODE_CONFIG[4].receive}
+            />
+            {fromPreviousSimulation && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', marginBottom: '16px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,184,0,0.7)' }}>
+                <span style={{ flex: 1 }}>Continuando a partir da sua simulação anterior.</span>
+                {!isEditingMode4 && (
+                  <button onClick={() => setIsEditingMode4(true)} style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', border: '1px solid rgba(255,184,0,0.3)', padding: '6px 12px', color: 'rgba(255,184,0,0.7)', background: 'none', cursor: 'pointer' }}>
+                    Editar campos
+                  </button>
+                )}
+              </div>
+            )}
+            {/* Seletor de lado */}
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+              <button
+                onClick={() => setState(prev => ({ ...prev, userSide: 'AUTHOR' }))}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', border: state.userSide === 'AUTHOR' ? `2px solid ${MODE_CONFIG[4].color}` : '2px solid var(--border)', background: state.userSide === 'AUTHOR' ? `rgba(255,184,0,0.1)` : 'var(--bg-card)', color: state.userSide === 'AUTHOR' ? MODE_CONFIG[4].color : 'var(--text-secondary)' }}
+              >
+                ⚔️ Acusação
+              </button>
+              <button
+                onClick={() => setState(prev => ({ ...prev, userSide: 'DEFENSE' }))}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', border: state.userSide === 'DEFENSE' ? `2px solid ${MODE_CONFIG[4].color}` : '2px solid var(--border)', background: state.userSide === 'DEFENSE' ? `rgba(255,184,0,0.1)` : 'var(--bg-card)', color: state.userSide === 'DEFENSE' ? MODE_CONFIG[4].color : 'var(--text-secondary)' }}
+              >
+                🛡 Defesa
+              </button>
+            </div>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
+              <div style={{ padding: '16px 20px 4px' }}>
+                <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Petição do Autor</span>
+              </div>
+              <textarea
+                value={state.caseDescription}
+                onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
+                readOnly={fromPreviousSimulation && !isEditingMode4}
+                placeholder="Cole ou descreva a petição inicial do autor..."
+                style={{ width: '100%', minHeight: '140px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box', opacity: fromPreviousSimulation && !isEditingMode4 ? 0.6 : 1, cursor: fromPreviousSimulation && !isEditingMode4 ? 'not-allowed' : 'auto' }}
+              />
+            </div>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
+              <div style={{ padding: '16px 20px 4px' }}>
+                <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Contestação do Réu</span>
+              </div>
+              <textarea
+                value={state.defenseDescription}
+                onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
+                readOnly={fromPreviousSimulation && !isEditingMode4}
+                placeholder="Cole ou descreva a contestação do réu..."
+                style={{ width: '100%', minHeight: '140px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box', opacity: fromPreviousSimulation && !isEditingMode4 ? 0.6 : 1, cursor: fromPreviousSimulation && !isEditingMode4 ? 'not-allowed' : 'auto' }}
+              />
+            </div>
+            <p style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '24px', lineHeight: '1.6' }}>
+              O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
+            </p>
+          </div>
+          <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0 }}>
+            <button
+              disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading}
+              onClick={handleValidate}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[4].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 0.5 : 1 }}
+            >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[4].cta}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── MODO 3 — Mesa Dupla: Juiz ────────────────────────────── */}
       {state.step === 'input' && state.selectedMode === 3 && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
