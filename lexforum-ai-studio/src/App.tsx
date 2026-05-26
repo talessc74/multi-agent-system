@@ -2300,8 +2300,8 @@ const handleGeminiError = (err: any) => {
                 )}
 
                 {state.selectedMode !== 5 && (
-                <div className="flex items-center justify-between border-b border-white/10 pb-8 print:border-black/10">
-                  <h2 className="text-5xl font-serif italic tracking-tight text-white/90 print:text-black">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-white/10 pb-8 gap-6 print:border-black/10">
+                  <h2 className="text-3xl md:text-5xl font-serif italic tracking-tight text-white/90 print:text-black">
                     Laudo <span className="text-white font-bold print:text-black">Estratégico</span>
                   </h2>
                   <div className="flex flex-col items-end">
