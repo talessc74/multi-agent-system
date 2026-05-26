@@ -589,6 +589,38 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 - Zero bugs conhecidos abertos
 - Próximo: Sprint 1 Mobile (novo chat)
 
+## Sessão 26/05/2026 — Sprint 2 Mobile: Zona de Contexto e telas dos 5 modos
+
+**9 commits + merge em main — deploy automático disparado**
+
+Branch: `feature/mobile-sprint2-modes` → merge `0da9a42` em main.
+
+### Novos arquivos
+
+- `lexforum-ai-studio/src/components/ContextZone.tsx` — componente reutilizável com borda lateral colorida, descrição e colunas "O que trazer / O que receber". Cores via `style prop` com `var()`. Zero hardcoded.
+- `lexforum-ai-studio/src/components/ModeNavbar.tsx` — navbar de modo `[← Voltar] [TAG] [EAI✓?]`, 56px, blur(12px), tokens CSS Sprint 1.
+- `lexforum-ai-studio/src/config/modeConfig.ts` — interface `ModeConfig` + dados completos dos 5 modos (cor, colorRgb, headline, tagline, description, bring[], receive[], cta, inputType, hasAttachment, hasSelector, selectorType).
+
+### Telas dos 5 modos
+
+Cada modo (1–5) tem overlay `position: fixed; z-index: 200` independente do layout desktop. Fluxo: overlay Input → confirm/simulating/result no layout existente (sem quebra de comportamento).
+
+| Modo | Cor | CTA | Seletor |
+|---|---|---|---|
+| 1 — Tese Estratégica | #00FFEF | Validar causa → | — |
+| 2 — Defesa sob Ataque | #FF6B6B | Validar defesa → | — |
+| 3 — Mesa Dupla — Juiz | #A882FF | Consultar magistrado → | — |
+| 4 — Mesa Dupla — Assistida | #FFB800 | Iniciar simulação → | ⚔️ Acusação / 🛡 Defesa |
+| 5 — Revisão Pós-Conflito | #00CC88 | Analisar agora → | ⚖️ Recorrer / 🤝 Acordo |
+
+CTA fixo no bottom com `padding-bottom: calc(16px + env(safe-area-inset-bottom))`.
+Modo 4 e 5: CTA desabilitado sem seleção.
+Modos 3, 4, 5: `padding-bottom: 100px` no container scrollável para conteúdo não ser coberto pelo CTA.
+
+### Próximo
+
+- Sprint 3 Mobile (a definir)
+
 ## Sessão 25/05/2026 — Sprint 1 Mobile: Fundação CSS
 
 **Sprint 1 Mobile concluída — 5 commits + merge em main**
