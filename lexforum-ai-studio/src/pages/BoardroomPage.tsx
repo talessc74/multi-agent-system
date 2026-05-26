@@ -159,6 +159,9 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
           <p className="text-[9px] uppercase tracking-[0.2em] text-white/20">
             Simulação gratuita · Laudo completo R$9,90
           </p>
+          <p className="text-[9px] uppercase tracking-[0.2em] text-white/20 mt-1">
+            {`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}
+          </p>
         </div>
       </div>
 
