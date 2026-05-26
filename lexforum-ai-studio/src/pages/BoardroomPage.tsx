@@ -79,10 +79,52 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
         onShowHistory={onShowHistory}
       />
 
-      {/* Page content */}
-      <div>
+      {/* ── MOBILE HOME ───────────────────────────────────────── */}
+      <div className="md:hidden flex flex-col min-h-screen px-6 pt-16 pb-8">
+        <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-white/35 mb-6">
+          SIMULADOR JURÍDICO
+        </span>
 
-        {/* Hero */}
+        <h1 className="font-playfair italic text-[44px] leading-tight text-white">
+          A incerteza jurídica tem uma saída.
+        </h1>
+
+        <p className="text-[15px] text-white/50 mt-4 leading-relaxed">
+          Descreva seu problema. Receba sua chance real de êxito em minutos.
+        </p>
+
+        <button
+          onClick={() => onEnter(1)}
+          className="mt-12 w-full font-bold text-[13px] uppercase tracking-[0.15em] flex items-center justify-center"
+          style={{ height: '56px', background: '#00FFEF', color: '#0A1628' }}
+        >
+          Simular meu caso →
+        </button>
+
+        <button
+          onClick={() => document.getElementById('modos')?.scrollIntoView({ behavior: 'smooth' })}
+          className="mt-4 text-center text-[11px] text-white/35 underline underline-offset-2 bg-transparent border-none cursor-pointer w-full"
+        >
+          Sou profissional — ver todos os modos
+        </button>
+
+        <div className="mt-auto text-center space-y-1">
+          <p className="text-[9px] uppercase tracking-[0.2em] text-white/20">
+            Não é consulta jurídica · Não garante vitória
+          </p>
+          <p className="text-[9px] uppercase tracking-[0.2em] text-white/20">
+            Simulação gratuita · Laudo completo R$9,90
+          </p>
+        </div>
+      </div>
+
+      {/* ── DESKTOP CONTENT ─────────────────────────────────────── */}
+      <div className="hidden md:block" id="modos">
+
+        {/* Page content */}
+        <div>
+
+          {/* Hero */}
         <section className="px-6 md:px-12 lg:px-20 pt-20 pb-12 max-w-6xl mx-auto">
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
@@ -235,6 +277,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
           </div>
         </div>
 
+      </div>
       </div>
 
       {showLoginModal && (
