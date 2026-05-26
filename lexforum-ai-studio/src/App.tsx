@@ -557,6 +557,127 @@ const handleGeminiError = (err: any) => {
 
   return (
     <>
+      {/* ── MODO 5 — Revisão Pós-Conflito ───────────────────────── */}
+      {state.step === 'input' && state.selectedMode === 5 && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
+          <ModeNavbar
+            onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
+            modeName={MODE_CONFIG[5].headline}
+            color={MODE_CONFIG[5].color}
+          />
+          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
+            {state.error && (
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
+                <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
+                  <X style={{ width: '16px', height: '16px' }} />
+                </button>
+              </div>
+            )}
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[5].color, marginBottom: '12px' }}>
+              {MODE_CONFIG[5].tagline}
+            </p>
+            <ContextZone
+              color={MODE_CONFIG[5].color}
+              colorRgb={MODE_CONFIG[5].colorRgb}
+              description={MODE_CONFIG[5].description}
+              bring={MODE_CONFIG[5].bring}
+              receive={MODE_CONFIG[5].receive}
+            />
+            {/* Seletor de subcaso */}
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+              <button
+                onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'RECURSO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: prev.mode5Input?.attachments || [] } }))}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', border: state.mode5Input?.subCase === 'RECURSO' ? `2px solid ${MODE_CONFIG[5].color}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'RECURSO' ? 'rgba(0,204,136,0.1)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'RECURSO' ? MODE_CONFIG[5].color : 'var(--text-secondary)' }}
+              >
+                ⚖️ Recorrer
+              </button>
+              <button
+                onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'ACORDO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: prev.mode5Input?.attachments || [] } }))}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', border: state.mode5Input?.subCase === 'ACORDO' ? `2px solid ${MODE_CONFIG[5].color}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'ACORDO' ? 'rgba(0,204,136,0.1)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'ACORDO' ? MODE_CONFIG[5].color : 'var(--text-secondary)' }}
+              >
+                🤝 Acordo
+              </button>
+            </div>
+            {state.mode5Input?.subCase && (
+              <>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                  <div style={{ padding: '16px 20px 4px' }}>
+                    <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Relato do Caso</span>
+                  </div>
+                  <textarea
+                    value={state.mode5Input?.caseDescription || ''}
+                    onChange={(e) => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, caseDescription: e.target.value } }))}
+                    placeholder="Descreva o contexto do conflito, o que aconteceu e qual é sua posição..."
+                    style={{ width: '100%', minHeight: '130px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                  <div style={{ padding: '16px 20px 4px' }}>
+                    <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+                      {state.mode5Input.subCase === 'RECURSO' ? 'Sentença Recebida' : 'Proposta de Acordo'}
+                    </span>
+                  </div>
+                  <textarea
+                    value={state.mode5Input?.sentencaOuProposta || ''}
+                    onChange={(e) => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, sentencaOuProposta: e.target.value } }))}
+                    placeholder={state.mode5Input.subCase === 'RECURSO' ? 'Cole aqui o texto da sentença ou decisão recebida...' : 'Descreva os termos da proposta de acordo recebida...'}
+                    style={{ width: '100%', minHeight: '130px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                  <div style={{ padding: '12px 20px 12px' }}>
+                    <input type="file" id="m5-file-new" className="hidden" multiple accept="image/*,application/pdf"
+                      onChange={async (e) => {
+                        const files = Array.from(e.target.files || []);
+                        const newAtts: import('./types').Attachment[] = [];
+                        for (const file of files) {
+                          if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                          const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
+                          newAtts.push({ name: file.name, type: file.type, size: file.size, data });
+                        }
+                        setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, attachments: [...(prev.mode5Input?.attachments || []), ...newAtts] } }));
+                      }}
+                    />
+                    {(state.mode5Input?.attachments || []).length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+                        {(state.mode5Input?.attachments || []).map((file, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-secondary)', padding: '4px 10px', border: '1px solid var(--border)' }}>
+                            <FileIcon style={{ width: '12px', height: '12px', color: 'var(--text-muted)', flexShrink: 0 }} />
+                            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, attachments: (prev.mode5Input?.attachments || []).filter((_, j) => j !== i) } }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}><X style={{ width: '12px', height: '12px' }} /></button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <label htmlFor="m5-file-new" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                        <Plus style={{ width: '14px', height: '14px' }} />
+                        {state.mode5Input.subCase === 'RECURSO' ? 'Anexar sentença ou documentos' : 'Anexar proposta ou documentos'}
+                      </label>
+                      <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+            <p style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '24px', lineHeight: '1.6' }}>
+              O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
+            </p>
+          </div>
+          <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0 }}>
+            <button
+              disabled={!state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
+              onClick={handleValidate}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[5].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 0.5 : 1 }}
+            >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[5].cta}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── MODO 4 — Mesa Dupla: Assistida ──────────────────────── */}
       {state.step === 'input' && state.selectedMode === 4 && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
