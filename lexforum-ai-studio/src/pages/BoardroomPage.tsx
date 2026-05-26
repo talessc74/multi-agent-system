@@ -101,13 +101,6 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
           Simular meu caso →
         </button>
 
-        <button
-          onClick={() => document.getElementById('modos')?.scrollIntoView({ behavior: 'smooth' })}
-          className="mt-4 text-center text-[11px] text-white/35 underline underline-offset-2 bg-transparent border-none cursor-pointer w-full"
-        >
-          Sou profissional — ver todos os modos
-        </button>
-
         <div className="mt-auto text-center space-y-1">
           <p className="text-[9px] uppercase tracking-[0.2em] text-white/20">
             Não é consulta jurídica · Não garante vitória
