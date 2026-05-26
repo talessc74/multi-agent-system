@@ -93,15 +93,31 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
           Descreva seu problema. Receba sua chance real de êxito em minutos.
         </p>
 
-        <button
-          onClick={() => onEnter(1)}
-          className="mt-12 w-full font-bold text-[13px] uppercase tracking-[0.15em] flex items-center justify-center"
-          style={{ height: '56px', background: '#00FFEF', color: '#0A1628' }}
-        >
-          Simular meu caso →
-        </button>
+        <div className="mt-10 flex flex-col" style={{ gap: '12px' }}>
+          {[
+            { mode: 1, name: 'Tese Estratégica',      price: 'R$ 9,90', color: '#00FFEF' },
+            { mode: 2, name: 'Defesa Sob Ataque',      price: 'R$ 9,90', color: '#FF6B6B' },
+            { mode: 3, name: 'Mesa Dupla — Juiz',      price: 'R$ 5,90', color: '#A882FF' },
+            { mode: 4, name: 'Mesa Dupla — Assistida', price: 'R$ 9,90', color: '#FFB800' },
+            { mode: 5, name: 'Revisão Pós-Conflito',   price: 'R$ 5,90', color: '#00CC88' },
+          ].map(({ mode, name, price, color }) => (
+            <div key={mode} className="flex items-center justify-between">
+              <div>
+                <p className="text-[13px] font-bold text-white leading-none">{name}</p>
+                <p className="text-[11px] font-mono mt-1" style={{ color }}>{price}</p>
+              </div>
+              <button
+                onClick={() => onEnter(mode)}
+                className="font-bold text-[12px] flex items-center justify-center shrink-0"
+                style={{ background: color, color: '#0A1628', height: '48px', width: '120px', borderRadius: '12px' }}
+              >
+                Começar →
+              </button>
+            </div>
+          ))}
+        </div>
 
-        <div className="mt-auto text-center space-y-1">
+        <div className="mt-auto pt-8 text-center space-y-1">
           <p className="text-[9px] uppercase tracking-[0.2em] text-white/20">
             Não é consulta jurídica · Não garante vitória
           </p>
