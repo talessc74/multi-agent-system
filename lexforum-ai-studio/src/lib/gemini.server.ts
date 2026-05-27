@@ -89,7 +89,7 @@ export async function validateCausaServer(caseDescription: string, attachments: 
 
 async function getOrGenerateAgent(type: "lawyer" | "judge", area: string, specificName: string | null) {
   let cacheKey = `${type}_${area}`;
-  if (type === "judge" && specificName) cacheKey = `judge_specific_${specificName}`;
+  if (type === "judge" && specificName) cacheKey = `judge_specific_${area}_${specificName}`;
 
   if (dynamicAgents[cacheKey]) return dynamicAgents[cacheKey];
 
@@ -97,9 +97,9 @@ async function getOrGenerateAgent(type: "lawyer" | "judge", area: string, specif
   const prompt = `Você é um arquiteto de agentes jurídicos do EAI?. Sua tarefa é criar um agente jurídico especializado.
   ${isLawyer 
     ? `Advogado Especializado em ${area}. Perfil intelectual, focado em construir argumentos sólidos e desenvolver a tese jurídica a cada rodada, usando "Lawyer's Briefs" para evoluir sua estratégia.`
-    : specificName 
-      ? `Juiz Específico focado no perfil/comarca de "${specificName}" (Área: ${area}). Ele NUNCA tem memória de rodadas passadas. Ele deve OBRIGATORIAMENTE escrever uma fundamentação jurídica técnica e detalhada, ponderando os argumentos apresentados, e somente ao final incluir o JSON {"success_probability": int\_0\_100}.`
-      : `Juiz Especializado na área ${area}. Ele NUNCA tem memória de rodadas passadas. Ele deve OBRIGATORIAMENTE escrever uma fundamentação jurídica técnica e detalhada, avaliando e ponderando os argumentos apresentados, e somente ao final incluir o JSON {"success_probability": int\_0\_100}.`}
+    : specificName
+      ? `Juiz Específico focado no perfil/comarca de "${specificName}" (Área: ${area}). ATENÇÃO: Este agente é especializado EXCLUSIVAMENTE na área ${area}. Nunca simule juiz de área diferente. Nunca mencione varas cíveis, JEC, TJPR ou qualquer jurisdição incompatível com a área ${area}. Ele NUNCA tem memória de rodadas passadas. Ele deve OBRIGATORIAMENTE escrever uma fundamentação jurídica técnica e detalhada, ponderando os argumentos apresentados, e somente ao final incluir o JSON {"success_probability": int\_0\_100}.`
+      : `Juiz Especializado EXCLUSIVAMENTE na área ${area}. ATENÇÃO CRÍTICA: Este agente deve atuar SOMENTE como magistrado da área ${area}. Nunca simule juiz de área diferente. Se a área for LABOR, atue como Juiz do Trabalho. Se for CONSUMER, atue como Juiz Consumerista. Se for CIVIL, atue como Juiz Cível. Nunca mencione jurisdição incompatível com a área solicitada. Ele NUNCA tem memória de rodadas passadas. Ele deve OBRIGATORIAMENTE escrever uma fundamentação jurídica técnica e detalhada, avaliando e ponderando os argumentos apresentados, e somente ao final incluir o JSON {"success_probability": int\_0\_100}.`}
   
   Retorne APENAS um JSON válido com "name" e "instruction" (prompt detalhado do agente).`;
 
