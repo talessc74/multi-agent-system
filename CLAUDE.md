@@ -710,3 +710,36 @@ Deploy automático Cloud Build disparado pelo push.
 
 ### Fix descartado
 - Legibilidade textos secundários mobile (label/subtítulo/disclaimer) — aprovado visualmente pelo Tales sem alteração necessária
+
+## Sessão 27/05/2026 — Bugs e Correções (manhã/tarde)
+
+**4 entregas em produção**
+
+### Fix 1 — Sobreposição do título no resultado mobile [FIX] commit c92f607
+- App.tsx: bloco "Laudo Estratégico" alterado de `flex items-center justify-between` para `flex flex-col md:flex-row md:items-center md:justify-between gap-6`
+- App.tsx: h2 alterado de `text-5xl` para `text-3xl md:text-5xl`
+- Em mobile: título empilha acima do número. Desktop: mantém layout lado a lado.
+- Bug identificado via screenshot do iPhone — título em Playfair sobrepunha o bloco do percentual por ausência de quebra de coluna em mobile.
+
+### Fix 2 — Instrução de polos processuais nos 3 prompts do relatório [FIX] commit 289973e
+- gemini.server.ts: systemInstruction dos 3 prompts de generateReportServer corrigidos (layman, professional, causeSummary)
+- Instrução adicionada: identificar com precisão Exequente/Autor e Executado/Réu antes de redigir
+- Proibido parafrasear argumentos adversos sem identificá-los com conectores explícitos
+- Resolve inversão de polos processuais reportada por consultor jurídico externo via laudo real
+
+### Fix 3 — Juiz gerado com área obrigatória [FIX] commit 284e18f
+- gemini.server.ts: prompt de geração do juiz em getOrGenerateAgent reforçado com instrução explícita de área
+- Juiz LABOR → instrui Juiz do Trabalho. Juiz CIVIL → instrui Juiz Cível. Nunca jurisdição incompatível.
+- cacheKey de juiz específico corrigido: `judge_specific_${specificName}` → `judge_specific_${area}_${specificName}`
+- Resolve bug reportado: causa trabalhista julgada por juiz civil do TJPR
+- Firestore analisado: não há agentes corrompidos — nenhum agente precisa ser deletado
+
+### Deploy — Índice Firestore ativo em produção [CONFIG]
+- `firebase deploy --only firestore:indexes --project gen-lang-client-0982741688` executado
+- Índice composto `agents: area ASC + tipo ASC` confirmado ativo em produção
+
+### Pendência registrada
+- `firestore.rules` contém warnings: funções não usadas e variáveis com nomes reservados — não bloqueiam funcionamento, limpeza futura
+
+### Descartado
+- Fix de legibilidade textos secundários mobile — aprovado visualmente pelo Tales sem alteração
