@@ -326,21 +326,21 @@ export async function generateReportServer(lastPetition: string, lastJudgment: s
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nSentença: ${lastJudgment}` }] }],
       config: {
-        systemInstruction: "Você é um Consultor Jurídico sênior. Gere um laudo em linguagem LEIGA seguindo: 1. Veredito. 2. Pontos Fortes. 3. Riscos. 4. Passo a passo prático."
+        systemInstruction: "Você é um Consultor Jurídico sênior. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Ao citar argumentos da parte contrária, use sempre conectores explícitos como 'A parte adversa alega que...' ou 'O argumento do Exequente, que não merece acolhimento, é que...'. Gere um laudo em linguagem LEIGA seguindo: 1. Veredito. 2. Pontos Fortes. 3. Riscos. 4. Passo a passo prático."
       }
     }),
     ai.models.generateContent({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nSentença: ${lastJudgment}` }] }],
       config: {
-        systemInstruction: "Você é um Chief Legal Officer. Gere um LAUDO ESTRATÉGICO seguindo: 1. Resultados. 2. Fundamentação. 3. Riscos. 4. Plano Estratégico."
+        systemInstruction: "Você é um Chief Legal Officer. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Ao citar argumentos da parte contrária, use sempre conectores explícitos como 'A Exequente alega que...', 'O argumento da parte adversa, que não merece acolhimento, é que...'. Proibido parafrasear argumentos adversos sem identificá-los claramente como sendo da parte contrária. Gere um LAUDO ESTRATÉGICO seguindo: 1. Resultados. 2. Fundamentação. 3. Riscos. 4. Plano Estratégico."
       }
     }),
     ai.models.generateContent({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nAvaliação técnica: ${lastJudgment}` }] }],
       config: {
-        systemInstruction: "Você é um organizador de informações jurídicas. Com base na petição e na avaliação técnica, organize um resumo claro e objetivo da causa para que o usuário possa apresentar a um advogado real. Use linguagem simples. Não use linguagem de petição ou peça processual. Estruture em: Situação relatada, Argumentos identificados, Pontos de atenção, Área jurídica identificada, Próximos passos."
+        systemInstruction: "Você é um organizador de informações jurídicas. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Com base na petição e na avaliação técnica, organize um resumo claro e objetivo da causa para que o usuário possa apresentar a um advogado real. Use linguagem simples. Não use linguagem de petição ou peça processual. Estruture em: Situação relatada, Argumentos identificados, Pontos de atenção, Área jurídica identificada, Próximos passos."
       }
     })
   ]);
