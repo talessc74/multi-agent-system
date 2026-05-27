@@ -742,6 +742,37 @@ const handleGeminiError = (err: any) => {
                 placeholder="Cole ou descreva a petição inicial do autor..."
                 style={{ width: '100%', minHeight: '140px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box', opacity: fromPreviousSimulation && !isEditingMode4 ? 0.6 : 1, cursor: fromPreviousSimulation && !isEditingMode4 ? 'not-allowed' : 'auto' }}
               />
+              <div style={{ padding: '12px 20px 16px', borderTop: '1px solid var(--border)' }}>
+                <input type="file" id="author-file-m4-mobile" className="hidden" multiple accept="image/*,application/pdf"
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files || []);
+                    const newAtts: import('./types').Attachment[] = [];
+                    for (const file of files) {
+                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
+                      newAtts.push({ name: file.name, type: file.type, size: file.size, data });
+                    }
+                    setState(prev => ({ ...prev, attachments: [...prev.attachments, ...newAtts] }));
+                  }}
+                />
+                {state.attachments.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+                    {state.attachments.map((file, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-secondary)', padding: '4px 10px', border: '1px solid var(--border)' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</span>
+                        <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}><X style={{ width: '12px', height: '12px' }} /></button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <label htmlFor="author-file-m4-mobile" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                    <Plus style={{ width: '14px', height: '14px' }} />
+                    Anexar provas do autor
+                  </label>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                </div>
+              </div>
             </div>
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
@@ -754,6 +785,37 @@ const handleGeminiError = (err: any) => {
                 placeholder="Cole ou descreva a contestação do réu..."
                 style={{ width: '100%', minHeight: '140px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box', opacity: fromPreviousSimulation && !isEditingMode4 ? 0.6 : 1, cursor: fromPreviousSimulation && !isEditingMode4 ? 'not-allowed' : 'auto' }}
               />
+              <div style={{ padding: '12px 20px 16px', borderTop: '1px solid var(--border)' }}>
+                <input type="file" id="defense-file-m4-mobile" className="hidden" multiple accept="image/*,application/pdf"
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files || []);
+                    const newAtts: import('./types').Attachment[] = [];
+                    for (const file of files) {
+                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
+                      newAtts.push({ name: file.name, type: file.type, size: file.size, data });
+                    }
+                    setState(prev => ({ ...prev, defenseAttachments: [...prev.defenseAttachments, ...newAtts] }));
+                  }}
+                />
+                {state.defenseAttachments.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+                    {state.defenseAttachments.map((file, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-secondary)', padding: '4px 10px', border: '1px solid var(--border)' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</span>
+                        <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}><X style={{ width: '12px', height: '12px' }} /></button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <label htmlFor="defense-file-m4-mobile" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                    <Plus style={{ width: '14px', height: '14px' }} />
+                    Anexar provas do réu
+                  </label>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                </div>
+              </div>
             </div>
             <p style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '24px', lineHeight: '1.6' }}>
               O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
@@ -809,6 +871,37 @@ const handleGeminiError = (err: any) => {
                 placeholder="Descreva a posição e os argumentos do autor..."
                 style={{ width: '100%', minHeight: '140px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box' }}
               />
+              <div style={{ padding: '12px 20px 16px', borderTop: '1px solid var(--border)' }}>
+                <input type="file" id="author-file-m3" className="hidden" multiple accept="image/*,application/pdf"
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files || []);
+                    const newAtts: import('./types').Attachment[] = [];
+                    for (const file of files) {
+                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
+                      newAtts.push({ name: file.name, type: file.type, size: file.size, data });
+                    }
+                    setState(prev => ({ ...prev, attachments: [...prev.attachments, ...newAtts] }));
+                  }}
+                />
+                {state.attachments.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+                    {state.attachments.map((file, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-secondary)', padding: '4px 10px', border: '1px solid var(--border)' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</span>
+                        <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}><X style={{ width: '12px', height: '12px' }} /></button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <label htmlFor="author-file-m3" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                    <Plus style={{ width: '14px', height: '14px' }} />
+                    Anexar provas do autor
+                  </label>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                </div>
+              </div>
             </div>
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[3].color}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
@@ -820,6 +913,37 @@ const handleGeminiError = (err: any) => {
                 placeholder="Descreva a posição e os argumentos do réu..."
                 style={{ width: '100%', minHeight: '140px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box' }}
               />
+              <div style={{ padding: '12px 20px 16px', borderTop: '1px solid var(--border)' }}>
+                <input type="file" id="defense-file-m3" className="hidden" multiple accept="image/*,application/pdf"
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files || []);
+                    const newAtts: import('./types').Attachment[] = [];
+                    for (const file of files) {
+                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
+                      newAtts.push({ name: file.name, type: file.type, size: file.size, data });
+                    }
+                    setState(prev => ({ ...prev, defenseAttachments: [...prev.defenseAttachments, ...newAtts] }));
+                  }}
+                />
+                {state.defenseAttachments.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+                    {state.defenseAttachments.map((file, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-secondary)', padding: '4px 10px', border: '1px solid var(--border)' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</span>
+                        <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}><X style={{ width: '12px', height: '12px' }} /></button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <label htmlFor="defense-file-m3" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                    <Plus style={{ width: '14px', height: '14px' }} />
+                    Anexar provas do réu
+                  </label>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                </div>
+              </div>
             </div>
             <p style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '24px', lineHeight: '1.6' }}>
               O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
