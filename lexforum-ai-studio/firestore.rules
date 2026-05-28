@@ -36,7 +36,7 @@ service cloud.firestore {
              data.area is string && data.area.size() <= 50 &&
              data.finalSuccessProbability is number &&
              data.isWin is bool &&
-             (data.userId == null || (data.userId is string && data.userId == request.auth.uid)) &&
+             (data.userId == null || (request.auth != null && data.userId is string && data.userId == request.auth.uid)) &&
              data.createdAt == request.time;
     }
 
