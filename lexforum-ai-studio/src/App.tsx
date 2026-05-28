@@ -1147,7 +1147,7 @@ const handleGeminiError = (err: any) => {
               statusColor={modeColor}
             />
             <ProgressDots currentStep={currentStep} modeColor={modeColor} />
-            <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px', scrollbarWidth: 'none' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px', scrollbarWidth: 'none', minHeight: 0 }}>
               <div style={{ width: '64px', height: '64px', border: `3px solid var(--border)`, borderTop: `3px solid ${modeColor}`, borderRadius: '50%', margin: '32px auto 0', animation: 'eai-spin 1s linear infinite' }} />
               <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '22px', fontStyle: 'italic', textAlign: 'center', marginTop: '20px', color: 'var(--text-primary)' }}>
                 Processando inteligência
