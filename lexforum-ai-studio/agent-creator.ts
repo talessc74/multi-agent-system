@@ -113,6 +113,8 @@ async function generateAgent(seed: any, request: string, agentId: string, tipo: 
     contents: [{
       role: "user",
       parts: [{ text: `
+        INSTRUÇÃO OBRIGATÓRIA: Todo agente gerado deve operar exclusivamente em português brasileiro. Nomes de campos internos podem ser em inglês, mas todo conteúdo textual, instruções, respostas e raciocínio devem ser em português brasileiro.
+
         Crie o agente jurídico final.
         SEMENTE (DNA): ${JSON.stringify(seed)}
         SOLICITAÇÃO: "${request}"
