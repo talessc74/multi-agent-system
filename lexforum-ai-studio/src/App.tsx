@@ -93,6 +93,84 @@ const cleanJudgmentText = (text: string) => {
   return cleaned;
 };
 
+function LaudoMobile({ state, modeColor, onPrint, onRestart }: { state: any; modeColor: string; onPrint: () => void; onRestart: () => void; }) {
+  const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
+  const finalPct = state.simulation?.finalSuccessProbability ?? 0;
+  return (
+    <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+      <div style={{ display: 'flex', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', overflow: 'hidden', margin: '12px 20px 0', flexShrink: 0 }}>
+        <button onClick={() => setActiveVolume('I')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'I' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'I' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'I' ? '8px' : 0, margin: activeVolume === 'I' ? '4px' : 0, transition: 'all 0.2s' }}>Volume I — Orientação</button>
+        <button onClick={() => setActiveVolume('II')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'II' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'II' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'II' ? '8px' : 0, margin: activeVolume === 'II' ? '4px' : 0, transition: 'all 0.2s' }}>Volume II — Técnico</button>
+      </div>
+      <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingBottom: 'calc(96px + env(safe-area-inset-bottom))', scrollbarWidth: 'none' }}>
+        <div style={{ textAlign: 'center', padding: '24px 20px 16px' }}>
+          <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 8px' }}>Índice de força argumentativa</p>
+          <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '56px', fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, color: modeColor, margin: '0 0 6px' }}>{state.selectedMode === 5 ? `${state.mode5Result?.confidenceLevel ?? 0}%` : `${finalPct}%`}</p>
+          <p style={{ fontSize: '10px', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: '240px', margin: '0 auto' }}>Estimativa baseada na sua descrição. Não é probabilidade estatística.</p>
+        </div>
+        {state.selectedMode === 5 && state.mode5Result && (
+          <div style={{ margin: '0 20px 16px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', textAlign: 'center' }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Recomendação</p>
+            <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '22px', fontStyle: 'italic', fontWeight: 700, color: state.mode5Result.recommendation === 'RECORRER' ? '#FF6B6B' : state.mode5Result.recommendation === 'ACEITAR' ? '#00CC88' : '#FFB800' }}>{state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}</p>
+          </div>
+        )}
+        {activeVolume === 'I' && (
+          <div style={{ padding: '0 20px 16px' }}>
+            {state.selectedMode === 5 && state.mode5Result && (
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginBottom: '8px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px' }}>Análise do Juiz Estrategista</p>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, fontStyle: 'italic', fontFamily: 'Georgia, serif' }}>{state.mode5Result.strategistAnalysis}</p>
+              </div>
+            )}
+            {state.selectedMode !== 5 && state.report?.layman && (
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#00CC88', marginBottom: '12px' }}>Orientação ao Cliente</p>
+                <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, fontStyle: 'italic', fontFamily: 'Georgia, serif' }}><ReactMarkdown>{state.report.layman}</ReactMarkdown></div>
+              </div>
+            )}
+            {(state.selectedMode === 1 || state.selectedMode === 2) && state.report?.causeSummary && (
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginTop: '16px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>Resumo da Causa</p>
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7 }}><ReactMarkdown>{state.report.causeSummary}</ReactMarkdown></div>
+              </div>
+            )}
+            {(state.detectedArea === 'FAMILY' || state.detectedArea === 'SOCIAL_SECURITY') && (
+              <div style={{ padding: '16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', borderRadius: '12px', marginTop: '16px' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,184,0,0.8)', display: 'block', marginBottom: '8px' }}>🤝 Recursos de Apoio</span>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong> — Central de Atendimento à Mulher.</p>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong> — CVV.</p>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>Apoio jurídico gratuito: <strong style={{ color: 'var(--text-primary)' }}>Defensoria Pública</strong> ou <strong style={{ color: 'var(--text-primary)' }}>CRAS</strong>.</p>
+              </div>
+            )}
+            <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.6, textAlign: 'center', padding: '16px 0 4px' }}>O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.</p>
+          </div>
+        )}
+        {activeVolume === 'II' && (
+          <div style={{ padding: '0 20px 16px' }}>
+            {state.selectedMode === 5 && state.mode5Result && (
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>Fundamentação Jurídica</p>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, fontFamily: 'monospace' }}>{state.mode5Result.reasoning}</p>
+              </div>
+            )}
+            {state.selectedMode !== 5 && state.report?.professional && (
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>Laudo Técnico Estratégico</p>
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, fontFamily: 'monospace' }}><ReactMarkdown>{state.report.professional}</ReactMarkdown></div>
+              </div>
+            )}
+            <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.6, textAlign: 'center', padding: '16px 0 4px' }}>O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.</p>
+          </div>
+        )}
+      </div>
+      <div style={{ position: 'sticky', bottom: 0, padding: '12px 20px', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))', background: 'linear-gradient(to bottom, transparent 0%, var(--bg-primary) 35%)', flexShrink: 0 }}>
+        <button onClick={onPrint} style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer' }}>↓ Exportar PDF</button>
+        <button onClick={onRestart} style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>Nova simulação</button>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [userHistory, setUserHistory] = useState<any[]>([]);
@@ -1376,167 +1454,14 @@ const handleGeminiError = (err: any) => {
       })()}
 
       {/* ── LAUDO MOBILE — Desbloqueado (Tarefa 6) ───────────────── */}
-      {state.step === 'result' && state.isUnlocked && (() => {
-        const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
-        const finalPct = state.simulation?.finalSuccessProbability ?? 0;
-        const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
-
-        return (
-          <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
-            {/* Navbar */}
-            <ModeNavbar
-              onBack={() => setState(prev => ({ ...prev, step: 'result', isUnlocked: true }))}
-              modeName="Laudo"
-              color={modeColor}
-            />
-
-            {/* Volume toggle fixo */}
-            <div style={{ display: 'flex', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', overflow: 'hidden', margin: '12px 20px 0', flexShrink: 0 }}>
-              <button
-                onClick={() => setActiveVolume('I')}
-                style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'I' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'I' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'I' ? '8px' : 0, margin: activeVolume === 'I' ? '4px' : 0, transition: 'all 0.2s' }}
-              >
-                Volume I — Orientação
-              </button>
-              <button
-                onClick={() => setActiveVolume('II')}
-                style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'II' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'II' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'II' ? '8px' : 0, margin: activeVolume === 'II' ? '4px' : 0, transition: 'all 0.2s' }}
-              >
-                Volume II — Técnico
-              </button>
-            </div>
-
-            {/* Scroll container */}
-            <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingBottom: 'calc(96px + env(safe-area-inset-bottom))', scrollbarWidth: 'none' }}>
-
-              {/* Índice de força */}
-              <div style={{ textAlign: 'center', padding: '24px 20px 16px' }}>
-                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 8px' }}>
-                  Índice de força argumentativa
-                </p>
-                <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '56px', fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, color: modeColor, margin: '0 0 6px' }}>
-                  {state.selectedMode === 5
-                    ? `${state.mode5Result?.confidenceLevel ?? 0}%`
-                    : `${finalPct}%`}
-                </p>
-                <p style={{ fontSize: '10px', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: '240px', margin: '0 auto' }}>
-                  Estimativa baseada na sua descrição. Não é probabilidade estatística.
-                </p>
-              </div>
-
-              {/* Modo 5 — Recomendação */}
-              {state.selectedMode === 5 && state.mode5Result && (
-                <div style={{ margin: '0 20px 16px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', textAlign: 'center' }}>
-                  <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Recomendação</p>
-                  <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '22px', fontStyle: 'italic', fontWeight: 700, color: state.mode5Result.recommendation === 'RECORRER' ? '#FF6B6B' : state.mode5Result.recommendation === 'ACEITAR' ? '#00CC88' : '#FFB800' }}>
-                    {state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}
-                  </p>
-                </div>
-              )}
-
-              {/* Volume I — Orientação */}
-              {activeVolume === 'I' && (
-                <div style={{ padding: '0 20px 16px' }}>
-
-                  {/* Modo 5 */}
-                  {state.selectedMode === 5 && state.mode5Result && (
-                    <>
-                      <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginBottom: '8px' }}>
-                        <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px' }}>Análise do Juiz Estrategista</p>
-                        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, fontStyle: 'italic', fontFamily: 'Georgia, serif' }}>
-                          {state.mode5Result.strategistAnalysis}
-                        </p>
-                      </div>
-                    </>
-                  )}
-
-                  {/* Modos 1–4 — Volume I (layman) */}
-                  {state.selectedMode !== 5 && state.report?.layman && (
-                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
-                      <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#00CC88', marginBottom: '12px' }}>Orientação ao Cliente</p>
-                      <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, fontStyle: 'italic', fontFamily: 'Georgia, serif' }}>
-                        <ReactMarkdown>{state.report.layman}</ReactMarkdown>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Resumo da causa — Modos 1 e 2 */}
-                  {(state.selectedMode === 1 || state.selectedMode === 2) && state.report?.causeSummary && (
-                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginTop: '16px' }}>
-                      <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>Resumo da Causa</p>
-                      <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-                        <ReactMarkdown>{state.report.causeSummary}</ReactMarkdown>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Recursos de apoio */}
-                  {(state.detectedArea === 'FAMILY' || state.detectedArea === 'SOCIAL_SECURITY') && (
-                    <div style={{ padding: '16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', borderRadius: '12px', marginTop: '16px' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,184,0,0.8)', display: 'block', marginBottom: '8px' }}>🤝 Recursos de Apoio</span>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong> — Central de Atendimento à Mulher.</p>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong> — CVV.</p>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>Apoio jurídico gratuito: <strong style={{ color: 'var(--text-primary)' }}>Defensoria Pública</strong> ou <strong style={{ color: 'var(--text-primary)' }}>CRAS</strong>.</p>
-                    </div>
-                  )}
-
-                  {/* Disclaimer */}
-                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.6, textAlign: 'center', padding: '16px 0 4px' }}>
-                    O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
-                  </p>
-                </div>
-              )}
-
-              {/* Volume II — Técnico */}
-              {activeVolume === 'II' && (
-                <div style={{ padding: '0 20px 16px' }}>
-
-                  {/* Modo 5 — Fundamentação */}
-                  {state.selectedMode === 5 && state.mode5Result && (
-                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
-                      <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>Fundamentação Jurídica</p>
-                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, fontFamily: 'monospace' }}>
-                        {state.mode5Result.reasoning}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Modos 1–4 — Volume II (professional) */}
-                  {state.selectedMode !== 5 && state.report?.professional && (
-                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
-                      <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>Laudo Técnico Estratégico</p>
-                      <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, fontFamily: 'monospace' }}>
-                        <ReactMarkdown>{state.report.professional}</ReactMarkdown>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Disclaimer */}
-                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.6, textAlign: 'center', padding: '16px 0 4px' }}>
-                    O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* CTA fixo */}
-            <div style={{ position: 'sticky', bottom: 0, padding: '12px 20px', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))', background: 'linear-gradient(to bottom, transparent 0%, var(--bg-primary) 35%)', flexShrink: 0 }}>
-              <button
-                onClick={() => window.print()}
-                style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer' }}
-              >
-                ↓ Exportar PDF
-              </button>
-              <button
-                onClick={() => window.location.reload()}
-                style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}
-              >
-                Nova simulação
-              </button>
-            </div>
-          </div>
-        );
-      })()}
+      {state.step === 'result' && state.isUnlocked && (
+        <LaudoMobile
+          state={state}
+          modeColor={MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF'}
+          onPrint={() => window.print()}
+          onRestart={() => window.location.reload()}
+        />
+      )}
 
       {state.step === 'boardroom' ? (
         <BoardroomPage
