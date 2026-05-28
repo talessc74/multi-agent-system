@@ -102,7 +102,11 @@ async function generateSeed(legacyData: any, seedId: string) {
   return safeParseJSON(response.text!);
 }
 
-async function generateAgent(seed: any, request: string, agentId: string) {
+async function generateAgent(seed: any, request: string, agentId: string, tipo: string) {
+  const judgeOutputInstruction = tipo === 'juiz'
+    ? `\nINSTRUÇÃO CRÍTICA DE OUTPUT: Ao final de cada sentença ou avaliação técnica, você DEVE obrigatoriamente incluir o seguinte JSON na última linha da sua resposta: {"success_probability": <número entre 0 e 100>} onde o número representa sua estimativa da chance de êxito do autor. Esta instrução nunca pode ser omitida.`
+    : '';
+
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     systemInstruction: JSON.stringify(ESPECIALISTA_V2),
@@ -115,7 +119,7 @@ async function generateAgent(seed: any, request: string, agentId: string) {
         agent_id obrigatório: "${agentId}"
         Blocos obrigatórios: logicaArquivos, logicaDatas, logicaInterpretacao,
         instrucoesEspecificas, diretrizesEticas, versao.
-        NUNCA cite o legado original.
+        NUNCA cite o legado original.${judgeOutputInstruction}
         Retorne JSON: { "explicacao": "...", "agente": { ... } }
       `}]
     }],
@@ -140,7 +144,7 @@ export async function createAgentFromScratch(params: CreateAgentParams) {
 
   const legacyData = await identifyReference(description);
   const seed = await generateSeed(legacyData, seedId);
-  const result = await generateAgent(seed, description, agentId);
+  const result = await generateAgent(seed, description, agentId, params.tipo);
 
   return {
     seed,
