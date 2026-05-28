@@ -1270,6 +1270,103 @@ const handleGeminiError = (err: any) => {
         );
       })()}
 
+      {/* ── ARENA MOBILE — Rodadas (resultado bloqueado) ─────────── */}
+      {state.step === 'result' && !state.isUnlocked && (() => {
+        const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
+        const modeColorRgb = MODE_CONFIG[state.selectedMode]?.colorRgb ?? '0,255,239';
+        const rounds = state.simulation?.rounds ?? [];
+        return (
+          <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+            <div style={{ opacity: 0.4, pointerEvents: 'none' }}>
+              <ModeNavbar
+                onBack={() => {}}
+                modeName={MODE_CONFIG[state.selectedMode]?.headline ?? ''}
+                color={modeColor}
+              />
+            </div>
+            <SessionStatusBar
+              area={formatAreaLabel(state.detectedArea)}
+              statusText="✓ Simulação concluída"
+              statusColor={modeColor}
+              isComplete
+            />
+            <ProgressDots currentStep={3} modeColor={modeColor} />
+            <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, padding: '16px 16px 120px', scrollbarWidth: 'none' }}>
+              {rounds.map((round, index) => (
+                <div key={round.round}>
+                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', marginTop: index > 0 ? '24px' : 0 }}>
+                    RODADA {round.round}
+                  </p>
+                  {/* Card Advogado */}
+                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '12px', padding: '16px', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <div>
+                        <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 2px' }}>ADVOGADO</p>
+                        <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                          {state.simulation?.lawyerAgentName ?? 'Advogado Especializado'}
+                        </p>
+                      </div>
+                      <span style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', background: modeColor, color: '#000', padding: '3px 8px', borderRadius: '4px' }}>Petição</span>
+                    </div>
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, fontStyle: 'italic', marginBottom: '12px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' } as React.CSSProperties}>
+                      {round.lawyerPetition}
+                    </p>
+                    <p style={{ fontSize: '9px', color: 'var(--text-muted)', marginBottom: '4px' }}>Impacto técnico</p>
+                    <div style={{ height: '3px', background: 'var(--border)', borderRadius: '2px' }}>
+                      <div style={{ width: `${Math.min(60 + index * 15, 95)}%`, background: modeColor, height: '100%', borderRadius: '2px' }} />
+                    </div>
+                  </div>
+                  {/* Card Magistrado */}
+                  <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderLeft: `3px solid rgba(${modeColorRgb},0.4)`, borderRadius: '12px', padding: '16px', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <div>
+                        <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 2px' }}>MAGISTRADO</p>
+                        <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                          {state.simulation?.judgeAgentName ?? 'Magistrado Especializado'}
+                        </p>
+                      </div>
+                      <span style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', border: '1px solid var(--border)', color: 'var(--text-secondary)', padding: '3px 8px', borderRadius: '4px', background: 'transparent' }}>Avaliação</span>
+                    </div>
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '12px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' } as React.CSSProperties}>
+                      {cleanJudgmentText(round.judgeJudgment)}
+                    </p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>Índice de êxito</span>
+                      <span style={{ fontSize: '20px', fontWeight: 700, fontFamily: '"Playfair Display", Georgia, serif', fontStyle: 'italic', color: 'var(--text-primary)' }}>
+                        {round.successProbability}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {/* Paywall */}
+              <div style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '20px', textAlign: 'center', marginTop: '8px' }}>
+                <p style={{ fontSize: '24px', marginBottom: '8px' }}>🔒</p>
+                <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '18px', fontStyle: 'italic', color: 'var(--text-primary)', marginBottom: '8px' }}>Simulação concluída.</p>
+                {state.simulation?.finalSuccessProbability != null && (
+                  <>
+                    <p style={{ fontSize: '48px', fontWeight: 700, fontFamily: '"Playfair Display", Georgia, serif', fontStyle: 'italic', color: 'var(--text-primary)', margin: '0 0 4px' }}>
+                      {state.simulation.finalSuccessProbability}%
+                    </p>
+                    <p style={{ fontSize: '9px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', letterSpacing: '0.15em' }}>Índice de força argumentativa</p>
+                  </>
+                )}
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>O laudo completo está disponível abaixo.</p>
+              </div>
+            </div>
+            {/* CTA sticky */}
+            <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0 }}>
+              <button
+                onClick={handleCheckout}
+                style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: 'pointer' }}
+              >
+                Ver laudo completo — R$ 9,90
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+
       {state.step === 'boardroom' ? (
         <BoardroomPage
           onEnter={(mode) => setState(prev => ({ ...prev, step: 'input', selectedMode: mode }))}
