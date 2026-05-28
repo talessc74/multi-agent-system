@@ -74,6 +74,8 @@ import { Navbar } from './components/Navbar';
 import BoardroomPage from './pages/BoardroomPage';
 import { ContextZone } from './components/ContextZone';
 import { ModeNavbar } from './components/ModeNavbar';
+import { SessionStatusBar } from './components/SessionStatusBar';
+import { ProgressDots } from './components/ProgressDots';
 import { MODE_CONFIG } from './config/modeConfig';
 
 const cleanJudgmentText = (text: string) => {
@@ -1106,6 +1108,89 @@ const handleGeminiError = (err: any) => {
           </div>
         </div>
       )}
+
+      {/* ── LOADING MOBILE — Simulação em curso ─────────────────── */}
+      {state.step === 'simulating' && (() => {
+        const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
+        const simStepMap: Record<string, number> = {
+          WRITING: 0,
+          DELIVERING: 1,
+          JUDGING: 2,
+          REVIEWING: 3,
+        };
+        const currentStep = (simStepMap[state.simStep] ?? 0) as 0 | 1 | 2 | 3;
+        const statusText =
+          state.simStep === 'WRITING' ? 'Peticionando' :
+          state.simStep === 'DELIVERING' ? 'Protocolando' :
+          state.simStep === 'JUDGING' ? `Julgando · Rodada ${state.currentRound}` :
+          state.simStep === 'REVIEWING' ? 'Revisando' :
+          'Iniciando simulação';
+        const steps = [
+          { icon: '📋', name: 'Peticionando', desc: 'Advogado elaborando argumentos' },
+          { icon: '→',  name: 'Protocolando', desc: 'Transmissão ao sistema' },
+          { icon: '⚖️', name: 'Julgando',      desc: 'Magistrado analisando' },
+          { icon: '🔍', name: 'Revisando',     desc: 'Consolidando análise' },
+        ];
+        return (
+          <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+            <style>{`@keyframes eai-spin { to { transform: rotate(360deg); } }`}</style>
+            <div style={{ opacity: 0.4, pointerEvents: 'none' }}>
+              <ModeNavbar
+                onBack={() => {}}
+                modeName={MODE_CONFIG[state.selectedMode]?.headline ?? ''}
+                color={modeColor}
+              />
+            </div>
+            <SessionStatusBar
+              area={formatAreaLabel(state.detectedArea)}
+              statusText={statusText}
+              statusColor={modeColor}
+            />
+            <ProgressDots currentStep={currentStep} modeColor={modeColor} />
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px', scrollbarWidth: 'none' }}>
+              <div style={{ width: '64px', height: '64px', border: `3px solid var(--border)`, borderTop: `3px solid ${modeColor}`, borderRadius: '50%', margin: '32px auto 0', animation: 'eai-spin 1s linear infinite' }} />
+              <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '22px', fontStyle: 'italic', textAlign: 'center', marginTop: '20px', color: 'var(--text-primary)' }}>
+                Processando inteligência
+              </p>
+              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', textAlign: 'center', marginTop: '8px', marginBottom: '32px' }}>
+                Os agentes estão analisando sua causa
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '0 4px' }}>
+                {steps.map((s, index) => {
+                  const isActive = index === currentStep;
+                  const isDone = index < currentStep;
+                  return (
+                    <div key={index} style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '14px 16px',
+                      background: 'var(--bg-card)',
+                      border: `1px solid ${isActive ? modeColor : 'var(--border)'}`,
+                      borderRadius: '10px',
+                      opacity: isDone ? 0.5 : 1,
+                      transition: 'border-color 0.2s ease, opacity 0.2s ease',
+                    }}>
+                      <span style={{ fontSize: '20px', flexShrink: 0 }}>{s.icon}</span>
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{s.name}</p>
+                        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>{s.desc}</p>
+                      </div>
+                      {isActive && (
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: modeColor }}>Em curso</span>
+                      )}
+                      {isDone && (
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--success)' }}>✓</span>
+                      )}
+                      {!isActive && !isDone && (
+                        <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Aguarda</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {state.step === 'boardroom' ? (
         <BoardroomPage
