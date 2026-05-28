@@ -1192,6 +1192,84 @@ const handleGeminiError = (err: any) => {
         );
       })()}
 
+      {/* ── CONFIRMAÇÃO MOBILE — Área identificada ───────────────── */}
+      {state.step === 'confirm' && (() => {
+        const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
+        const modeColorRgb = MODE_CONFIG[state.selectedMode]?.colorRgb ?? '0,255,239';
+        const agentTypeByArea: Record<string, string> = {
+          LABOR: 'Trabalhista',
+          CONSUMER: 'Consumerista',
+          CIVIL: 'Civilista',
+          FAMILY: 'Família',
+          CRIMINAL: 'Criminal',
+          TAX: 'Tributarista',
+        };
+        const agentType = agentTypeByArea[state.detectedArea] ?? 'Especializado';
+        return (
+          <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+            <style>{`@keyframes eai-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }`}</style>
+            <ModeNavbar
+              onBack={() => setState(prev => ({ ...prev, step: 'input' }))}
+              modeName={MODE_CONFIG[state.selectedMode]?.headline ?? ''}
+              color={modeColor}
+            />
+            <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, padding: '24px 16px 100px', scrollbarWidth: 'none' }}>
+              {/* Badge animado */}
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: `rgba(${modeColorRgb},0.12)`, border: `1px solid rgba(${modeColorRgb},0.3)`, borderRadius: '8px', padding: '8px 14px', marginBottom: '16px' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: modeColor, animation: 'eai-pulse 2s infinite', flexShrink: 0 }} />
+                <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor }}>
+                  {formatAreaLabel(state.detectedArea)}
+                </span>
+              </div>
+              {/* Título */}
+              <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '24px', fontStyle: 'italic', color: 'var(--text-primary)', marginBottom: '16px', lineHeight: 1.3 }}>
+                O sistema entendeu sua causa.
+              </p>
+              {/* Card resumo */}
+              {state.caseSummary && (
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '14px', padding: '16px', marginBottom: '16px' }}>
+                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>NÚCLEO CENTRAL</p>
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}>{state.caseSummary}</p>
+                </div>
+              )}
+              {/* Agentes */}
+              <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>AGENTES ESCALADOS</p>
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
+                  <p style={{ fontSize: '20px', marginBottom: '6px' }}>⚖️</p>
+                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 2px' }}>ADVOGADO</p>
+                  <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
+                </div>
+                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
+                  <p style={{ fontSize: '20px', marginBottom: '6px' }}>🧑‍⚖️</p>
+                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 2px' }}>MAGISTRADO</p>
+                  <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
+                </div>
+              </div>
+              {/* Informativo */}
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.6, marginBottom: '16px' }}>
+                A simulação processará em rodadas. O laudo completo está disponível após o resultado.
+              </p>
+            </div>
+            {/* CTA sticky */}
+            <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button
+                onClick={handleSimulate}
+                style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: 'pointer' }}
+              >
+                Iniciar Fórum →
+              </button>
+              <button
+                onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
+                style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', borderRadius: '14px', cursor: 'pointer' }}
+              >
+                ← Corrigir causa
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+
       {state.step === 'boardroom' ? (
         <BoardroomPage
           onEnter={(mode) => setState(prev => ({ ...prev, step: 'input', selectedMode: mode }))}
