@@ -1271,10 +1271,12 @@ const handleGeminiError = (err: any) => {
       })()}
 
       {/* ── ARENA MOBILE — Rodadas (resultado bloqueado) ─────────── */}
+      {/* ── RESULTADO MOBILE — Índice + Paywall (Tarefa 5) ──────── */}
       {state.step === 'result' && !state.isUnlocked && (() => {
         const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
-        const modeColorRgb = MODE_CONFIG[state.selectedMode]?.colorRgb ?? '0,255,239';
         const rounds = state.simulation?.rounds ?? [];
+        const finalPct = state.simulation?.finalSuccessProbability ?? 0;
+
         return (
           <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
             <div style={{ opacity: 0.4, pointerEvents: 'none' }}>
@@ -1291,76 +1293,82 @@ const handleGeminiError = (err: any) => {
               isComplete
             />
             <ProgressDots currentStep={3} modeColor={modeColor} />
-            <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, padding: '16px 16px 120px', scrollbarWidth: 'none' }}>
-              {rounds.map((round, index) => (
-                <div key={round.round}>
-                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', marginTop: index > 0 ? '24px' : 0 }}>
-                    RODADA {round.round}
-                  </p>
-                  {/* Card Advogado */}
-                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '12px', padding: '16px', marginBottom: '12px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                      <div>
-                        <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 2px' }}>ADVOGADO</p>
-                        <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
-                          {state.simulation?.lawyerAgentName ?? 'Advogado Especializado'}
-                        </p>
-                      </div>
-                      <span style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', background: modeColor, color: '#000', padding: '3px 8px', borderRadius: '4px' }}>Petição</span>
-                    </div>
-                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, fontStyle: 'italic', marginBottom: '12px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' } as React.CSSProperties}>
-                      {round.lawyerPetition}
-                    </p>
-                    <p style={{ fontSize: '9px', color: 'var(--text-muted)', marginBottom: '4px' }}>Impacto técnico</p>
-                    <div style={{ height: '3px', background: 'var(--border)', borderRadius: '2px' }}>
-                      <div style={{ width: `${Math.min(60 + index * 15, 95)}%`, background: modeColor, height: '100%', borderRadius: '2px' }} />
-                    </div>
-                  </div>
-                  {/* Card Magistrado */}
-                  <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderLeft: `3px solid rgba(${modeColorRgb},0.4)`, borderRadius: '12px', padding: '16px', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                      <div>
-                        <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 2px' }}>MAGISTRADO</p>
-                        <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
-                          {state.simulation?.judgeAgentName ?? 'Magistrado Especializado'}
-                        </p>
-                      </div>
-                      <span style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', border: '1px solid var(--border)', color: 'var(--text-secondary)', padding: '3px 8px', borderRadius: '4px', background: 'transparent' }}>Avaliação</span>
-                    </div>
-                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '12px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' } as React.CSSProperties}>
-                      {cleanJudgmentText(round.judgeJudgment)}
-                    </p>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>Índice de êxito</span>
-                      <span style={{ fontSize: '20px', fontWeight: 700, fontFamily: '"Playfair Display", Georgia, serif', fontStyle: 'italic', color: 'var(--text-primary)' }}>
-                        {round.successProbability}%
-                      </span>
-                    </div>
-                  </div>
+            <div style={{
+              flex: 1,
+              overflowY: 'auto',
+              minHeight: 0,
+              paddingBottom: 'calc(96px + env(safe-area-inset-bottom))',
+              scrollbarWidth: 'none',
+            }}>
+              {/* GAUGE */}
+              <div style={{ textAlign: 'center', padding: '32px 20px 20px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 12px' }}>
+                  Índice de força argumentativa
+                </p>
+                <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '72px', fontWeight: 900, letterSpacing: '-3px', lineHeight: 1, color: modeColor, margin: '0 0 10px' }}>
+                  {finalPct}%
+                </p>
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: '260px', margin: '0 auto' }}>
+                  Estimativa baseada na sua descrição. Não é probabilidade estatística. Resultados reais variam.
+                </p>
+              </div>
+              {/* VEREDITO BAR */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px', margin: '0 20px 20px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', flexShrink: 0, minWidth: '36px' }}>Autor</span>
+                <div style={{ flex: 1, height: '6px', background: 'var(--border)', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: `${finalPct}%`, height: '100%', borderRadius: '3px', background: `linear-gradient(to right, ${modeColor}, #00CC88)` }} />
                 </div>
-              ))}
-              {/* Paywall */}
-              <div style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '20px', textAlign: 'center', marginTop: '8px' }}>
-                <p style={{ fontSize: '24px', marginBottom: '8px' }}>🔒</p>
-                <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '18px', fontStyle: 'italic', color: 'var(--text-primary)', marginBottom: '8px' }}>Simulação concluída.</p>
-                {state.simulation?.finalSuccessProbability != null && (
-                  <>
-                    <p style={{ fontSize: '48px', fontWeight: 700, fontFamily: '"Playfair Display", Georgia, serif', fontStyle: 'italic', color: 'var(--text-primary)', margin: '0 0 4px' }}>
-                      {state.simulation.finalSuccessProbability}%
-                    </p>
-                    <p style={{ fontSize: '9px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', letterSpacing: '0.15em' }}>Índice de força argumentativa</p>
-                  </>
+                <span style={{ fontSize: '12px', fontWeight: 700, flexShrink: 0, color: modeColor }}>{finalPct}%</span>
+              </div>
+              {/* SEÇÕES */}
+              <div style={{ padding: '0 20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>Argumento do autor</span>
+                  </div>
+                  {rounds.length > 0 && (
+                    <div style={{ padding: '0 16px 14px', fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, maxHeight: '80px', overflow: 'hidden', position: 'relative' }}>
+                      {rounds[0].lawyerPetition}
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50px', background: 'linear-gradient(to bottom, transparent, var(--bg-card))' }} />
+                    </div>
+                  )}
+                </div>
+                {['Argumento do réu', 'Fundamentos jurídicos', 'Riscos e próximos passos'].map((titulo) => (
+                  <div key={titulo} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflow: 'hidden', opacity: 0.55 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{titulo}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: 'var(--text-muted)' }}>
+                        <span>🔒</span><span>Laudo</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.6, textAlign: 'center', padding: '8px 0 4px' }}>
+                  O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
+                </p>
+                {(state.detectedArea === 'FAMILY' || state.detectedArea === 'SOCIAL_SECURITY') && (
+                  <div style={{ padding: '16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', borderRadius: '12px', marginTop: '4px' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,184,0,0.8)', display: 'block', marginBottom: '8px' }}>🤝 Recursos de Apoio</span>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong> — Central de Atendimento à Mulher.</p>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong> — CVV.</p>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>Apoio jurídico gratuito: <strong style={{ color: 'var(--text-primary)' }}>Defensoria Pública</strong> ou <strong style={{ color: 'var(--text-primary)' }}>CRAS</strong>.</p>
+                  </div>
                 )}
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>O laudo completo está disponível abaixo.</p>
               </div>
             </div>
-            {/* CTA sticky */}
-            <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0 }}>
+            {/* CTA FIXO */}
+            <div style={{ position: 'sticky', bottom: 0, padding: '12px 20px', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))', background: 'linear-gradient(to bottom, transparent 0%, var(--bg-primary) 35%)', flexShrink: 0 }}>
               <button
                 onClick={handleCheckout}
-                style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: 'pointer' }}
+                style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '0.3px', borderRadius: '14px', cursor: 'pointer' }}
               >
                 Ver laudo completo — R$ 9,90
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}
+              >
+                Reiniciar simulação
               </button>
             </div>
           </div>
