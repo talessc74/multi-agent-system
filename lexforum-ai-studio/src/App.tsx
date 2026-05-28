@@ -93,11 +93,16 @@ const cleanJudgmentText = (text: string) => {
   return cleaned;
 };
 
-function LaudoMobile({ state, modeColor, onPrint, onRestart }: { state: any; modeColor: string; onPrint: () => void; onRestart: () => void; }) {
+function LaudoMobile({ state, modeColor, onRestart }: { state: any; modeColor: string; onRestart: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.simulation?.finalSuccessProbability ?? 0;
+  const handlePrint = () => {
+    document.body.classList.add('eai-printing');
+    window.print();
+    setTimeout(() => document.body.classList.remove('eai-printing'), 1000);
+  };
   return (
-    <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+    <div className="flex flex-col md:hidden eai-laudo-mobile" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
       <div style={{ display: 'flex', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', overflow: 'hidden', margin: '12px 20px 0', flexShrink: 0 }}>
         <button onClick={() => setActiveVolume('I')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'I' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'I' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'I' ? '8px' : 0, margin: activeVolume === 'I' ? '4px' : 0, transition: 'all 0.2s' }}>Volume I — Orientação</button>
         <button onClick={() => setActiveVolume('II')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'II' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'II' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'II' ? '8px' : 0, margin: activeVolume === 'II' ? '4px' : 0, transition: 'all 0.2s' }}>Volume II — Técnico</button>
@@ -164,7 +169,7 @@ function LaudoMobile({ state, modeColor, onPrint, onRestart }: { state: any; mod
         )}
       </div>
       <div style={{ position: 'sticky', bottom: 0, padding: '12px 20px', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))', background: 'linear-gradient(to bottom, transparent 0%, var(--bg-primary) 35%)', flexShrink: 0 }}>
-        <button onClick={onPrint} style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer' }}>↓ Exportar PDF</button>
+        <button onClick={handlePrint} style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer' }}>↓ Exportar PDF</button>
         <button onClick={onRestart} style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>Nova simulação</button>
       </div>
     </div>
@@ -1458,7 +1463,6 @@ const handleGeminiError = (err: any) => {
         <LaudoMobile
           state={state}
           modeColor={MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF'}
-          onPrint={() => window.print()}
           onRestart={() => window.location.reload()}
         />
       )}
