@@ -11,6 +11,26 @@ Contexto completo sobre arquitetura ativa e pendências em `CLAUDE.md`.
 
 ---
 
+### 2026-05-29 — Sprint de Tema e Diferenciação de Modos
+
+**2 entregas em produção**
+
+#### Tema claro/escuro — BoardroomPage
+
+- [FIX] 1c884fe — BoardroomPage.tsx: cores hardcoded (`bg-[#111111]`, `bg-[#1a1a1a]`, `bg-[#0e0e0e]`) substituídas por tokens CSS (`var(--bg-primary)`, `var(--bg-card)`, `var(--bg-secondary)`). Tema claro/escuro agora funciona corretamente no mobile e desktop.
+
+#### Diferenciação de modos desktop
+
+- [FIX] e7070bc — App.tsx: título e subtítulo da tela de input desktop agora mudam por modo. Modo 2 exibe "Descreva a acusação recebida e sua versão dos fatos." + "Nossa IA constrói sua defesa técnica e o juiz avalia em até 3 ciclos." Demais modos mantêm o texto original.
+
+#### Pendências registradas desta sessão
+
+- Tema claro desktop (App.tsx + index.css) — tokens CSS não aplicados ainda
+- Testes visuais pendentes: toggle de tema no iPhone + Modo 2 desktop
+- Chat pós-sessão: Tales quer detalhar feature de perguntas direcionadas ao advogado e ao juiz da simulação
+
+---
+
 ### 2026-05-28 — Sprint de Qualidade e Bugs Críticos
 
 **16 entregas em produção**
