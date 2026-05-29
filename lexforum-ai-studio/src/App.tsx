@@ -104,7 +104,6 @@ function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHy
     setTimeout(() => {
       window.print();
       document.body.classList.remove('eai-printing');
-      setIsPrinting(false);
     }, 300);
   };
   return (
@@ -229,8 +228,13 @@ function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHy
       </div>
       <div style={{ position: 'sticky', bottom: 0, padding: '12px 20px', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))', background: 'linear-gradient(to bottom, transparent 0%, var(--bg-primary) 35%)', flexShrink: 0 }}>
         <button onClick={handlePrint} disabled={isPrinting} style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: isPrinting ? 'not-allowed' : 'pointer', opacity: isPrinting ? 0.8 : 1, transition: 'opacity 0.2s' }}>
-    {isPrinting ? '⏳ Gerando PDF...' : '↓ Exportar PDF'}
-  </button>
+          {isPrinting ? '⏳ Gerando PDF...' : '↓ Exportar PDF'}
+        </button>
+        {isPrinting && (
+          <button onClick={() => setIsPrinting(false)} style={{ width: '100%', padding: '10px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-muted)', fontSize: '12px', borderRadius: '10px', cursor: 'pointer', marginTop: '8px' }}>
+            Cancelar
+          </button>
+        )}
         <button onClick={onRestart} style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>Nova simulação</button>
       </div>
     </div>
