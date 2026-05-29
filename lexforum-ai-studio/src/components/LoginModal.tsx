@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { loginWithGoogle, loginWithEmail, registerWithEmail, resetPassword } from '../lib/firebase';
+import { registrarAceiteTermos } from '../services/dbService';
 import { X } from 'lucide-react';
 
 interface Props {
@@ -15,6 +16,7 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+  const [termosAceitos, setTermosAceitos] = useState(false);
 
   const resetForm = () => {
     setEmail('');
@@ -65,7 +67,8 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
     }
     setLoading(true);
     try {
-      await registerWithEmail(email, password);
+      const credential = await registerWithEmail(email, password);
+      await registrarAceiteTermos(credential.user.uid);
       onSuccess();
     } catch (e: any) {
       setError(e.message ?? 'Erro ao criar conta.');
@@ -269,9 +272,21 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
                 <p className="text-[10px] text-red-400 leading-relaxed">{error}</p>
               )}
 
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={termosAceitos}
+                  onChange={(e) => setTermosAceitos(e.target.checked)}
+                />
+                Li e aceito os{' '}
+                <a href="https://eai.radiokactus.com/termos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
+                  Termos de Uso
+                </a>
+              </label>
+
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !termosAceitos}
                 className="w-full bg-white text-black text-[11px] font-bold uppercase tracking-widest py-3 hover:bg-white/90 transition-colors disabled:opacity-50 mt-1"
               >
                 Criar conta
