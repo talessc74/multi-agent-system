@@ -111,10 +111,12 @@ async function startServer() {
 
     let lawyerInstruction: string | undefined;
     try {
+      const lawyerSide = (mode === 2) ? 'DEFENSE' : 'AUTHOR';
       const lawyerEntry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
         comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
         tipo: 'advogado',
+        userSide: lawyerSide,
       });
       const lawyerJson = lawyerEntry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), lawyerEntry.arquivo), 'utf-8'));
       lawyerInstruction = JSON.stringify(lawyerJson);
