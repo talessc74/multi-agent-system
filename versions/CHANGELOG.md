@@ -11,6 +11,38 @@ Contexto completo sobre arquitetura ativa e pendências em `CLAUDE.md`.
 
 ---
 
+### 2026-05-30 — Sprint de UX Mobile e Tema Claro
+
+**7 entregas em produção**
+
+#### Tema claro — BoardroomPage completo
+
+- [FIX] 1d0e3ad — BoardroomPage mobile: textos de header (label, título, subtítulo) com tokens CSS var() — contraste no tema claro
+- [FIX] 90ea582 — BoardroomPage mobile: nomes dos modos com token var(--text-primary)
+- [FIX] 1bad845 — BoardroomPage: todos os textos restantes (desktop hero, disclaimer, cards, footer, boardroom panel, card expandido mobile) com tokens CSS — tema claro completo
+
+#### UX — Feedback e wayfinding
+
+- [UX] 12cbe08 — LaudoMobile: estado isExpanding adicionado — feedback visual "⏳ Expandindo argumento..." ao clicar hipótese
+- [UX] af17ec7 — LaudoMobile: botão PDF mantém estado "⏳ Gerando PDF..." até usuário cancelar — sem reset automático por timeout
+- [UX] 3cffcce — LaudoMobile: botão "Ver como a outra parte vai reagir" movido do corpo do laudo para a barra sticky do rodapé
+- [UX] 7a168a6 — LaudoMobile: hipóteses (loading, opções A/B/C, expandindo, Modo 4) movidas inteiramente para barra sticky do rodapé — sem scroll necessário
+
+#### Testes aprovados
+
+- BoardroomPage tema claro mobile ✅
+- Desktop Modo 2 título diferenciado ✅
+- Hipóteses na barra sticky — fluxo completo ✅
+- Tema claro contraste geral ✅ (com ressalva: pode ficar mais escuro — não tratado)
+
+#### Pendências registradas
+
+- Tema claro App.tsx (telas de simulação, laudo, input) — não iniciado
+- "Invalid Date" nos registros antigos do Firestore
+- Chat pós-sessão — Tales quer detalhar feature de perguntas ao advogado e juiz
+
+---
+
 ### 2026-05-29 — Sprint de Tema e Diferenciação de Modos
 
 **2 entregas em produção**
