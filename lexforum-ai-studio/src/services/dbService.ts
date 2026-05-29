@@ -227,6 +227,18 @@ export const getSimulationById = async (simulationId: string) => {
   }
 };
 
+export const registrarAceiteTermos = async (uid: string): Promise<void> => {
+  try {
+    const userRef = doc(db, 'users', uid);
+    await updateDoc(userRef, {
+      termosAceitosEm: serverTimestamp(),
+      termosVersao: '1.2'
+    });
+  } catch (error) {
+    console.error('[registrarAceiteTermos]', error);
+  }
+};
+
 export const registrarAcessoLaudo = async (uid: string, simulationId: string): Promise<void> => {
   try {
     const paymentRef = doc(db, 'users', uid, 'payments', simulationId);
