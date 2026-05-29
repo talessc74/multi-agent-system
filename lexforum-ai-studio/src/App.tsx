@@ -96,10 +96,15 @@ const cleanJudgmentText = (text: string) => {
 function LaudoMobile({ state, modeColor, onRestart }: { state: any; modeColor: string; onRestart: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.simulation?.finalSuccessProbability ?? 0;
+  const [isPrinting, setIsPrinting] = React.useState(false);
   const handlePrint = () => {
+    setIsPrinting(true);
     document.body.classList.add('eai-printing');
-    window.print();
-    setTimeout(() => document.body.classList.remove('eai-printing'), 1000);
+    setTimeout(() => {
+      window.print();
+      document.body.classList.remove('eai-printing');
+      setIsPrinting(false);
+    }, 300);
   };
   return (
     <div className="flex flex-col md:hidden eai-laudo-mobile" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
@@ -169,7 +174,9 @@ function LaudoMobile({ state, modeColor, onRestart }: { state: any; modeColor: s
         )}
       </div>
       <div style={{ position: 'sticky', bottom: 0, padding: '12px 20px', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))', background: 'linear-gradient(to bottom, transparent 0%, var(--bg-primary) 35%)', flexShrink: 0 }}>
-        <button onClick={handlePrint} style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer' }}>↓ Exportar PDF</button>
+        <button onClick={handlePrint} disabled={isPrinting} style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: isPrinting ? 'not-allowed' : 'pointer', opacity: isPrinting ? 0.8 : 1, transition: 'opacity 0.2s' }}>
+    {isPrinting ? '⏳ Gerando PDF...' : '↓ Exportar PDF'}
+  </button>
         <button onClick={onRestart} style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>Nova simulação</button>
       </div>
     </div>
@@ -3317,8 +3324,16 @@ const handleGeminiError = (err: any) => {
       {state.step === 'result' && state.isUnlocked && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] pointer-events-none no-print">
            <div className="pointer-events-auto bg-[#1C1C1F] text-white p-1 flex gap-px shadow-[0_0_50px_rgba(0,0,0,0.8)] scale-125 lg:scale-100 border border-white/10">
-             <button 
-              onClick={() => window.print()}
+             <button
+              onClick={() => {
+                const btn = document.getElementById('btn-export-pdf');
+                if (btn) btn.textContent = '⏳ Gerando...';
+                setTimeout(() => {
+                  window.print();
+                  if (btn) btn.textContent = 'Exportar PDF';
+                }, 300);
+              }}
+              id="btn-export-pdf"
               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
              >
                 Exportar PDF
