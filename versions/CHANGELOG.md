@@ -11,6 +11,40 @@ Contexto completo sobre arquitetura ativa e pendências em `CLAUDE.md`.
 
 ---
 
+### 2026-05-29 — Sprint de Compliance, UX e Qualidade
+
+**10 entregas em produção**
+
+#### Qualidade e fixes
+
+- [FIX] 9e243cc — App.tsx: `formatSimDate` extraída como função utilitária. Ternário de 7 linhas em "Meus Casos" substituído por chamada única. Lida com Firestore Timestamp, `_seconds` e string/number. Retorna `'—'` se sem data.
+- [FIX] 54716bb — App.tsx: `getUserSimulations` pode retornar `undefined`. `?? []` adicionado nos três pontos de chamada (linhas 317, 621 e 671) para garantir que `setUserHistory` sempre recebe array — evita crash silencioso em "Meus Casos".
+- [FIX] 96fa407 — App.tsx/LaudoMobile: prop `onShowHypotheses` removida da assinatura e do call-site após dropdown substituir o botão que a chamava. Prop havia virado letra morta.
+
+#### UX — Dropdown Modo 1→4
+
+- [FEAT] 1e1d8f0 — LaudoMobile: botão "Ver como a outra parte vai reagir" agora expande um painel com descrição e preço do Modo 4 antes de navegar. Estado `showMode4Preview` controla o toggle. Botão amarelo "Iniciar Mesa Dupla — R$ 9,90 →" chama `onGoToMode4`.
+
+#### Compliance LGPD
+
+- [FEAT] ac555eb — `dbService.ts`: `registrarAcessoLaudo(uid, simulationId)` criada. Grava `laudoAcessadoEm: serverTimestamp()` em `users/{uid}/payments/{simulationId}` no momento exato em que o laudo é desbloqueado após retorno do Stripe.
+- [FEAT] c3b99a9 — `dbService.ts`: `registrarAceiteTermos(uid)` criada. Grava `termosAceitosEm: serverTimestamp()` e `termosVersao: '1.2'` em `users/{uid}` no momento do cadastro.
+- [FEAT] 78c10b9 — `LoginModal.tsx`: checkbox "Li e aceito os Termos de Uso" adicionado ao modo register. Botão "Criar conta" desabilitado até aceite. Após cadastro, chama `registrarAceiteTermos(uid)`.
+
+#### Página de Termos de Uso
+
+- [FEAT] 6469c76 — `src/pages/TermosPage.tsx` criado. 10 seções completas (v1.2, Maio/2026): definição do produto, limites, LGPD/dados, pagamento/reembolso, responsabilidade, uso aceitável, propriedade intelectual, atualizações, foro e contato.
+- [FEAT] cfcaf05 — App.tsx: guard `window.location.pathname === '/termos'` adicionado antes do render principal. Renderiza `TermosPage` se URL for `/termos` — sem React Router.
+- [FEAT] 5cef083 — `LoginModal.tsx`: link dos termos atualizado de URL absoluta para `/termos`. `BoardroomPage.tsx`: link "Termos de Uso" adicionado no rodapé desktop (após FOOTER_STATS) e no rodapé mobile.
+
+#### Pendências registradas desta sessão
+
+- Tema claro App.tsx (telas de simulação, laudo, input) — não iniciado
+- Chat pós-sessão ao vivo — não iniciado
+- `firestore.rules` — warnings pendentes (funções não usadas, variáveis com nomes reservados)
+
+---
+
 ### 2026-05-30 — Sprint de UX Mobile e Tema Claro
 
 **7 entregas em produção**
