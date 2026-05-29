@@ -153,49 +153,6 @@ function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHy
               </div>
             )}
 
-            {state.showHypotheses && !state.counterHypotheses?.length && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', marginTop: '12px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
-                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Gerando hipóteses...</span>
-              </div>
-            )}
-
-            {state.counterHypotheses && state.counterHypotheses.length > 0 && !state.expandedHypothesis && (
-              <div style={{ marginTop: '12px', padding: '16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0 }}>Como o réu pode reagir — escolha:</p>
-                {isExpanding ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Expandindo argumento...</span>
-                  </div>
-                ) : (
-                  state.counterHypotheses.map((hyp: string, i: number) => (
-                    <button
-                      key={i}
-                      onClick={async () => { setIsExpanding(true); await onSelectHypothesis?.(hyp); setIsExpanding(false); }}
-                      style={{ padding: '12px 14px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '10px', cursor: 'pointer', textAlign: 'left' }}
-                    >
-                      <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Opção {String.fromCharCode(65 + i)}</span>
-                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{hyp}</p>
-                    </button>
-                  ))
-                )}
-              </div>
-            )}
-
-            {state.expandedHypothesis && (
-              <div style={{ marginTop: '12px', padding: '16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0 }}>Argumento do outro lado</p>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: 1.7, margin: 0 }}>{state.expandedHypothesis}</p>
-                <button
-                  onClick={onGoToMode4}
-                  style={{ width: '100%', padding: '14px', background: 'var(--text-primary)', color: 'var(--bg-primary)', border: 'none', borderRadius: '12px', cursor: 'pointer', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase' }}
-                >
-                  Simular contraditório no Modo 4 →
-                </button>
-              </div>
-            )}
-
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.6, textAlign: 'center', padding: '16px 0 4px' }}>O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.</p>
           </div>
         )}
@@ -218,23 +175,72 @@ function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHy
         )}
       </div>
       <div style={{ position: 'sticky', bottom: 0, padding: '12px 20px', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))', background: 'linear-gradient(to bottom, transparent 0%, var(--bg-primary) 35%)', flexShrink: 0 }}>
-        <button onClick={handlePrint} disabled={isPrinting} style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: isPrinting ? 'not-allowed' : 'pointer', opacity: isPrinting ? 0.8 : 1, transition: 'opacity 0.2s' }}>
-          {isPrinting ? '⏳ Gerando PDF...' : '↓ Exportar PDF'}
-        </button>
-        {isPrinting && (
-          <button onClick={() => setIsPrinting(false)} style={{ width: '100%', padding: '10px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-muted)', fontSize: '12px', borderRadius: '10px', cursor: 'pointer', marginTop: '8px' }}>
-            Cancelar
-          </button>
+
+        {/* Carregando hipóteses */}
+        {state.showHypotheses && !state.counterHypotheses?.length && !state.expandedHypothesis && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', marginBottom: '10px' }}>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Gerando hipóteses...</span>
+          </div>
         )}
-        {(state.selectedMode === 1) && !state.showHypotheses && !state.counterHypotheses?.length && (
+
+        {/* Hipóteses prontas */}
+        {state.counterHypotheses && state.counterHypotheses.length > 0 && !state.expandedHypothesis && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
+            <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 4px' }}>Como o réu pode reagir:</p>
+            {isExpanding ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Expandindo argumento...</span>
+              </div>
+            ) : (
+              state.counterHypotheses.map((hyp: string, i: number) => (
+                <button
+                  key={i}
+                  onClick={async () => { setIsExpanding(true); await onSelectHypothesis?.(hyp); setIsExpanding(false); }}
+                  style={{ padding: '12px 14px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>Opção {String.fromCharCode(65 + i)}</span>
+                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>{hyp}</p>
+                </button>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* Hipótese expandida */}
+        {state.expandedHypothesis && (
           <button
-            onClick={onShowHypotheses}
-            style={{ width: '100%', padding: '14px 16px', marginTop: '10px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+            onClick={onGoToMode4}
+            style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '13px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginBottom: '10px', letterSpacing: '0.1em', textTransform: 'uppercase' }}
           >
-            <span>⚖ Ver como a outra parte vai reagir</span>
-            <span>→</span>
+            Simular contraditório no Modo 4 →
           </button>
         )}
+
+        {/* Barra normal */}
+        {!state.showHypotheses && !state.expandedHypothesis && (
+          <>
+            <button onClick={handlePrint} disabled={isPrinting} style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: isPrinting ? 'not-allowed' : 'pointer', opacity: isPrinting ? 0.8 : 1, transition: 'opacity 0.2s' }}>
+              {isPrinting ? '⏳ Gerando PDF...' : '↓ Exportar PDF'}
+            </button>
+            {isPrinting && (
+              <button onClick={() => setIsPrinting(false)} style={{ width: '100%', padding: '10px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-muted)', fontSize: '12px', borderRadius: '10px', cursor: 'pointer', marginTop: '8px' }}>
+                Cancelar
+              </button>
+            )}
+            {(state.selectedMode === 1) && (
+              <button
+                onClick={onShowHypotheses}
+                style={{ width: '100%', padding: '14px 16px', marginTop: '10px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+              >
+                <span>⚖ Ver como a outra parte vai reagir</span>
+                <span>→</span>
+              </button>
+            )}
+          </>
+        )}
+
         <button onClick={onRestart} style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>Nova simulação</button>
       </div>
     </div>
