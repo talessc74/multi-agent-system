@@ -97,6 +97,7 @@ function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHy
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.simulation?.finalSuccessProbability ?? 0;
   const [isPrinting, setIsPrinting] = React.useState(false);
+  const [isExpanding, setIsExpanding] = React.useState(false);
   const handlePrint = () => {
     setIsPrinting(true);
     document.body.classList.add('eai-printing');
@@ -172,16 +173,23 @@ function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHy
             {state.counterHypotheses && state.counterHypotheses.length > 0 && !state.expandedHypothesis && (
               <div style={{ marginTop: '12px', padding: '16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0 }}>Como o réu pode reagir — escolha:</p>
-                {state.counterHypotheses.map((hyp: string, i: number) => (
-                  <button
-                    key={i}
-                    onClick={() => onSelectHypothesis?.(hyp)}
-                    style={{ padding: '12px 14px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '10px', cursor: 'pointer', textAlign: 'left' }}
-                  >
-                    <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Opção {String.fromCharCode(65 + i)}</span>
-                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{hyp}</p>
-                  </button>
-                ))}
+                {isExpanding ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Expandindo argumento...</span>
+                  </div>
+                ) : (
+                  state.counterHypotheses.map((hyp: string, i: number) => (
+                    <button
+                      key={i}
+                      onClick={async () => { setIsExpanding(true); await onSelectHypothesis?.(hyp); setIsExpanding(false); }}
+                      style={{ padding: '12px 14px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '10px', cursor: 'pointer', textAlign: 'left' }}
+                    >
+                      <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Opção {String.fromCharCode(65 + i)}</span>
+                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{hyp}</p>
+                    </button>
+                  ))
+                )}
               </div>
             )}
 
