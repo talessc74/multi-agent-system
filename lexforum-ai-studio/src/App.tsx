@@ -113,6 +113,7 @@ function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHy
   const finalPct = state.simulation?.finalSuccessProbability ?? 0;
   const [isPrinting, setIsPrinting] = React.useState(false);
   const [isExpanding, setIsExpanding] = React.useState(false);
+  const [showMode4Preview, setShowMode4Preview] = React.useState(false);
   const handlePrint = () => {
     setIsPrinting(true);
     document.body.classList.add('eai-printing');
@@ -245,13 +246,28 @@ function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHy
               </button>
             )}
             {(state.selectedMode === 1) && (
-              <button
-                onClick={onShowHypotheses}
-                style={{ width: '100%', padding: '14px 16px', marginTop: '10px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
-              >
-                <span>⚖ Ver como a outra parte vai reagir</span>
-                <span>→</span>
-              </button>
+              <>
+                <button
+                  onClick={() => setShowMode4Preview(prev => !prev)}
+                  style={{ width: '100%', padding: '14px 16px', marginTop: '10px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                >
+                  <span>⚖ Ver como a outra parte vai reagir</span>
+                  <span>{showMode4Preview ? '↑' : '→'}</span>
+                </button>
+
+                {showMode4Preview && (
+                  <div style={{ marginTop: '8px', padding: '16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px' }}>
+                    <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Mesa Dupla Assistida</p>
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '14px' }}>Advogado e juiz simulam os dois lados do seu caso. Você recebe análise completa com estratégia de ação.</p>
+                    <button
+                      onClick={onGoToMode4}
+                      style={{ width: '100%', padding: '14px', background: '#FFB800', color: '#000000', border: 'none', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                    >
+                      Iniciar Mesa Dupla — R$ 9,90 →
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}
