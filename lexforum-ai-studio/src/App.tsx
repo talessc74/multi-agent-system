@@ -152,15 +152,6 @@ function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHy
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>Apoio jurídico gratuito: <strong style={{ color: 'var(--text-primary)' }}>Defensoria Pública</strong> ou <strong style={{ color: 'var(--text-primary)' }}>CRAS</strong>.</p>
               </div>
             )}
-            {(state.selectedMode === 1) && state.report?.layman && !state.showHypotheses && !state.counterHypotheses?.length && (
-              <button
-                onClick={onShowHypotheses}
-                style={{ width: '100%', padding: '14px 16px', marginTop: '12px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
-              >
-                <span>⚖ Ver como a outra parte vai reagir</span>
-                <span>→</span>
-              </button>
-            )}
 
             {state.showHypotheses && !state.counterHypotheses?.length && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', marginTop: '12px' }}>
@@ -233,6 +224,15 @@ function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHy
         {isPrinting && (
           <button onClick={() => setIsPrinting(false)} style={{ width: '100%', padding: '10px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-muted)', fontSize: '12px', borderRadius: '10px', cursor: 'pointer', marginTop: '8px' }}>
             Cancelar
+          </button>
+        )}
+        {(state.selectedMode === 1) && !state.showHypotheses && !state.counterHypotheses?.length && (
+          <button
+            onClick={onShowHypotheses}
+            style={{ width: '100%', padding: '14px 16px', marginTop: '10px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+          >
+            <span>⚖ Ver como a outra parte vai reagir</span>
+            <span>→</span>
           </button>
         )}
         <button onClick={onRestart} style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>Nova simulação</button>
