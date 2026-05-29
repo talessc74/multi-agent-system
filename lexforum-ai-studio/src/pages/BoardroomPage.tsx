@@ -162,6 +162,9 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
           <p className="text-[9px] uppercase tracking-[0.2em] mt-1" style={{ color: 'var(--text-muted)' }}>
             {`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}
           </p>
+          <a href="/termos" className="text-[9px] uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>
+            Termos de Uso
+          </a>
         </div>
       </div>
 
@@ -262,6 +265,11 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                   <p className="text-[9px] font-mono leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{value}</p>
                 </div>
               ))}
+            </div>
+            <div className="mt-6">
+              <a href="/termos" className="text-[8px] uppercase tracking-[0.25em] font-bold" style={{ color: 'var(--text-muted)' }}>
+                Termos de Uso
+              </a>
             </div>
           </div>
         </div>

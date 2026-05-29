@@ -279,7 +279,7 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
                   onChange={(e) => setTermosAceitos(e.target.checked)}
                 />
                 Li e aceito os{' '}
-                <a href="https://eai.radiokactus.com/termos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
+                <a href="/termos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
                   Termos de Uso
                 </a>
               </label>
