@@ -93,6 +93,21 @@ const cleanJudgmentText = (text: string) => {
   return cleaned;
 };
 
+function formatSimDate(createdAt: unknown): string {
+  if (!createdAt) return '—';
+  if (typeof createdAt === 'object' && createdAt !== null) {
+    if ('toDate' in createdAt) {
+      return (createdAt as any).toDate().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+    }
+    if ('_seconds' in createdAt) {
+      return new Date((createdAt as any)._seconds * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+    }
+  }
+  const d = new Date(createdAt as string | number);
+  if (isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
 function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHypothesis, onGoToMode4 }: { state: any; modeColor: string; onRestart: () => void; onShowHypotheses?: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.simulation?.finalSuccessProbability ?? 0;
@@ -3508,13 +3523,7 @@ const handleGeminiError = (err: any) => {
                         <div className="flex justify-between items-start mb-5">
                           <div className="max-w-[70%]">
                             <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-emerald-500/60 mb-2 block">
-                              {sim.createdAt?.toDate
-                                ? new Date(sim.createdAt.toDate()).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
-                                : sim.createdAt?._seconds
-                                  ? new Date(sim.createdAt._seconds * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
-                                  : sim.createdAt
-                                    ? new Date(sim.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
-                                    : 'Data não disponível'}
+                              {formatSimDate(sim.createdAt)}
                             </span>
                             <h3 className="text-lg font-serif italic text-white/90 leading-tight line-clamp-1">
                               {sim.caseSummary || sim.caseDescription}
