@@ -108,7 +108,7 @@ function formatSimDate(createdAt: unknown): string {
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
-function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHypothesis, onGoToMode4 }: { state: any; modeColor: string; onRestart: () => void; onShowHypotheses?: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; }) {
+function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4 }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.simulation?.finalSuccessProbability ?? 0;
   const [isPrinting, setIsPrinting] = React.useState(false);
@@ -1577,12 +1577,6 @@ const handleGeminiError = (err: any) => {
           state={state}
           modeColor={MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF'}
           onRestart={() => window.location.reload()}
-          onShowHypotheses={async () => {
-            const lastPetition = state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '';
-            setState((prev: any) => ({ ...prev, showHypotheses: true }));
-            const hypotheses = await generateCounterHypotheses(lastPetition, state.detectedArea, state.selectedMode);
-            setState((prev: any) => ({ ...prev, counterHypotheses: hypotheses.length ? hypotheses : [] }));
-          }}
           onSelectHypothesis={async (hyp: string) => {
             setState((prev: any) => ({ ...prev, selectedHypothesis: hyp }));
             const expanded = await expandHypothesis(
