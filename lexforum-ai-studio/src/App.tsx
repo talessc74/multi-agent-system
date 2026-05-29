@@ -2141,10 +2141,16 @@ const handleGeminiError = (err: any) => {
                       )}
                     </div>
                     <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
-                      Descreva sua causa para iniciar a <br /><span className="text-[#F4F4F2] font-bold">simulação de fórum.</span>
+                      {state.selectedMode === 2
+                        ? <>Descreva a acusação recebida e <br /><span className="text-[#F4F4F2] font-bold">sua versão dos fatos.</span></>
+                        : <>Descreva sua causa para iniciar a <br /><span className="text-[#F4F4F2] font-bold">simulação de fórum.</span></>
+                      }
                     </h1>
                     <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
-                      Tecnologia de ponta para análise estratégica de petições, processada por agentes autônomos especializados.
+                      {state.selectedMode === 2
+                        ? 'Nossa IA constrói sua defesa técnica e o juiz avalia em até 3 ciclos.'
+                        : 'Tecnologia de ponta para análise estratégica de petições, processada por agentes autônomos especializados.'
+                      }
                     </p>
                   </div>
 
