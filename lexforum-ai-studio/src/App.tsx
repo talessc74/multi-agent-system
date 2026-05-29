@@ -93,7 +93,7 @@ const cleanJudgmentText = (text: string) => {
   return cleaned;
 };
 
-function LaudoMobile({ state, modeColor, onRestart }: { state: any; modeColor: string; onRestart: () => void; }) {
+function LaudoMobile({ state, modeColor, onRestart, onShowHypotheses, onSelectHypothesis, onGoToMode4 }: { state: any; modeColor: string; onRestart: () => void; onShowHypotheses?: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.simulation?.finalSuccessProbability ?? 0;
   const [isPrinting, setIsPrinting] = React.useState(false);
@@ -152,6 +152,52 @@ function LaudoMobile({ state, modeColor, onRestart }: { state: any; modeColor: s
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>Apoio jurídico gratuito: <strong style={{ color: 'var(--text-primary)' }}>Defensoria Pública</strong> ou <strong style={{ color: 'var(--text-primary)' }}>CRAS</strong>.</p>
               </div>
             )}
+            {(state.selectedMode === 1) && state.report?.layman && !state.showHypotheses && !state.counterHypotheses?.length && (
+              <button
+                onClick={onShowHypotheses}
+                style={{ width: '100%', padding: '14px 16px', marginTop: '12px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+              >
+                <span>⚖ Ver como a outra parte vai reagir</span>
+                <span>→</span>
+              </button>
+            )}
+
+            {state.showHypotheses && !state.counterHypotheses?.length && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', marginTop: '12px' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Gerando hipóteses...</span>
+              </div>
+            )}
+
+            {state.counterHypotheses && state.counterHypotheses.length > 0 && !state.expandedHypothesis && (
+              <div style={{ marginTop: '12px', padding: '16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0 }}>Como o réu pode reagir — escolha:</p>
+                {state.counterHypotheses.map((hyp: string, i: number) => (
+                  <button
+                    key={i}
+                    onClick={() => onSelectHypothesis?.(hyp)}
+                    style={{ padding: '12px 14px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '10px', cursor: 'pointer', textAlign: 'left' }}
+                  >
+                    <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Opção {String.fromCharCode(65 + i)}</span>
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{hyp}</p>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {state.expandedHypothesis && (
+              <div style={{ marginTop: '12px', padding: '16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0 }}>Argumento do outro lado</p>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: 1.7, margin: 0 }}>{state.expandedHypothesis}</p>
+                <button
+                  onClick={onGoToMode4}
+                  style={{ width: '100%', padding: '14px', background: 'var(--text-primary)', color: 'var(--bg-primary)', border: 'none', borderRadius: '12px', cursor: 'pointer', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase' }}
+                >
+                  Simular contraditório no Modo 4 →
+                </button>
+              </div>
+            )}
+
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.6, textAlign: 'center', padding: '16px 0 4px' }}>O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.</p>
           </div>
         )}
@@ -1482,6 +1528,29 @@ const handleGeminiError = (err: any) => {
           state={state}
           modeColor={MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF'}
           onRestart={() => window.location.reload()}
+          onShowHypotheses={async () => {
+            const lastPetition = state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '';
+            setState((prev: any) => ({ ...prev, showHypotheses: true }));
+            const hypotheses = await generateCounterHypotheses(lastPetition, state.detectedArea, state.selectedMode);
+            setState((prev: any) => ({ ...prev, counterHypotheses: hypotheses.length ? hypotheses : [] }));
+          }}
+          onSelectHypothesis={async (hyp: string) => {
+            setState((prev: any) => ({ ...prev, selectedHypothesis: hyp }));
+            const expanded = await expandHypothesis(
+              state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '',
+              hyp,
+              state.detectedArea
+            );
+            setState((prev: any) => ({ ...prev, expandedHypothesis: expanded }));
+          }}
+          onGoToMode4={() => setState((prev: any) => ({
+            ...prev,
+            step: 'input',
+            selectedMode: 4,
+            defenseDescription: state.expandedHypothesis!,
+            caseDescription: state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '',
+            userSide: 'AUTHOR',
+          }))}
         />
       )}
 
