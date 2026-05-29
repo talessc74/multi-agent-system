@@ -2648,7 +2648,7 @@ const handleGeminiError = (err: any) => {
                   </div>
                 </div>
 
-                {(state.selectedMode === 1 || state.selectedMode === 2) && (
+                {state.selectedMode === 1 && (
                   <div className="p-6 bg-white/5 border border-white/10 mb-8">
                     <p className="text-sm text-white/60 leading-relaxed">
                       Esta análise avalia a força dos seus argumentos de forma independente.
@@ -2657,7 +2657,7 @@ const handleGeminiError = (err: any) => {
                   </div>
                 )}
 
-                {(state.selectedMode === 1 || state.selectedMode === 2) && state.isUnlocked && (
+                {state.selectedMode === 1 && state.isUnlocked && (
                   <div className="space-y-6 mb-8">
 
                     {!state.showHypotheses && !state.counterHypotheses?.length && (
