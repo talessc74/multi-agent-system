@@ -33,6 +33,7 @@ import { validateCausa, simulateForum, generateReport, simulateMode5, generateCo
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo } from './services/dbService';
+import TermosPage from './pages/TermosPage';
 
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
@@ -753,6 +754,8 @@ const handleGeminiError = (err: any) => {
       }
     });
   }, [user]);
+
+  if (window.location.pathname === '/termos') return <TermosPage />;
 
   return (
     <>
