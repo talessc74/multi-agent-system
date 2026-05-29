@@ -41,9 +41,11 @@ function findAgentLocal(params: ResolveParams): AgentEntry | null {
 async function findAgentFirestore(params: ResolveParams): Promise<AgentEntry | null> {
   try {
     const db = admin.firestore();
+    const lado = params.userSide === 'DEFENSE' ? 'defesa' : 'acusacao';
     let query = db.collection('agents')
       .where('area', '==', params.area)
-      .where('tipo', '==', params.tipo);
+      .where('tipo', '==', params.tipo)
+      .where('lado', '==', lado);
 
     if (params.comarca) {
       query = query.where('comarca', '==', params.comarca);
@@ -88,6 +90,7 @@ async function createAndSaveAgent(params: ResolveParams): Promise<AgentEntry> {
     await db.collection('agents').doc(result.agent_id).set({
       ...entry,
       area: params.area,
+      lado: params.userSide === 'DEFENSE' ? 'defesa' : 'acusacao',
       criadoEm: admin.firestore.FieldValue.serverTimestamp(),
       criadoPor: 'EspecialistaV1',
       versao: '1.0',
