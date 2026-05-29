@@ -91,15 +91,15 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
 
       {/* ── MOBILE HOME ───────────────────────────────────────── */}
       <div className="md:hidden flex flex-col min-h-screen px-6 pt-16 pb-8">
-        <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-white/35 mb-6">
+        <span className="text-[9px] font-bold uppercase tracking-[0.3em] mb-6" style={{ color: 'var(--text-muted)' }}>
           SIMULADOR JURÍDICO
         </span>
 
-        <h1 className="font-playfair italic text-[44px] leading-tight text-white">
+        <h1 className="font-playfair italic text-[44px] leading-tight" style={{ color: 'var(--text-primary)' }}>
           A incerteza jurídica tem uma saída.
         </h1>
 
-        <p className="text-[15px] text-white/50 mt-4 leading-relaxed">
+        <p className="text-[15px] mt-4 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
           Descreva seu problema. Receba sua chance real de êxito em minutos.
         </p>
 
@@ -153,13 +153,13 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
         </div>
 
         <div className="mt-auto pt-8 text-center space-y-1">
-          <p className="text-[9px] uppercase tracking-[0.2em] text-white/20">
+          <p className="text-[9px] uppercase tracking-[0.2em] mt-1" style={{ color: 'var(--text-muted)' }}>
             Não é consulta jurídica · Não garante vitória
           </p>
-          <p className="text-[9px] uppercase tracking-[0.2em] text-white/20">
+          <p className="text-[9px] uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>
             Simulação gratuita · Laudo completo R$9,90
           </p>
-          <p className="text-[9px] uppercase tracking-[0.2em] text-white/20 mt-1">
+          <p className="text-[9px] uppercase tracking-[0.2em] mt-1" style={{ color: 'var(--text-muted)' }}>
             {`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}
           </p>
         </div>
