@@ -81,7 +81,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
   const [openMode, setOpenMode] = useState<number | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#111111] text-white overflow-x-hidden selection:bg-amber-400/20">
+    <div className="min-h-screen overflow-x-hidden selection:bg-amber-400/20" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       <Navbar
         user={user}
         onLogin={() => setShowLoginModal(true)}
@@ -214,7 +214,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.45, delay: 0.08 * i + 0.1 }}
                 onClick={() => onEnter(mode)}
-                className="bg-[#1a1a1a] border border-white/[0.07] hover:border-amber-400/25 transition-all duration-200 group cursor-pointer"
+                className="border border-white/[0.07] hover:border-amber-400/25 transition-all duration-200 group cursor-pointer" style={{ background: 'var(--bg-card)' }}
               >
                 <div className="p-5 md:p-7 flex flex-col sm:flex-row sm:items-center gap-5 md:gap-8">
                   {/* Icon + Title */}
@@ -267,7 +267,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
         </div>
 
         {/* Boardroom Panel */}
-        <div className="border-t border-white/[0.05] bg-[#0e0e0e]">
+        <div className="border-t border-white/[0.05]" style={{ background: 'var(--bg-secondary)' }}>
           <div className="px-6 md:px-12 lg:px-20 py-12 max-w-6xl mx-auto">
             <p className="text-[8px] uppercase tracking-[0.4em] text-white/20 font-bold mb-10">
               PAINEL BOARDROOM
