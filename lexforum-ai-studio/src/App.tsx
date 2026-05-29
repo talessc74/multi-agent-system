@@ -572,6 +572,17 @@ const handleGeminiError = (err: any) => {
     ENVIRONMENTAL: "Direito Ambiental",
     ADMINISTRATIVE: "Direito Administrativo",
     CORPORATE: "Direito Empresarial",
+    CHILDREN_AND_ADOLESCENT: "Direito da Criança e do Adolescente",
+    DISABILITY_RIGHTS: "Direito das Pessoas com Deficiência",
+    EDUCATIONAL: "Direito Educacional",
+    INTERNATIONAL: "Direito Internacional",
+    INTERNATIONAL_LAW: "Direito Internacional",
+    FINANCIAL: "Direito Financeiro",
+    FINANCIAL_CRIMES: "Crimes Financeiros",
+    CRIMINAL_FINANCIAL: "Direito Penal Econômico",
+    HUMAN_RIGHTS: "Direitos Humanos",
+    INTELLECTUAL_PROPERTY: "Propriedade Intelectual",
+    REAL_ESTATE: "Direito Imobiliário",
     OTHER: "Geral / Outros"
   };
 
