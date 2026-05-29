@@ -3404,7 +3404,13 @@ const handleGeminiError = (err: any) => {
                         <div className="flex justify-between items-start mb-5">
                           <div className="max-w-[70%]">
                             <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-emerald-500/60 mb-2 block">
-                              {sim.createdAt?.toDate ? new Date(sim.createdAt.toDate()).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : 'Simulação Recente'}
+                              {sim.createdAt?.toDate
+                                ? new Date(sim.createdAt.toDate()).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+                                : sim.createdAt?._seconds
+                                  ? new Date(sim.createdAt._seconds * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+                                  : sim.createdAt
+                                    ? new Date(sim.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+                                    : 'Data não disponível'}
                             </span>
                             <h3 className="text-lg font-serif italic text-white/90 leading-tight line-clamp-1">
                               {sim.caseSummary || sim.caseDescription}
