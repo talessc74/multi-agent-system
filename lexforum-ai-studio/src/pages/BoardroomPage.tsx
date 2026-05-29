@@ -131,7 +131,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                 {/* Expanded */}
                 {isOpen && (
                   <div style={{ padding: '0 20px 20px' }}>
-                    <p className="text-[13px] text-white/60 leading-relaxed mb-3">
+                    <p className="text-[13px] leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
                       {cfg.description}
                     </p>
                     <p className="text-[11px] font-bold uppercase tracking-[0.15em] mb-4" style={{ color: cfg.color }}>
@@ -177,7 +177,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="font-playfair italic text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.04] tracking-tight text-white mb-10"
+            className="font-playfair italic text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.04] tracking-tight mb-10" style={{ color: 'var(--text-primary)' }}
           >
             A incerteza jurídica agora tem<br className="hidden md:block" /> uma arena de testes.
           </motion.h1>
@@ -186,7 +186,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.25 }}
-            className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.3em] text-white/35 max-w-xl leading-relaxed"
+            className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.3em] max-w-xl leading-relaxed" style={{ color: 'var(--text-muted)' }}
           >
             SELECIONE UM DOS MODOS DE OPERAÇÃO PARA INICIAR O PROTOCOLO DE SIMULAÇÃO PROCESSUAL.
           </motion.p>
@@ -195,7 +195,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
         {/* Disclaimer */}
         <div className="px-6 md:px-12 lg:px-20 mb-10 max-w-6xl mx-auto">
           <div className="border-l-2 border-amber-400/25 pl-4 py-1">
-            <p className="text-[9px] uppercase tracking-[0.22em] text-white/25 leading-relaxed">
+            <p className="text-[9px] uppercase tracking-[0.22em] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               O EAI? É UMA FERRAMENTA DE APOIO ANALÍTICO BASEADA EM MODELOS DE LINGUAGEM AVANÇADOS.
               NÃO SUBSTITUI O ACONSELHAMENTO JURÍDICO PROFISSIONAL.
             </p>
@@ -223,7 +223,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                       <Icon className="w-4 h-4 text-white/30 group-hover:text-amber-400 transition-colors duration-200" />
                     </div>
                     <div className="min-w-[160px]">
-                      <h3 className="text-[11px] md:text-[12px] font-bold uppercase tracking-[0.22em] text-white/80 group-hover:text-amber-400 transition-colors duration-200 leading-none mb-1">
+                      <h3 className="text-[11px] md:text-[12px] font-bold uppercase tracking-[0.22em] group-hover:text-amber-400 transition-colors duration-200 leading-none mb-1" style={{ color: 'var(--text-primary)' }}>
                         {title}
                       </h3>
                       <span className="text-[10px] font-mono text-amber-400/60">{price}</span>
@@ -234,14 +234,14 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                   <div className="hidden sm:block w-px h-10 bg-white/[0.06] flex-shrink-0" />
 
                   {/* Description */}
-                  <p className="text-[9px] md:text-[10px] uppercase tracking-[0.16em] text-white/30 leading-relaxed flex-1">
+                  <p className="text-[9px] md:text-[10px] uppercase tracking-[0.16em] leading-relaxed flex-1" style={{ color: 'var(--text-muted)' }}>
                     {desc}
                   </p>
 
                   {/* CTA */}
                   <button
                     onClick={(e) => { e.stopPropagation(); onEnter(mode); }}
-                    className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-white/25 group-hover:text-amber-400 transition-colors duration-200 flex-shrink-0 self-end sm:self-auto whitespace-nowrap"
+                    className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] group-hover:text-amber-400 transition-colors duration-200 flex-shrink-0 self-end sm:self-auto whitespace-nowrap" style={{ color: 'var(--text-muted)' }}
                   >
                     SELECIONAR MODO <ArrowRight className="w-3 h-3" />
                   </button>
@@ -258,8 +258,8 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
               {FOOTER_STATS.map(({ label, value }) => (
                 <div key={label} className="space-y-1.5">
-                  <p className="text-[8px] uppercase tracking-[0.25em] text-white/18 font-bold">{label}</p>
-                  <p className="text-[9px] font-mono text-white/40 leading-relaxed">{value}</p>
+                  <p className="text-[8px] uppercase tracking-[0.25em] font-bold" style={{ color: 'var(--text-muted)' }}>{label}</p>
+                  <p className="text-[9px] font-mono leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{value}</p>
                 </div>
               ))}
             </div>
@@ -269,7 +269,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
         {/* Boardroom Panel */}
         <div className="border-t border-white/[0.05]" style={{ background: 'var(--bg-secondary)' }}>
           <div className="px-6 md:px-12 lg:px-20 py-12 max-w-6xl mx-auto">
-            <p className="text-[8px] uppercase tracking-[0.4em] text-white/20 font-bold mb-10">
+            <p className="text-[8px] uppercase tracking-[0.4em] font-bold mb-10" style={{ color: 'var(--text-muted)' }}>
               PAINEL BOARDROOM
             </p>
 
@@ -285,17 +285,17 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                     key={label}
                     className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-white/[0.05] gap-1"
                   >
-                    <span className="text-[9px] uppercase tracking-[0.22em] text-white/25 font-bold">
+                    <span className="text-[9px] uppercase tracking-[0.22em] font-bold" style={{ color: 'var(--text-muted)' }}>
                       {label}
                     </span>
-                    <span className="text-[10px] font-mono text-white/40">{value}</span>
+                    <span className="text-[10px] font-mono" style={{ color: 'var(--text-secondary)' }}>{value}</span>
                   </div>
                 ))}
               </div>
 
               {/* Flow Steps */}
               <div>
-                <p className="text-[8px] uppercase tracking-[0.3em] text-white/18 font-bold mb-6">
+                <p className="text-[8px] uppercase tracking-[0.3em] font-bold mb-6" style={{ color: 'var(--text-muted)' }}>
                   FLUXO ESTRATÉGICO
                 </p>
                 <div className="space-y-4">
@@ -313,7 +313,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                       }}
                     >
                       <ArrowRight className="w-3 h-3 text-amber-400/50 flex-shrink-0" />
-                      <span className="text-[9px] uppercase tracking-[0.18em] text-white/35 font-medium">
+                      <span className="text-[9px] uppercase tracking-[0.18em] font-medium" style={{ color: 'var(--text-muted)' }}>
                         {step}
                       </span>
                     </motion.div>
