@@ -314,7 +314,7 @@ export default function App() {
       if (u) {
         await createOrUpdateUser(u.uid, u.email);
         const history = await getUserSimulations(u.uid);
-        setUserHistory(history);
+        setUserHistory(history ?? []);
       } else {
         setUserHistory([]);
       }
@@ -618,9 +618,9 @@ const handleGeminiError = (err: any) => {
       // Refresh history if logged in
       if (user) {
         const history = await getUserSimulations(user.uid);
-        setUserHistory(history);
+        setUserHistory(history ?? []);
       }
-      
+
       // Update local stats display
       const newStatsResult = await getStats();
       setGlobalStats({
@@ -668,7 +668,7 @@ const handleGeminiError = (err: any) => {
   const handleShowHistory = async () => {
     if (user) {
       const history = await getUserSimulations(user.uid);
-      setUserHistory(history);
+      setUserHistory(history ?? []);
     }
     setShowHistory(true);
   };
