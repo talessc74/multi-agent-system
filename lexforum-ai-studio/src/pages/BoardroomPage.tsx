@@ -122,7 +122,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                     <Icon style={{ width: '16px', height: '16px', color: cfg.color }} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[16px] font-bold text-white leading-none">{cfg.headline}</p>
+                    <p className="text-[16px] font-bold leading-none" style={{ color: 'var(--text-primary)' }}>{cfg.headline}</p>
                   </div>
                   <ArrowRight
                     style={{ width: '18px', height: '18px', color: 'var(--text-secondary)', flexShrink: 0, transform: isOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}
