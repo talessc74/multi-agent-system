@@ -226,3 +226,14 @@ export const getSimulationById = async (simulationId: string) => {
     return null;
   }
 };
+
+export const registrarAcessoLaudo = async (uid: string, simulationId: string): Promise<void> => {
+  try {
+    const paymentRef = doc(db, 'users', uid, 'payments', simulationId);
+    await updateDoc(paymentRef, {
+      laudoAcessadoEm: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('[registrarAcessoLaudo]', error);
+  }
+};

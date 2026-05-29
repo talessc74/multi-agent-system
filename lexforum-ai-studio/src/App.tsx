@@ -32,7 +32,7 @@ import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode
 import { validateCausa, simulateForum, generateReport, simulateMode5, generateCounterHypotheses, expandHypothesis } from './lib/gemini';
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { getStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById } from './services/dbService';
+import { getStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo } from './services/dbService';
 
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
@@ -742,8 +742,9 @@ const handleGeminiError = (err: any) => {
     const params = new URLSearchParams(window.location.search);
     const simId = params.get('sim');
     if (!simId) return;
-    hasUserPaidForSession(user.uid, simId).then(paid => {
+    hasUserPaidForSession(user.uid, simId).then(async paid => {
       if (paid) {
+        await registrarAcessoLaudo(user.uid, simId);
         getSimulationById(simId).then(sim => {
           if (sim) loadSimulation(sim);
           else setState(prev => ({ ...prev, isUnlocked: true, simulationId: simId }));
