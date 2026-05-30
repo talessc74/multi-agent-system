@@ -13,13 +13,14 @@ Contexto completo sobre arquitetura ativa e pendências em `CLAUDE.md`.
 
 ### 2026-05-29 — Sprint de Compliance, UX e Qualidade
 
-**10 entregas em produção**
+**11 entregas em produção**
 
 #### Qualidade e fixes
 
 - [FIX] 9e243cc — App.tsx: `formatSimDate` extraída como função utilitária. Ternário de 7 linhas em "Meus Casos" substituído por chamada única. Lida com Firestore Timestamp, `_seconds` e string/number. Retorna `'—'` se sem data.
 - [FIX] 54716bb — App.tsx: `getUserSimulations` pode retornar `undefined`. `?? []` adicionado nos três pontos de chamada (linhas 317, 621 e 671) para garantir que `setUserHistory` sempre recebe array — evita crash silencioso em "Meus Casos".
 - [FIX] 96fa407 — App.tsx/LaudoMobile: prop `onShowHypotheses` removida da assinatura e do call-site após dropdown substituir o botão que a chamava. Prop havia virado letra morta.
+- [FIX] 98c07fe — LaudoMobile: botão "Ver como a outra parte vai reagir" (Modo 4) ocultado quando `simulationMode === 5`. Usuário no Modo 5 não tem caminho para Modo 4.
 
 #### UX — Dropdown Modo 1→4
 
