@@ -717,7 +717,7 @@ const handleGeminiError = (err: any) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ simulationId: state.simulationId }),
+        body: JSON.stringify({ simulationId: state.simulationId, mode: state.selectedMode }),
       });
       const data = await response.json();
       if (data.url) {
