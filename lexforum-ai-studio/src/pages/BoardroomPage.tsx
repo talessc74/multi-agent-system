@@ -100,7 +100,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
         </h1>
 
         <p className="text-[15px] mt-4 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-          Descreva seu problema. Receba sua chance real de êxito em minutos.
+          Antes do tribunal, o teste.
         </p>
 
         <div className="mt-10 flex flex-col" style={{ gap: '12px' }}>
@@ -191,7 +191,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
             transition={{ duration: 0.6, delay: 0.25 }}
             className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.3em] max-w-xl leading-relaxed" style={{ color: 'var(--text-muted)' }}
           >
-            SELECIONE UM DOS MODOS DE OPERAÇÃO PARA INICIAR O PROTOCOLO DE SIMULAÇÃO PROCESSUAL.
+            ANTES DO TRIBUNAL, O TESTE.
           </motion.p>
         </section>
 
