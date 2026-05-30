@@ -511,7 +511,7 @@ const handleGeminiError = (err: any) => {
         return;
       }
       setLoading(true);
-      setState(prev => ({ ...prev, step: 'simulating', simStep: 'JUDGING' }));
+      setState(prev => ({ ...prev, step: 'simulating', simStep: 'JUDGING', isUnlocked: false, simulationId: null }));
       setState(prev => ({
         ...prev,
         activeAgents: [
@@ -538,7 +538,7 @@ const handleGeminiError = (err: any) => {
       return;
     }
     setLoading(true);
-    setState(prev => ({ ...prev, step: 'simulating' }));
+    setState(prev => ({ ...prev, step: 'simulating', isUnlocked: false, simulationId: null }));
     try {
       const data = await simulateForum(
         state.caseDescription, 
