@@ -132,7 +132,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
       <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingBottom: 'calc(96px + env(safe-area-inset-bottom))', scrollbarWidth: 'none' }}>
         <div style={{ textAlign: 'center', padding: '24px 20px 16px' }}>
           <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 8px' }}>Índice de força argumentativa</p>
-          <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '56px', fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, color: modeColor, margin: '0 0 6px' }}>{state.selectedMode === 5 ? `${state.mode5Result?.confidenceLevel ?? 0}%` : `${finalPct}%`}</p>
+          <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '56px', fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, color: modeColor, margin: '0 0 6px' }}>{state.selectedMode === 5 ? `${state.mode5Result?.successProbability ?? 0}%` : `${finalPct}%`}</p>
           <p style={{ fontSize: '10px', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: '240px', margin: '0 auto' }}>Estimativa baseada na sua descrição. Não é probabilidade estatística.</p>
         </div>
         {state.selectedMode === 5 && state.mode5Result && (
@@ -2669,7 +2669,7 @@ const handleGeminiError = (err: any) => {
                           {state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}
                         </span>
                         {(() => {
-                          const pct = state.mode5Result.confidenceLevel;
+                          const pct = state.mode5Result.successProbability;
                           const isRecurso = state.mode5Result.subCase === 'RECURSO';
 
                           const getLabel = (p: number) => {
