@@ -298,6 +298,5 @@ O Modo 4 roda com lógica própria. O laudo final do Modo 4 é liberado automati
 - Migração de domínio para eaijuridico.com.br
 - Manual do usuário — glossário, como preencher, o que não fazer
 - `firestore.rules` — limpar warnings (funções não usadas, variáveis com nomes reservados)
-- Desconto R$4,90 Modo 1→4 + validação server-side anti-abuso (simulationId de origem)
 - Botão editar no argumento expandido (Modo 1 → antes do Modo 4)
 - Alerta email Resend — confirmar funcionamento com primeiro erro real de quota
