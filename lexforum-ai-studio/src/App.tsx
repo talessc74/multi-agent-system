@@ -111,7 +111,7 @@ function formatSimDate(createdAt: unknown): string {
 
 function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
-  const finalPct = state.simulation?.finalSuccessProbability ?? 0;
+  const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
   const [isPrinting, setIsPrinting] = React.useState(false);
   const [isExpanding, setIsExpanding] = React.useState(false);
   const [showMode4Preview, setShowMode4Preview] = React.useState(false);
@@ -1472,7 +1472,7 @@ const handleGeminiError = (err: any) => {
       {state.step === 'result' && !state.isUnlocked && (() => {
         const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
         const rounds = state.simulation?.rounds ?? [];
-        const finalPct = state.simulation?.finalSuccessProbability ?? 0;
+        const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
 
         return (
           <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
