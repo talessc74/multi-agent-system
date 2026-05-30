@@ -117,7 +117,7 @@ export const saveSimulation = async (
       });
     }
   } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, 'stats/global');
+    console.error('[saveSimulation] stats update falhou — não crítico:', error);
   }
 
   return simulationId;
