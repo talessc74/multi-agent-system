@@ -68,7 +68,10 @@ service cloud.firestore {
     match /stats/{statId} {
       allow read: if true;
       allow create: if isValidGlobalStats(incoming());
-      allow update: if isValidGlobalStats(incoming());
+      allow update: if incoming().keys().hasOnly(['totalSimulations', 'totalWins', 'lastUpdated'])
+                  && incoming().totalSimulations is int
+                  && incoming().totalWins is int
+                  && incoming().lastUpdated == request.time;
     }
 
     // regions collection (read-only for users)
