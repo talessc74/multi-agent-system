@@ -529,6 +529,19 @@ const handleGeminiError = (err: any) => {
           }
         );
         setState(prev => ({ ...prev, step: 'result', mode5Result: result, simStep: 'IDLE' }));
+        const mode5SimResult: SimulationResult = {
+          area: state.detectedArea,
+          rounds: [],
+          finalSuccessProbability: result.successProbability,
+          lawyerAgentName: undefined,
+          judgeAgentName: result.judgeAgentName,
+        };
+        const simId = await saveSimulation(user?.uid || null, state.mode5Input?.caseDescription || '', mode5SimResult, null, null);
+        if (simId) setState(prev => ({ ...prev, simulationId: simId }));
+        if (user) {
+          const history = await getUserSimulations(user.uid);
+          setUserHistory(history ?? []);
+        }
       } catch (err) {
         handleGeminiError(err);
         setState(prev => ({ ...prev, step: 'input', simStep: 'IDLE' }));
