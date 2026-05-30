@@ -730,16 +730,13 @@ const handleGeminiError = (err: any) => {
     }
   };
 
-  // Verifica accessLevel beta e pagamento ao retornar do Stripe
   useEffect(() => {
     if (!user) return;
-    // Usuário beta — libera tudo sem pagar
     getUserAccessLevel(user.uid).then(level => {
       if (level === 'beta') {
         setState(prev => ({ ...prev, isUnlocked: true }));
       }
     });
-    // Verifica retorno do Stripe
     const params = new URLSearchParams(window.location.search);
     const simId = params.get('sim');
     if (!simId) return;
@@ -753,7 +750,7 @@ const handleGeminiError = (err: any) => {
         window.history.replaceState({}, '', '/');
       }
     });
-  }, [user]);
+  }, [user, state.step]);
 
   if (window.location.pathname === '/termos') return <TermosPage />;
 
