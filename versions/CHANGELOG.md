@@ -11,6 +11,25 @@ Contexto completo sobre arquitetura ativa e pendências em `CLAUDE.md`.
 
 ---
 
+## [2.5.0] — 2026-05-30
+
+### Jornada de Pagamento — Modo 1 → Modo 4
+- Definida jornada completa: Modo 1 (R$9,90) → hipóteses resumidas gratuitas → desconto R$5,90 → hipótese expandida → Modo 4 sem paywall
+- Corrigido preço por modo no servidor: modos 3 e 5 cobram R$5,90, demais R$9,90
+- Frontend passa `mode` no body do checkout para cálculo correto de preço
+
+### Correções
+- [FIX] LaudoMobile — prop onShowHypotheses conectada ao botão "Escolher hipótese" (5daa1be)
+- [FIX] App — geração de hipóteses conectada no mobile (f4c366c)
+- [FIX] Forçar redeploy via trigger — restaurar VITE_GIT_HASH (4264662)
+- [FIX] handleCheckout — mode passado no body para cálculo de preço (9707260)
+- [FIX] server — preço por modo: R$5,90 para modos 3 e 5, R$9,90 para demais (ca66f40)
+
+### Documentação
+- [DOCS] CLAUDE.md — jornada de pagamento Modo 1→4 documentada (947537a)
+
+---
+
 ### 2026-05-29 — Sprint de Compliance, UX e Qualidade
 
 **11 entregas em produção**
