@@ -74,7 +74,7 @@ export interface Mode5Result {
   subCase: Mode5SubCase;
   strategistAnalysis: string;
   recommendation: 'RECORRER' | 'ACEITAR' | 'NEGOCIAR';
-  confidenceLevel: number;
+  successProbability: number;
   reasoning: string;
   tokenCount?: number;
 }

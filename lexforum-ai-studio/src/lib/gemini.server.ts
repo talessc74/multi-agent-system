@@ -416,7 +416,7 @@ export async function simulateMode5Server(
   agentInstruction?: string,
   agentName?: string,
   onProgress?: (step: string, data?: any) => void
-): Promise<{ subCase: 'RECURSO' | 'ACORDO'; strategistAnalysis: string; recommendation: 'RECORRER' | 'ACEITAR' | 'NEGOCIAR'; confidenceLevel: number; reasoning: string; judgeAgentName: string; tokenCount?: number }> {
+): Promise<{ subCase: 'RECURSO' | 'ACORDO'; strategistAnalysis: string; recommendation: 'RECORRER' | 'ACEITAR' | 'NEGOCIAR'; successProbability: number; reasoning: string; judgeAgentName: string; tokenCount?: number }> {
 
   onProgress?.('ANALYZING');
 
@@ -513,7 +513,7 @@ ESCALA DE REFERÊNCIA para successProbability (ACORDO):
     subCase: mode5Input.subCase,
     strategistAnalysis: parsed.strategistAnalysis || '',
     recommendation,
-    confidenceLevel: parsed.successProbability ?? 50,
+    successProbability: parsed.successProbability ?? 50,
     reasoning: parsed.reasoning || '',
     judgeAgentName: judgeName,
     tokenCount: response.usageMetadata?.totalTokenCount
@@ -523,7 +523,7 @@ ESCALA DE REFERÊNCIA para successProbability (ACORDO):
     subCase: mode5Input.subCase,
     strategistAnalysis: parsed.strategistAnalysis || '',
     recommendation,
-    confidenceLevel: parsed.successProbability ?? 50,
+    successProbability: parsed.successProbability ?? 50,
     reasoning: parsed.reasoning || '',
     judgeAgentName: judgeName,
     tokenCount: response.usageMetadata?.totalTokenCount
