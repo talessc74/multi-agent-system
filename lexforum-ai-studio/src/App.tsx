@@ -1559,7 +1559,7 @@ const handleGeminiError = (err: any) => {
                 onClick={handleCheckout}
                 style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '0.3px', borderRadius: '14px', cursor: 'pointer' }}
               >
-                Ver laudo completo — R$ 9,90
+                Ver laudo completo — {[3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90'}
               </button>
               <button
                 onClick={() => window.location.reload()}
