@@ -261,10 +261,10 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
                     <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Mesa Dupla Assistida</p>
                     <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '14px' }}>Advogado e juiz simulam os dois lados do seu caso. Você recebe análise completa com estratégia de ação.</p>
                     <button
-                      onClick={onGoToMode4}
-                      style={{ width: '100%', padding: '14px', background: '#FFB800', color: '#000000', border: 'none', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                      onClick={() => { setShowMode4Preview(false); }}
+                      style={{ width: '100%', padding: '14px', background: 'var(--bg-primary)', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                     >
-                      Iniciar Mesa Dupla — R$ 9,90 →
+                      Escolher hipótese →
                     </button>
                   </div>
                 )}
