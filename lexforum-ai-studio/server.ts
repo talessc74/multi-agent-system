@@ -281,7 +281,7 @@ async function startServer() {
       const decoded = await admin.auth().verifyIdToken(token);
       const uid = decoded.uid;
 
-      const { simulationId } = req.body;
+      const { simulationId, mode } = req.body;
       if (!simulationId) {
         res.status(400).json({ error: 'simulationId required' });
         return;
@@ -299,8 +299,8 @@ async function startServer() {
         line_items: [{
           price_data: {
             currency: 'brl',
-            product_data: { name: 'Laudo Estratégico EAI?' },
-            unit_amount: 990,
+            product_data: { name: `Laudo Estratégico EAI? — R$ ${(mode === 3 || mode === 5) ? '5,90' : '9,90'}` },
+            unit_amount: (mode === 3 || mode === 5) ? 590 : 990,
           },
           quantity: 1,
         }],
