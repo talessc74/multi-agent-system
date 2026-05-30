@@ -264,6 +264,31 @@ The Especialista enforces Project Zero Mindset (Kern 0xF1). When working with ag
 - If a request would bypass security blocks, the Especialista triggers `[ALERTA DE ESTRUTURA INCOMPLETA]`.
 - Privacy by Design and LGPD compliance are mandatory.
 
+## Jornada de Pagamento — Decisões e Fundamentos
+
+### Preços por modo
+- Modo 1 — Tese Estratégica: R$ 9,90
+- Modo 2 — Defesa sob Ataque: R$ 9,90
+- Modo 3 — Mesa Dupla — Juiz: R$ 5,90
+- Modo 4 — Mesa Dupla — Assistida: R$ 9,90
+- Modo 5 — Revisão Pós-Conflito: R$ 5,90
+
+### Jornada Modo 1 → Modo 4
+O usuário inicia pelo Modo 1 e paga R$9,90 para ver o laudo completo.
+No laudo, o sistema oferece hipóteses de defesa que ele pode enfrentar (3 geradas + campo livre).
+As hipóteses aparecem resumidas — ele pode vê-las sem custo adicional.
+Antes de expandir a hipótese escolhida, o sistema exibe um card de desconto:
+~~R$9,90~~ R$5,90 — porque ele já pagou o Modo 1.
+Ao confirmar o pagamento de R$5,90, a hipótese é expandida e carregada no Modo 4.
+O Modo 4 roda com lógica própria. O laudo final do Modo 4 é liberado automaticamente — sem novo paywall — porque o pagamento de R$5,90 já foi a autorização.
+
+### Por que decidimos assim
+- O usuário já obteve o valor principal no Modo 1 (força dos argumentos).
+- As hipóteses resumidas são gratuitas — ele vê o que vai receber antes de decidir.
+- O paywall aparece no momento certo: antes de ver a defesa completa, quando a decisão ainda é consciente.
+- O desconto explícito (~~9,90~~ 5,90) ancora o valor e remove a fricção de "vou pagar de novo?".
+- O laudo do Modo 4 não tem paywall porque o pagamento já foi feito na etapa anterior.
+
 ## Pendências Abertas
 
 - Chat pós-sessão ao vivo (R$ 2,99 / 3 perguntas) — nova fonte de receita
