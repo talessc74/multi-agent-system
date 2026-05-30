@@ -1595,6 +1595,12 @@ const handleGeminiError = (err: any) => {
             caseDescription: state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '',
             userSide: 'AUTHOR',
           }))}
+          onShowHypotheses={async () => {
+            const lastPetition = state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '';
+            setState((prev: any) => ({ ...prev, showHypotheses: true }));
+            const hypotheses = await generateCounterHypotheses(lastPetition, state.detectedArea, state.selectedMode);
+            setState((prev: any) => ({ ...prev, counterHypotheses: hypotheses.length ? hypotheses : [] }));
+          }}
         />
       )}
 
