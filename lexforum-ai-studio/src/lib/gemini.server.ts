@@ -513,7 +513,7 @@ ESCALA DE REFERÊNCIA para successProbability (ACORDO):
     subCase: mode5Input.subCase,
     strategistAnalysis: parsed.strategistAnalysis || '',
     recommendation,
-    successProbability: parsed.successProbability ?? 50,
+    successProbability: (parsed.successProbability != null && parsed.successProbability > 0) ? parsed.successProbability : 50,
     reasoning: parsed.reasoning || '',
     judgeAgentName: judgeName,
     tokenCount: response.usageMetadata?.totalTokenCount
@@ -523,7 +523,7 @@ ESCALA DE REFERÊNCIA para successProbability (ACORDO):
     subCase: mode5Input.subCase,
     strategistAnalysis: parsed.strategistAnalysis || '',
     recommendation,
-    successProbability: parsed.successProbability ?? 50,
+    successProbability: (parsed.successProbability != null && parsed.successProbability > 0) ? parsed.successProbability : 50,
     reasoning: parsed.reasoning || '',
     judgeAgentName: judgeName,
     tokenCount: response.usageMetadata?.totalTokenCount
