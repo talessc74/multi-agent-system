@@ -2576,7 +2576,11 @@ const handleGeminiError = (err: any) => {
                   )}
                 </div>
 
-                {state.step === 'result' && !state.isUnlocked && (
+                {state.step === 'result' && !state.isUnlocked && (() => {
+                  const finalPct = state.selectedMode === 5
+                    ? (state.mode5Result?.successProbability ?? 0)
+                    : (state.simulation?.finalSuccessProbability ?? 0);
+                  return (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -2586,10 +2590,10 @@ const handleGeminiError = (err: any) => {
                       <Lock className="text-white/5 w-24 h-24 -rotate-12" />
                     </div>
                     <div className="relative z-10 flex flex-col items-center text-center space-y-6">
-                      {state.simulation?.finalSuccessProbability !== undefined && (
+                      {finalPct > 0 && (
                         <div className="flex flex-col items-center mb-4">
                           <span className="text-7xl font-serif italic font-bold text-white">
-                            {state.simulation.finalSuccessProbability}%
+                            {finalPct}%
                           </span>
                           <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold mt-1">
                             Índice de força argumentativa
@@ -2616,7 +2620,8 @@ const handleGeminiError = (err: any) => {
                       </div>
                     </div>
                   </motion.div>
-                )}
+                  );
+                })()}
 
                 {(state.detectedArea === 'FAMILY' ||
                   state.detectedArea === 'SOCIAL_SECURITY') && (
