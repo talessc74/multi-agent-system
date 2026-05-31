@@ -2627,7 +2627,7 @@ const handleGeminiError = (err: any) => {
                         onClick={handleCheckout}
                         className="bg-white text-black px-12 py-5 text-sm font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-2xl shadow-black"
                       >
-                        Liberar Laudo Completo — R$ 9,90
+                        Liberar Laudo Completo — {[3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90'}
                       </button>
                       <div className="flex gap-8 border-t border-white/5 pt-6 text-[9px] font-bold uppercase tracking-widest text-white/20">
                         <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Liberação PIX</span>
