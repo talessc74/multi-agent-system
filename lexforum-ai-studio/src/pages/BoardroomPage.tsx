@@ -74,6 +74,7 @@ const FOOTER_STATS = [
   { label: 'Privacidade', value: 'Criptografia RSA-4096' },
   { label: 'Versão', value: `v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}` },
   { label: 'Contato', value: 'eaijuridico@icloud.com' },
+  { label: 'Criado por', value: 'Rádio Kactus © 2026' },
 ];
 
 export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistory, user }: Props) {
@@ -159,9 +160,12 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
           <p className="text-[9px] uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>
             Simulação gratuita · Laudo completo R$9,90
           </p>
-          <p className="text-[9px] uppercase tracking-[0.2em] mt-1" style={{ color: 'var(--text-muted)' }}>
-            {`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}
-          </p>
+          <div className="flex items-center justify-center gap-2 mt-1" style={{ opacity: 0.5 }}>
+            <img src="/radiokactus-logo.PNG" alt="Rádio Kactus" style={{ height: '14px', width: 'auto' }} />
+            <p className="text-[9px] uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>
+              {`criado por Rádio Kactus © 2026 · v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}
+            </p>
+          </div>
           <a href="/termos" className="text-[9px] uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>
             Termos de Uso
           </a>
@@ -262,7 +266,14 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
               {FOOTER_STATS.map(({ label, value }) => (
                 <div key={label} className="space-y-1.5">
                   <p className="text-[8px] uppercase tracking-[0.25em] font-bold" style={{ color: 'var(--text-muted)' }}>{label}</p>
-                  <p className="text-[9px] font-mono leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{value}</p>
+                  {label === 'Criado por' ? (
+                    <div className="flex items-center gap-1.5" style={{ opacity: 0.6 }}>
+                      <img src="/radiokactus-logo.PNG" alt="Rádio Kactus" style={{ height: '14px', width: 'auto' }} />
+                      <p className="text-[9px] font-mono leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{value}</p>
+                    </div>
+                  ) : (
+                    <p className="text-[9px] font-mono leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{value}</p>
+                  )}
                 </div>
               ))}
             </div>
