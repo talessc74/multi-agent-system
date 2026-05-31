@@ -490,6 +490,7 @@ const handleGeminiError = (err: any) => {
       caseDescription: sim.caseDescription,
       detectedArea: sim.area || 'OTHER',
       caseSummary: sim.caseSummary,
+      selectedMode: sim.mode5Result ? 5 : prev.selectedMode,
       simulation: {
         area: sim.area,
         rounds: sim.rounds || [],
@@ -498,6 +499,7 @@ const handleGeminiError = (err: any) => {
         judgeAgentName: sim.judgeAgentName
       },
       report: sim.report,
+      mode5Result: sim.mode5Result ?? prev.mode5Result,
       isUnlocked: true
     }));
     setShowHistory(false);
