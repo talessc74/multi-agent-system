@@ -536,7 +536,21 @@ const handleGeminiError = (err: any) => {
           lawyerAgentName: undefined,
           judgeAgentName: result.judgeAgentName,
         };
-        const simId = await saveSimulation(user?.uid || null, state.mode5Input?.caseDescription || '', mode5SimResult, null, null);
+        const simId = await saveSimulation(
+          user?.uid || null,
+          state.mode5Input?.caseDescription || '',
+          mode5SimResult,
+          null,
+          null,
+          {
+            successProbability: result.successProbability,
+            recommendation: result.recommendation,
+            strategistAnalysis: result.strategistAnalysis,
+            reasoning: result.reasoning,
+            subCase: state.mode5Input?.subCase,
+            judgeAgentName: result.judgeAgentName,
+          }
+        );
         if (simId) setState(prev => ({ ...prev, simulationId: simId }));
         if (user) {
           const history = await getUserSimulations(user.uid);
