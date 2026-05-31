@@ -9,6 +9,13 @@ Todos os registros de versões, mudanças e decisões do projeto.
 Sessões de desenvolvimento do EAI? Studio (`lexforum-ai-studio/`).
 Contexto completo sobre arquitetura ativa e pendências em `CLAUDE.md`.
 
+### 2026-05-30 — Resolução de Bloqueadores Pré-Lançamento
+
+**2 itens resolvidos**
+
+- [FIX] Tema claro App.tsx (telas de simulação, laudo, input) — tokens CSS aplicados. Contraste corrigido para usuários iPhone com tema claro do sistema.
+- [FIX] Stripe operacional em produção — jornada de pagamento validada end-to-end em modo live.
+
 ---
 
 ## [2.5.1] — 2026-05-30
