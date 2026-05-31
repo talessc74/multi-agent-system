@@ -11,6 +11,18 @@ Contexto completo sobre arquitetura ativa e pendências em `CLAUDE.md`.
 
 ---
 
+## [2.5.1] — 2026-05-30
+
+### Correções — Modo 5 end-to-end
+
+- [FIX] 6c0a32b — App — resultado bloqueado desktop: `finalPct` lê `mode5Result.successProbability` no Modo 5. Percentual aparece corretamente antes do pagamento.
+- [FIX] c988dc9 — dbService — `saveSimulation`: aceita e persiste `mode5Result` completo como sexto parâmetro opcional.
+- [FIX] 0551317 — App — Modo 5: passa `mode5Result` completo (`successProbability`, `recommendation`, `strategistAnalysis`, `reasoning`, `subCase`, `judgeAgentName`) para `saveSimulation`.
+- [FIX] f71062a — App — `loadSimulation`: restaura `mode5Result` e força `selectedMode: 5` após retorno do Stripe. Laudo desbloqueado agora exibe conteúdo real.
+- [FIX] 023fe47 — App — resultado bloqueado desktop: preço dinâmico R$5,90 para modos 3 e 5, R$9,90 para demais.
+
+---
+
 ## [2.5.0] — 2026-05-30
 
 ### Jornada de Pagamento — Modo 1 → Modo 4
