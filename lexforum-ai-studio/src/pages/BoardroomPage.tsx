@@ -74,7 +74,6 @@ const FOOTER_STATS = [
   { label: 'Privacidade', value: 'Criptografia RSA-4096' },
   { label: 'Versão', value: `v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}` },
   { label: 'Contato', value: 'eaijuridico@icloud.com' },
-  { label: 'Criado por', value: 'Rádio Kactus © 2026' },
 ];
 
 export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistory, user }: Props) {
@@ -160,8 +159,8 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
           <p className="text-[9px] uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>
             Simulação gratuita · Laudo completo R$9,90
           </p>
-          <p className="text-[9px] uppercase tracking-[0.2em] mt-1" style={{ color: 'var(--text-muted)', opacity: 0.6 }}>
-            {`criado por Rádio Kactus © 2026 · v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}
+          <p className="text-[9px] uppercase tracking-[0.2em] mt-1" style={{ color: 'var(--text-muted)' }}>
+            {`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}
           </p>
           <a href="/termos" className="text-[9px] uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>
             Termos de Uso
