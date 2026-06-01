@@ -2229,7 +2229,7 @@ const handleGeminiError = (err: any) => {
                     <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
                       {state.selectedMode === 2
                         ? 'Nossa IA constrói sua defesa técnica e o juiz avalia em até 3 ciclos.'
-                        : 'Tecnologia de ponta para análise estratégica de petições, processada por agentes autônomos especializados.'
+                        : 'Para quem tem uma situação e quer entender, antes de qualquer passo, se os argumentos estão do seu lado.'
                       }
                     </p>
                   </div>
