@@ -2631,7 +2631,7 @@ const handleGeminiError = (err: any) => {
                         Liberar Laudo Completo — {[3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90'}
                       </button>
                       <div className="flex gap-8 border-t border-white/5 pt-6 text-[9px] font-bold uppercase tracking-widest text-white/20">
-                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Liberação PIX</span>
+                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Pagamento seguro</span>
                         <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Acesso Vitalício</span>
                         <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Formato Profissional</span>
                       </div>
@@ -3479,7 +3479,7 @@ const handleGeminiError = (err: any) => {
           <div className="flex-1 md:w-1/2 p-10 flex items-center justify-between gap-12">
             <div className="space-y-1">
               <h4 className="text-2xl font-serif italic leading-tight text-white">Obtenha o Laudo Estratégico</h4>
-              <p className="text-xs text-white/30 font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via PIX. Estratégia técnica detalhada.</p>
+              <p className="text-xs text-white/30 font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via cartão. Estratégia técnica detalhada.</p>
             </div>
             <button 
                onClick={handleCheckout}
