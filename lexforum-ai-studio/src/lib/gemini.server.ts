@@ -46,7 +46,8 @@ export async function validateCausaServer(caseDescription: string, attachments: 
     1. Identifique o ramo do direito brasileiro mais específico aplicável ao caso. Exemplos: CONSUMER, LABOR, CIVIL, FAMILY, SOCIAL_SECURITY, MARITIME, CRIMINAL, TAX, ENVIRONMENTAL, ADMINISTRATIVE, CORPORATE — ou qualquer outro ramo pertinente. Retorne em inglês, maiúsculas, sem espaços.
     2. Verifique se o usuário mencionou um juiz, vara ou comarca específica no relato ou nos documentos. Se sim, extraia, senão null.
     3. Crie um resumo conciso em um ou dois parágrafos do que você entendeu ser o núcleo central do problema/causa. IMPORTANTE: responda SEMPRE em português brasileiro, independentemente do idioma em que a causa foi redigida.
-    
+    4. Identifique quem é o usuário nesta ação judicial: se ele é quem MOVE a ação (polo ativo/autor) ou quem RESPONDE à ação (polo passivo/réu). Retorne 'AUTOR' ou 'REU'.
+
     Causa: ${caseDescription}`,
     attachments
   );
@@ -64,9 +65,10 @@ export async function validateCausaServer(caseDescription: string, attachments: 
           area: { type: Type.STRING, description: "Brazilian legal branch in English uppercase (e.g. CONSUMER, LABOR, CIVIL, MARITIME, CRIMINAL, TAX, ENVIRONMENTAL, ADMINISTRATIVE, CORPORATE, FAMILY, SOCIAL_SECURITY, or any other)" },
           specificJudge: { type: Type.STRING },
           summary: { type: Type.STRING },
-          detectedProfile: { type: Type.STRING }
+          detectedProfile: { type: Type.STRING },
+          userPole: { type: Type.STRING, description: "AUTOR se o usuário move a ação, REU se o usuário responde à ação" }
         },
-        required: ["area", "summary", "detectedProfile"]
+        required: ["area", "summary", "detectedProfile", "userPole"]
       }
     }
   });
@@ -83,7 +85,8 @@ export async function validateCausaServer(caseDescription: string, attachments: 
     area: (parsed.area?.toUpperCase() as LegalArea) || LegalArea.OTHER,
     specificJudge: parsed.specificJudge || null,
     summary: parsed.summary || null,
-    detectedProfile: (parsed.detectedProfile === 'profissional' ? 'profissional' : 'leigo') as 'leigo' | 'profissional'
+    detectedProfile: (parsed.detectedProfile === 'profissional' ? 'profissional' : 'leigo') as 'leigo' | 'profissional',
+    userPole: (parsed.userPole === 'REU' ? 'REU' : 'AUTOR') as 'AUTOR' | 'REU'
   };
 }
 
@@ -276,7 +279,9 @@ export async function simulateForumServer(
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: prepareParts(lawPrompt, attachments) }],
       config: {
-        systemInstruction: lawAgent.instruction
+        systemInstruction: lawAgent.instruction + (userSide === 'DEFENSE'
+          ? '\n\nATENÇÃO: O usuário é o RÉU. Você está defendendo os interesses do réu. Nunca argumente pelo lado do autor.'
+          : '\n\nATENÇÃO: O usuário é o AUTOR. Você está defendendo os interesses do autor. Nunca argumente pelo lado do réu.')
       }
     });
     currentPetition = lawRes.text || "";

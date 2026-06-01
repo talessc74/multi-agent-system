@@ -42,6 +42,7 @@ export interface AppState {
   detectedArea: LegalArea;
   caseSummary: string | null;
   specificJudge: string | null;
+  userPole?: 'AUTOR' | 'REU';
   simulation: SimulationResult | null;
   report: ReportContent | null;
   isUnlocked: boolean;

@@ -467,13 +467,14 @@ const handleGeminiError = (err: any) => {
     setLoading(true);
     try {
       const data = await validateCausa(descToValidate, attsToValidate);
-      setState(prev => ({ 
-        ...prev, 
-        step: 'confirm', 
-        detectedArea: data.area || 'OTHER', 
+      setState(prev => ({
+        ...prev,
+        step: 'confirm',
+        detectedArea: data.area || 'OTHER',
         specificJudge: data.specificJudge,
         caseSummary: data.summary,
         selectedProfile: data.detectedProfile || prev.selectedProfile,
+        userPole: data.userPole || 'AUTOR',
         error: null
       }));
     } catch (err) {
@@ -629,7 +630,7 @@ const handleGeminiError = (err: any) => {
         state.selectedMode,
         state.defenseDescription,
         state.defenseAttachments,
-        state.userSide,
+        state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR'),
         (attempt) => { setRetryCount(attempt); }
       );
       // Select the best round based on probability (highest, then latest if tie)
@@ -1451,6 +1452,34 @@ const handleGeminiError = (err: any) => {
               <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '24px', fontStyle: 'italic', color: 'var(--text-primary)', marginBottom: '16px', lineHeight: 1.3 }}>
                 O sistema entendeu sua causa.
               </p>
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+                <button
+                  onClick={() => setState(prev => ({ ...prev, userPole: 'AUTOR' }))}
+                  style={{
+                    flex: 1, padding: '12px 8px', fontSize: '11px', fontWeight: 700,
+                    letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer',
+                    border: state.userPole === 'AUTOR' ? '2px solid var(--accent)' : '2px solid var(--border)',
+                    background: state.userPole === 'AUTOR' ? 'rgba(0,255,239,0.1)' : 'var(--bg-card)',
+                    color: state.userPole === 'AUTOR' ? 'var(--accent)' : 'var(--text-secondary)',
+                    borderRadius: '10px'
+                  }}
+                >
+                  ⚔️ Estou processando
+                </button>
+                <button
+                  onClick={() => setState(prev => ({ ...prev, userPole: 'REU' }))}
+                  style={{
+                    flex: 1, padding: '12px 8px', fontSize: '11px', fontWeight: 700,
+                    letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer',
+                    border: state.userPole === 'REU' ? '2px solid var(--accent)' : '2px solid var(--border)',
+                    background: state.userPole === 'REU' ? 'rgba(0,255,239,0.1)' : 'var(--bg-card)',
+                    color: state.userPole === 'REU' ? 'var(--accent)' : 'var(--text-secondary)',
+                    borderRadius: '10px'
+                  }}
+                >
+                  🛡️ Estou sendo processado
+                </button>
+              </div>
               {/* Card resumo */}
               {state.caseSummary && (
                 <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '14px', padding: '16px', marginBottom: '16px' }}>
@@ -2429,7 +2458,32 @@ const handleGeminiError = (err: any) => {
                     </p>
                   </div>
                 )}
-                
+
+                <div className="flex gap-4 justify-center mt-6">
+                  <button
+                    onClick={() => setState(prev => ({ ...prev, userPole: 'AUTOR' }))}
+                    className="flex-1 py-3 px-4 text-[11px] font-bold uppercase tracking-widest transition-all"
+                    style={{
+                      border: state.userPole === 'AUTOR' ? '2px solid var(--accent)' : '1px solid rgba(255,255,255,0.1)',
+                      background: state.userPole === 'AUTOR' ? 'rgba(0,255,239,0.08)' : 'transparent',
+                      color: state.userPole === 'AUTOR' ? 'var(--accent)' : 'rgba(255,255,255,0.4)'
+                    }}
+                  >
+                    ⚔️ Estou processando alguém
+                  </button>
+                  <button
+                    onClick={() => setState(prev => ({ ...prev, userPole: 'REU' }))}
+                    className="flex-1 py-3 px-4 text-[11px] font-bold uppercase tracking-widest transition-all"
+                    style={{
+                      border: state.userPole === 'REU' ? '2px solid var(--accent)' : '1px solid rgba(255,255,255,0.1)',
+                      background: state.userPole === 'REU' ? 'rgba(0,255,239,0.08)' : 'transparent',
+                      color: state.userPole === 'REU' ? 'var(--accent)' : 'rgba(255,255,255,0.4)'
+                    }}
+                  >
+                    🛡️ Estou sendo processado
+                  </button>
+                </div>
+
                 <p className="text-white/40 text-sm font-sans uppercase tracking-widest leading-relaxed mt-8 max-w-lg mx-auto">
                   Agentes especializados escalados. Deseja iniciar o fórum?
                 </p>
