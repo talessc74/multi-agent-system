@@ -97,7 +97,7 @@ Origem: migrado do LexForum (Next.js + Vercel + Supabase) em maio/2026. Todo des
 | AI Model | Gemini 2.5 Flash (`gemini-2.5-flash`) |
 | Deploy | Cloud Run — `eai-producao`, região `us-east1` |
 | Projeto GCP | `gen-lang-client-0982741688` |
-| URL | eai.radiokactus.com |
+| URL | eaijuridico.com.br |
 | Dockerfile | `lexforum-ai-studio/Dockerfile` |
 | Pipeline | `cloudbuild.yaml` (raiz do repo) — push em main deploya automaticamente |
 
@@ -295,8 +295,9 @@ O Modo 4 roda com lógica própria. O laudo final do Modo 4 é liberado automati
 - Chat no histórico — mesmo fluxo, transcript já salvo
 - "Meus Casos" — data da consulta (ausente na UI)
 - Stats globais com dados reais do Firestore (win rate, precisão, Forge Monitor — hoje mockados)
-- Migração de domínio para eaijuridico.com.br
 - Manual do usuário — glossário, como preencher, o que não fazer
 - `firestore.rules` — limpar warnings (funções não usadas, variáveis com nomes reservados)
 - Botão editar no argumento expandido (Modo 1 → antes do Modo 4)
 - Alerta email Resend — confirmar funcionamento com primeiro erro real de quota
+- Retry webhook Stripe — monitoramento manual por ora, implementação semana 1
+- Seletor AUTOR/RÉU na tela de confirmação — roadmap V2 (lógica no backend, UI removida por decisão de produto)

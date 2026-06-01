@@ -9,6 +9,38 @@ Todos os registros de versões, mudanças e decisões do projeto.
 Sessões de desenvolvimento do EAI? Studio (`lexforum-ai-studio/`).
 Contexto completo sobre arquitetura ativa e pendências em `CLAUDE.md`.
 
+### 2026-05-31 — Dia de Lançamento
+
+**Produto lançado em eaijuridico.com.br**
+
+#### Infraestrutura
+- [CONFIG] Firebase Auth — `eaijuridico.com.br` adicionado aos domínios autorizados. Google OAuth operacional no novo domínio.
+- [CONFIG] Cloud Run — variável `APP_URL` atualizada para `https://eaijuridico.com.br`. Stripe redireciona para o domínio correto após pagamento.
+- [FIX] Firestore Rules — `data.createdAt == request.time` removido de `isValidSimulation`. Simulações sem login funcionando em produção.
+- [FIX] Firestore Rules — deploy executado para o projeto correto (`eairadiokactus`). Rules anteriores estavam no projeto errado.
+
+#### Produto
+- [FIX] App.tsx — referências a "PIX" substituídas por "cartão". Stripe only.
+- [FIX] App.tsx — descrição Modo 1 desktop atualizada: "Para quem tem uma situação e quer entender, antes de qualquer passo, se os argumentos estão do seu lado."
+- [FEAT] gemini.server.ts — `validateCausaServer` detecta polo processual (`userPole: AUTOR | REU`) via Gemini.
+- [FEAT] types.ts — `userPole?: 'AUTOR' | 'REU'` adicionado ao `AppState`.
+- [FEAT] App.tsx — `userPole` gravado no estado após validação. `userSide` derivado de `userPole` na chamada de `simulateForum`.
+- [FEAT] gemini.server.ts — `sideContext` injetado no advogado dos modos 1 e 2 conforme `userSide`.
+- [FIX] App.tsx — seletor AUTOR/RÉU removido da tela de confirmação (decisão de produto — roadmap V2). Lógica de polo mantida no backend.
+- [FEAT] BoardroomPage.tsx — logo Rádio Kactus © 2026 adicionado ao rodapé mobile e desktop.
+- [FEAT] public/radiokactus-logo.PNG — logo Rádio Kactus adicionado ao repositório.
+
+#### Decisões de produto
+- Seletor AUTOR/RÉU na tela de confirmação: lógica implementada no backend, UI adiada para V2. Solução de curto prazo: melhorar descrições dos modos na entrada.
+- Modo 1 não é para réus — usuário sendo processado deve usar Modo 2. Clareza na entrada resolve o problema de roteamento.
+
+#### Pendências registradas
+- `firestore.rules` — warnings (funções não usadas, variáveis com nomes reservados)
+- Retry webhook Stripe — monitoramento manual por ora, implementação semana 1
+- Seletor AUTOR/RÉU na tela de confirmação — roadmap V2
+
+---
+
 ### 2026-05-30 — Resolução de Bloqueadores Pré-Lançamento
 
 **2 itens resolvidos**
