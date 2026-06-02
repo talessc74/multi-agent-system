@@ -36,7 +36,7 @@ Nenhuma sessão com decisões relevantes pode ser encerrada sem que este arquivo
 This repository contains two distinct components:
 
 1. **Multi-Agent System** — JSON-based, no executable code. All artifacts are configuration files and Markdown prompts consumed by AI platforms (Claude, Gemini, Copilot).
-2. **EAI? App** (`lexforum-ai-studio/`) — Vite + Express + TypeScript application deployed at [eai.radiokactus.com](https://eai.radiokactus.com) via Cloud Run.
+2. **EAI? App** (`lexforum-ai-studio/`) — Vite + Express + TypeScript application deployed at [eaijuridico.com.br](https://eaijuridico.com.br) via Cloud Run.
 
 **Current scale (v5.0.0):** 14 seeds · 13 agents · 2 core config agents · 1 advisory board framework · 1 web application
 
@@ -301,3 +301,4 @@ O Modo 4 roda com lógica própria. O laudo final do Modo 4 é liberado automati
 - Alerta email Resend — confirmar funcionamento com primeiro erro real de quota
 - Retry webhook Stripe — monitoramento manual por ora, implementação semana 1
 - Seletor AUTOR/RÉU na tela de confirmação — roadmap V2 (lógica no backend, UI removida por decisão de produto)
+- Google Analytics GA4 (G-CJHGE4WQPS) — instalado em 01/06/2026, ativo em produção
