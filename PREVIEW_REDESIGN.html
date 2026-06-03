@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EAI? — Preview de Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button { cursor: pointer; font: inherit; }
+textarea, input { font: inherit; }
+
+/* ─── TOKENS ─── */
+:root {
+  --bg: #090B0E;
+  --bg-card: #111318;
+  --bg-elevated: #181C23;
+  --border: rgba(255,255,255,0.07);
+  --border-active: rgba(0,255,239,0.30);
+  --text: #ECEEF2;
+  --text-2: #7A8494;
+  --text-3: #3D4554;
+  --cyan: #00FFEF;
+  --cyan-dim: rgba(0,255,239,0.12);
+  --red: #FF5A5A;
+  --purple: #9B7FF0;
+  --amber: #FFB800;
+  --green: #00CC88;
+  --price: #E8C200;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.serif { font-family: "Cormorant Garamond", Georgia, serif; }
+.mono  { font-family: "JetBrains Mono", monospace; }
+
+/* ─── PREVIEW CHROME ─── */
+#preview-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  height: 52px;
+  background: #0F1218;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  display: flex; align-items: center; gap: 0;
+  padding: 0 16px;
+  overflow-x: auto;
+}
+#preview-bar .pb-label {
+  font-size: 9px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.25); white-space: nowrap; padding-right: 20px;
+  border-right: 1px solid rgba(255,255,255,0.10); margin-right: 16px; flex-shrink: 0;
+}
+#preview-bar button {
+  height: 52px; padding: 0 14px;
+  font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--text-2); background: none; border: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap; flex-shrink: 0; transition: all .15s;
+}
+#preview-bar button.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+#preview-bar button:hover:not(.active) { color: var(--text); }
+
+.screen { display: none; padding-top: 52px; min-height: 100vh; }
+.screen.active { display: block; }
+
+/* ─── NAVBAR ─── */
+.navbar {
+  position: sticky; top: 52px; z-index: 100; height: 56px;
+  background: rgba(9,11,14,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+}
+.navbar-logo { display: flex; align-items: baseline; gap: 0; }
+.navbar-logo .brand { font-family: "Cormorant Garamond", serif; font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
+.navbar-logo .check { font-family: "Cormorant Garamond", serif; font-size: 22px; font-weight: 700; color: var(--cyan); }
+.navbar-right { display: flex; align-items: center; gap: 4px; }
+.nav-btn {
+  height: 36px; padding: 0 12px;
+  font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--text-2); background: none; border: 1px solid var(--border);
+  transition: all .15s;
+}
+.nav-btn:hover { color: var(--text); border-color: rgba(255,255,255,.15); }
+.nav-icon-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-2); background: none; border: none;
+}
+.avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--cyan-dim); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--cyan); }
+
+/* ─── SCREEN 1: HOME ─── */
+.home-hero {
+  max-width: 1100px; margin: 0 auto;
+  padding: 72px 40px 48px;
+}
+.home-hero h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(44px, 6vw, 76px);
+  font-weight: 700; font-style: italic;
+  line-height: 1.03; letter-spacing: -.5px;
+  color: var(--text);
+  margin-bottom: 20px;
+  max-width: 820px;
+}
+.home-hero .tagline {
+  font-size: 10px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 8px;
+}
+.home-hero .sub {
+  font-size: 15px; color: var(--text-2); line-height: 1.65;
+  max-width: 480px; margin-top: 16px;
+}
+
+/* Disclaimer strip */
+.disclaimer-strip {
+  max-width: 1100px; margin: 0 auto; padding: 0 40px 32px;
+}
+.disclaimer-strip .inner {
+  border-left: 2px solid rgba(255,184,0,.2);
+  padding: 6px 0 6px 16px;
+}
+.disclaimer-strip p {
+  font-size: 9px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--text-3); line-height: 1.7;
+}
+
+/* Mode list */
+.mode-list {
+  max-width: 1100px; margin: 0 auto; padding: 0 40px 60px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.mode-row {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  display: flex; align-items: center; gap: 0;
+  padding: 20px 24px;
+  transition: all .2s; cursor: pointer; position: relative;
+  overflow: hidden;
+}
+.mode-row::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--mode-color, var(--cyan)); opacity: 0;
+  transition: opacity .2s;
+}
+.mode-row:hover { border-color: rgba(255,255,255,.12); background: var(--bg-elevated); }
+.mode-row:hover::before { opacity: 1; }
+
+.mode-icon-wrap {
+  width: 36px; height: 36px; flex-shrink: 0; margin-right: 20px;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.mode-row:hover .mode-icon-wrap { border-color: rgba(255,255,255,.15); }
+
+.mode-icon { font-size: 14px; }
+
+.mode-title-block { min-width: 200px; flex-shrink: 0; margin-right: 32px; }
+.mode-name {
+  font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--text); transition: color .2s;
+}
+.mode-row:hover .mode-name { color: var(--mode-color, var(--cyan)); }
+.mode-price { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--price); margin-top: 4px; }
+
+.mode-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; margin-right: 28px; }
+
+.mode-desc {
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-3); line-height: 1.75; flex: 1;
+}
+
+.mode-cta {
+  font-size: 9px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--text-3); flex-shrink: 0; margin-left: 24px;
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  transition: color .2s;
+}
+.mode-row:hover .mode-cta { color: var(--mode-color, var(--cyan)); }
+
+/* Stats footer */
+.stats-footer {
+  border-top: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.stats-inner {
+  max-width: 1100px; margin: 0 auto; padding: 32px 40px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+}
+.stat-item .stat-label {
+  font-size: 8px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 6px;
+}
+.stat-item .stat-val {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px; color: var(--text-2); line-height: 1.5;
+}
+
+/* ─── SCREEN 2: INPUT ─── */
+.input-wrap {
+  max-width: 720px; margin: 0 auto; padding: 48px 24px 80px;
+}
+.step-indicator { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
+.step-dots { display: flex; gap: 4px; }
+.dot { width: 32px; height: 3px; border-radius: 2px; background: var(--border); transition: background .3s; }
+.dot.active { background: var(--cyan); }
+.dot.done { background: rgba(0,255,239,.35); }
+.step-label { font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--text-3); }
+
+.input-heading { margin-bottom: 32px; }
+.input-heading h1 { font-family: "Cormorant Garamond", serif; font-size: 36px; font-weight: 700; color: var(--text); line-height: 1.1; margin-bottom: 8px; }
+.input-heading p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+
+.mode-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border: 1px solid var(--border-active); background: var(--cyan-dim);
+  font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 28px;
+}
+
+.chips-label { font-size: 9px; font-weight: 700; letter-spacing: .25em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+.chip {
+  padding: 6px 14px; border: 1px solid var(--border); background: none;
+  font-size: 11px; color: var(--text-2); transition: all .15s;
+}
+.chip:hover { border-color: var(--border-active); color: var(--cyan); }
+.chip.selected { border-color: var(--border-active); color: var(--cyan); background: var(--cyan-dim); }
+
+.text-area-wrap {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-left: 3px solid var(--cyan);
+  margin-bottom: 20px; position: relative;
+}
+.text-area-label { padding: 14px 20px 0; font-size: 9px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--text-3); }
+.text-area-wrap textarea {
+  width: 100%; min-height: 160px;
+  background: transparent; border: none; outline: none; resize: vertical;
+  padding: 10px 20px 16px;
+  font-size: 15px; font-family: "Cormorant Garamond", serif; font-style: italic;
+  color: var(--text); line-height: 1.7;
+}
+.text-area-wrap textarea::placeholder { color: var(--text-3); }
+.char-count { padding: 0 20px 12px; font-family: "JetBrains Mono", monospace; font-size: 9px; color: var(--text-3); text-align: right; }
+
+.upload-zone {
+  border: 1px dashed var(--border); padding: 16px 20px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 28px; cursor: pointer; transition: border-color .15s;
+}
+.upload-zone:hover { border-color: rgba(255,255,255,.15); }
+.upload-icon { font-size: 16px; color: var(--text-3); flex-shrink: 0; }
+.upload-text { font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--text-3); }
+.upload-sub { font-size: 9px; color: var(--text-3); margin-top: 2px; letter-spacing: .08em; }
+
+.submit-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.btn-primary {
+  height: 52px; padding: 0 32px;
+  font-size: 11px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  background: var(--cyan); color: #000;
+  border: none; transition: opacity .15s;
+}
+.btn-primary:hover { opacity: .88; }
+.btn-primary:disabled { opacity: .35; cursor: not-allowed; }
+.submit-note { font-size: 10px; color: var(--text-3); line-height: 1.6; max-width: 280px; text-align: right; }
+
+/* ─── SCREEN 3: CONFIRM ─── */
+.confirm-wrap { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.cause-box {
+  border: 1px solid var(--border); background: var(--bg-card);
+  padding: 20px; margin-bottom: 20px;
+}
+.cause-box .box-label { font-size: 9px; font-weight: 700; letter-spacing: .25em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+.cause-box .cause-text { font-size: 14px; color: var(--text-2); line-height: 1.7; font-style: italic; font-family: "Cormorant Garamond", serif; }
+
+.analysis-box {
+  border: 1px solid var(--border-active); background: var(--cyan-dim);
+  padding: 20px; margin-bottom: 20px;
+}
+.analysis-box .box-label { font-size: 9px; font-weight: 700; letter-spacing: .25em; text-transform: uppercase; color: var(--cyan); margin-bottom: 14px; }
+.analysis-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.tag {
+  padding: 4px 12px; border: 1px solid var(--border-active);
+  font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--cyan);
+}
+.conf-badge { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--text-3); padding: 4px 10px; border: 1px solid var(--border); }
+.analysis-summary { font-size: 13px; color: var(--text-2); line-height: 1.7; }
+
+.profile-row { margin-bottom: 28px; }
+.profile-row .box-label { font-size: 9px; font-weight: 700; letter-spacing: .25em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+.profile-btns { display: flex; gap: 8px; }
+.profile-btn {
+  padding: 8px 18px; border: 1px solid var(--border); background: none;
+  font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--text-2); transition: all .15s;
+}
+.profile-btn.selected { border-color: var(--border-active); color: var(--cyan); background: var(--cyan-dim); }
+
+/* ─── SCREEN 4: SIMULATING ─── */
+.sim-wrap {
+  min-height: calc(100vh - 108px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 48px 24px;
+}
+.sim-logo { font-family: "Cormorant Garamond", serif; font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 48px; }
+.sim-logo span { color: var(--cyan); }
+
+.sim-stages { width: 100%; max-width: 480px; margin-bottom: 48px; display: flex; flex-direction: column; gap: 0; }
+.sim-stage {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 20px; border: 1px solid var(--border);
+  background: var(--bg-card); margin-bottom: 2px;
+  position: relative; overflow: hidden;
+}
+.sim-stage.done { border-color: rgba(0,255,239,.15); }
+.sim-stage.running { border-color: var(--border-active); }
+.sim-stage.pending { opacity: .4; }
+
+.sim-stage::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, var(--cyan-dim), transparent);
+  transform: translateX(-100%);
+}
+.sim-stage.running::after { animation: shimmer 1.6s ease-in-out infinite; }
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.stage-status { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.stage-dot-done { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); }
+.stage-dot-run { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); animation: pulse-dot 1s ease-in-out infinite; }
+.stage-dot-wait { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+
+.stage-info { flex: 1; }
+.stage-name { font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--text); }
+.stage-desc { font-size: 9px; color: var(--text-3); margin-top: 2px; letter-spacing: .08em; }
+
+.stage-time { font-family: "JetBrains Mono", monospace; font-size: 9px; color: var(--text-3); flex-shrink: 0; }
+
+.sim-caption { font-size: 12px; color: var(--text-3); text-align: center; line-height: 1.7; max-width: 360px; }
+
+/* ─── SCREEN 5: RESULT ─── */
+.result-wrap { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.result-header { margin-bottom: 36px; }
+.result-header h1 { font-family: "Cormorant Garamond", serif; font-size: 34px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+.result-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge {
+  padding: 5px 14px; border: 1px solid var(--border);
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-2);
+}
+.badge.primary { border-color: var(--border-active); color: var(--cyan); background: var(--cyan-dim); font-family: "JetBrains Mono", monospace; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; padding: 6px 16px; }
+
+/* Gauge */
+.gauge-block {
+  border: 1px solid var(--border); background: var(--bg-card);
+  padding: 32px; margin-bottom: 20px; text-align: center;
+}
+.gauge-number {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 96px; font-weight: 700; line-height: 1; letter-spacing: -4px;
+  color: var(--cyan); position: relative; display: inline-block;
+}
+.gauge-pct { font-size: 32px; font-weight: 400; vertical-align: super; letter-spacing: 0; }
+.gauge-label { font-size: 9px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; color: var(--text-3); margin-top: 10px; }
+.gauge-bar-wrap { margin: 20px auto 0; max-width: 300px; height: 3px; background: var(--border); position: relative; }
+.gauge-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--cyan); border-radius: 2px; transition: width 1s ease; }
+
+/* Volume tabs */
+.vol-tabs { display: flex; border: 1px solid var(--border); background: var(--bg-card); margin-bottom: 2px; overflow: hidden; }
+.vol-tab {
+  flex: 1; padding: 12px; text-align: center;
+  font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--text-3); background: none; border: none; border-right: 1px solid var(--border);
+  transition: all .15s;
+}
+.vol-tab:last-child { border-right: none; }
+.vol-tab.active { color: var(--cyan); background: var(--cyan-dim); }
+
+.section-block { border: 1px solid var(--border); background: var(--bg-card); padding: 20px; margin-bottom: 2px; }
+.section-block.locked { position: relative; overflow: hidden; }
+.section-label { font-size: 9px; font-weight: 700; letter-spacing: .25em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+.section-text { font-size: 14px; color: var(--text-2); line-height: 1.75; }
+
+.lock-overlay {
+  position: absolute; inset: 0;
+  background: rgba(9,11,14,.85);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+}
+.lock-icon { font-size: 18px; color: var(--text-3); }
+.lock-label { font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--text-3); }
+
+.unlock-btn {
+  width: 100%; height: 56px; margin: 20px 0 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  background: var(--amber); color: #000; border: none;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: opacity .15s;
+}
+.unlock-btn:hover { opacity: .88; }
+.unlock-price { font-family: "JetBrains Mono", monospace; font-size: 14px; font-weight: 400; }
+
+.restart-btn {
+  width: 100%; height: 48px;
+  font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  background: none; color: var(--text-2); border: 1px solid var(--border);
+  transition: all .15s;
+}
+.restart-btn:hover { border-color: rgba(255,255,255,.15); color: var(--text); }
+
+/* ─── SCREEN 6: MOBILE ─── */
+.mobile-frame {
+  max-width: 390px; margin: 24px auto;
+  border: 1px solid rgba(255,255,255,.12);
+  background: var(--bg);
+  min-height: 812px;
+  position: relative; overflow: hidden;
+}
+.mobile-navbar {
+  height: 56px; background: rgba(9,11,14,.95);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+}
+.mobile-hero { padding: 28px 24px 24px; }
+.mobile-hero .eyebrow { font-size: 9px; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--text-3); margin-bottom: 14px; }
+.mobile-hero h1 { font-family: "Cormorant Garamond", serif; font-size: 38px; font-style: italic; font-weight: 700; color: var(--text); line-height: 1.1; margin-bottom: 10px; }
+.mobile-hero .sub { font-size: 14px; color: var(--text-2); line-height: 1.6; }
+.mobile-modes { padding: 8px 16px 32px; display: flex; flex-direction: column; gap: 2px; }
+.mobile-mode-row {
+  border: 1px solid var(--border); background: var(--bg-card);
+  padding: 18px 16px; display: flex; align-items: center; gap: 12px;
+  position: relative; overflow: hidden;
+}
+.mobile-mode-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+.mobile-mode-icon-wrap { width: 30px; height: 30px; flex-shrink: 0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.mobile-mode-info { flex: 1; min-width: 0; }
+.mobile-mode-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 2px; }
+.mobile-mode-price { font-family: "JetBrains Mono", monospace; font-size: 9px; color: var(--price); }
+.mobile-arrow { font-size: 14px; color: var(--text-3); flex-shrink: 0; }
+
+.mobile-footer { padding: 16px 24px 28px; border-top: 1px solid var(--border); text-align: center; }
+.mobile-footer p { font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--text-3); line-height: 1.8; }
+.mobile-footer a { color: var(--text-3); text-decoration: none; }
+
+/* ─── ANNOTATION LABELS ─── */
+.annot {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 9px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px; margin-left: 10px; vertical-align: middle;
+}
+.annot.new { background: rgba(0,255,239,.15); color: var(--cyan); }
+.annot.fix { background: rgba(255,90,90,.12); color: var(--red); }
+.annot.imp { background: rgba(255,184,0,.12); color: var(--amber); }
+
+.section-note {
+  font-size: 10px; color: var(--text-3); line-height: 1.6;
+  border-left: 2px solid var(--border); padding-left: 12px; margin: 12px 0;
+}
+
+/* Comparison strip */
+.compare-strip {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+  max-width: 900px; margin: 0 auto 40px; padding: 0 24px;
+}
+.compare-col { padding: 20px; background: var(--bg-card); border: 1px solid var(--border); }
+.compare-col.before { border-left: 3px solid var(--red); }
+.compare-col.after  { border-left: 3px solid var(--green); }
+.compare-title { font-size: 9px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; margin-bottom: 12px; }
+.compare-col.before .compare-title { color: var(--red); }
+.compare-col.after  .compare-title { color: var(--green); }
+.compare-item { font-size: 12px; color: var(--text-2); line-height: 1.7; margin-bottom: 6px; display: flex; gap: 8px; }
+.compare-item::before { content: '→'; flex-shrink: 0; }
+.compare-col.before .compare-item::before { color: var(--red); }
+.compare-col.after  .compare-item::before { color: var(--green); }
+
+/* Page section header */
+.page-section-hdr {
+  max-width: 900px; margin: 40px auto 16px; padding: 0 24px;
+  font-size: 9px; font-weight: 700; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--text-3); display: flex; align-items: center; gap: 12px;
+}
+.page-section-hdr::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+</style>
+</head>
+<body>
+
+<!-- ── PREVIEW NAV ── -->
+<div id="preview-bar">
+  <span class="pb-label">EAI? Preview</span>
+  <button class="active" onclick="show('home')">Home</button>
+  <button onclick="show('input')">Input</button>
+  <button onclick="show('confirm')">Confirmação</button>
+  <button onclick="show('simulating')">Simulando</button>
+  <button onclick="show('result')">Resultado</button>
+  <button onclick="show('mobile')">Mobile</button>
+  <button onclick="show('compare')">O que muda</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 1 — HOME
+═══════════════════════════════════════════════════════ -->
+<div id="screen-home" class="screen active">
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <span class="brand">EAI</span><span class="check">✓?</span>
+    </div>
+    <div class="navbar-right">
+      <button class="nav-icon-btn" title="Tema">☀</button>
+      <button class="nav-btn">Entrar</button>
+    </div>
+  </nav>
+
+  <div class="home-hero">
+    <p class="tagline">Simulador Jurídico</p>
+    <h1>A incerteza jurídica agora tem uma arena de testes.</h1>
+    <p class="sub">Antes do tribunal, o teste. Escolha o modo de simulação e descubra sua chance real de êxito.</p>
+  </div>
+
+  <div class="disclaimer-strip">
+    <div class="inner">
+      <p>O EAI? é uma ferramenta de apoio analítico baseada em modelos de linguagem avançados. Não substitui o aconselhamento jurídico profissional. Não garante resultado judicial.</p>
+    </div>
+  </div>
+
+  <div class="mode-list">
+
+    <div class="mode-row" style="--mode-color: #00FFEF">
+      <div class="mode-icon-wrap"><span class="mode-icon">⚡</span></div>
+      <div class="mode-title-block">
+        <div class="mode-name">Tese Estratégica</div>
+        <div class="mode-price">R$ 9,90</div>
+      </div>
+      <div class="mode-divider"></div>
+      <p class="mode-desc">Descreva sua situação. Descubra se você tem razão e qual sua chance real de ganhar.</p>
+      <div class="mode-cta">Selecionar modo →</div>
+    </div>
+
+    <div class="mode-row" style="--mode-color: #FF5A5A">
+      <div class="mode-icon-wrap"><span class="mode-icon">🛡</span></div>
+      <div class="mode-title-block">
+        <div class="mode-name">Defesa sob Ataque</div>
+        <div class="mode-price">R$ 9,90</div>
+      </div>
+      <div class="mode-divider"></div>
+      <p class="mode-desc">Você está sendo acusado. A IA constrói sua defesa técnica e avalia em 3 ciclos.</p>
+      <div class="mode-cta">Selecionar modo →</div>
+    </div>
+
+    <div class="mode-row" style="--mode-color: #9B7FF0">
+      <div class="mode-icon-wrap"><span class="mode-icon">⚖</span></div>
+      <div class="mode-title-block">
+        <div class="mode-name">Mesa Dupla — Juiz</div>
+        <div class="mode-price">R$ 5,90</div>
+      </div>
+      <div class="mode-divider"></div>
+      <p class="mode-desc">Você traz acusação e defesa prontas. O magistrado especializado emite sentença direta.</p>
+      <div class="mode-cta">Selecionar modo →</div>
+    </div>
+
+    <div class="mode-row" style="--mode-color: #FFB800">
+      <div class="mode-icon-wrap"><span class="mode-icon">⚔</span></div>
+      <div class="mode-title-block">
+        <div class="mode-name">Mesa Dupla — Assistida</div>
+        <div class="mode-price">R$ 9,90</div>
+      </div>
+      <div class="mode-divider"></div>
+      <p class="mode-desc">Acusação e defesa prontas. Escolha seu lado e tenha um advogado IA reforçando sua tese.</p>
+      <div class="mode-cta">Selecionar modo →</div>
+    </div>
+
+    <div class="mode-row" style="--mode-color: #00CC88">
+      <div class="mode-icon-wrap"><span class="mode-icon">⏱</span></div>
+      <div class="mode-title-block">
+        <div class="mode-name">Revisão Pós-Conflito</div>
+        <div class="mode-price">R$ 5,90</div>
+      </div>
+      <div class="mode-divider"></div>
+      <p class="mode-desc">Já existe uma decisão ou proposta? Descubra se vale recorrer ou se o acordo é justo.</p>
+      <div class="mode-cta">Selecionar modo →</div>
+    </div>
+
+  </div>
+
+  <div class="stats-footer">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <div class="stat-label">Base de dados</div>
+        <div class="stat-val">1.9M+ Precedentes</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Simulações realizadas</div>
+        <div class="stat-val" id="sim-counter">Carregando...</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Privacidade</div>
+        <div class="stat-val">Criptografia RSA-4096</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Versão</div>
+        <div class="stat-val">v2.4.0 · Produção</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 2 — INPUT
+═══════════════════════════════════════════════════════ -->
+<div id="screen-input" class="screen">
+  <nav class="navbar">
+    <div class="navbar-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+    <div class="navbar-right">
+      <button class="nav-icon-btn" onclick="show('home')" title="Voltar">← Voltar</button>
+    </div>
+  </nav>
+
+  <div class="input-wrap">
+    <div class="step-indicator">
+      <div class="step-dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <span class="step-label">Passo 1 de 3 · Declaração da causa</span>
+    </div>
+
+    <div class="mode-badge" style="border-color: rgba(0,255,239,.3); color: #00FFEF;">
+      ⚡ Modo 1 — Tese Estratégica
+    </div>
+
+    <div class="input-heading">
+      <h1>O que aconteceu?</h1>
+      <p>Descreva com suas palavras. Sem juridiquês — quanto mais detalhes, mais precisa a simulação.</p>
+    </div>
+
+    <p class="chips-label">Categoria (opcional)</p>
+    <div class="chips">
+      <button class="chip selected">Trabalhista</button>
+      <button class="chip">Consumidor</button>
+      <button class="chip">Imóvel ou vizinho</button>
+      <button class="chip">Dívida ou cobrança</button>
+      <button class="chip">Acidente ou dano</button>
+      <button class="chip">Outro</button>
+    </div>
+
+    <div class="text-area-wrap">
+      <div class="text-area-label">Relato</div>
+      <textarea placeholder="Ex: Fui demitido sem justa causa após 4 anos de empresa. Meu FGTS não foi depositado por 8 meses e a multa de 40% não foi paga. Tenho os holerites e o extrato do FGTS como prova...">Trabalhista: Fui demitido sem justa causa após 4 anos de empresa. Meu FGTS não foi depositado por 8 meses e a multa de 40% não foi paga.</textarea>
+      <div class="char-count">142 / sem limite</div>
+    </div>
+
+    <div class="upload-zone">
+      <span class="upload-icon">📎</span>
+      <div>
+        <div class="upload-text">Adicionar documentos (opcional)</div>
+        <div class="upload-sub">PDF, JPEG ou PNG · máx 10 MB por arquivo · até 5 arquivos</div>
+      </div>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn-primary" onclick="show('confirm')">Validar causa →</button>
+      <p class="submit-note">Simulação educativa. Não substitui assessoria jurídica real.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 3 — CONFIRMAÇÃO
+═══════════════════════════════════════════════════════ -->
+<div id="screen-confirm" class="screen">
+  <nav class="navbar">
+    <div class="navbar-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+    <div class="navbar-right">
+      <button class="nav-icon-btn" onclick="show('input')" style="font-size:12px; color: var(--text-2)">← Ajustar</button>
+    </div>
+  </nav>
+
+  <div class="confirm-wrap">
+    <div class="step-indicator">
+      <div class="step-dots">
+        <div class="dot done"></div>
+        <div class="dot active"></div>
+        <div class="dot"></div>
+      </div>
+      <span class="step-label">Passo 2 de 3 · Confirmação e análise prévia</span>
+    </div>
+
+    <div class="input-heading">
+      <h1>Confirmar e simular</h1>
+      <p>Revise a análise preliminar antes de iniciar o fórum virtual.</p>
+    </div>
+
+    <div class="cause-box">
+      <div class="box-label">Sua causa</div>
+      <p class="cause-text">Trabalhista: Fui demitido sem justa causa após 4 anos de empresa. Meu FGTS não foi depositado por 8 meses e a multa de 40% não foi paga.</p>
+    </div>
+
+    <div class="analysis-box">
+      <div class="box-label">Análise preliminar</div>
+      <div class="analysis-tags">
+        <span class="tag">Direito do Trabalho</span>
+        <span class="conf-badge">Confiança: 94%</span>
+      </div>
+      <p class="analysis-summary">Caso de rescisão sem justa causa com possível irregularidade nos depósitos de FGTS e ausência de pagamento da multa rescisória. Há elementos que indicam direito ao recebimento de verbas rescisórias completas.</p>
+    </div>
+
+    <div class="profile-row">
+      <div class="box-label">Perfil do laudo</div>
+      <div class="profile-btns">
+        <button class="profile-btn selected">Linguagem simples</button>
+        <button class="profile-btn">Técnico-jurídico</button>
+      </div>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn-primary" onclick="show('simulating')">Iniciar simulação →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 4 — SIMULANDO
+═══════════════════════════════════════════════════════ -->
+<div id="screen-simulating" class="screen">
+  <nav class="navbar">
+    <div class="navbar-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+  </nav>
+
+  <div class="sim-wrap">
+    <div class="sim-stages">
+
+      <div class="sim-stage done">
+        <div class="stage-status"><div class="stage-dot-done"></div></div>
+        <div class="stage-info">
+          <div class="stage-name">Ativando sementes jurídicas</div>
+          <div class="stage-desc">Direito do Trabalho · TRT4 · TST</div>
+        </div>
+        <div class="stage-time">0.8s</div>
+      </div>
+
+      <div class="sim-stage done">
+        <div class="stage-status"><div class="stage-dot-done"></div></div>
+        <div class="stage-info">
+          <div class="stage-name">Advogado peticionando</div>
+          <div class="stage-desc">Dr. Marcelo Fontes — Trabalhista</div>
+        </div>
+        <div class="stage-time">4.2s</div>
+      </div>
+
+      <div class="sim-stage running">
+        <div class="stage-status"><div class="stage-dot-run"></div></div>
+        <div class="stage-info">
+          <div class="stage-name">Magistrado julgando</div>
+          <div class="stage-desc">Juíza Dra. Renata Mello — Rodada 2/3</div>
+        </div>
+        <div class="stage-time" id="sim-timer">12s</div>
+      </div>
+
+      <div class="sim-stage pending">
+        <div class="stage-status"><div class="stage-dot-wait"></div></div>
+        <div class="stage-info">
+          <div class="stage-name">Elaborando laudo final</div>
+          <div class="stage-desc">Volume I e Volume II</div>
+        </div>
+        <div class="stage-time">—</div>
+      </div>
+
+    </div>
+
+    <p class="sim-caption">
+      Agentes especializados estão analisando sua causa.<br>
+      Isso pode levar entre 20 e 60 segundos.
+    </p>
+
+    <div style="margin-top: 32px;">
+      <button onclick="show('result')" style="font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--text-3); background:none; border:1px solid var(--border); padding: 10px 20px;">
+        (Preview: pular para resultado →)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 5 — RESULTADO
+═══════════════════════════════════════════════════════ -->
+<div id="screen-result" class="screen">
+  <nav class="navbar">
+    <div class="navbar-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+    <div class="navbar-right">
+      <button class="nav-icon-btn" onclick="show('home')" style="font-size:12px; color: var(--text-2)">← Início</button>
+    </div>
+  </nav>
+
+  <div class="result-wrap">
+    <div class="step-indicator">
+      <div class="step-dots">
+        <div class="dot done"></div>
+        <div class="dot done"></div>
+        <div class="dot active"></div>
+      </div>
+      <span class="step-label">Passo 3 de 3 · Resultado da simulação</span>
+    </div>
+
+    <div class="result-header">
+      <h1>Resultado do fórum</h1>
+      <div class="result-badges">
+        <span class="badge primary">72% de êxito</span>
+        <span class="badge">Direito do Trabalho</span>
+        <span class="badge">3 rodadas</span>
+        <span class="badge">Dr. Marcelo Fontes</span>
+      </div>
+    </div>
+
+    <!-- Gauge de probabilidade -->
+    <div class="gauge-block">
+      <div class="gauge-number">72<span class="gauge-pct">%</span></div>
+      <div class="gauge-label">Índice de força argumentativa</div>
+      <div class="gauge-bar-wrap">
+        <div class="gauge-bar-fill" style="width: 72%"></div>
+      </div>
+      <p style="font-size:10px; color:var(--text-3); margin-top:14px; line-height:1.6;">Estimativa baseada na análise dos argumentos. Não é probabilidade estatística.</p>
+    </div>
+
+    <!-- Toggle de perfil -->
+    <div class="vol-tabs" style="margin-bottom: 16px;">
+      <button class="vol-tab active" id="tab-leigo" onclick="setTab('leigo')">Volume I — Orientação ao cliente</button>
+      <button class="vol-tab" id="tab-pro" onclick="setTab('pro')">Volume II — Técnico-jurídico</button>
+    </div>
+
+    <!-- Seções do laudo (leigo) -->
+    <div id="vol-leigo">
+      <div class="section-block">
+        <div class="section-label">Veredicto</div>
+        <p class="section-text">Sua causa tem boas chances. Os argumentos sobre o não pagamento da multa de 40% são sólidos e bem documentados. O FGTS irregular fortalece ainda mais sua posição.</p>
+      </div>
+      <div class="section-block">
+        <div class="section-label">Pontos de atenção</div>
+        <p class="section-text">A defesa pode questionar se houve justa causa indireta. Certifique-se de que possui o contrato de trabalho assinado e os holerites dos meses com FGTS irregular.</p>
+      </div>
+      <div class="section-block locked">
+        <div class="section-label">Próximos passos</div>
+        <p class="section-text" style="filter: blur(4px); user-select:none;">Recomendamos protocolar reclamação trabalhista no prazo de 2 anos da demissão. Busque a Vara do Trabalho da sua cidade. O valor estimado da causa é entre R$ 18.000 e R$ 24.000...</p>
+        <div class="lock-overlay">
+          <div class="lock-icon">🔒</div>
+          <div class="lock-label">Disponível no laudo completo</div>
+        </div>
+      </div>
+      <div class="section-block locked">
+        <div class="section-label">Decisão do juiz</div>
+        <p class="section-text" style="filter: blur(4px); user-select:none;">DISPOSITIVO: Julgo PROCEDENTE em parte o pedido. Condeno a reclamada ao pagamento da multa de 40% do FGTS no valor de R$ 8.400,00 acrescido de correção monetária...</p>
+        <div class="lock-overlay">
+          <div class="lock-icon">🔒</div>
+          <div class="lock-label">Disponível no laudo completo</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="vol-pro" style="display:none;">
+      <div class="section-block">
+        <div class="section-label">Fundamentação jurídica</div>
+        <p class="section-text" style="font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.8;">CLT art. 18 §1° — Obrigatoriedade de depósito FGTS.<br>TST Súmula 362 — Prescrição trintenária do FGTS.<br>CLT art. 477 §8° — Multa por atraso no pagamento das verbas rescisórias.</p>
+      </div>
+      <div class="section-block locked">
+        <div class="section-label">Estratégia processual</div>
+        <p class="section-text" style="filter: blur(4px); user-select:none;">Iniciar com pedido de tutela de urgência para bloqueio de contas caso empresa apresente risco de insolvência. Considerar...</p>
+        <div class="lock-overlay">
+          <div class="lock-icon">🔒</div>
+          <div class="lock-label">Disponível no laudo completo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA de desbloqueio -->
+    <button class="unlock-btn">
+      Ver laudo completo — <span class="unlock-price">R$ 9,90</span>
+    </button>
+
+    <button class="restart-btn" onclick="show('home')">Nova simulação</button>
+
+    <p style="font-size:10px; color:var(--text-3); line-height:1.7; margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
+      O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado habilitado.
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 6 — MOBILE
+═══════════════════════════════════════════════════════ -->
+<div id="screen-mobile" class="screen" style="background: var(--bg-card); padding: 24px 0;">
+  <p style="text-align:center; font-size:9px; font-weight:700; letter-spacing:.25em; text-transform:uppercase; color:var(--text-3); margin-bottom:20px; padding-top:8px;">Viewport Mobile — 390px</p>
+
+  <div class="mobile-frame">
+    <div class="mobile-navbar">
+      <div class="navbar-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+      <div style="display:flex; gap:4px;">
+        <button class="nav-icon-btn" style="font-size:12px;">☀</button>
+        <button class="nav-btn" style="font-size:10px; height:32px; padding:0 10px;">Entrar</button>
+      </div>
+    </div>
+
+    <div class="mobile-hero">
+      <p class="eyebrow">Simulador Jurídico</p>
+      <h1>A incerteza jurídica tem uma saída.</h1>
+      <p class="sub">Antes do tribunal, o teste.</p>
+    </div>
+
+    <div class="mobile-modes">
+
+      <div class="mobile-mode-row">
+        <div class="mobile-mode-accent" style="background:#00FFEF"></div>
+        <div class="mobile-mode-icon-wrap">⚡</div>
+        <div class="mobile-mode-info">
+          <div class="mobile-mode-name">Tese Estratégica</div>
+          <div class="mobile-mode-price">R$ 9,90</div>
+        </div>
+        <div class="mobile-arrow">›</div>
+      </div>
+
+      <div class="mobile-mode-row">
+        <div class="mobile-mode-accent" style="background:#FF5A5A"></div>
+        <div class="mobile-mode-icon-wrap">🛡</div>
+        <div class="mobile-mode-info">
+          <div class="mobile-mode-name">Defesa sob Ataque</div>
+          <div class="mobile-mode-price">R$ 9,90</div>
+        </div>
+        <div class="mobile-arrow">›</div>
+      </div>
+
+      <div class="mobile-mode-row">
+        <div class="mobile-mode-accent" style="background:#9B7FF0"></div>
+        <div class="mobile-mode-icon-wrap">⚖</div>
+        <div class="mobile-mode-info">
+          <div class="mobile-mode-name">Mesa Dupla — Juiz</div>
+          <div class="mobile-mode-price">R$ 5,90</div>
+        </div>
+        <div class="mobile-arrow">›</div>
+      </div>
+
+      <div class="mobile-mode-row">
+        <div class="mobile-mode-accent" style="background:#FFB800"></div>
+        <div class="mobile-mode-icon-wrap">⚔</div>
+        <div class="mobile-mode-info">
+          <div class="mobile-mode-name">Mesa Dupla — Assistida</div>
+          <div class="mobile-mode-price">R$ 9,90</div>
+        </div>
+        <div class="mobile-arrow">›</div>
+      </div>
+
+      <div class="mobile-mode-row">
+        <div class="mobile-mode-accent" style="background:#00CC88"></div>
+        <div class="mobile-mode-icon-wrap">⏱</div>
+        <div class="mobile-mode-info">
+          <div class="mobile-mode-name">Revisão Pós-Conflito</div>
+          <div class="mobile-mode-price">R$ 5,90</div>
+        </div>
+        <div class="mobile-arrow">›</div>
+      </div>
+
+    </div>
+
+    <div class="mobile-footer">
+      <p>Simulação gratuita · Laudo completo R$ 9,90</p>
+      <p>Não é consulta jurídica · Não garante vitória</p>
+      <p style="margin-top:6px;"><a href="#">Termos de Uso</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 7 — O QUE MUDA
+═══════════════════════════════════════════════════════ -->
+<div id="screen-compare" class="screen" style="padding-bottom:60px;">
+  <nav class="navbar">
+    <div class="navbar-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+  </nav>
+
+  <div style="max-width:900px; margin:0 auto; padding: 40px 24px 20px;">
+    <h2 style="font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:700; color:var(--text); margin-bottom:8px;">O que este redesign propõe</h2>
+    <p style="font-size:13px; color:var(--text-2); line-height:1.65; max-width:600px;">Nenhuma mudança na lógica, nas APIs, nos agentes ou nos fluxos de pagamento. Apenas identidade visual, hierarquia de informação e experiência.</p>
+  </div>
+
+  <div class="page-section-hdr">Home — BoardroomPage</div>
+  <div class="compare-strip">
+    <div class="compare-col before">
+      <div class="compare-title">Antes</div>
+      <div class="compare-item">PAINEL BOARDROOM com dados hardcoded que nunca mudam</div>
+      <div class="compare-item">Accordion mobile sem feedback visual de qual modo está ativo</div>
+      <div class="compare-item">Disclaimer repetido 3× em 9px — invisível e redundante</div>
+      <div class="compare-item">Cards desktop hover amber — boa ideia, mas sem identidade por modo</div>
+    </div>
+    <div class="compare-col after">
+      <div class="compare-title">Proposta</div>
+      <div class="compare-item">Painel removido; stats footer com dados reais do Firestore</div>
+      <div class="compare-item">Lista de modos com acento colorido único por modo (barra lateral)</div>
+      <div class="compare-item">Um único disclaimer limpo, respeitoso e legível</div>
+      <div class="compare-item">Hover mantém cor do modo — reforça identidade visual de cada simulação</div>
+    </div>
+  </div>
+
+  <div class="page-section-hdr">Input</div>
+  <div class="compare-strip">
+    <div class="compare-col before">
+      <div class="compare-title">Antes</div>
+      <div class="compare-item">Textarea genérica sem contexto de qual modo está ativo</div>
+      <div class="compare-item">Botão de upload pequeno e discreto — pouco descoberto</div>
+      <div class="compare-item">Nenhum contador de caracteres — usuário sem feedback de progresso</div>
+      <div class="compare-item">Threshold de envio: 10 caracteres (muito baixo)</div>
+    </div>
+    <div class="compare-col after">
+      <div class="compare-title">Proposta</div>
+      <div class="compare-item">Badge do modo ativo visível no topo (cor + nome do modo)</div>
+      <div class="compare-item">Zona de upload com área clicável maior e instrução clara</div>
+      <div class="compare-item">Contador de caracteres em tempo real (JetBrains Mono)</div>
+      <div class="compare-item">Visual consistente com o sistema de CSS variables já existente</div>
+    </div>
+  </div>
+
+  <div class="page-section-hdr">Simulando (loading)</div>
+  <div class="compare-strip">
+    <div class="compare-col before">
+      <div class="compare-title">Antes</div>
+      <div class="compare-item">Spinner simples para processo de 20–60s</div>
+      <div class="compare-item">Sem feedback de qual agente está trabalhando</div>
+      <div class="compare-item">Sem estimativa de tempo</div>
+      <div class="compare-item">Falha redireciona silenciosamente, sem mensagem</div>
+    </div>
+    <div class="compare-col after">
+      <div class="compare-title">Proposta</div>
+      <div class="compare-item">4 estágios nomeados com status visual (feito / rodando / aguardando)</div>
+      <div class="compare-item">Nome do agente ativo exibido em tempo real</div>
+      <div class="compare-item">Tempo decorrido por estágio (timer em JetBrains Mono)</div>
+      <div class="compare-item">Efeito shimmer no estágio ativo — sem spinner isolado</div>
+    </div>
+  </div>
+
+  <div class="page-section-hdr">Resultado</div>
+  <div class="compare-strip">
+    <div class="compare-col before">
+      <div class="compare-title">Antes</div>
+      <div class="compare-item">Percentual como badge pequeno no header</div>
+      <div class="compare-item">Conteúdo bloqueado com blur + overlay — visualmente pesado</div>
+      <div class="compare-item">Seções sem hierarquia clara — texto flat</div>
+      <div class="compare-item">Volume I / II só no mobile — desktop não tem essa divisão</div>
+    </div>
+    <div class="compare-col after">
+      <div class="compare-title">Proposta</div>
+      <div class="compare-item">Gauge com número gigante em Cormorant + barra de progresso</div>
+      <div class="compare-item">Lock overlay mais limpo e direto — sem blur, apenas fundo sólido</div>
+      <div class="compare-item">Seções como blocos com borda inferior separando claramente</div>
+      <div class="compare-item">Volume I / II como tabs em desktop e mobile — consistência</div>
+    </div>
+  </div>
+
+  <div class="page-section-hdr">Código (sem alterar lógica)</div>
+  <div class="compare-strip">
+    <div class="compare-col before">
+      <div class="compare-title">Antes</div>
+      <div class="compare-item">App.tsx com 3610 linhas misturando lógica e UI</div>
+      <div class="compare-item">Estilos inline em todos os modos (style={'{...}'}) — difícil manter</div>
+      <div class="compare-item">LaudoMobile e CensoredText embutidos no App.tsx</div>
+      <div class="compare-item">alert() nativo para erro de arquivo</div>
+    </div>
+    <div class="compare-col after">
+      <div class="compare-title">Proposta (só visual)</div>
+      <div class="compare-item">Mover LaudoMobile → components/LaudoMobile.tsx</div>
+      <div class="compare-item">Extrair estilos inline para CSS variables já existentes</div>
+      <div class="compare-item">Substituir alert() por componente de erro inline</div>
+      <div class="compare-item">Lógica de negócio intocada — apenas apresentação</div>
+    </div>
+  </div>
+
+  <div style="max-width:900px; margin: 40px auto 0; padding: 0 24px;">
+    <div style="border: 1px solid var(--border-active); background: var(--cyan-dim); padding: 24px;">
+      <p style="font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--cyan); margin-bottom:12px;">Próximo passo</p>
+      <p style="font-size:14px; color:var(--text-2); line-height:1.7;">Se este preview estiver na direção certa, o trabalho de implementação acontece numa branch separada apontando para <strong style="color:var(--text);">eai.radiokactus.com</strong> — sem tocar em produção até aprovação final.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#preview-bar button').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  const map = { home:0, input:1, confirm:2, simulating:3, result:4, mobile:5, compare:6 };
+  document.querySelectorAll('#preview-bar button')[map[id]]?.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function setTab(tab) {
+  document.getElementById('vol-leigo').style.display = tab === 'leigo' ? 'block' : 'none';
+  document.getElementById('vol-pro').style.display   = tab === 'pro'   ? 'block' : 'none';
+  document.getElementById('tab-leigo').className = 'vol-tab' + (tab === 'leigo' ? ' active' : '');
+  document.getElementById('tab-pro').className   = 'vol-tab' + (tab === 'pro'   ? ' active' : '');
+}
+
+// Contador fake de simulações (imita dado real do Firestore)
+setTimeout(() => {
+  document.getElementById('sim-counter').textContent = '3.847 simulações';
+}, 800);
+
+// Timer da simulação
+let secs = 12;
+setInterval(() => {
+  secs++;
+  const el = document.getElementById('sim-timer');
+  if (el) el.textContent = secs + 's';
+}, 1000);
+</script>
+</body>
+</html>
