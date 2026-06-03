@@ -465,18 +465,44 @@ body{
 /* ══════════════════════════════════════
    SCREEN 5 — MOBILE
 ══════════════════════════════════════ */
-.mob-wrap{background:var(--paper-2);padding:24px 0 40px;min-height:calc(100vh - 108px)}
-.mob-label{text-align:center;font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--ink-3);padding:12px 0 16px}
-.mob-frame{
-  max-width:390px;margin:0 auto;
-  background:var(--paper);border:1px solid var(--border-strong);
-  box-shadow:var(--shadow-lg);min-height:780px;
+.mob-wrap{
+  background:#111827;
+  padding:32px 24px 48px;
+  min-height:calc(100vh - 48px);
+  display:flex;flex-direction:column;align-items:center;
 }
+.mob-toolbar{
+  display:flex;align-items:center;gap:12px;margin-bottom:24px;width:100%;max-width:430px;
+}
+.mob-toolbar-label{
+  font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;
+  color:rgba(255,255,255,0.4);flex:1;
+}
+.mob-tab-btn{
+  height:28px;padding:0 12px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
+  border-radius:3px;transition:all .15s;white-space:nowrap;
+}
+.mob-tab-btn.on{color:#fff;background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.35)}
+.mob-frame{
+  width:390px;max-width:100%;
+  background:var(--paper);
+  border-radius:40px;
+  border:8px solid #2a2a2a;
+  box-shadow:0 0 0 1px #444, 0 32px 80px rgba(0,0,0,0.7);
+  overflow:hidden;
+  min-height:780px;
+  position:relative;
+}
+.mob-notch{
+  width:120px;height:30px;background:#2a2a2a;
+  border-radius:0 0 18px 18px;margin:0 auto;
+}
+.mob-scroll{overflow-y:auto;max-height:740px;}
 .mob-nav{
   height:56px;background:rgba(245,242,235,0.97);
   border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;padding:0 20px;
-  position:sticky;top:0;z-index:10;
 }
 .mob-hero{padding:32px 24px 20px}
 .mob-eyebrow{font-size:9px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px}
@@ -967,58 +993,174 @@ body{
 ════════════════════════════════════ -->
 <div id="s-mobile" class="screen">
   <div class="mob-wrap">
-    <div class="mob-label">Viewport Mobile — 390px</div>
-    <div class="mob-frame">
-      <div class="mob-nav">
-        <div class="nav-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
-        <div style="display:flex;gap:6px">
-          <button class="nav-ghost" style="height:32px;padding:0 10px;font-size:10px">☀</button>
-          <button class="nav-solid" style="height:32px;padding:0 10px;font-size:10px">Entrar</button>
-        </div>
-      </div>
 
-      <!-- Hero mobile — fundo navy -->
-      <div style="background:var(--navy);padding:28px 24px 28px">
-        <div class="mob-eyebrow" style="color:rgba(255,255,255,0.35)">Simulador Jurídico</div>
-        <h1 class="mob-h1" style="color:#fff;margin-bottom:12px">A incerteza jurídica tem uma saída.</h1>
-        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:20px">Antes do tribunal, o teste.</p>
-        <button class="btn-hero" style="width:100%;justify-content:center;display:flex;align-items:center;height:48px">Começar simulação →</button>
-      </div>
-
-      <!-- Tabs de situação — SEED_HCD_001: constraint para reduzir escolha -->
-      <div class="mob-sit-tabs">
-        <button class="mob-sit-tab on">Em conflito</button>
-        <button class="mob-sit-tab">Dois lados</button>
-        <button class="mob-sit-tab">Pós-decisão</button>
-      </div>
-
-      <div class="mob-modes">
-        <div class="mob-mrow">
-          <div class="mob-accent" style="background:var(--navy-2)"></div>
-          <div class="mob-icon">⚡</div>
-          <div class="mob-minfo">
-            <div class="mob-mname">Tese Estratégica</div>
-            <div class="mob-mprice">R$ 9,90</div>
-          </div>
-          <div class="mob-arr">›</div>
-        </div>
-        <div class="mob-mrow">
-          <div class="mob-accent" style="background:var(--red)"></div>
-          <div class="mob-icon">🛡</div>
-          <div class="mob-minfo">
-            <div class="mob-mname">Defesa sob Ataque</div>
-            <div class="mob-mprice">R$ 9,90</div>
-          </div>
-          <div class="mob-arr">›</div>
-        </div>
-      </div>
-
-      <div class="mob-footer">
-        <p>Simulação gratuita · Laudo R$ 9,90</p>
-        <p>Não substitui advogado habilitado</p>
-        <p style="margin-top:6px"><a href="#">Termos de Uso</a></p>
-      </div>
+    <!-- Toolbar: label + state switcher -->
+    <div class="mob-toolbar">
+      <span class="mob-toolbar-label">Viewport Mobile — 390 × 844 px</span>
+      <button class="mob-tab-btn on" onclick="mobState('home',this)">Home</button>
+      <button class="mob-tab-btn" onclick="mobState('input',this)">Input</button>
+      <button class="mob-tab-btn" onclick="mobState('sim',this)">Simulando</button>
+      <button class="mob-tab-btn" onclick="mobState('result',this)">Resultado</button>
     </div>
+
+    <!-- Phone frame -->
+    <div class="mob-frame">
+      <div class="mob-notch"></div>
+      <div class="mob-scroll">
+
+        <!-- STATE: home -->
+        <div id="ms-home" class="mob-state">
+          <div class="mob-nav">
+            <div class="nav-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+            <div style="display:flex;gap:6px">
+              <button class="nav-ghost" style="height:32px;padding:0 10px;font-size:10px">☀</button>
+              <button class="nav-solid" style="height:32px;padding:0 10px;font-size:10px">Entrar</button>
+            </div>
+          </div>
+          <div style="background:var(--navy);padding:32px 24px">
+            <div class="mob-eyebrow" style="color:rgba(255,255,255,0.35);margin-bottom:10px">Simulador Jurídico com IA</div>
+            <h1 class="mob-h1" style="color:#fff;margin-bottom:12px">A incerteza jurídica agora tem <em>uma arena de testes.</em></h1>
+            <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:24px">Antes de ir ao tribunal, descubra sua chance real.</p>
+            <button class="btn-hero" style="width:100%;justify-content:center;display:flex;align-items:center;height:52px;font-size:13px">Começar simulação →</button>
+            <p style="font-size:10px;color:rgba(255,255,255,0.3);text-align:center;margin-top:12px">Simulação gratuita · Laudo R$ 9,90</p>
+          </div>
+          <div class="mob-sit-tabs">
+            <button class="mob-sit-tab on">Em conflito</button>
+            <button class="mob-sit-tab">Dois lados</button>
+            <button class="mob-sit-tab">Pós-decisão</button>
+          </div>
+          <div class="mob-modes">
+            <div class="mob-mrow">
+              <div class="mob-accent" style="background:var(--navy-2)"></div>
+              <div class="mob-icon">⚡</div>
+              <div class="mob-minfo"><div class="mob-mname">Tese Estratégica</div><div class="mob-mprice">R$ 9,90</div></div>
+              <div class="mob-arr">›</div>
+            </div>
+            <div class="mob-mrow">
+              <div class="mob-accent" style="background:var(--red)"></div>
+              <div class="mob-icon">🛡</div>
+              <div class="mob-minfo"><div class="mob-mname">Defesa sob Ataque</div><div class="mob-mprice">R$ 9,90</div></div>
+              <div class="mob-arr">›</div>
+            </div>
+          </div>
+          <div class="mob-footer">
+            <p>Simulação gratuita · Laudo R$ 9,90</p>
+            <p>Não substitui advogado habilitado</p>
+          </div>
+        </div><!-- /ms-home -->
+
+        <!-- STATE: input -->
+        <div id="ms-input" class="mob-state" style="display:none">
+          <div class="mob-nav">
+            <div class="nav-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+            <button class="nav-ghost" style="height:32px;padding:0 10px;font-size:10px">← Voltar</button>
+          </div>
+          <div style="padding:20px">
+            <div style="display:flex;gap:4px;margin-bottom:20px;align-items:center">
+              <div style="width:24px;height:24px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:700">1</div>
+              <div style="height:2px;flex:1;background:var(--border)"></div>
+              <div style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--ink-3);font-weight:700">2</div>
+              <div style="height:2px;flex:1;background:var(--border)"></div>
+              <div style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--ink-3);font-weight:700">3</div>
+            </div>
+            <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(26,58,107,0.06);border:1px solid rgba(26,58,107,0.18);margin-bottom:16px">
+              <span style="font-size:11px;font-weight:700;color:var(--navy-2)">⚡ Tese Estratégica</span>
+            </div>
+            <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--navy);margin-bottom:6px">O que aconteceu com você?</h2>
+            <p style="font-size:12px;color:var(--ink-3);line-height:1.6;margin-bottom:16px">Descreva com suas palavras — sem juridiquês.</p>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+              <span style="padding:4px 10px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--navy);color:var(--navy);background:rgba(14,36,72,0.05)">Trabalhista</span>
+              <span style="padding:4px 10px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);color:var(--ink-3)">Consumidor</span>
+              <span style="padding:4px 10px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);color:var(--ink-3)">Dívida</span>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--border-strong);padding:14px;margin-bottom:12px">
+              <textarea style="width:100%;resize:none;border:none;outline:none;font-size:13px;color:var(--ink);line-height:1.65;height:100px;background:transparent">Fui demitido sem justa causa após 4 anos. FGTS não foi depositado por 8 meses e a multa de 40% não foi paga.</textarea>
+            </div>
+            <div style="background:rgba(14,36,72,0.04);border:1px solid rgba(14,36,72,0.15);padding:12px;display:flex;gap:10px;margin-bottom:14px">
+              <div style="width:14px;height:14px;border:2px solid var(--navy);border-radius:2px;flex-shrink:0;margin-top:2px"></div>
+              <p style="font-size:10px;color:var(--ink-2);line-height:1.6"><strong>Consentimento:</strong> Entendo que meu relato será processado por IA para fins de simulação. Dados não são vendidos.</p>
+            </div>
+            <button class="btn-hero" style="width:100%;display:flex;justify-content:center;align-items:center;height:52px;font-size:13px">Validar causa →</button>
+          </div>
+        </div><!-- /ms-input -->
+
+        <!-- STATE: sim -->
+        <div id="ms-sim" class="mob-state" style="display:none">
+          <div style="background:var(--navy);padding:32px 24px;text-align:center;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:#fff;letter-spacing:-.5px;margin-bottom:6px">EAI<span style="color:var(--gold)">✓?</span></div>
+            <p style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:32px;letter-spacing:.1em">Fórum virtual em andamento</p>
+            <div style="width:100%;display:flex;flex-direction:column;gap:3px;text-align:left">
+              <div style="background:rgba(255,255,255,0.06);border-left:3px solid var(--green);padding:12px 14px;display:flex;align-items:center;gap:10px">
+                <span style="font-size:10px;color:var(--green);font-weight:700">✓</span>
+                <div style="flex:1"><div style="font-size:11px;color:#fff;font-weight:600">Sementes ativadas</div><div style="font-size:9px;color:rgba(255,255,255,0.4)">Direito do Trabalho · TRT4</div></div>
+                <span style="font-size:9px;color:rgba(255,255,255,0.3)">0.8s</span>
+              </div>
+              <div style="background:rgba(255,255,255,0.06);border-left:3px solid var(--green);padding:12px 14px;display:flex;align-items:center;gap:10px">
+                <span style="font-size:10px;color:var(--green);font-weight:700">✓</span>
+                <div style="flex:1"><div style="font-size:11px;color:#fff;font-weight:600">Advogado peticionando</div><div style="font-size:9px;color:rgba(255,255,255,0.4)">Dr. Marcelo Fontes — Rodada 1</div></div>
+                <span style="font-size:9px;color:rgba(255,255,255,0.3)">4.2s</span>
+              </div>
+              <div style="background:rgba(184,135,10,0.08);border-left:3px solid var(--gold);padding:12px 14px;display:flex;align-items:center;gap:10px">
+                <span style="font-size:10px;color:var(--gold);font-weight:700">3</span>
+                <div style="flex:1"><div style="font-size:11px;color:#fff;font-weight:600">Magistrado julgando</div><div style="font-size:9px;color:rgba(255,255,255,0.4)">Dra. Renata Mello — Rodada 2/3</div></div>
+                <span style="font-size:9px;color:var(--gold)" id="mt">14s</span>
+              </div>
+              <div style="background:rgba(255,255,255,0.03);border-left:3px solid rgba(255,255,255,0.12);padding:12px 14px;display:flex;align-items:center;gap:10px;opacity:.35">
+                <span style="font-size:10px;color:rgba(255,255,255,0.3);font-weight:700">4</span>
+                <div style="flex:1"><div style="font-size:11px;color:#fff;font-weight:600">Elaborando laudo</div><div style="font-size:9px;color:rgba(255,255,255,0.4)">Volume I e II</div></div>
+                <span style="font-size:9px;color:rgba(255,255,255,0.3)">—</span>
+              </div>
+            </div>
+          </div>
+          <div style="padding:20px;text-align:center">
+            <p style="font-size:10px;color:var(--ink-3);line-height:1.6">Não feche esta janela durante a simulação.</p>
+          </div>
+        </div><!-- /ms-sim -->
+
+        <!-- STATE: result -->
+        <div id="ms-result" class="mob-state" style="display:none">
+          <div class="mob-nav">
+            <div class="nav-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+            <button class="nav-ghost" style="height:32px;padding:0 10px;font-size:10px">← Início</button>
+          </div>
+          <div style="background:var(--navy);padding:28px 20px;margin:0;text-align:center">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px">Índice de força argumentativa</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:80px;font-weight:700;color:#fff;line-height:1">72<span style="font-size:36px;color:var(--gold)">%</span></div>
+            <div style="height:4px;background:rgba(255,255,255,0.12);margin:12px 0;border-radius:2px;overflow:hidden">
+              <div style="width:72%;height:100%;background:var(--gold)"></div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:10px">
+              <span style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;background:rgba(14,90,42,0.25);color:#6fcf97">Chance de êxito: boa</span>
+              <span style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5)">Trabalhista</span>
+              <span style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5)">3 rodadas</span>
+            </div>
+          </div>
+          <div style="display:flex;border-bottom:2px solid var(--border);background:var(--white)">
+            <button style="flex:1;padding:12px 8px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--navy);border-bottom:2px solid var(--navy);margin-bottom:-2px;background:none;border-left:none;border-right:none;border-top:none">Vol. I — Cliente</button>
+            <button style="flex:1;padding:12px 8px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:none;border:none">Vol. II — Técnico</button>
+          </div>
+          <div style="padding:16px">
+            <div style="background:var(--white);border:1px solid var(--border);padding:16px;margin-bottom:3px">
+              <div style="font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px">Veredicto</div>
+              <p style="font-size:13px;color:var(--ink-2);line-height:1.7">Sua causa tem boas chances. Os argumentos sobre o não pagamento da multa de 40% são sólidos e bem documentados.</p>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--border);padding:16px;margin-bottom:3px;position:relative;overflow:hidden">
+              <div style="font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px">Próximos passos</div>
+              <p style="font-size:13px;color:var(--ink-2);line-height:1.7;filter:blur(4px);user-select:none">Recomendamos protocolar reclamação trabalhista no prazo de 2 anos da demissão. Busque a Vara do Trabalho...</p>
+              <div style="position:absolute;inset:0;background:rgba(245,242,235,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+                <span style="font-size:16px">🔒</span>
+                <span style="font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)">Disponível no laudo completo</span>
+              </div>
+            </div>
+            <button style="width:100%;margin-top:12px;background:var(--navy);color:#fff;padding:16px;display:flex;align-items:center;justify-content:space-between">
+              <div style="text-align:left"><div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase">Ver laudo completo</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px">Próximos passos · Estratégia processual</div></div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--gold)">R$ 9,90</div>
+            </button>
+          </div>
+        </div><!-- /ms-result -->
+
+      </div><!-- /mob-scroll -->
+    </div><!-- /mob-frame -->
   </div>
 </div>
 
@@ -1136,7 +1278,21 @@ function setVol(n){
   document.getElementById('vb2').className='vol-btn'+(n===2?' on':'');
 }
 let s=14;
-setInterval(()=>{s++;const e=document.getElementById('t');if(e)e.textContent=s+'s'},1000);
+setInterval(()=>{
+  s++;
+  const e=document.getElementById('t');if(e)e.textContent=s+'s';
+  const m=document.getElementById('mt');if(m)m.textContent=s+'s';
+},1000);
+
+function mobState(id,btn){
+  document.querySelectorAll('.mob-state').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.mob-tab-btn').forEach(b=>b.classList.remove('on'));
+  const el=document.getElementById('ms-'+id);
+  if(el)el.style.display='block';
+  if(btn)btn.classList.add('on');
+  const scroll=document.querySelector('.mob-scroll');
+  if(scroll)scroll.scrollTop=0;
+}
 </script>
 </body>
 </html>
