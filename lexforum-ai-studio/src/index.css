@@ -116,3 +116,37 @@
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* Opção D — Híbrido: corpo em Inter, subtítulos de seção em Cormorant */
+.laudo-prose h1,
+.laudo-prose h2,
+.laudo-prose h3,
+.laudo-prose h4 {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  margin-top: 2rem;
+  margin-bottom: 0.6rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  color: inherit;
+}
+.laudo-prose h1:first-child,
+.laudo-prose h2:first-child,
+.laudo-prose h3:first-child,
+.laudo-prose h4:first-child {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+@media print {
+  .laudo-prose h1,
+  .laudo-prose h2,
+  .laudo-prose h3,
+  .laudo-prose h4 {
+    border-top-color: rgba(0, 0, 0, 0.1);
+    color: black;
+  }
+}

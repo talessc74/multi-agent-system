@@ -146,13 +146,13 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
             {state.selectedMode === 5 && state.mode5Result && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginBottom: '8px' }}>
                 <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px' }}>Análise do Juiz Estrategista</p>
-                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, fontStyle: 'italic', fontFamily: 'Georgia, serif' }}>{state.mode5Result.strategistAnalysis}</p>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}>{state.mode5Result.strategistAnalysis}</p>
               </div>
             )}
             {state.selectedMode !== 5 && state.report?.layman && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
                 <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#00CC88', marginBottom: '12px' }}>Orientação ao Cliente</p>
-                <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, fontStyle: 'italic', fontFamily: 'Georgia, serif' }}><ReactMarkdown>{state.report.layman}</ReactMarkdown></div>
+                <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}><ReactMarkdown>{state.report.layman}</ReactMarkdown></div>
               </div>
             )}
             {(state.selectedMode === 1 || state.selectedMode === 2) && state.report?.causeSummary && (
@@ -184,7 +184,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
             {state.selectedMode !== 5 && state.report?.professional && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
                 <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>Laudo Técnico Estratégico</p>
-                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, fontFamily: 'monospace' }}><ReactMarkdown>{state.report.professional}</ReactMarkdown></div>
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7 }}><ReactMarkdown>{state.report.professional}</ReactMarkdown></div>
               </div>
             )}
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.6, textAlign: 'center', padding: '16px 0 4px' }}>O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.</p>
@@ -3051,7 +3051,7 @@ const handleGeminiError = (err: any) => {
                         <div className="text-[11px] font-serif italic text-white/40">Estrategista de Acessibilidade</div>
                       </div>
                     </div>
-                    <div className="prose prose-invert max-w-none font-serif text-lg leading-[1.6] text-white/90 font-light italic bg-emerald-500/[0.05] p-8 border border-emerald-500/20 shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0">
+                    <div className="laudo-prose prose prose-invert max-w-none font-sans text-lg leading-[1.6] text-white/90 font-light bg-emerald-500/[0.05] p-8 border border-emerald-500/20 shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0">
                       <ReactMarkdown>
                         {state.report?.layman || ''}
                       </ReactMarkdown>
@@ -3075,7 +3075,7 @@ const handleGeminiError = (err: any) => {
                         <div className="text-[11px] font-serif italic text-white/40">Analista Processual Sênior</div>
                       </div>
                     </div>
-                    <div className="p-10 border border-white/5 bg-[#15161A]/50 font-mono text-[13px] leading-loose text-white/60 shadow-2xl relative overflow-hidden prose prose-invert prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0">
+                    <div className="laudo-prose p-10 border border-white/5 bg-[#15161A]/50 font-sans text-[13px] leading-loose text-white/60 shadow-2xl relative overflow-hidden prose prose-invert prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0">
                       <ReactMarkdown>
                         {state.report?.professional || ''}
                       </ReactMarkdown>
@@ -3157,7 +3157,7 @@ const handleGeminiError = (err: any) => {
                                 <Scale className="w-4 h-4 text-emerald-500 print:text-black" />
                                 <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest print:text-black">Petição e Pedidos do Advogado</span>
                               </div>
-                              <div className="p-6 bg-white/[0.02] border border-white/5 text-[13px] leading-relaxed text-white/50 italic font-serif print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
+                              <div className="p-6 bg-white/[0.02] border border-white/5 text-[13px] leading-relaxed text-white/50 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
                                 "{round.lawyerPetition}"
                               </div>
                             </div>
