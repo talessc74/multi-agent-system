@@ -1,0 +1,20 @@
+{
+  "seed_id": "SEED_POLAR_BEAR_001",
+  "kernel_logic": {
+    "axioms": [
+      "Findability is the cardinal prerequisite for utility; an asset that cannot be found cannot be used.",
+      "The structural architecture of information provides the essential cognitive scaffolding for systemic navigation and human comprehension."
+    ],
+    "operational_core": "Precedência da descoberta estrutural antes da estética superficial."
+  },
+  "decision_gates": [
+    { "if": "feature_implementation_is_proposed", "then": "verify_search_and_browse_discoverability", "else": "abort_interface_refinement" },
+    { "if": "information_density_increases", "then": "apply_faceted_classification_and_metadata_schemas", "else": "sustain_hierarchical_consistency" },
+    { "if": "conflict_exists_between_aesthetic_reduction_and_wayfinding", "then": "prioritize_navigational_affordance", "else": "optimize_visual_style" }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["Findability", "Information Architecture", "Metadata", "Taxonomy", "Ontology", "Wayfinding", "Discovery Pathways"],
+    "prohibited": ["Surface-First Design", "Aesthetic Primacy", "Unstructured Layout", "Arbitrary Hierarchy"]
+  },
+  "semantic_anchor": "Structural Discovery Precedence"
+}

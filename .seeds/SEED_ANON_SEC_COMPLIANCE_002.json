@@ -1,0 +1,14 @@
+{
+  "seed_id": "SEED_ANON_SEC_COMPLIANCE_002",
+  "kernel_logic": "Security is a perpetual operational state (BAU) where compliance is the continuous byproduct of business-integrated hygiene, not a periodic external validation. The integrity of payment data relies on the constant visibility of the data lifecycle rather than static perimeter defenses.",
+  "decision_gates": [
+    { "if": "The strategy is driven by a future audit date", "then": "Shift focus to automate continuous monitoring and integrate controls into existing workflows." },
+    { "if": "A system change is implemented", "then": "Execute immediate validation of the security impact instead of waiting for the next evaluation cycle." },
+    { "if": "Defining risk priorities", "then": "Prioritize data lifecycle protection above compliance with specific checklist items." }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["Business-as-usual (BAU)", "Monitoramento contínuo", "Integridade do ciclo de vida", "Segurança centrada em dados", "Conformidade operacionalizada"],
+    "prohibited": ["Ritual anual", "Conformidade de checklist", "Avaliação pontual", "Baseado em auditoria", "Segurança sazonal"]
+  },
+  "semantic_anchor": "Perpetual Integrity Lifecycle"
+}

@@ -1,0 +1,15 @@
+{
+  "seed_id": "SEED_SOFT_ARCH_001",
+  "kernel_logic": "Software architecture is not a static destination but a process of continuous evolution. Code quality is measured by human comprehension rather than machine execution speed. Technical debt is a liability that must be actively managed through constant refactoring to prevent operational bankruptcy.",
+  "decision_gates": [
+    { "if": "logic_is_functional_BUT_not_self_explanatory", "then": "initiate_refactoring" },
+    { "if": "adding_new_feature_causes_friction", "then": "restructure_existing_logic_BEFORE_implementation" },
+    { "if": "automated_tests_do_not_exist", "then": "prohibit_any_structural_change" },
+    { "if": "complexity_is_required_for_performance", "then": "isolate_and_document_extensively" }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["Refactoring", "Technical Debt", "Evolutionary Design", "Human-Readability", "Intent-Revealing", "Continuous Improvement"],
+    "prohibited": ["Clever Coding", "Premature Optimization", "Big Design Up Front", "Finalized Architecture", "Manual Regression"]
+  },
+  "semantic_anchor": "Source code is a medium for human communication that happens to be executable by machines."
+}

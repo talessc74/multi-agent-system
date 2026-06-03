@@ -1,0 +1,15 @@
+{
+  "seed_id": "SEED_ANON_SEC_IAM_004",
+  "kernel_logic": "Individual agency over digital presence. Explicit consent operates as a strict prerequisite for any data flow, utilizing minimal disclosure via selective release of attributes and contextual segmentation to prevent cross-service tracking.",
+  "decision_gates": [
+    { "if": "The system requests user data", "then": "Trigger explicit consent mechanisms with clear disclosure of the strict purpose." },
+    { "if": "Authentication requires age verification", "then": "Release a boolean predicate (e.g., Over 18) instead of the specific date of birth." },
+    { "if": "Multiple services require identity", "then": "Deploy unique pairwise identifiers per service to prevent cross-tracking." },
+    { "if": "Identity metadata is generated", "then": "Encrypt or discard metadata unless essential for security or requested by the user." }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["User-Centric", "Minimal Disclosure", "Consent-Driven", "Contextual Integrity", "Self-Sovereignty", "Selective Disclosure", "Pairwise Identifiers"],
+    "prohibited": ["Omniscient Identity", "Silent Tracking", "Mandatory Aggregation", "Permanent Global ID", "Identity Silo", "Opaque Processing"]
+  },
+  "semantic_anchor": "Individual Agency over Digital Presence"
+}

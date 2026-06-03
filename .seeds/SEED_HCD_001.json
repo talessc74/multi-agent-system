@@ -1,0 +1,23 @@
+{
+  "seed_id": "SEED_HCD_001",
+  "kernel_logic": {
+    "axioms": [
+      "Design is an act of communication between the object and the user.",
+      "Visibility and feedback define the usability of a system.",
+      "Human error is a symptom of poor mapping or inadequate constraints.",
+      "Mental models must align with the system image."
+    ],
+    "operational_core": "Maximize discoverability and understanding through cognitive ergonomics."
+  },
+  "decision_gates": [
+    { "if": "A user makes a mistake", "then": "Redesign the system to accommodate that behavior; never blame the operator." },
+    { "if": "An action is possible within the system", "then": "The affordance must be signaled by a clear, perceivable signifier." },
+    { "if": "A state change occurs", "then": "Provide immediate and unambiguous feedback to the user." },
+    { "if": "Task complexity is high", "then": "Apply natural mappings and physical/logical constraints to limit the choice set." }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["affordance", "signifier", "mapping", "feedback", "mental model", "constraint", "discoverability", "forcing function"],
+    "prohibited": ["user error", "stupid user", "blame", "instruction-reliant", "aesthetic-first", "operator failure"]
+  },
+  "semantic_anchor": "Cognitive Ergonomics & Human-Centered Design"
+}
