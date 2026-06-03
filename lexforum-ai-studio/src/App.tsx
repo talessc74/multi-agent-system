@@ -1460,16 +1460,16 @@ const handleGeminiError = (err: any) => {
                 </div>
               )}
               {/* Agentes */}
-              <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>AGENTES ESCALADOS</p>
+              <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: modeColor, marginBottom: '8px' }}>AGENTES ESCALADOS</p>
               <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
+                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
                   <p style={{ fontSize: '20px', marginBottom: '6px' }}>⚖️</p>
-                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 2px' }}>ADVOGADO</p>
+                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor, margin: '0 0 2px' }}>ADVOGADO</p>
                   <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
                 </div>
-                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
+                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
                   <p style={{ fontSize: '20px', marginBottom: '6px' }}>🧑‍⚖️</p>
-                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 2px' }}>MAGISTRADO</p>
+                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor, margin: '0 0 2px' }}>MAGISTRADO</p>
                   <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
                 </div>
               </div>
@@ -2444,15 +2444,18 @@ const handleGeminiError = (err: any) => {
                 )}
 
                 {/* Agentes escalados */}
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2">
+                <p className="text-[9px] font-bold uppercase tracking-[0.2em] mt-4" style={{ color: dcColor }}>Agentes Escalados</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2"
+                    style={{ borderLeftWidth: '3px', borderLeftColor: dcColor }}>
                     <span className="text-2xl block">⚖️</span>
-                    <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/30">Advogado</p>
+                    <p className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>Advogado</p>
                     <p className="text-sm font-medium text-white/60">{agentSpec}</p>
                   </div>
-                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2">
+                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2"
+                    style={{ borderLeftWidth: '3px', borderLeftColor: dcColor }}>
                     <span className="text-2xl block">🧑‍⚖️</span>
-                    <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/30">Magistrado</p>
+                    <p className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>Magistrado</p>
                     <p className="text-sm font-medium text-white/60">{agentSpec}</p>
                   </div>
                 </div>

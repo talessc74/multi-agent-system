@@ -345,15 +345,16 @@
       </div>
 
       <!-- Agentes (novo) -->
+      <p id="agents-label" class="after-cta-text" style="color:#00FFEF;margin-bottom:8px">Agentes Escalados</p>
       <div class="agents-grid">
-        <div class="agent-card">
+        <div class="agent-card" id="agent-card-1" style="border-left:3px solid #00FFEF">
           <span class="agent-icon">⚖️</span>
-          <span class="agent-role">Advogado</span>
+          <span class="agent-role" id="agent-role-1" style="color:#00FFEF">Advogado</span>
           <span class="agent-name" id="agent-spec">Civilista</span>
         </div>
-        <div class="agent-card">
+        <div class="agent-card" id="agent-card-2" style="border-left:3px solid #00FFEF">
           <span class="agent-icon">🧑‍⚖️</span>
-          <span class="agent-role">Magistrado</span>
+          <span class="agent-role" id="agent-role-2" style="color:#00FFEF">Magistrado</span>
           <span class="agent-name" id="agent-spec2">Civilista</span>
         </div>
       </div>
@@ -415,6 +416,12 @@ function setMode(m, color, rgb) {
   // agents
   document.getElementById('agent-spec').textContent = d.spec;
   document.getElementById('agent-spec2').textContent = d.spec;
+  // agent cards color
+  document.getElementById('agents-label').style.color = d.color;
+  document.getElementById('agent-card-1').style.borderLeftColor = d.color;
+  document.getElementById('agent-card-2').style.borderLeftColor = d.color;
+  document.getElementById('agent-role-1').style.color = d.color;
+  document.getElementById('agent-role-2').style.color = d.color;
   // button
   document.getElementById('btn-pri-after').style.background = d.color;
   document.getElementById('btn-pri-after').style.color = ['#00FFEF','#A78BFA'].includes(d.color) ? '#000' : '#fff';
