@@ -2,6 +2,7 @@ import {
   collection,
   addDoc,
   serverTimestamp,
+  FieldValue,
   doc,
   getDoc,
   setDoc,
@@ -69,6 +70,7 @@ export const saveSimulation = async (
 
   const sanitize = (obj: any): any => {
     if (obj === null || obj === undefined) return null;
+    if (obj instanceof FieldValue) return obj; // sentinels (serverTimestamp, increment…) must reach Firestore unmodified
     if (Array.isArray(obj)) return obj.map(sanitize);
     if (typeof obj === 'object') {
       return Object.fromEntries(
