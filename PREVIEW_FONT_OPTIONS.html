@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EAI? — Opções de Fonte · Laudo Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button{cursor:pointer;font:inherit}
+
+:root{
+  --bg: #0A0C0F;
+  --surface: #111318;
+  --border: rgba(255,255,255,0.07);
+  --text: #E8E6E1;
+  --text-2: rgba(232,230,225,0.60);
+  --text-3: rgba(232,230,225,0.35);
+  --accent: #00FFEF;
+  --gold: #B8870A;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding:48px 0 80px;
+}
+
+/* ── HEADER ── */
+.page-header{
+  max-width:900px;margin:0 auto 40px;padding:0 24px;
+}
+.page-header h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;font-weight:700;font-style:italic;
+  color:var(--text);margin-bottom:6px;
+}
+.page-header p{font-size:13px;color:var(--text-3);line-height:1.6}
+.page-header .seeds{
+  display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;
+}
+.seed-chip{
+  font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  padding:3px 10px;border:1px solid rgba(0,255,239,0.25);color:rgba(0,255,239,0.6);
+}
+
+/* ── TAB BAR ── */
+#tabbar{
+  max-width:900px;margin:0 auto 32px;padding:0 24px;
+  display:flex;gap:0;border-bottom:1px solid var(--border);
+}
+.tab-btn{
+  padding:12px 20px;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-3);background:none;border:none;border-bottom:2px solid transparent;
+  margin-bottom:-1px;white-space:nowrap;transition:all .15s;
+}
+.tab-btn.on{color:var(--text);border-bottom-color:var(--accent)}
+.tab-btn:hover:not(.on){color:var(--text-2)}
+
+/* ── CARD ── */
+.option-wrap{display:none;max-width:900px;margin:0 auto;padding:0 24px}
+.option-wrap.on{display:block}
+
+.option-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  overflow:hidden;
+  margin-bottom:16px;
+}
+
+/* top meta bar */
+.card-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;border-bottom:1px solid var(--border);
+}
+.card-meta-label{
+  font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);
+}
+.card-meta-val{
+  font-size:10px;font-weight:600;color:var(--text-2);
+}
+.verdict-strip{
+  display:flex;align-items:center;gap:16px;
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,0.015);
+}
+.verdict-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:42px;font-weight:700;color:var(--text);line-height:1;
+}
+.verdict-pct{font-size:20px;color:var(--text-3)}
+.verdict-meta{display:flex;flex-direction:column;gap:4px}
+.verdict-tag{
+  font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  padding:3px 8px;border:1px solid;
+}
+.verdict-tag.win{border-color:rgba(0,255,0,0.2);color:rgba(0,255,128,0.7)}
+.verdict-tag.area{border-color:var(--border);color:var(--text-3)}
+
+/* volume tabs */
+.vol-tabs{
+  display:flex;border-bottom:1px solid var(--border);padding:0 20px;
+}
+.vol-tab{
+  padding:10px 16px;font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--text-3);background:none;border:none;border-bottom:2px solid transparent;
+  margin-bottom:-1px;transition:all .15s;
+}
+.vol-tab.on{color:var(--text);border-bottom-color:var(--accent)}
+
+/* the body text area */
+.laudo-body{padding:24px 20px 32px}
+
+/* ── OPTION SPECIFIC TYPOGRAPHY ── */
+
+/* A: Georgia Italic (atual) */
+.font-a .laudo-body{
+  font-family:Georgia,'Times New Roman',serif;
+  font-style:italic;
+  font-size:14px;
+  line-height:1.75;
+  color:var(--text-2);
+}
+.font-a .laudo-body strong{font-style:normal;color:var(--text)}
+.font-a .laudo-body h3{
+  font-family:Georgia,serif;font-style:italic;font-size:13px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);
+  margin:20px 0 10px;
+}
+
+/* B: Inter Regular */
+.font-b .laudo-body{
+  font-family:'Inter',sans-serif;
+  font-style:normal;
+  font-size:14px;
+  line-height:1.8;
+  color:rgba(232,230,225,0.72);
+}
+.font-b .laudo-body strong{font-weight:600;color:var(--text)}
+.font-b .laudo-body h3{
+  font-family:'Inter',sans-serif;font-style:normal;font-size:9px;font-weight:700;
+  letter-spacing:.28em;text-transform:uppercase;color:var(--text-3);
+  margin:24px 0 10px;border-top:1px solid var(--border);padding-top:16px;
+}
+.font-b .laudo-body h3:first-child{border-top:none;padding-top:0}
+
+/* C: Cormorant Garamond Regular (sem itálico) */
+.font-c .laudo-body{
+  font-family:'Cormorant Garamond',serif;
+  font-style:normal;
+  font-size:16px;
+  line-height:1.8;
+  color:rgba(232,230,225,0.75);
+  font-weight:400;
+}
+.font-c .laudo-body strong{font-weight:600;color:var(--text)}
+.font-c .laudo-body h3{
+  font-family:'Cormorant Garamond',serif;font-style:normal;font-size:13px;font-weight:700;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);
+  margin:22px 0 10px;
+}
+
+/* D: Híbrido — Inter corpo + Cormorant cabeçalhos de seção */
+.font-d .laudo-body{
+  font-family:'Inter',sans-serif;
+  font-style:normal;
+  font-size:14px;
+  line-height:1.8;
+  color:rgba(232,230,225,0.72);
+}
+.font-d .laudo-body strong{font-weight:600;color:var(--text)}
+.font-d .laudo-body h3{
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;font-weight:600;
+  color:rgba(232,230,225,0.55);letter-spacing:0;text-transform:none;
+  margin:24px 0 10px;border-top:1px solid var(--border);padding-top:18px;
+}
+.font-d .laudo-body h3:first-child{border-top:none;padding-top:0}
+
+/* analysis box */
+.analysis{
+  background:rgba(255,255,255,0.02);border:1px solid var(--border);
+  padding:20px;margin-top:20px;
+}
+.analysis-title{
+  font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);
+}
+.analysis-row{display:flex;gap:16px;margin-bottom:8px;align-items:flex-start}
+.analysis-icon{font-size:10px;margin-top:2px;flex-shrink:0}
+.analysis-icon.pass{color:#00c97a}
+.analysis-icon.warn{color:#f0a500}
+.analysis-icon.fail{color:#e05050}
+.analysis-text{font-size:12px;color:var(--text-2);line-height:1.6}
+.analysis-seed{
+  font-size:9px;font-weight:700;letter-spacing:.14em;
+  color:rgba(0,255,239,0.5);margin-left:6px;
+}
+
+/* recommend badge */
+.recommend{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  padding:4px 12px;background:rgba(0,255,239,0.08);border:1px solid rgba(0,255,239,0.3);
+  color:var(--accent);margin-top:16px;
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Opções tipográficas — Laudo Final</h1>
+  <p>Avaliação do Conselho de UX com decision gates ativos. Selecione a aba para comparar cada opção com o mesmo conteúdo real do laudo.</p>
+  <div class="seeds">
+    <span class="seed-chip">HCD_001 ativo</span>
+    <span class="seed-chip">USABX_001 ativo</span>
+    <span class="seed-chip">POLAR_BEAR_001 ativo</span>
+  </div>
+</div>
+
+<div id="tabbar">
+  <button class="tab-btn on" onclick="setTab('a',this)">A — Atual (Georgia italic)</button>
+  <button class="tab-btn" onclick="setTab('b',this)">B — Inter regular</button>
+  <button class="tab-btn" onclick="setTab('c',this)">C — Cormorant sem itálico</button>
+  <button class="tab-btn" onclick="setTab('d',this)">D — Híbrido recomendado</button>
+</div>
+
+<!-- ══════ OPÇÃO A — ATUAL ══════ -->
+<div id="opt-a" class="option-wrap on">
+  <div class="option-card font-a">
+    <div class="card-meta">
+      <span class="card-meta-label">Opção A — Estado atual</span>
+      <span class="card-meta-val">Georgia · italic · 14px · line-height 1.75</span>
+    </div>
+    <div class="verdict-strip">
+      <div class="verdict-num">93<span class="verdict-pct">%</span></div>
+      <div class="verdict-meta">
+        <span class="verdict-tag win">Chance de êxito: muito boa</span>
+        <span class="verdict-tag area">Direito Civil · Danos Materiais</span>
+      </div>
+    </div>
+    <div class="vol-tabs">
+      <button class="vol-tab on">Volume I — Orientação</button>
+      <button class="vol-tab">Volume II — Técnico</button>
+    </div>
+    <div class="laudo-body">
+      <h3>Orientação ao Cliente</h3>
+      <p>Prezado(a) Cliente,</p><br>
+      <p>Com base na petição inicial que nos foi apresentada e na avaliação técnica altamente favorável sobre a sua solidez, preparei o laudo jurídico para que você compreenda o cenário e os próximos passos.</p><br>
+      <h3>Identificação das Partes</h3>
+      <p><strong>Autor(a) / Exequente:</strong> Você, o(a) condômino(a) que teve a bicicleta furtada.<br>
+      <strong>Réu / Executado:</strong> O Condomínio [Nome do Condomínio].</p><br>
+      <h3>Laudo Jurídico — Análise da Ação de Reparação de Danos</h3>
+      <p><strong>Veredito</strong></p><br>
+      <p>A análise técnica indica uma probabilidade de êxito <strong>muito alta (93%)</strong>. Seu caso apresenta fundamentação jurídica robusta, amparada pelo Código Civil e pela jurisprudência consolidada dos Tribunais de Justiça sobre responsabilidade objetiva dos condomínios por furtos em área comum.</p>
+    </div>
+  </div>
+
+  <div class="analysis">
+    <div class="analysis-title">Análise dos decision gates</div>
+    <div class="analysis-row">
+      <span class="analysis-icon fail">✗</span>
+      <span class="analysis-text"><strong>USABX_001</strong> — Itálico em corpo longo viola padrão de legibilidade estabelecido. Conflito entre inovação estética (elegância literária) e padrão usabilidade → priorizar padrão.<span class="analysis-seed">REPROVADO</span></span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-icon warn">△</span>
+      <span class="analysis-text"><strong>HCD_001</strong> — Mapeamento inconsistente: usuário espera "documento jurídico formal", mas italic evoca jornal ou carta pessoal. Modelo mental misalinhado.<span class="analysis-seed">ATENÇÃO</span></span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-icon fail">✗</span>
+      <span class="analysis-text"><strong>POLAR_BEAR_001</strong> — Hierarquia de seção (h3 em italic + uppercase 13px) compete visualmente com o corpo italic. Wayfinding prejudicado.<span class="analysis-seed">REPROVADO</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ OPÇÃO B — INTER ══════ -->
+<div id="opt-b" class="option-wrap">
+  <div class="option-card font-b">
+    <div class="card-meta">
+      <span class="card-meta-label">Opção B — Inter Regular</span>
+      <span class="card-meta-val">Inter · normal · 14px · line-height 1.80</span>
+    </div>
+    <div class="verdict-strip">
+      <div class="verdict-num">93<span class="verdict-pct">%</span></div>
+      <div class="verdict-meta">
+        <span class="verdict-tag win">Chance de êxito: muito boa</span>
+        <span class="verdict-tag area">Direito Civil · Danos Materiais</span>
+      </div>
+    </div>
+    <div class="vol-tabs">
+      <button class="vol-tab on">Volume I — Orientação</button>
+      <button class="vol-tab">Volume II — Técnico</button>
+    </div>
+    <div class="laudo-body">
+      <h3>Orientação ao Cliente</h3>
+      <p>Prezado(a) Cliente,</p><br>
+      <p>Com base na petição inicial que nos foi apresentada e na avaliação técnica altamente favorável sobre a sua solidez, preparei o laudo jurídico para que você compreenda o cenário e os próximos passos.</p><br>
+      <h3>Identificação das Partes</h3>
+      <p><strong>Autor(a) / Exequente:</strong> Você, o(a) condômino(a) que teve a bicicleta furtada.<br>
+      <strong>Réu / Executado:</strong> O Condomínio [Nome do Condomínio].</p><br>
+      <h3>Laudo Jurídico — Análise da Ação de Reparação de Danos</h3>
+      <p><strong>Veredito</strong></p><br>
+      <p>A análise técnica indica uma probabilidade de êxito <strong>muito alta (93%)</strong>. Seu caso apresenta fundamentação jurídica robusta, amparada pelo Código Civil e pela jurisprudência consolidada dos Tribunais de Justiça sobre responsabilidade objetiva dos condomínios por furtos em área comum.</p>
+    </div>
+  </div>
+
+  <div class="analysis">
+    <div class="analysis-title">Análise dos decision gates</div>
+    <div class="analysis-row">
+      <span class="analysis-icon pass">✓</span>
+      <span class="analysis-text"><strong>USABX_001</strong> — Inter é o padrão estabelecido para corpo de texto em interfaces digitais. Máxima legibilidade em tela pequena. Sem conflito estético.<span class="analysis-seed">APROVADO</span></span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-icon pass">✓</span>
+      <span class="analysis-text"><strong>HCD_001</strong> — Modelo mental "documento digital/institucional" alinhado. Separadores + uppercase labels criam hierarchy clara.<span class="analysis-seed">APROVADO</span></span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-icon warn">△</span>
+      <span class="analysis-text"><strong>POLAR_BEAR_001</strong> — Boa hierarquia, mas perde o character tipográfico do produto. Pode soar genérico sem diferenciação visual.<span class="analysis-seed">ATENÇÃO</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ OPÇÃO C — CORMORANT SEM ITÁLICO ══════ -->
+<div id="opt-c" class="option-wrap">
+  <div class="option-card font-c">
+    <div class="card-meta">
+      <span class="card-meta-label">Opção C — Cormorant Garamond Regular</span>
+      <span class="card-meta-val">Cormorant Garamond · normal · 16px · line-height 1.80</span>
+    </div>
+    <div class="verdict-strip">
+      <div class="verdict-num">93<span class="verdict-pct">%</span></div>
+      <div class="verdict-meta">
+        <span class="verdict-tag win">Chance de êxito: muito boa</span>
+        <span class="verdict-tag area">Direito Civil · Danos Materiais</span>
+      </div>
+    </div>
+    <div class="vol-tabs">
+      <button class="vol-tab on">Volume I — Orientação</button>
+      <button class="vol-tab">Volume II — Técnico</button>
+    </div>
+    <div class="laudo-body">
+      <h3>Orientação ao Cliente</h3>
+      <p>Prezado(a) Cliente,</p><br>
+      <p>Com base na petição inicial que nos foi apresentada e na avaliação técnica altamente favorável sobre a sua solidez, preparei o laudo jurídico para que você compreenda o cenário e os próximos passos.</p><br>
+      <h3>Identificação das Partes</h3>
+      <p><strong>Autor(a) / Exequente:</strong> Você, o(a) condômino(a) que teve a bicicleta furtada.<br>
+      <strong>Réu / Executado:</strong> O Condomínio [Nome do Condomínio].</p><br>
+      <h3>Laudo Jurídico — Análise da Ação de Reparação de Danos</h3>
+      <p><strong>Veredito</strong></p><br>
+      <p>A análise técnica indica uma probabilidade de êxito <strong>muito alta (93%)</strong>. Seu caso apresenta fundamentação jurídica robusta, amparada pelo Código Civil e pela jurisprudência consolidada dos Tribunais de Justiça sobre responsabilidade objetiva dos condomínios por furtos em área comum.</p>
+    </div>
+  </div>
+
+  <div class="analysis">
+    <div class="analysis-title">Análise dos decision gates</div>
+    <div class="analysis-row">
+      <span class="analysis-icon pass">✓</span>
+      <span class="analysis-text"><strong>USABX_001</strong> — Remove o itálico, o maior problema de legibilidade. Cormorant regular em 16px é aceitável para leitura. Resolve o gate sem trocar de família.<span class="analysis-seed">APROVADO</span></span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-icon warn">△</span>
+      <span class="analysis-text"><strong>HCD_001</strong> — Cormorant é uma fonte display, não foi projetada para longas leituras em tela. Em telas OLED escuras com antialiasing variável pode ter rendering irregular em 16px.<span class="analysis-seed">ATENÇÃO</span></span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-icon pass">✓</span>
+      <span class="analysis-text"><strong>POLAR_BEAR_001</strong> — Preserva o character visual do produto e os h3 em uppercase Cormorant criam hierarquia consistente com o resto do app.<span class="analysis-seed">APROVADO</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ OPÇÃO D — HÍBRIDO (RECOMENDADA) ══════ -->
+<div id="opt-d" class="option-wrap">
+  <div class="option-card font-d">
+    <div class="card-meta">
+      <span class="card-meta-label">Opção D — Híbrido · Recomendada pelo Conselho UX</span>
+      <span class="card-meta-val">Inter corpo · Cormorant italic cabeçalhos · 14px · line-height 1.80</span>
+    </div>
+    <div class="verdict-strip">
+      <div class="verdict-num">93<span class="verdict-pct">%</span></div>
+      <div class="verdict-meta">
+        <span class="verdict-tag win">Chance de êxito: muito boa</span>
+        <span class="verdict-tag area">Direito Civil · Danos Materiais</span>
+      </div>
+    </div>
+    <div class="vol-tabs">
+      <button class="vol-tab on">Volume I — Orientação</button>
+      <button class="vol-tab">Volume II — Técnico</button>
+    </div>
+    <div class="laudo-body">
+      <h3>Orientação ao Cliente</h3>
+      <p>Prezado(a) Cliente,</p><br>
+      <p>Com base na petição inicial que nos foi apresentada e na avaliação técnica altamente favorável sobre a sua solidez, preparei o laudo jurídico para que você compreenda o cenário e os próximos passos.</p><br>
+      <h3>Identificação das Partes</h3>
+      <p><strong>Autor(a) / Exequente:</strong> Você, o(a) condômino(a) que teve a bicicleta furtada.<br>
+      <strong>Réu / Executado:</strong> O Condomínio [Nome do Condomínio].</p><br>
+      <h3>Laudo Jurídico — Análise da Ação de Reparação de Danos</h3>
+      <p><strong>Veredito</strong></p><br>
+      <p>A análise técnica indica uma probabilidade de êxito <strong>muito alta (93%)</strong>. Seu caso apresenta fundamentação jurídica robusta, amparada pelo Código Civil e pela jurisprudência consolidada dos Tribunais de Justiça sobre responsabilidade objetiva dos condomínios por furtos em área comum.</p>
+    </div>
+  </div>
+
+  <div class="analysis">
+    <div class="analysis-title">Análise dos decision gates</div>
+    <div class="analysis-row">
+      <span class="analysis-icon pass">✓</span>
+      <span class="analysis-text"><strong>USABX_001</strong> — Corpo em Inter elimina o problema de legibilidade. Padrão estabelecido para leitura densa. Zero carga cognitiva extra.<span class="analysis-seed">APROVADO</span></span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-icon pass">✓</span>
+      <span class="analysis-text"><strong>HCD_001</strong> — Cormorant italic nos cabeçalhos de seção cria um signifier visual claro: "mudei de assunto". O usuário sabe onde está no documento sem precisar memorizar.<span class="analysis-seed">APROVADO</span></span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-icon pass">✓</span>
+      <span class="analysis-text"><strong>POLAR_BEAR_001</strong> — Hierarquia mais forte do conjunto: h3 Cormorant italic destaca a estrutura do documento, Inter no corpo mantém o ritmo de leitura. Wayfinding máximo.<span class="analysis-seed">APROVADO</span></span>
+    </div>
+    <div class="recommend">⭐ Recomendação unânime do Conselho UX — 3/3 gates aprovados</div>
+  </div>
+</div>
+
+<script>
+function setTab(id,btn){
+  document.querySelectorAll('.option-wrap').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('opt-'+id).classList.add('on');
+  btn.classList.add('on');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
