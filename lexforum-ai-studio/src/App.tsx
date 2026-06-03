@@ -1456,7 +1456,7 @@ const handleGeminiError = (err: any) => {
               {state.caseSummary && (
                 <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '14px', padding: '16px', marginBottom: '16px' }}>
                   <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>NÚCLEO CENTRAL</p>
-                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}>{state.caseSummary}</p>
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{state.caseSummary}</p>
                 </div>
               )}
               {/* Agentes */}
@@ -2670,7 +2670,7 @@ const handleGeminiError = (err: any) => {
                   >
                     <div className="p-6 bg-white/5 border border-white/10 space-y-4">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-serif italic text-white/80 leading-relaxed">
+                      <p className="text-lg font-sans text-white/80 leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={true} />
                       </p>
                     </div>
@@ -2752,7 +2752,7 @@ const handleGeminiError = (err: any) => {
 
                     <div className="p-8 bg-white/5 border border-white/10 space-y-4">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-serif italic text-white/80 leading-relaxed">
+                      <p className="text-lg font-sans text-white/80 leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={!state.isUnlocked} />
                       </p>
                     </div>
@@ -2935,7 +2935,7 @@ const handleGeminiError = (err: any) => {
                         <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">
                           Argumento do outro lado — expandido
                         </div>
-                        <p className="text-sm font-serif italic text-white/70 leading-relaxed">
+                        <p className="text-sm font-sans text-white/70 leading-relaxed">
                           {state.expandedHypothesis}
                         </p>
                         <button
@@ -3006,11 +3006,11 @@ const handleGeminiError = (err: any) => {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-6 bg-white/5 border border-white/10">
                         <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-3">Argumento do Autor</div>
-                        <p className="text-sm font-serif italic text-white/70 leading-relaxed">{state.simulation.rounds[0].authorSummary || '—'}</p>
+                        <p className="text-sm font-sans text-white/70 leading-relaxed">{state.simulation.rounds[0].authorSummary || '—'}</p>
                       </div>
                       <div className="p-6 bg-white/5 border border-amber-500/20">
                         <div className="text-[9px] font-bold uppercase tracking-widest text-amber-500/60 mb-3">Argumento do Réu</div>
-                        <p className="text-sm font-serif italic text-white/70 leading-relaxed">{state.simulation.rounds[0].defenseSummary || '—'}</p>
+                        <p className="text-sm font-sans text-white/70 leading-relaxed">{state.simulation.rounds[0].defenseSummary || '—'}</p>
                       </div>
                     </div>
                     <div className="p-6 bg-white/5 border border-white/10 space-y-4">
