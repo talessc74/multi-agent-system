@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Preview — Página de Confirmação</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0A0C0F;
+    color: #E5E5E5;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  /* ── Layout geral ── */
+  .page-title {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    margin-bottom: 12px;
+  }
+  .tab-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 48px;
+  }
+  .tab {
+    padding: 8px 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  /* ── Comparação antes/depois ── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto 60px;
+  }
+  @media (max-width: 700px) { .compare { grid-template-columns: 1fr; } }
+
+  .panel {
+    border: 1px solid rgba(255,255,255,0.07);
+    overflow: hidden;
+  }
+  .panel-label {
+    padding: 10px 16px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .panel-label.before { color: rgba(255,100,100,0.7); background: rgba(255,100,100,0.04); }
+  .panel-label.after  { color: rgba(0,204,136,0.8);  background: rgba(0,204,136,0.04); }
+
+  /* ── ANTES ── */
+  .before-body {
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    text-align: center;
+  }
+  .icon-circle {
+    width: 80px; height: 80px;
+    border: 1px solid white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 25px 50px rgba(255,255,255,0.05);
+  }
+  .icon-circle svg { width: 40px; height: 40px; color: white; }
+  .before-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 28px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.25;
+  }
+  .before-title span {
+    font-weight: 700;
+    border-bottom: 1px solid white;
+    padding-bottom: 2px;
+  }
+  .before-card {
+    background: #15161A;
+    padding: 28px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    text-align: left;
+    width: 100%;
+  }
+  .card-label {
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .before-summary {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+  }
+  .before-cta-text {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+  .btn-row { display: flex; gap: 12px; justify-content: center; }
+  .btn-sec {
+    padding: 14px 32px;
+    border: 1px solid rgba(255,255,255,0.1);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    background: transparent; cursor: pointer;
+  }
+  .btn-pri-before {
+    padding: 14px 32px;
+    background: white; color: black;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    border: none; cursor: pointer;
+  }
+
+  /* ── DEPOIS ── */
+  .after-body {
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    text-align: center;
+  }
+
+  /* badge */
+  .area-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px;
+  }
+  .badge-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .badge-text {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+  }
+
+  /* title */
+  .after-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 28px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.25;
+  }
+
+  /* summary card */
+  .after-card {
+    padding: 28px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    text-align: left;
+    width: 100%;
+    background: #15161A;
+  }
+  .after-summary {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.7;
+  }
+
+  /* agents */
+  .agents-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+  .agent-card {
+    padding: 18px 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
+  }
+  .agent-icon { font-size: 22px; }
+  .agent-role {
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+  .agent-name {
+    font-size: 13px; font-weight: 500;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .after-cta-text {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ── Modo switcher ── */
+  .mode-switch {
+    max-width: 1100px;
+    margin: 0 auto 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mode-label {
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    white-space: nowrap;
+  }
+  .mode-btn {
+    padding: 6px 14px;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mode-btn.sel { color: #fff; border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); }
+
+  /* ── highlight ── */
+  .change-tag {
+    display: inline-block;
+    font-size: 8px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    background: rgba(0,204,136,0.15);
+    color: #00CC88;
+    border: 1px solid rgba(0,204,136,0.3);
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<p class="page-title">Preview — Página de Confirmação · Desktop</p>
+
+<!-- Modo selector -->
+<div class="mode-switch">
+  <span class="mode-label">Simular modo:</span>
+  <button class="mode-btn sel" onclick="setMode(1,'#00FFEF','0,255,239')">Modo 1</button>
+  <button class="mode-btn" onclick="setMode(2,'#A78BFA','167,139,250')">Modo 2</button>
+  <button class="mode-btn" onclick="setMode(3,'#FB923C','251,146,60')">Modo 3</button>
+  <button class="mode-btn" onclick="setMode(4,'#F59E0B','245,158,11')">Modo 4</button>
+  <button class="mode-btn" onclick="setMode(5,'#EF4444','239,68,68')">Modo 5</button>
+</div>
+
+<!-- Comparação -->
+<div class="compare">
+
+  <!-- ANTES -->
+  <div class="panel">
+    <div class="panel-label before">Antes</div>
+    <div class="before-body">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 3v1m0 16v1M4.22 4.22l.707.707M18.364 18.364l.707.707M3 12h1m16 0h1M4.927 19.073l.707-.707M18.364 5.636l.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l9 13 9-13"/>
+        </svg>
+      </div>
+      <h1 class="before-title">
+        Causa identificada como<br/>
+        <span id="b-area">Direito Civil</span>
+      </h1>
+      <div class="before-card">
+        <div class="card-label">Núcleo Central Entendido</div>
+        <p class="before-summary">
+          "O condomínio tem responsabilidade objetiva pelo furto da bicicleta em área comum, conforme jurisprudência consolidada dos Tribunais de Justiça."
+        </p>
+      </div>
+      <p class="before-cta-text">Agentes especializados escalados. Deseja iniciar o fórum?</p>
+      <div class="btn-row">
+        <button class="btn-sec">Voltar</button>
+        <button class="btn-pri-before">Iniciar Fórum</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEPOIS -->
+  <div class="panel">
+    <div class="panel-label after">Depois <span class="change-tag">3 mudanças</span></div>
+    <div class="after-body">
+
+      <!-- Badge área -->
+      <div class="area-badge" id="after-badge"
+        style="background:rgba(0,255,239,0.12);border:1px solid rgba(0,255,239,0.3)">
+        <div class="badge-dot" id="badge-dot" style="background:#00FFEF"></div>
+        <span class="badge-text" id="badge-text" style="color:#00FFEF">Direito Civil</span>
+      </div>
+
+      <!-- Título mais humano -->
+      <h1 class="after-title">
+        O sistema entendeu<br/>sua causa.
+      </h1>
+
+      <!-- Card com borda colorida + Inter -->
+      <div class="after-card" id="after-card"
+        style="border-width:1px 1px 1px 3px;border-style:solid;border-color:rgba(0,255,239,0.15) rgba(0,255,239,0.15) rgba(0,255,239,0.15) #00FFEF">
+        <div class="card-label">Núcleo Central Entendido</div>
+        <p class="after-summary">
+          "O condomínio tem responsabilidade objetiva pelo furto da bicicleta em área comum, conforme jurisprudência consolidada dos Tribunais de Justiça."
+        </p>
+      </div>
+
+      <!-- Agentes (novo) -->
+      <div class="agents-grid">
+        <div class="agent-card">
+          <span class="agent-icon">⚖️</span>
+          <span class="agent-role">Advogado</span>
+          <span class="agent-name" id="agent-spec">Civilista</span>
+        </div>
+        <div class="agent-card">
+          <span class="agent-icon">🧑‍⚖️</span>
+          <span class="agent-role">Magistrado</span>
+          <span class="agent-name" id="agent-spec2">Civilista</span>
+        </div>
+      </div>
+
+      <p class="after-cta-text">Deseja iniciar o fórum?</p>
+      <div class="btn-row">
+        <button class="btn-sec">Corrigir causa</button>
+        <button id="btn-pri-after"
+          style="padding:14px 32px;background:#00FFEF;color:#000;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;border:none;cursor:pointer;">
+          Iniciar Fórum
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Legenda das mudanças -->
+<div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-bottom:60px">
+  <div style="padding:20px;border:1px solid rgba(0,204,136,0.2);background:rgba(0,204,136,0.04)">
+    <p style="font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#00CC88;margin-bottom:8px">① Badge de área</p>
+    <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6">Substitui o ícone genérico. Informa a área detectada com a cor do modo escolhido.</p>
+  </div>
+  <div style="padding:20px;border:1px solid rgba(0,204,136,0.2);background:rgba(0,204,136,0.04)">
+    <p style="font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#00CC88;margin-bottom:8px">② Agentes escalados</p>
+    <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6">Advogado e Magistrado especializados na área — cria antecipação e confiança antes do fórum.</p>
+  </div>
+  <div style="padding:20px;border:1px solid rgba(0,204,136,0.2);background:rgba(0,204,136,0.04)">
+    <p style="font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#00CC88;margin-bottom:8px">③ Fonte Inter + cor</p>
+    <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6">Resumo em Inter (consistente com o laudo). Borda e botão na cor do modo.</p>
+  </div>
+</div>
+
+<script>
+const areaMap = {
+  1: { label:'Direito Civil',    spec:'Civilista',    color:'#00FFEF', rgb:'0,255,239'   },
+  2: { label:'Direito Penal',    spec:'Criminal',     color:'#A78BFA', rgb:'167,139,250' },
+  3: { label:'Direito Trabalhista', spec:'Trabalhista', color:'#FB923C', rgb:'251,146,60' },
+  4: { label:'Direito Tributário',  spec:'Tributarista', color:'#F59E0B', rgb:'245,158,11' },
+  5: { label:'Direito do Consumidor',spec:'Consumerista', color:'#EF4444', rgb:'239,68,68' },
+};
+
+function setMode(m, color, rgb) {
+  const d = areaMap[m];
+  // tabs
+  document.querySelectorAll('.mode-btn').forEach((b,i) => b.classList.toggle('sel', i===m-1));
+  // before
+  document.getElementById('b-area').textContent = d.label;
+  // badge
+  const badge = document.getElementById('after-badge');
+  badge.style.background = `rgba(${d.rgb},0.12)`;
+  badge.style.borderColor = `rgba(${d.rgb},0.3)`;
+  document.getElementById('badge-dot').style.background = d.color;
+  document.getElementById('badge-text').style.color = d.color;
+  document.getElementById('badge-text').textContent = d.label;
+  // card border
+  const card = document.getElementById('after-card');
+  card.style.borderColor = `rgba(${d.rgb},0.15) rgba(${d.rgb},0.15) rgba(${d.rgb},0.15) ${d.color}`;
+  // agents
+  document.getElementById('agent-spec').textContent = d.spec;
+  document.getElementById('agent-spec2').textContent = d.spec;
+  // button
+  document.getElementById('btn-pri-after').style.background = d.color;
+  document.getElementById('btn-pri-after').style.color = ['#00FFEF','#A78BFA'].includes(d.color) ? '#000' : '#fff';
+}
+</script>
+</body>
+</html>
