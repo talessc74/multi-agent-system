@@ -2405,51 +2405,79 @@ const handleGeminiError = (err: any) => {
               </motion.div>
             )}
 
-            {state.step === 'confirm' && (
-              <motion.div 
+            {state.step === 'confirm' && (() => {
+              const dcColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
+              const dcColorRgb = MODE_CONFIG[state.selectedMode]?.colorRgb ?? '0,255,239';
+              const agentSpecMap: Record<string, string> = {
+                LABOR: 'Trabalhista', CONSUMER: 'Consumerista', CIVIL: 'Civilista',
+                FAMILY: 'Família', CRIMINAL: 'Criminal', TAX: 'Tributarista',
+              };
+              const agentSpec = agentSpecMap[state.detectedArea] ?? 'Especializado';
+              return (
+              <motion.div
                 key="confirm"
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="space-y-8 py-16 text-center max-w-3xl mx-auto"
               >
-                <div className="w-20 h-20 border border-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-white/5">
-                  <Scale className="text-white w-10 h-10" />
-                </div>
-                <h1 className="text-4xl font-serif italic tracking-tight text-white/90">
-                  Causa identificada como <br />
-                  <span className="font-bold border-b border-white pb-1 text-white">
-                    {areaLabels[state.detectedArea] || "Área Não Classificada"}
+                {/* Badge de área — identifica o modo e a área detectada */}
+                <div className="inline-flex items-center gap-2 px-4 py-2"
+                  style={{ background: `rgba(${dcColorRgb},0.12)`, border: `1px solid rgba(${dcColorRgb},0.3)` }}>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: dcColor }} />
+                  <span className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>
+                    {formatAreaLabel(state.detectedArea)}
                   </span>
+                </div>
+
+                <h1 className="text-4xl font-serif italic tracking-tight text-white/90">
+                  O sistema entendeu<br />sua causa.
                 </h1>
 
                 {state.caseSummary && (
-                  <div className="bg-[#15161A] p-8 border border-white/10 shadow-2xl shadow-black/50 mt-8 text-left">
+                  <div className="p-8 shadow-2xl shadow-black/50 mt-8 text-left"
+                    style={{ background: '#15161A', borderWidth: '1px 1px 1px 3px', borderStyle: 'solid', borderColor: `rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) ${dcColor}` }}>
                     <h4 className="text-[10px] uppercase font-bold tracking-widest text-white/30 mb-4 border-b border-white/5 pb-2">Núcleo Central Entendido</h4>
-                    <p className="text-xl font-serif italic text-white/80 leading-relaxed">
+                    <p className="text-xl font-sans text-white/80 leading-relaxed">
                       "{state.caseSummary}"
                     </p>
                   </div>
                 )}
 
-                <p className="text-white/40 text-sm font-sans uppercase tracking-widest leading-relaxed mt-8 max-w-lg mx-auto">
-                  Agentes especializados escalados. Deseja iniciar o fórum?
+                {/* Agentes escalados */}
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2">
+                    <span className="text-2xl block">⚖️</span>
+                    <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/30">Advogado</p>
+                    <p className="text-sm font-medium text-white/60">{agentSpec}</p>
+                  </div>
+                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2">
+                    <span className="text-2xl block">🧑‍⚖️</span>
+                    <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/30">Magistrado</p>
+                    <p className="text-sm font-medium text-white/60">{agentSpec}</p>
+                  </div>
+                </div>
+
+                <p className="text-white/30 text-[11px] font-sans uppercase tracking-widest leading-relaxed mt-6 max-w-lg mx-auto">
+                  Deseja iniciar o fórum?
                 </p>
                 <div className="flex justify-center gap-4 pt-6">
-                  <button 
+                  <button
                     onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
                     className="px-10 py-4 border border-white/10 text-[11px] uppercase tracking-widest hover:bg-white/5 transition-colors font-bold text-white/60"
                   >
-                    Voltar
+                    Corrigir causa
                   </button>
-                  <button 
+                  <button
                     onClick={handleSimulate}
-                    className="px-10 py-4 bg-white text-black text-[11px] uppercase tracking-widest hover:bg-[#F4F4F2] transition-colors font-bold shadow-2xl shadow-black/50"
+                    className="px-10 py-4 text-black text-[11px] uppercase tracking-widest hover:opacity-90 transition-colors font-bold shadow-2xl shadow-black/50"
+                    style={{ background: dcColor }}
                   >
                     Iniciar Fórum
                   </button>
                 </div>
               </motion.div>
-            )}
+              );
+            })()}
 
             {(state.step === 'simulating' || (state.step === 'result' && !state.isUnlocked)) && (
               <motion.div 
