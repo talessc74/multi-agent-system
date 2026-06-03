@@ -2463,13 +2463,13 @@ const handleGeminiError = (err: any) => {
                 <div className="flex justify-center gap-4 pt-6">
                   <button
                     onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
-                    className="px-10 py-4 border border-white/10 text-[11px] uppercase tracking-widest hover:bg-white/5 transition-colors font-bold text-white/60"
+                    className="px-10 py-4 border border-white/10 rounded-[14px] text-[11px] uppercase tracking-widest hover:bg-white/5 transition-colors font-bold text-white/60"
                   >
                     Corrigir causa
                   </button>
                   <button
                     onClick={handleSimulate}
-                    className="px-10 py-4 text-black text-[11px] uppercase tracking-widest hover:opacity-90 transition-colors font-bold shadow-2xl shadow-black/50"
+                    className="px-10 py-4 rounded-[14px] text-black text-[11px] uppercase tracking-widest hover:opacity-90 transition-colors font-bold shadow-2xl shadow-black/50"
                     style={{ background: dcColor }}
                   >
                     Iniciar Fórum
