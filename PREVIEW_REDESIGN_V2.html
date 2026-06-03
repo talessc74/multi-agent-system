@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EAI? — Proposta Visual V2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button{cursor:pointer;font:inherit;border:none;background:none}
+textarea,input{font:inherit}
+img{display:block}
+
+/* ── TOKENS ── */
+:root{
+  --paper:   #F5F2EB;
+  --paper-2: #EDE9DF;
+  --white:   #FFFFFF;
+  --ink:     #0C0C0C;
+  --ink-2:   #4A4A4A;
+  --ink-3:   #9A9A9A;
+  --navy:    #0E2448;
+  --navy-2:  #1A3A6B;
+  --gold:    #B8870A;
+  --gold-bg: rgba(184,135,10,0.08);
+  --red:     #8B1A1A;
+  --red-bg:  rgba(139,26,26,0.06);
+  --purple:  #3D1F7A;
+  --purple-bg: rgba(61,31,122,0.06);
+  --amber:   #7A5200;
+  --amber-bg:rgba(122,82,0,0.06);
+  --green:   #0E5A2A;
+  --green-bg:rgba(14,90,42,0.06);
+  --border:  rgba(0,0,0,0.10);
+  --border-strong: rgba(0,0,0,0.18);
+  --shadow:  0 1px 4px rgba(0,0,0,0.08);
+  --shadow-lg:0 4px 24px rgba(0,0,0,0.10);
+}
+
+body{
+  font-family:"Inter",sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+.serif{font-family:"Cormorant Garamond",Georgia,serif}
+.mono {font-family:"JetBrains Mono",monospace}
+
+/* ── PREVIEW CHROME ── */
+#pbar{
+  position:fixed;top:0;left:0;right:0;z-index:9999;
+  height:48px;background:#0E2448;
+  display:flex;align-items:center;gap:0;
+  padding:0 16px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.12);
+}
+#pbar .pl{
+  font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);white-space:nowrap;padding-right:18px;
+  border-right:1px solid rgba(255,255,255,0.12);margin-right:14px;flex-shrink:0;
+}
+#pbar button{
+  height:48px;padding:0 14px;
+  font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,0.45);background:none;border:none;
+  border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;transition:all .15s;
+}
+#pbar button.on{color:#fff;border-bottom-color:rgba(255,255,255,0.8)}
+#pbar button:hover:not(.on){color:rgba(255,255,255,0.75)}
+
+.screen{display:none;padding-top:48px;min-height:100vh}
+.screen.on{display:block}
+
+/* ── NAVBAR ── */
+.nav{
+  position:sticky;top:48px;z-index:100;
+  background:rgba(245,242,235,0.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  height:60px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;
+}
+.nav-logo{display:flex;align-items:baseline;gap:0;text-decoration:none}
+.nav-logo .brand{font-family:"Cormorant Garamond",serif;font-size:24px;font-weight:700;color:var(--navy);letter-spacing:-.3px}
+.nav-logo .check{font-family:"Cormorant Garamond",serif;font-size:24px;font-weight:700;color:var(--gold)}
+.nav-r{display:flex;align-items:center;gap:8px}
+.nav-ghost{
+  height:36px;padding:0 14px;
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-2);border:1px solid var(--border-strong);
+  transition:all .15s;background:none;
+}
+.nav-ghost:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.nav-solid{
+  height:36px;padding:0 14px;
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  background:var(--navy);color:#fff;border:1px solid var(--navy);
+  transition:all .15s;
+}
+.nav-solid:hover{background:var(--navy-2)}
+
+/* ══════════════════════════════════════
+   SCREEN 1 — HOME
+══════════════════════════════════════ */
+
+/* Hero */
+.hero-band{
+  background:var(--navy);
+  padding:72px 40px 64px;
+}
+.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.hero-left{}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:4px 12px;border:1px solid rgba(255,255,255,0.15);
+  font-size:9px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);margin-bottom:24px;
+}
+.hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.hero-h1{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(40px,5vw,66px);font-weight:700;font-style:italic;
+  color:#fff;line-height:1.04;letter-spacing:-.5px;margin-bottom:20px;
+}
+.hero-h1 em{not-italic:italic;color:var(--gold);font-style:normal}
+.hero-sub{font-size:14px;color:rgba(255,255,255,0.55);line-height:1.7;max-width:400px;margin-bottom:32px}
+.hero-cta-row{display:flex;align-items:center;gap:12px}
+.btn-hero{
+  height:48px;padding:0 28px;
+  font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--gold);color:#fff;border:none;transition:all .15s;
+}
+.btn-hero:hover{background:#9A7008}
+.hero-note{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.08em}
+
+/* Hero right — stats panel */
+.hero-stats{
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);
+  padding:28px;display:flex;flex-direction:column;gap:0;
+}
+.stat-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.stat-row:last-child{border-bottom:none}
+.stat-label{font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.stat-val{font-family:"JetBrains Mono",monospace;font-size:11px;color:rgba(255,255,255,0.7)}
+.stat-val.hi{color:var(--gold);font-size:18px;font-weight:600}
+
+/* Disclaimer */
+.disc{
+  background:var(--paper-2);border-bottom:1px solid var(--border);
+  padding:12px 40px;
+}
+.disc p{
+  max-width:1100px;margin:0 auto;
+  font-size:9px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-3);line-height:1.7;
+}
+
+/* Mode section */
+.modes-section{max-width:1100px;margin:0 auto;padding:60px 40px 80px}
+.modes-section-hdr{
+  display:flex;align-items:baseline;gap:16px;margin-bottom:40px;
+}
+.modes-section-hdr h2{
+  font-family:"Cormorant Garamond",serif;
+  font-size:32px;font-weight:700;color:var(--ink);
+}
+.modes-section-hdr .hdr-sub{font-size:11px;color:var(--ink-3);letter-spacing:.12em}
+
+/* Situação grouping — SEED_POLAR_BEAR_001 + SEED_HCD_001 */
+.situation-group{margin-bottom:48px}
+.situation-label{
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;
+}
+.situation-label span{
+  font-size:9px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-3);
+}
+.situation-label::before{content:'';width:20px;height:1px;background:var(--border-strong)}
+.situation-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.mode-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2px}
+
+/* Mode card — affordance permanente, não só hover */
+.mcard{
+  background:var(--white);border:1px solid var(--border);
+  display:flex;flex-direction:column;
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+}
+.mcard:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.mcard-top{
+  height:4px;width:100%;
+  background:var(--mode-color,var(--navy));
+}
+.mcard-body{padding:24px;flex:1}
+.mcard-icon{
+  width:40px;height:40px;
+  background:var(--mode-bg,rgba(14,36,72,0.06));
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:16px;
+}
+.mcard-name{
+  font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);margin-bottom:6px;
+}
+.mcard-desc{font-size:12px;color:var(--ink-2);line-height:1.65;margin-bottom:16px}
+.mcard-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 24px;border-top:1px solid var(--border);
+  background:var(--paper);
+}
+.mcard-price{font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:600;color:var(--gold)}
+.mcard-cta{
+  font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--mode-color,var(--navy));display:flex;align-items:center;gap:4px;
+}
+
+/* Tech footer */
+.tech-footer{
+  background:var(--navy);border-top:4px solid var(--gold);
+  padding:40px;
+}
+.tech-footer-inner{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:32px;
+}
+.tf-item .tf-label{font-size:8px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px}
+.tf-item .tf-val{font-family:"JetBrains Mono",monospace;font-size:9px;color:rgba(255,255,255,0.55);line-height:1.6}
+.tf-terms{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);max-width:1100px;margin-left:auto;margin-right:auto;padding-left:40px;padding-right:40px}
+.tf-terms a{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.25);text-decoration:none}
+
+/* ══════════════════════════════════════
+   SCREEN 2 — INPUT
+══════════════════════════════════════ */
+.form-shell{max-width:680px;margin:0 auto;padding:48px 24px 80px}
+
+.breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:40px}
+.bc-step{
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:50%;
+  font-size:10px;font-weight:700;
+  border:2px solid var(--border-strong);color:var(--ink-3);
+  transition:all .3s;flex-shrink:0;
+}
+.bc-step.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.bc-step.done{background:var(--green);border-color:var(--green);color:#fff}
+.bc-line{flex:1;height:1px;background:var(--border)}
+.bc-label{font-size:10px;font-weight:600;color:var(--ink-3);white-space:nowrap}
+
+.form-mode-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:8px 16px;margin-bottom:28px;
+  border-left:3px solid var(--mode-color,var(--navy));
+  background:var(--mode-bg,rgba(14,36,72,0.04));
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--mode-color,var(--navy));
+}
+
+.form-heading{margin-bottom:32px}
+.form-heading h1{font-family:"Cormorant Garamond",serif;font-size:38px;font-weight:700;color:var(--ink);line-height:1.1;margin-bottom:8px}
+.form-heading p{font-size:13px;color:var(--ink-2);line-height:1.6}
+
+.chips-label{font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px}
+.chip{
+  padding:7px 15px;border:1px solid var(--border-strong);background:var(--white);
+  font-size:11px;font-weight:500;color:var(--ink-2);transition:all .15s;
+}
+.chip:hover{border-color:var(--navy);color:var(--navy)}
+.chip.on{border-color:var(--navy);color:var(--navy);background:rgba(14,36,72,0.06);font-weight:700}
+
+.field-card{
+  background:var(--white);border:1px solid var(--border);
+  margin-bottom:16px;
+}
+.field-card-top{
+  padding:14px 20px 0;display:flex;justify-content:space-between;align-items:center;
+}
+.field-label{font-size:9px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-3)}
+.field-count{font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-3)}
+.field-card textarea{
+  width:100%;min-height:160px;
+  background:transparent;border:none;outline:none;resize:vertical;
+  padding:10px 20px 16px;
+  font-size:15px;font-family:"Cormorant Garamond",serif;font-style:italic;
+  color:var(--ink);line-height:1.7;
+}
+.field-card textarea::placeholder{color:var(--ink-3)}
+
+/* Upload */
+.upload-card{
+  background:var(--white);border:1px dashed var(--border-strong);
+  padding:20px;margin-bottom:24px;
+  display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .15s;
+}
+.upload-card:hover{border-color:var(--navy);background:rgba(14,36,72,0.02)}
+.upload-ic{
+  width:40px;height:40px;background:var(--paper);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+}
+.upload-txt .ut1{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:3px}
+.upload-txt .ut2{font-size:10px;color:var(--ink-3);letter-spacing:.06em}
+
+/* Consent — SEED_ANON_SEC_IAM_004 */
+.consent-box{
+  border:1px solid rgba(184,135,10,0.3);background:rgba(184,135,10,0.04);
+  padding:16px 20px;margin-bottom:24px;display:flex;gap:14px;align-items:flex-start;
+}
+.consent-check{
+  width:18px;height:18px;border:2px solid var(--gold);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;cursor:pointer;
+  background:var(--gold);
+}
+.consent-check::after{content:'✓';font-size:11px;font-weight:700;color:#fff}
+.consent-text{font-size:11px;color:var(--ink-2);line-height:1.65}
+.consent-text strong{color:var(--ink);font-weight:600}
+
+.submit-row{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.btn-submit{
+  height:52px;padding:0 36px;
+  font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  background:var(--navy);color:#fff;border:none;transition:all .15s;
+}
+.btn-submit:hover{background:var(--navy-2)}
+.btn-submit:disabled{background:var(--ink-3);cursor:not-allowed}
+.submit-note{font-size:10px;color:var(--ink-3);line-height:1.6;max-width:240px;text-align:right}
+
+/* ══════════════════════════════════════
+   SCREEN 3 — SIMULATING
+══════════════════════════════════════ */
+.sim-shell{
+  min-height:calc(100vh - 108px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:48px 24px;
+}
+.sim-header{text-align:center;margin-bottom:48px}
+.sim-header .sim-logo{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:700;color:var(--ink)}
+.sim-header .sim-logo span{color:var(--gold)}
+.sim-header p{font-size:12px;color:var(--ink-3);margin-top:8px;letter-spacing:.06em}
+
+.sim-track{width:100%;max-width:520px;display:flex;flex-direction:column;gap:2px}
+.sim-item{
+  background:var(--white);border:1px solid var(--border);
+  padding:16px 20px;display:flex;align-items:center;gap:16px;
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.sim-item.done{border-left:3px solid var(--green);padding-left:17px}
+.sim-item.run{border-left:3px solid var(--gold);padding-left:17px;background:rgba(184,135,10,0.03)}
+.sim-item.run::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(184,135,10,0.06),transparent);
+  animation:sweep 1.8s ease-in-out infinite;
+}
+@keyframes sweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.sim-item.wait{opacity:.35}
+
+.sim-num{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;font-family:"JetBrains Mono",monospace;
+  border:2px solid var(--border-strong);color:var(--ink-3);
+}
+.sim-item.done .sim-num{background:var(--green);border-color:var(--green);color:#fff}
+.sim-item.run .sim-num{background:var(--gold);border-color:var(--gold);color:#fff;animation:pulse-n 1.2s ease-in-out infinite}
+@keyframes pulse-n{0%,100%{box-shadow:0 0 0 0 rgba(184,135,10,0.4)}50%{box-shadow:0 0 0 6px rgba(184,135,10,0)}}
+
+.sim-info{flex:1}
+.sim-stage-name{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.sim-stage-sub{font-size:10px;color:var(--ink-3);margin-top:2px}
+.sim-item.done .sim-stage-name{color:var(--green)}
+.sim-item.run .sim-stage-name{color:var(--amber)}
+
+.sim-time{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--ink-3);flex-shrink:0}
+
+/* ══════════════════════════════════════
+   SCREEN 4 — RESULTADO
+══════════════════════════════════════ */
+.result-shell{max-width:720px;margin:0 auto;padding:48px 24px 80px}
+
+/* Verdict card — peça central */
+.verdict-card{
+  background:var(--navy);color:#fff;
+  padding:40px;margin-bottom:20px;position:relative;overflow:hidden;
+}
+.verdict-card::before{
+  content:'';position:absolute;right:-40px;top:-40px;
+  width:240px;height:240px;border-radius:50%;
+  background:rgba(255,255,255,0.03);
+}
+.verdict-eyebrow{
+  font-size:9px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(255,255,255,0.4);margin-bottom:20px;
+}
+.verdict-number{
+  font-family:"Cormorant Garamond",serif;
+  font-size:100px;font-weight:700;line-height:1;letter-spacing:-4px;
+  color:var(--gold);display:inline-block;margin-bottom:4px;
+}
+.verdict-pct{font-size:36px;font-weight:400;letter-spacing:0;vertical-align:super;margin-left:2px}
+.verdict-bar{height:3px;background:rgba(255,255,255,0.12);margin:16px 0;position:relative}
+.verdict-bar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--gold)}
+.verdict-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.v-badge{
+  padding:5px 12px;border:1px solid rgba(255,255,255,0.15);
+  font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,0.6);
+}
+.v-badge.main{border-color:rgba(184,135,10,0.5);color:var(--gold)}
+
+/* Profile toggle */
+.vol-toggle{
+  display:flex;background:var(--white);border:1px solid var(--border);
+  margin-bottom:2px;overflow:hidden;
+}
+.vol-btn{
+  flex:1;padding:12px;text-align:center;
+  font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);background:none;border:none;border-right:1px solid var(--border);
+  transition:all .15s;
+}
+.vol-btn:last-child{border-right:none}
+.vol-btn.on{color:var(--navy);background:rgba(14,36,72,0.05);border-bottom:2px solid var(--navy)}
+
+/* Report sections */
+.rsec{background:var(--white);border:1px solid var(--border);padding:20px;margin-bottom:2px}
+.rsec.locked{position:relative;overflow:hidden}
+.rsec-label{font-size:9px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+.rsec-text{font-size:14px;color:var(--ink-2);line-height:1.75}
+.rsec-text.mono{font-family:"JetBrains Mono",monospace;font-size:12px;line-height:1.9}
+
+.lock-over{
+  position:absolute;inset:0;
+  background:rgba(245,242,235,0.94);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+}
+.lock-over .lo-icon{font-size:20px}
+.lock-over .lo-txt{font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
+
+/* Unlock CTA */
+.unlock-cta{
+  background:var(--gold);color:#fff;
+  padding:20px 28px;margin:20px 0 6px;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;transition:all .15s;border:none;width:100%;text-align:left;
+}
+.unlock-cta:hover{background:#9A7008}
+.uc-left .uc-label{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#fff}
+.uc-left .uc-sub{font-size:11px;color:rgba(255,255,255,0.7);margin-top:3px}
+.uc-price{font-family:"JetBrains Mono",monospace;font-size:28px;font-weight:600;color:#fff}
+
+.restart-btn{
+  width:100%;padding:14px;background:none;
+  border:1px solid var(--border-strong);color:var(--ink-2);
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  transition:all .15s;
+}
+.restart-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.legal-disc{
+  margin-top:24px;padding-top:20px;border-top:1px solid var(--border);
+  font-size:10px;color:var(--ink-3);line-height:1.7;
+}
+
+/* ══════════════════════════════════════
+   SCREEN 5 — MOBILE
+══════════════════════════════════════ */
+.mob-wrap{background:var(--paper-2);padding:24px 0 40px;min-height:calc(100vh - 108px)}
+.mob-label{text-align:center;font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--ink-3);padding:12px 0 16px}
+.mob-frame{
+  max-width:390px;margin:0 auto;
+  background:var(--paper);border:1px solid var(--border-strong);
+  box-shadow:var(--shadow-lg);min-height:780px;
+}
+.mob-nav{
+  height:56px;background:rgba(245,242,235,0.97);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  position:sticky;top:0;z-index:10;
+}
+.mob-hero{padding:32px 24px 20px}
+.mob-eyebrow{font-size:9px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px}
+.mob-h1{font-family:"Cormorant Garamond",serif;font-size:36px;font-style:italic;font-weight:700;color:var(--ink);line-height:1.1;margin-bottom:10px}
+.mob-sub{font-size:13px;color:var(--ink-2);line-height:1.6}
+
+/* Situação tabs no mobile */
+.mob-sit-tabs{
+  display:flex;border-bottom:2px solid var(--border);
+  margin:0 0 2px;overflow-x:auto;padding:0 16px;
+}
+.mob-sit-tab{
+  padding:10px 16px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:2px solid transparent;margin-bottom:-2px;
+  white-space:nowrap;flex-shrink:0;background:none;border-left:none;border-right:none;border-top:none;
+  transition:all .15s;
+}
+.mob-sit-tab.on{color:var(--navy);border-bottom-color:var(--navy)}
+
+.mob-modes{padding:8px 16px 24px;display:flex;flex-direction:column;gap:2px}
+.mob-mrow{
+  background:var(--white);border:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;padding:16px;
+  position:relative;overflow:hidden;cursor:pointer;transition:all .15s;
+}
+.mob-mrow:hover{border-color:var(--border-strong)}
+.mob-accent{position:absolute;left:0;top:0;bottom:0;width:3px}
+.mob-icon{width:32px;height:32px;background:var(--paper);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.mob-minfo{flex:1;min-width:0}
+.mob-mname{font-size:13px;font-weight:700;color:var(--ink);line-height:1.2;margin-bottom:2px}
+.mob-mprice{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--gold)}
+.mob-arr{font-size:16px;color:var(--ink-3);flex-shrink:0}
+
+.mob-footer{padding:20px 24px 32px;border-top:1px solid var(--border);text-align:center}
+.mob-footer p{font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);line-height:1.9}
+.mob-footer a{color:var(--ink-3);text-decoration:none}
+
+/* ══════════════════════════════════════
+   SCREEN 6 — DECISÕES DE DESIGN
+══════════════════════════════════════ */
+.dec-wrap{max-width:960px;margin:0 auto;padding:48px 32px 80px}
+.dec-hero{margin-bottom:48px;padding-bottom:32px;border-bottom:2px solid var(--ink)}
+.dec-hero h2{font-family:"Cormorant Garamond",serif;font-size:44px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.dec-hero p{font-size:14px;color:var(--ink-2);line-height:1.65;max-width:560px}
+
+.dec-section{margin-bottom:40px}
+.dec-section-title{
+  font-size:9px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+}
+.dec-section-title .seed-badge{
+  font-size:8px;padding:2px 8px;border:1px solid var(--border-strong);color:var(--ink-3);
+}
+
+.dec-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:4px}
+.dec-col{background:var(--white);border:1px solid var(--border);padding:20px}
+.dec-col.was{border-left:3px solid #8B1A1A}
+.dec-col.now{border-left:3px solid #0E5A2A}
+.dec-col-title{font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin-bottom:14px}
+.dec-col.was .dec-col-title{color:#8B1A1A}
+.dec-col.now .dec-col-title{color:#0E5A2A}
+.dec-item{font-size:12px;color:var(--ink-2);line-height:1.7;margin-bottom:8px;display:flex;gap:8px;align-items:flex-start}
+.dec-item::before{content:'·';flex-shrink:0;margin-top:1px}
+
+.seed-applied{
+  background:var(--paper);border:1px solid var(--border);
+  padding:14px 18px;margin-bottom:2px;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.seed-id{
+  font-family:"JetBrains Mono",monospace;
+  font-size:9px;font-weight:600;letter-spacing:.1em;
+  color:var(--navy);white-space:nowrap;padding-top:1px;flex-shrink:0;
+}
+.seed-gate{font-size:11px;color:var(--ink-2);line-height:1.55}
+.seed-gate strong{color:var(--ink);font-weight:600}
+
+.prototype-banner{
+  background:var(--navy);color:#fff;
+  padding:20px 24px;margin-bottom:32px;
+  display:flex;align-items:flex-start;gap:16px;
+}
+.pb-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.pb-content .pb-title{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:6px}
+.pb-content .pb-text{font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65}
+
+</style>
+</head>
+<body>
+
+<!-- ── PREVIEW BAR ── -->
+<div id="pbar">
+  <span class="pl">EAI? V2 — Proposta Visual</span>
+  <button class="on" onclick="go('home')">Home</button>
+  <button onclick="go('input')">Input</button>
+  <button onclick="go('sim')">Simulando</button>
+  <button onclick="go('result')">Resultado</button>
+  <button onclick="go('mobile')">Mobile</button>
+  <button onclick="go('dec')">Por que estas escolhas</button>
+</div>
+
+<!-- ════════════════════════════════════
+     HOME
+════════════════════════════════════ -->
+<div id="s-home" class="screen on">
+  <nav class="nav">
+    <div class="nav-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+    <div class="nav-r">
+      <button class="nav-ghost">☀ Tema</button>
+      <button class="nav-ghost">Meus casos</button>
+      <button class="nav-solid">Entrar</button>
+    </div>
+  </nav>
+
+  <!-- Hero escuro — contraste máximo, hierarquia clara -->
+  <div class="hero-band">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-eyebrow"><span class="dot"></span> Simulador Jurídico com IA</div>
+        <h1 class="hero-h1">A incerteza jurídica agora tem <em>uma arena de testes.</em></h1>
+        <p class="hero-sub">Antes de ir ao tribunal, descubra sua chance real. Agentes especializados simulam o processo com você.</p>
+        <div class="hero-cta-row">
+          <button class="btn-hero" onclick="go('input')">Começar simulação →</button>
+          <span class="hero-note">Simulação gratuita · Laudo R$ 9,90</span>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-row">
+          <span class="stat-label">Simulações realizadas</span>
+          <span class="stat-val hi">3.847</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Base de precedentes</span>
+          <span class="stat-val">1.9M+ documentos</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Tribunais cobertos</span>
+          <span class="stat-val">TRT · TJPR · STJ · JEC</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Privacidade</span>
+          <span class="stat-val">RSA-4096 · dados não vendidos</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Versão</span>
+          <span class="stat-val">v2.4.0 · Produção</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="disc">
+    <p>O EAI? é ferramenta de apoio analítico. Não substitui aconselhamento jurídico profissional. Não garante resultado judicial.</p>
+  </div>
+
+  <!-- Modos organizados por SITUAÇÃO — SEED_POLAR_BEAR_001 + SEED_HCD_001 -->
+  <div class="modes-section">
+    <div class="modes-section-hdr">
+      <h2>Escolha seu modo de simulação</h2>
+      <span class="hdr-sub">Organizado pela sua situação atual</span>
+    </div>
+
+    <!-- Grupo 1 -->
+    <div class="situation-group">
+      <div class="situation-label"><span>Você está em um conflito em aberto</span></div>
+      <div class="mode-grid">
+        <div class="mcard" style="--mode-color:var(--navy-2);--mode-bg:rgba(26,58,107,0.06)" onclick="go('input')">
+          <div class="mcard-top"></div>
+          <div class="mcard-body">
+            <div class="mcard-icon">⚡</div>
+            <div class="mcard-name">Tese Estratégica</div>
+            <p class="mcard-desc">Você descreve o que aconteceu com suas palavras. O sistema avalia a força dos seus argumentos e calcula sua chance real de êxito.</p>
+          </div>
+          <div class="mcard-footer">
+            <span class="mcard-price">R$ 9,90</span>
+            <span class="mcard-cta">Usar este modo →</span>
+          </div>
+        </div>
+        <div class="mcard" style="--mode-color:var(--red);--mode-bg:var(--red-bg)" onclick="go('input')">
+          <div class="mcard-top"></div>
+          <div class="mcard-body">
+            <div class="mcard-icon">🛡</div>
+            <div class="mcard-name">Defesa sob Ataque</div>
+            <p class="mcard-desc">Você está sendo acusado. A IA constrói sua defesa técnica, avalia vulnerabilidades e responde ao outro lado em 3 ciclos.</p>
+          </div>
+          <div class="mcard-footer">
+            <span class="mcard-price">R$ 9,90</span>
+            <span class="mcard-cta">Usar este modo →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grupo 2 -->
+    <div class="situation-group">
+      <div class="situation-label"><span>Você já tem os dois lados do conflito</span></div>
+      <div class="mode-grid">
+        <div class="mcard" style="--mode-color:var(--purple);--mode-bg:var(--purple-bg)">
+          <div class="mcard-top"></div>
+          <div class="mcard-body">
+            <div class="mcard-icon">⚖</div>
+            <div class="mcard-name">Mesa Dupla — Juiz</div>
+            <p class="mcard-desc">Você traz acusação e defesa prontas. O magistrado mais especializado emite sentença direta — sem advogado intermediário.</p>
+          </div>
+          <div class="mcard-footer">
+            <span class="mcard-price">R$ 5,90</span>
+            <span class="mcard-cta">Usar este modo →</span>
+          </div>
+        </div>
+        <div class="mcard" style="--mode-color:var(--amber);--mode-bg:var(--amber-bg)">
+          <div class="mcard-top"></div>
+          <div class="mcard-body">
+            <div class="mcard-icon">⚔</div>
+            <div class="mcard-name">Mesa Dupla — Assistida</div>
+            <p class="mcard-desc">Acusação e defesa prontas. Você escolhe seu lado e tem um advogado IA reforçando sua tese antes do julgamento.</p>
+          </div>
+          <div class="mcard-footer">
+            <span class="mcard-price">R$ 9,90</span>
+            <span class="mcard-cta">Usar este modo →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grupo 3 -->
+    <div class="situation-group">
+      <div class="situation-label"><span>Você já recebeu uma decisão ou proposta</span></div>
+      <div class="mode-grid" style="max-width:540px">
+        <div class="mcard" style="--mode-color:var(--green);--mode-bg:var(--green-bg)">
+          <div class="mcard-top"></div>
+          <div class="mcard-body">
+            <div class="mcard-icon">⏱</div>
+            <div class="mcard-name">Revisão Pós-Conflito</div>
+            <p class="mcard-desc">Já existe uma sentença ou proposta de acordo. Descubra se vale recorrer ou se a oferta é justa — e qual caminho tem menos risco.</p>
+          </div>
+          <div class="mcard-footer">
+            <span class="mcard-price">R$ 5,90</span>
+            <span class="mcard-cta">Usar este modo →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tech-footer">
+    <div class="tech-footer-inner">
+      <div class="tf-item"><div class="tf-label">Base de dados</div><div class="tf-val">1.9M+ Precedentes Injetados</div></div>
+      <div class="tf-item"><div class="tf-label">Processamento</div><div class="tf-val">Gemini — Geração 3</div></div>
+      <div class="tf-item"><div class="tf-label">Privacidade</div><div class="tf-val">RSA-4096 · sem venda de dados</div></div>
+      <div class="tf-item"><div class="tf-label">Contato</div><div class="tf-val">eaijuridico@icloud.com</div></div>
+    </div>
+    <div class="tf-terms" style="padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);max-width:1100px;margin:20px auto 0;padding-left:40px">
+      <a href="/termos">Termos de Uso</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     INPUT
+════════════════════════════════════ -->
+<div id="s-input" class="screen">
+  <nav class="nav">
+    <div class="nav-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+    <div class="nav-r">
+      <button class="nav-ghost" onclick="go('home')" style="font-size:11px">← Voltar</button>
+    </div>
+  </nav>
+
+  <div class="form-shell">
+    <!-- Breadcrumb — SEED_HCD_001: mapping, feedback de onde está -->
+    <div class="breadcrumb">
+      <div class="bc-step active">1</div>
+      <div class="bc-line"></div>
+      <span class="bc-label" style="color:var(--ink-3);font-size:10px">Causa</span>
+      <div class="bc-line"></div>
+      <div class="bc-step">2</div>
+      <div class="bc-line"></div>
+      <span class="bc-label" style="color:var(--ink-3);font-size:10px">Confirmação</span>
+      <div class="bc-line"></div>
+      <div class="bc-step">3</div>
+      <div class="bc-line"></div>
+      <span class="bc-label" style="color:var(--ink-3);font-size:10px">Resultado</span>
+    </div>
+
+    <!-- Modo ativo visível — SEED_USABX_001: reconhecimento sobre memorização -->
+    <div class="form-mode-badge" style="--mode-color:var(--navy-2);--mode-bg:rgba(26,58,107,0.04)">
+      ⚡ Modo 1 — Tese Estratégica
+    </div>
+
+    <div class="form-heading">
+      <h1>O que aconteceu com você?</h1>
+      <p>Descreva com suas palavras — sem juridiquês. Quanto mais detalhes, mais precisa a simulação.</p>
+    </div>
+
+    <p class="chips-label">Categoria (opcional)</p>
+    <div class="chips">
+      <button class="chip on">Trabalhista</button>
+      <button class="chip">Consumidor</button>
+      <button class="chip">Imóvel ou vizinho</button>
+      <button class="chip">Dívida ou cobrança</button>
+      <button class="chip">Acidente ou dano</button>
+      <button class="chip">Outro</button>
+    </div>
+
+    <div class="field-card">
+      <div class="field-card-top">
+        <span class="field-label">Relato da causa</span>
+        <span class="field-count">142 caracteres</span>
+      </div>
+      <textarea>Trabalhista: Fui demitido sem justa causa após 4 anos de empresa. Meu FGTS não foi depositado por 8 meses e a multa de 40% não foi paga.</textarea>
+    </div>
+
+    <div class="upload-card">
+      <div class="upload-ic">📎</div>
+      <div class="upload-txt">
+        <div class="ut1">Adicionar documentos (opcional)</div>
+        <div class="ut2">PDF, JPEG ou PNG · máx 10 MB por arquivo · até 5 arquivos</div>
+      </div>
+    </div>
+
+    <!-- Consentimento explícito — SEED_ANON_SEC_IAM_004 -->
+    <div class="consent-box">
+      <div class="consent-check"></div>
+      <p class="consent-text">
+        <strong>Consentimento de uso dos dados:</strong> Entendo que meu relato será processado por modelos de IA para fins de simulação argumentativa, armazenado de forma segura e usado exclusivamente para gerar este resultado. Meus dados não são vendidos nem usados para treinamento de modelos.
+      </p>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn-submit" onclick="go('sim')">Validar causa →</button>
+      <p class="submit-note">Simulação educativa. Não substitui assessoria jurídica real.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SIMULANDO
+════════════════════════════════════ -->
+<div id="s-sim" class="screen">
+  <nav class="nav">
+    <div class="nav-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+  </nav>
+  <div class="sim-shell">
+    <div class="sim-header">
+      <div class="sim-logo">EAI<span>✓?</span></div>
+      <p>Fórum virtual em andamento — não feche esta janela</p>
+    </div>
+
+    <div class="sim-track">
+      <div class="sim-item done">
+        <div class="sim-num">✓</div>
+        <div class="sim-info">
+          <div class="sim-stage-name">Sementes ativadas</div>
+          <div class="sim-stage-sub">Direito do Trabalho · TRT4 · TST</div>
+        </div>
+        <div class="sim-time">0.8s</div>
+      </div>
+      <div class="sim-item done">
+        <div class="sim-num">✓</div>
+        <div class="sim-info">
+          <div class="sim-stage-name">Advogado peticionando</div>
+          <div class="sim-stage-sub">Dr. Marcelo Fontes — Rodada 1</div>
+        </div>
+        <div class="sim-time">4.2s</div>
+      </div>
+      <div class="sim-item run">
+        <div class="sim-num">3</div>
+        <div class="sim-info">
+          <div class="sim-stage-name">Magistrado julgando</div>
+          <div class="sim-stage-sub">Juíza Dra. Renata Mello — Rodada 2 / 3</div>
+        </div>
+        <div class="sim-time" id="t">14s</div>
+      </div>
+      <div class="sim-item wait">
+        <div class="sim-num">4</div>
+        <div class="sim-info">
+          <div class="sim-stage-name">Elaborando laudo</div>
+          <div class="sim-stage-sub">Volume I e Volume II</div>
+        </div>
+        <div class="sim-time">—</div>
+      </div>
+    </div>
+
+    <button onclick="go('result')" style="margin-top:32px;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--border);padding:10px 20px;background:var(--white)">
+      (Preview: ver resultado →)
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     RESULTADO
+════════════════════════════════════ -->
+<div id="s-result" class="screen">
+  <nav class="nav">
+    <div class="nav-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+    <div class="nav-r">
+      <button class="nav-ghost" onclick="go('home')" style="font-size:11px">← Início</button>
+    </div>
+  </nav>
+
+  <div class="result-shell">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb" style="margin-bottom:32px">
+      <div class="bc-step done">✓</div>
+      <div class="bc-line"></div>
+      <div class="bc-step done">✓</div>
+      <div class="bc-line"></div>
+      <div class="bc-step active">3</div>
+    </div>
+
+    <!-- VERDICT CARD — peça central, impacto máximo -->
+    <div class="verdict-card">
+      <div class="verdict-eyebrow">Índice de força argumentativa</div>
+      <div class="verdict-number">72<span class="verdict-pct">%</span></div>
+      <div class="verdict-bar"><div class="verdict-bar-fill" style="width:72%"></div></div>
+      <p style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:8px">Estimativa baseada na análise dos argumentos. Não é probabilidade estatística.</p>
+      <div class="verdict-meta">
+        <span class="v-badge main">Chance de êxito: boa</span>
+        <span class="v-badge">Direito do Trabalho</span>
+        <span class="v-badge">3 rodadas</span>
+        <span class="v-badge">Dr. Marcelo Fontes</span>
+      </div>
+    </div>
+
+    <!-- Volume toggle -->
+    <div class="vol-toggle">
+      <button class="vol-btn on" id="vb1" onclick="setVol(1)">Volume I — Orientação ao cliente</button>
+      <button class="vol-btn" id="vb2" onclick="setVol(2)">Volume II — Técnico-jurídico</button>
+    </div>
+
+    <!-- V1 -->
+    <div id="v1">
+      <div class="rsec">
+        <div class="rsec-label">Veredicto</div>
+        <p class="rsec-text">Sua causa tem boas chances. Os argumentos sobre o não pagamento da multa de 40% são sólidos e bem documentados. O FGTS irregular fortalece ainda mais sua posição perante o magistrado.</p>
+      </div>
+      <div class="rsec">
+        <div class="rsec-label">Sua causa em resumo</div>
+        <p class="rsec-text" style="font-style:italic;color:var(--ink-3)">Demissão sem justa causa após 4 anos · FGTS não depositado por 8 meses · Multa de 40% não paga.</p>
+      </div>
+      <div class="rsec">
+        <div class="rsec-label">Pontos de atenção</div>
+        <p class="rsec-text">A defesa pode questionar se houve justa causa indireta. Certifique-se de ter o contrato assinado e os holerites dos meses com FGTS irregular.</p>
+      </div>
+      <div class="rsec locked">
+        <div class="rsec-label">Próximos passos</div>
+        <p class="rsec-text" style="filter:blur(5px);user-select:none">Recomendamos protocolar reclamação trabalhista no prazo de 2 anos da demissão. Busque a Vara do Trabalho da sua cidade. O valor estimado da causa é entre R$ 18.000 e R$ 24.000...</p>
+        <div class="lock-over"><div class="lo-icon">🔒</div><div class="lo-txt">Disponível no laudo completo</div></div>
+      </div>
+      <div class="rsec locked">
+        <div class="rsec-label">Decisão do magistrado</div>
+        <p class="rsec-text" style="filter:blur(5px);user-select:none">DISPOSITIVO: Julgo PROCEDENTE em parte o pedido. Condeno a reclamada ao pagamento da multa de 40% do FGTS no valor de R$ 8.400,00...</p>
+        <div class="lock-over"><div class="lo-icon">🔒</div><div class="lo-txt">Disponível no laudo completo</div></div>
+      </div>
+    </div>
+
+    <!-- V2 -->
+    <div id="v2" style="display:none">
+      <div class="rsec">
+        <div class="rsec-label">Fundamentação jurídica</div>
+        <p class="rsec-text mono">CLT art. 18 §1° — Obrigatoriedade de depósito FGTS.<br>TST Súmula 362 — Prescrição trintenária FGTS.<br>CLT art. 477 §8° — Multa por atraso rescisório.</p>
+      </div>
+      <div class="rsec locked">
+        <div class="rsec-label">Estratégia processual</div>
+        <p class="rsec-text mono" style="filter:blur(5px);user-select:none">Iniciar com pedido de tutela de urgência para bloqueio de contas caso empresa apresente risco de insolvência...</p>
+        <div class="lock-over"><div class="lo-icon">🔒</div><div class="lo-txt">Disponível no laudo completo</div></div>
+      </div>
+    </div>
+
+    <!-- CTA unlock -->
+    <button class="unlock-cta">
+      <div class="uc-left">
+        <div class="uc-label">Ver laudo completo</div>
+        <div class="uc-sub">Próximos passos · Estratégia processual · Decisão do magistrado</div>
+      </div>
+      <div class="uc-price">R$ 9,90</div>
+    </button>
+
+    <button class="restart-btn" onclick="go('home')">Nova simulação</button>
+
+    <p class="legal-disc">O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado habilitado.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     MOBILE
+════════════════════════════════════ -->
+<div id="s-mobile" class="screen">
+  <div class="mob-wrap">
+    <div class="mob-label">Viewport Mobile — 390px</div>
+    <div class="mob-frame">
+      <div class="mob-nav">
+        <div class="nav-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+        <div style="display:flex;gap:6px">
+          <button class="nav-ghost" style="height:32px;padding:0 10px;font-size:10px">☀</button>
+          <button class="nav-solid" style="height:32px;padding:0 10px;font-size:10px">Entrar</button>
+        </div>
+      </div>
+
+      <!-- Hero mobile — fundo navy -->
+      <div style="background:var(--navy);padding:28px 24px 28px">
+        <div class="mob-eyebrow" style="color:rgba(255,255,255,0.35)">Simulador Jurídico</div>
+        <h1 class="mob-h1" style="color:#fff;margin-bottom:12px">A incerteza jurídica tem uma saída.</h1>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:20px">Antes do tribunal, o teste.</p>
+        <button class="btn-hero" style="width:100%;justify-content:center;display:flex;align-items:center;height:48px">Começar simulação →</button>
+      </div>
+
+      <!-- Tabs de situação — SEED_HCD_001: constraint para reduzir escolha -->
+      <div class="mob-sit-tabs">
+        <button class="mob-sit-tab on">Em conflito</button>
+        <button class="mob-sit-tab">Dois lados</button>
+        <button class="mob-sit-tab">Pós-decisão</button>
+      </div>
+
+      <div class="mob-modes">
+        <div class="mob-mrow">
+          <div class="mob-accent" style="background:var(--navy-2)"></div>
+          <div class="mob-icon">⚡</div>
+          <div class="mob-minfo">
+            <div class="mob-mname">Tese Estratégica</div>
+            <div class="mob-mprice">R$ 9,90</div>
+          </div>
+          <div class="mob-arr">›</div>
+        </div>
+        <div class="mob-mrow">
+          <div class="mob-accent" style="background:var(--red)"></div>
+          <div class="mob-icon">🛡</div>
+          <div class="mob-minfo">
+            <div class="mob-mname">Defesa sob Ataque</div>
+            <div class="mob-mprice">R$ 9,90</div>
+          </div>
+          <div class="mob-arr">›</div>
+        </div>
+      </div>
+
+      <div class="mob-footer">
+        <p>Simulação gratuita · Laudo R$ 9,90</p>
+        <p>Não substitui advogado habilitado</p>
+        <p style="margin-top:6px"><a href="#">Termos de Uso</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     DECISÕES DE DESIGN
+════════════════════════════════════ -->
+<div id="s-dec" class="screen">
+  <nav class="nav">
+    <div class="nav-logo"><span class="brand">EAI</span><span class="check">✓?</span></div>
+  </nav>
+  <div class="dec-wrap">
+    <div class="dec-hero">
+      <h2>Por que estas escolhas</h2>
+      <p>Cada decisão visual foi validada pelos decision gates das seeds ativas. Esta proposta é uma <strong>hipótese a testar</strong> em eai.radiokactus.com — não uma decisão final. (SEED_USABX_001)</p>
+    </div>
+
+    <div class="prototype-banner">
+      <div class="pb-icon">⚠</div>
+      <div class="pb-content">
+        <div class="pb-title">Status: protótipo de hipótese</div>
+        <div class="pb-text">Nenhuma proposta deste documento é considerada validada até observação direta de usuários reais em eai.radiokactus.com. (SEED_USABX_001 — gate: funcionalidade não validada = tecnicamente nula)</div>
+      </div>
+    </div>
+
+    <div class="dec-section">
+      <div class="dec-section-title">Fundo claro em vez de fundo escuro <span class="seed-badge">HCD_001</span><span class="seed-badge">USABX_001</span></div>
+      <div class="dec-grid">
+        <div class="dec-col was"><div class="dec-col-title">Versão anterior</div>
+          <div class="dec-item">Fundo #0A0C0F (quase preto) com texto claro</div>
+          <div class="dec-item">Bonito para produto tech, mas o público-alvo é leigo em situação de estresse</div>
+          <div class="dec-item">Padrão dark não é o estabelecido para ferramentas jurídicas/documentais</div>
+        </div>
+        <div class="dec-col now"><div class="dec-col-title">Esta proposta</div>
+          <div class="dec-item">Fundo papel quente #F5F2EB com navy escuro — padrão de documentos legais</div>
+          <div class="dec-item">Reduz a carga cognitiva para o público leigo (padrão reconhecível)</div>
+          <div class="dec-item">Dark mode continua disponível via toggle — não é excluído</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dec-section">
+      <div class="dec-section-title">Modos agrupados por situação <span class="seed-badge">POLAR_BEAR_001</span><span class="seed-badge">HCD_001</span></div>
+      <div class="seed-applied">
+        <div class="seed-id">POLAR_BEAR</div>
+        <div class="seed-gate">Gate: <strong>"feature_implementation_is_proposed → verify_search_and_browse_discoverability"</strong> — 5 modos numa lista plana exigem que o usuário leia todos para encontrar o correto. Agrupamento por situação cria taxonomia navegável.</div>
+      </div>
+      <div class="seed-applied">
+        <div class="seed-id">HCD_001</div>
+        <div class="seed-gate">Gate: <strong>"Task complexity is high → apply constraints to limit the choice set"</strong> — 3 grupos em vez de 5 opções individuais. Forçar função cognitiva reduz o espaço de decisão inicial.</div>
+      </div>
+    </div>
+
+    <div class="dec-section">
+      <div class="dec-section-title">Consentimento explícito na tela de input <span class="seed-badge">IAM_004</span></div>
+      <div class="seed-applied">
+        <div class="seed-id">IAM_004</div>
+        <div class="seed-gate">Gate: <strong>"The system requests user data → Trigger explicit consent mechanisms with clear disclosure of the strict purpose."</strong> O relato da causa é dado pessoal sensível (situação jurídica, saúde, família). Um checkbox de consentimento é obrigatório — não opcional.</div>
+      </div>
+    </div>
+
+    <div class="dec-section">
+      <div class="dec-section-title">Verdict card com número grande <span class="seed-badge">HCD_001</span><span class="seed-badge">POLAR_BEAR_001</span></div>
+      <div class="dec-grid">
+        <div class="dec-col was"><div class="dec-col-title">Versão anterior</div>
+          <div class="dec-item">Percentual como badge pequeno no cabeçalho</div>
+          <div class="dec-item">Usuário precisa procurar a informação mais importante</div>
+        </div>
+        <div class="dec-col now"><div class="dec-col-title">Esta proposta</div>
+          <div class="dec-item">Número de 100px em destaque — primeira coisa que o olho encontra</div>
+          <div class="dec-item">Findability: a informação mais importante é a mais visível (POLAR_BEAR)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dec-section">
+      <div class="dec-section-title">Estadios de simulação nomeados <span class="seed-badge">HCD_001</span></div>
+      <div class="seed-applied">
+        <div class="seed-id">HCD_001</div>
+        <div class="seed-gate">Gate: <strong>"A state change occurs → Provide immediate and unambiguous feedback."</strong> Um spinner genérico para 20–60s viola este gate. 4 estágios nomeados com agente ativo e timer dão feedback contínuo e não ambíguo.</div>
+      </div>
+    </div>
+
+    <div class="dec-section">
+      <div class="dec-section-title">Bloqueadores que precisam ser resolvidos antes de implementar</div>
+      <div class="seed-applied" style="border-left:3px solid #8B1A1A">
+        <div class="seed-id" style="color:#8B1A1A">ENG_LOGIC</div>
+        <div class="seed-gate"><strong>BLOQUEADOR:</strong> App.tsx tem 3610 linhas sem testes automatizados. Qualquer implementação visual requer extração de LaudoMobile → componente próprio + testes de regressão antes.</div>
+      </div>
+      <div class="seed-applied" style="border-left:3px solid #8B1A1A">
+        <div class="seed-id" style="color:#8B1A1A">IAM_004</div>
+        <div class="seed-gate"><strong>CRÍTICO:</strong> Firebase UID usado diretamente no Stripe = cross-tracking entre serviços sem pairwise identifiers. Deve ser avaliado antes do deploy em staging.</div>
+      </div>
+      <div class="seed-applied" style="border-left:3px solid #8B1A1A">
+        <div class="seed-id" style="color:#8B1A1A">RESILIENCE</div>
+        <div class="seed-gate"><strong>VULNERABILIDADE:</strong> "Ver laudo completo" faz setUnlocked(true) sem verificação no servidor. Conteúdo pago não tem barreira técnica real no cliente. Não é problema de UX — é problema de segurança.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('#pbar button').forEach(b=>b.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  const m={home:0,input:1,sim:2,result:3,mobile:4,dec:5};
+  document.querySelectorAll('#pbar button')[m[id]]?.classList.add('on');
+  window.scrollTo(0,0);
+}
+function setVol(n){
+  document.getElementById('v1').style.display=n===1?'block':'none';
+  document.getElementById('v2').style.display=n===2?'block':'none';
+  document.getElementById('vb1').className='vol-btn'+(n===1?' on':'');
+  document.getElementById('vb2').className='vol-btn'+(n===2?' on':'');
+}
+let s=14;
+setInterval(()=>{s++;const e=document.getElementById('t');if(e)e.textContent=s+'s'},1000);
+</script>
+</body>
+</html>
