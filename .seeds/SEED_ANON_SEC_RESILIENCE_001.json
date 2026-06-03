@@ -1,0 +1,14 @@
+{
+  "seed_id": "SEED_ANON_SEC_RESILIENCE_001",
+  "kernel_logic": "Security is a continuous architectural process, never a final product or a purchasable SKU. User data are toxic liabilities to be minimized, not assets to be accumulated. Radical transparency is the only functional antidote to the inevitability of data exposure. The blast radius of a system is directly proportional to its data retention policy.",
+  "decision_gates": [
+    { "if": "A new data point is proposed for collection", "then": "Verify if the operational utility outweighs the liability risk; if negative, reject." },
+    { "if": "Evaluating a security solution", "then": "Prioritize architectural hardening and transparent protocols over proprietary black-box software." },
+    { "if": "A vulnerability is identified", "then": "Migrate immediately to radical transparency with the users." }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["Passivo de dados", "Superfície de exposição", "Segurança orientada a processos", "Transparência radical", "Endurecimento iterativo", "Raio de explosão"],
+    "prohibited": ["Inviolável", "Dados como ativo", "Produto de segurança", "Contenção de informações", "Defesa de perímetro", "Solução definitiva"]
+  },
+  "semantic_anchor": "Data minimization and iterative hardening as the core mechanism of architectural protection."
+}

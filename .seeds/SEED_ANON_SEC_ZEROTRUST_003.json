@@ -1,0 +1,14 @@
+{
+  "seed_id": "SEED_ANON_SEC_ZEROTRUST_003",
+  "kernel_logic": "Trust is a binary vulnerability to be eliminated. System architecture must assume a breached environment where every packet, user, and device is untrusted by default. Logical micro-segmentation and explicit identity validation are foundational requirements.",
+  "decision_gates": [
+    { "if": "An access request originates from either an internal OR external network", "then": "Execute complete authentication, authorization, and posture assessment before granting least privilege access." },
+    { "if": "A session is active and persistent", "then": "Perform continuous verification of identity and integrity; terminate access immediately upon policy violation." },
+    { "if": "A new workload or microservice is deployed", "then": "Implement micro-segmentation at the application layer to prevent lateral movement." }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["Verificação Contínua", "Micro-segmentação", "Privilégio Mínimo", "Negação Implícita", "Segurança Centrada em Dados", "Ponto de Imposição de Política"],
+    "prohibited": ["Rede Confiável", "Usuário Interno", "Segurança de Perímetro", "Zona Segura", "Confiança Implícita", "Segurança baseada apenas em VPN"]
+  },
+  "semantic_anchor": "Total elimination of implicit trust in distributed environments."
+}
