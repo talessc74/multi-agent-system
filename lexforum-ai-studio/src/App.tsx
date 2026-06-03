@@ -225,8 +225,8 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
           </div>
         )}
 
-        {/* Hipótese expandida */}
-        {state.expandedHypothesis && state.selectedMode !== 5 && (
+        {/* Hipótese expandida — só exibe se NÃO estiver já no Modo 4 */}
+        {state.expandedHypothesis && state.selectedMode !== 5 && state.selectedMode !== 4 && (
           <button
             onClick={onGoToMode4}
             style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '13px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginBottom: '10px', letterSpacing: '0.1em', textTransform: 'uppercase' }}
@@ -568,7 +568,15 @@ const handleGeminiError = (err: any) => {
       return;
     }
     setLoading(true);
-    setState(prev => ({ ...prev, step: 'simulating', isUnlocked: false, simulationId: null }));
+    setState(prev => ({
+      ...prev,
+      step: 'simulating',
+      isUnlocked: false,
+      simulationId: null,
+      expandedHypothesis: null,
+      counterHypotheses: [],
+      showHypotheses: false,
+    }));
     try {
       const data = await simulateForum(
         state.caseDescription, 
