@@ -9,3 +9,4 @@ coverage/
 .vercel
 !src/lib/
 !src/lib/**
+scripts/service-account.json

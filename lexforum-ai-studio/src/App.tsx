@@ -146,13 +146,13 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
             {state.selectedMode === 5 && state.mode5Result && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginBottom: '8px' }}>
                 <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px' }}>Análise do Juiz Estrategista</p>
-                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, fontStyle: 'italic', fontFamily: 'Georgia, serif' }}>{state.mode5Result.strategistAnalysis}</p>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}>{state.mode5Result.strategistAnalysis}</p>
               </div>
             )}
             {state.selectedMode !== 5 && state.report?.layman && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
                 <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#00CC88', marginBottom: '12px' }}>Orientação ao Cliente</p>
-                <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, fontStyle: 'italic', fontFamily: 'Georgia, serif' }}><ReactMarkdown>{state.report.layman}</ReactMarkdown></div>
+                <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}><ReactMarkdown>{state.report.layman}</ReactMarkdown></div>
               </div>
             )}
             {(state.selectedMode === 1 || state.selectedMode === 2) && state.report?.causeSummary && (
@@ -184,7 +184,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
             {state.selectedMode !== 5 && state.report?.professional && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
                 <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>Laudo Técnico Estratégico</p>
-                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7, fontFamily: 'monospace' }}><ReactMarkdown>{state.report.professional}</ReactMarkdown></div>
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7 }}><ReactMarkdown>{state.report.professional}</ReactMarkdown></div>
               </div>
             )}
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.6, textAlign: 'center', padding: '16px 0 4px' }}>O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.</p>
@@ -1474,20 +1474,20 @@ const handleGeminiError = (err: any) => {
               {state.caseSummary && (
                 <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '14px', padding: '16px', marginBottom: '16px' }}>
                   <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>NÚCLEO CENTRAL</p>
-                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}>{state.caseSummary}</p>
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{state.caseSummary}</p>
                 </div>
               )}
               {/* Agentes */}
-              <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>AGENTES ESCALADOS</p>
+              <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: modeColor, marginBottom: '8px' }}>AGENTES ESCALADOS</p>
               <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
+                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
                   <p style={{ fontSize: '20px', marginBottom: '6px' }}>⚖️</p>
-                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 2px' }}>ADVOGADO</p>
+                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor, margin: '0 0 2px' }}>ADVOGADO</p>
                   <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
                 </div>
-                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
+                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
                   <p style={{ fontSize: '20px', marginBottom: '6px' }}>🧑‍⚖️</p>
-                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 2px' }}>MAGISTRADO</p>
+                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor, margin: '0 0 2px' }}>MAGISTRADO</p>
                   <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
                 </div>
               </div>
@@ -2423,51 +2423,82 @@ const handleGeminiError = (err: any) => {
               </motion.div>
             )}
 
-            {state.step === 'confirm' && (
-              <motion.div 
+            {state.step === 'confirm' && (() => {
+              const dcColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
+              const dcColorRgb = MODE_CONFIG[state.selectedMode]?.colorRgb ?? '0,255,239';
+              const agentSpecMap: Record<string, string> = {
+                LABOR: 'Trabalhista', CONSUMER: 'Consumerista', CIVIL: 'Civilista',
+                FAMILY: 'Família', CRIMINAL: 'Criminal', TAX: 'Tributarista',
+              };
+              const agentSpec = agentSpecMap[state.detectedArea] ?? 'Especializado';
+              return (
+              <motion.div
                 key="confirm"
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="space-y-8 py-16 text-center max-w-3xl mx-auto"
               >
-                <div className="w-20 h-20 border border-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-white/5">
-                  <Scale className="text-white w-10 h-10" />
-                </div>
-                <h1 className="text-4xl font-serif italic tracking-tight text-white/90">
-                  Causa identificada como <br />
-                  <span className="font-bold border-b border-white pb-1 text-white">
-                    {areaLabels[state.detectedArea] || "Área Não Classificada"}
+                {/* Badge de área — identifica o modo e a área detectada */}
+                <div className="inline-flex items-center gap-2 px-4 py-2"
+                  style={{ background: `rgba(${dcColorRgb},0.12)`, border: `1px solid rgba(${dcColorRgb},0.3)` }}>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: dcColor }} />
+                  <span className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>
+                    {formatAreaLabel(state.detectedArea)}
                   </span>
+                </div>
+
+                <h1 className="text-4xl font-serif italic tracking-tight text-white/90">
+                  O sistema entendeu<br />sua causa.
                 </h1>
 
                 {state.caseSummary && (
-                  <div className="bg-[#15161A] p-8 border border-white/10 shadow-2xl shadow-black/50 mt-8 text-left">
+                  <div className="p-8 shadow-2xl shadow-black/50 mt-8 text-left"
+                    style={{ background: '#15161A', borderWidth: '1px 1px 1px 3px', borderStyle: 'solid', borderColor: `rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) ${dcColor}` }}>
                     <h4 className="text-[10px] uppercase font-bold tracking-widest text-white/30 mb-4 border-b border-white/5 pb-2">Núcleo Central Entendido</h4>
-                    <p className="text-xl font-serif italic text-white/80 leading-relaxed">
+                    <p className="text-xl font-sans text-white/80 leading-relaxed">
                       "{state.caseSummary}"
                     </p>
                   </div>
                 )}
 
-                <p className="text-white/40 text-sm font-sans uppercase tracking-widest leading-relaxed mt-8 max-w-lg mx-auto">
-                  Agentes especializados escalados. Deseja iniciar o fórum?
+                {/* Agentes escalados */}
+                <p className="text-[9px] font-bold uppercase tracking-[0.2em] mt-4" style={{ color: dcColor }}>Agentes Escalados</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2"
+                    style={{ borderLeftWidth: '3px', borderLeftColor: dcColor }}>
+                    <span className="text-2xl block">⚖️</span>
+                    <p className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>Advogado</p>
+                    <p className="text-sm font-medium text-white/60">{agentSpec}</p>
+                  </div>
+                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2"
+                    style={{ borderLeftWidth: '3px', borderLeftColor: dcColor }}>
+                    <span className="text-2xl block">🧑‍⚖️</span>
+                    <p className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>Magistrado</p>
+                    <p className="text-sm font-medium text-white/60">{agentSpec}</p>
+                  </div>
+                </div>
+
+                <p className="text-white/30 text-[11px] font-sans uppercase tracking-widest leading-relaxed mt-6 max-w-lg mx-auto">
+                  Deseja iniciar o fórum?
                 </p>
                 <div className="flex justify-center gap-4 pt-6">
-                  <button 
+                  <button
                     onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
-                    className="px-10 py-4 border border-white/10 text-[11px] uppercase tracking-widest hover:bg-white/5 transition-colors font-bold text-white/60"
+                    className="px-10 py-4 border border-white/10 rounded-[14px] text-[11px] uppercase tracking-widest hover:bg-white/5 transition-colors font-bold text-white/60"
                   >
-                    Voltar
+                    Corrigir causa
                   </button>
-                  <button 
+                  <button
                     onClick={handleSimulate}
-                    className="px-10 py-4 bg-white text-black text-[11px] uppercase tracking-widest hover:bg-[#F4F4F2] transition-colors font-bold shadow-2xl shadow-black/50"
+                    className="px-10 py-4 rounded-[14px] text-black text-[11px] uppercase tracking-widest hover:opacity-90 transition-colors font-bold shadow-2xl shadow-black/50"
+                    style={{ background: dcColor }}
                   >
                     Iniciar Fórum
                   </button>
                 </div>
               </motion.div>
-            )}
+              );
+            })()}
 
             {(state.step === 'simulating' || (state.step === 'result' && !state.isUnlocked)) && (
               <motion.div 
@@ -2688,7 +2719,7 @@ const handleGeminiError = (err: any) => {
                   >
                     <div className="p-6 bg-white/5 border border-white/10 space-y-4">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-serif italic text-white/80 leading-relaxed">
+                      <p className="text-lg font-sans text-white/80 leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={true} />
                       </p>
                     </div>
@@ -2770,7 +2801,7 @@ const handleGeminiError = (err: any) => {
 
                     <div className="p-8 bg-white/5 border border-white/10 space-y-4">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-serif italic text-white/80 leading-relaxed">
+                      <p className="text-lg font-sans text-white/80 leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={!state.isUnlocked} />
                       </p>
                     </div>
@@ -2953,7 +2984,7 @@ const handleGeminiError = (err: any) => {
                         <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">
                           Argumento do outro lado — expandido
                         </div>
-                        <p className="text-sm font-serif italic text-white/70 leading-relaxed">
+                        <p className="text-sm font-sans text-white/70 leading-relaxed">
                           {state.expandedHypothesis}
                         </p>
                         <button
@@ -3024,11 +3055,11 @@ const handleGeminiError = (err: any) => {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-6 bg-white/5 border border-white/10">
                         <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-3">Argumento do Autor</div>
-                        <p className="text-sm font-serif italic text-white/70 leading-relaxed">{state.simulation.rounds[0].authorSummary || '—'}</p>
+                        <p className="text-sm font-sans text-white/70 leading-relaxed">{state.simulation.rounds[0].authorSummary || '—'}</p>
                       </div>
                       <div className="p-6 bg-white/5 border border-amber-500/20">
                         <div className="text-[9px] font-bold uppercase tracking-widest text-amber-500/60 mb-3">Argumento do Réu</div>
-                        <p className="text-sm font-serif italic text-white/70 leading-relaxed">{state.simulation.rounds[0].defenseSummary || '—'}</p>
+                        <p className="text-sm font-sans text-white/70 leading-relaxed">{state.simulation.rounds[0].defenseSummary || '—'}</p>
                       </div>
                     </div>
                     <div className="p-6 bg-white/5 border border-white/10 space-y-4">
@@ -3069,7 +3100,7 @@ const handleGeminiError = (err: any) => {
                         <div className="text-[11px] font-serif italic text-white/40">Estrategista de Acessibilidade</div>
                       </div>
                     </div>
-                    <div className="prose prose-invert max-w-none font-serif text-lg leading-[1.6] text-white/90 font-light italic bg-emerald-500/[0.05] p-8 border border-emerald-500/20 shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0">
+                    <div className="laudo-prose prose prose-invert max-w-none font-sans text-lg leading-[1.6] text-white/90 font-light bg-emerald-500/[0.05] p-8 border border-emerald-500/20 shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0">
                       <ReactMarkdown>
                         {state.report?.layman || ''}
                       </ReactMarkdown>
@@ -3093,7 +3124,7 @@ const handleGeminiError = (err: any) => {
                         <div className="text-[11px] font-serif italic text-white/40">Analista Processual Sênior</div>
                       </div>
                     </div>
-                    <div className="p-10 border border-white/5 bg-[#15161A]/50 font-mono text-[13px] leading-loose text-white/60 shadow-2xl relative overflow-hidden prose prose-invert prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0">
+                    <div className="laudo-prose p-10 border border-white/5 bg-[#15161A]/50 font-sans text-[13px] leading-loose text-white/60 shadow-2xl relative overflow-hidden prose prose-invert prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0">
                       <ReactMarkdown>
                         {state.report?.professional || ''}
                       </ReactMarkdown>
@@ -3175,7 +3206,7 @@ const handleGeminiError = (err: any) => {
                                 <Scale className="w-4 h-4 text-emerald-500 print:text-black" />
                                 <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest print:text-black">Petição e Pedidos do Advogado</span>
                               </div>
-                              <div className="p-6 bg-white/[0.02] border border-white/5 text-[13px] leading-relaxed text-white/50 italic font-serif print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
+                              <div className="p-6 bg-white/[0.02] border border-white/5 text-[13px] leading-relaxed text-white/50 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
                                 "{round.lawyerPetition}"
                               </div>
                             </div>
