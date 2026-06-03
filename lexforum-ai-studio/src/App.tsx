@@ -633,6 +633,10 @@ const handleGeminiError = (err: any) => {
         state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR'),
         (attempt) => { setRetryCount(attempt); }
       );
+      if (!data.rounds || data.rounds.length === 0) {
+        throw new Error('Simulação retornou sem rodadas. Tente novamente.');
+      }
+
       // Select the best round based on probability (highest, then latest if tie)
       let bestRound = data.rounds[0];
       for (const round of data.rounds) {
@@ -650,10 +654,16 @@ const handleGeminiError = (err: any) => {
       setState(prev => ({ ...prev, simulation: finalData }));
       
       // After simulation, get report based on BEST round
-      const reportData = await generateReport(
-        bestRound.lawyerPetition,
-        bestRound.judgeJudgment
-      );
+      // generateReport failure must NOT block result display — show result with null report
+      let reportData = null;
+      try {
+        reportData = await generateReport(
+          bestRound.lawyerPetition,
+          bestRound.judgeJudgment
+        );
+      } catch (reportErr) {
+        console.error('[handleSimulate] generateReport falhou — exibindo resultado sem laudo:', reportErr);
+      }
       setState(prev => ({ ...prev, step: 'result', report: reportData, error: null }));
 
       // Save simulation to Firebase with the optimized result
