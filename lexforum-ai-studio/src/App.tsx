@@ -32,7 +32,7 @@ import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode
 import { validateCausa, simulateForum, generateReport, simulateMode5, generateCounterHypotheses, expandHypothesis } from './lib/gemini';
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { getStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo } from './services/dbService';
+import { getStats, getRegionalStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo } from './services/dbService';
 import TermosPage from './pages/TermosPage';
 
 
@@ -342,10 +342,22 @@ export default function App() {
       setGlobalStats({
         simulations: stats.totalSimulations,
         winRate: Number(stats.winRate.toFixed(1)),
-        precision: 98.4 // Mocked for now
+        precision: Number(((stats.totalWins / Math.max(stats.totalSimulations, 1)) * 100).toFixed(1))
       });
+
+      const regional = await getRegionalStats();
+      if (regional && regional.length > 0) {
+        setState(prev => ({
+          ...prev,
+          regionalStats: regional.map((r: any) => ({
+            region: r.region ?? '',
+            seeds: r.seeds ?? 0,
+            active: r.active ?? 0,
+          }))
+        }));
+      }
     };
-    
+
     fetchInitialStats();
     return () => unsub();
   }, []);
@@ -1718,7 +1730,7 @@ const handleGeminiError = (err: any) => {
                         setState(prev => ({ ...prev, error: null }));
                         handleSimulate();
                       }}
-                      className="mt-4 px-6 py-3 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-[#F4F4F2] transition-all rounded-[14px]"
+                      className="mt-4 px-6 py-3 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-[#F4F4F2] transition-all"
                     >
                       Tentar Novamente
                     </button>
@@ -1761,7 +1773,7 @@ const handleGeminiError = (err: any) => {
                       {!isEditingMode4 && (
                         <button
                           onClick={() => setIsEditingMode4(true)}
-                          className="text-[10px] font-bold uppercase tracking-widest border border-white/20 px-3 py-1.5 hover:border-white/40 hover:text-white transition-all text-white/40 rounded-[10px]"
+                          className="text-[10px] font-bold uppercase tracking-widest border border-white/20 px-3 py-1.5 hover:border-white/40 hover:text-white transition-all text-white/40"
                         >
                           Editar campos
                         </button>
@@ -1877,13 +1889,13 @@ const handleGeminiError = (err: any) => {
                 <div className="flex gap-4 justify-center">
                   <button
                     onClick={() => setState(prev => ({ ...prev, userSide: 'AUTHOR' }))}
-                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all rounded-[14px] ${state.userSide === 'AUTHOR' ? 'bg-white text-black border-white' : 'border-white/20 text-white/40 hover:border-white/40'}`}
+                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'AUTHOR' ? 'bg-white text-black border-white' : 'border-white/20 text-white/40 hover:border-white/40'}`}
                   >
                     Sou o Autor
                   </button>
                   <button
                     onClick={() => setState(prev => ({ ...prev, userSide: 'DEFENSE' }))}
-                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all rounded-[14px] ${state.userSide === 'DEFENSE' ? 'bg-amber-500 text-black border-amber-500' : 'border-white/20 text-white/40 hover:border-white/40'}`}
+                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'DEFENSE' ? 'bg-amber-500 text-black border-amber-500' : 'border-white/20 text-white/40 hover:border-white/40'}`}
                   >
                     Sou o Réu
                   </button>
@@ -1893,7 +1905,7 @@ const handleGeminiError = (err: any) => {
                   <button
                     disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading}
                     onClick={handleValidate}
-                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl rounded-[14px]"
+                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
                   >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                     <ArrowRight className="w-4 h-4" />
@@ -1919,7 +1931,7 @@ const handleGeminiError = (err: any) => {
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
                     </button>
-                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-amber-400/60 border border-amber-400/20 px-2 py-0.5">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.7)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.25)` }}>
                       Revisão Pós-Conflito
                     </span>
                   </div>
@@ -1934,14 +1946,15 @@ const handleGeminiError = (err: any) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'RECURSO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: [] } }))}
-                    className={`p-6 border text-left transition-all space-y-2 rounded-[14px] ${state.mode5Input?.subCase === 'RECURSO' ? 'bg-white text-black border-white' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
+                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'RECURSO' ? 'bg-white text-black border-white' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
                   >
                     <span className="text-[10px] font-bold uppercase tracking-widest block">⚖️ Tenho uma Sentença</span>
                     <span className="text-xs opacity-60">Quero saber se vale recorrer</span>
                   </button>
                   <button
                     onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'ACORDO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: [] } }))}
-                    className={`p-6 border text-left transition-all space-y-2 rounded-[14px] ${state.mode5Input?.subCase === 'ACORDO' ? 'bg-amber-500 text-black border-amber-500' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
+                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'ACORDO' ? 'text-black' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
+                    style={state.mode5Input?.subCase === 'ACORDO' ? { backgroundColor: MODE_CONFIG[5].color, borderColor: MODE_CONFIG[5].color } : {}}
                   >
                     <span className="text-[10px] font-bold uppercase tracking-widest block">🤝 Tenho uma Proposta de Acordo</span>
                     <span className="text-xs opacity-60">Quero saber se aceito ou vou a julgamento</span>
@@ -1968,7 +1981,7 @@ const handleGeminiError = (err: any) => {
                     </div>
 
                     <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
+                      <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
                           {state.mode5Input.subCase === 'RECURSO' ? 'Sentença Recebida' : 'Proposta de Acordo'}
@@ -1983,7 +1996,7 @@ const handleGeminiError = (err: any) => {
                     </div>
 
                     <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
+                      <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
                           Anexar Documentos
@@ -2035,14 +2048,14 @@ const handleGeminiError = (err: any) => {
                       </div>
                     </div>
 
-                    <div className="p-4 bg-amber-500/5 border border-amber-500/20 text-[10px] text-amber-400/60 uppercase tracking-widest font-bold">
+                    <div className="p-4 text-[10px] uppercase tracking-widest font-bold" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)`, color: `rgba(${MODE_CONFIG[5].colorRgb},0.7)` }}>
                       ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
 
                     {(state.detectedArea === 'FAMILY' ||
                       state.detectedArea === 'SOCIAL_SECURITY') && (
-                      <div className="p-6 bg-amber-500/5 border border-amber-500/20 space-y-3 mt-4">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/80 block">
+                      <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)` }}>
+                        <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.8)` }}>
                           🤝 Recursos de Apoio
                         </span>
                         <p className="text-sm text-white/60 leading-relaxed">
@@ -2065,7 +2078,7 @@ const handleGeminiError = (err: any) => {
                       <button
                         disabled={!state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
                         onClick={handleValidate}
-                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl rounded-[14px]"
+                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
                       >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Consultar Juiz Estrategista'}
                         <ArrowRight className="w-4 h-4" />
@@ -2093,7 +2106,7 @@ const handleGeminiError = (err: any) => {
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
                     </button>
-                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-amber-400/60 border border-amber-400/20 px-2 py-0.5">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5" style={{ color: `rgba(${MODE_CONFIG[3].colorRgb},0.7)`, border: `1px solid rgba(${MODE_CONFIG[3].colorRgb},0.25)` }}>
                       Mesa Dupla — Juiz
                     </span>
                   </div>
@@ -2154,7 +2167,7 @@ const handleGeminiError = (err: any) => {
                   </div>
 
                   <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
+                    <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[3].colorRgb},0.6)` }} />
                     <div className="px-8 pt-6 pb-2">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
                     </div>
@@ -2205,7 +2218,7 @@ const handleGeminiError = (err: any) => {
                   <button
                     disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || loading}
                     onClick={handleValidate}
-                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl rounded-[14px]"
+                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
                   >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                     <ArrowRight className="w-4 h-4" />
@@ -2233,7 +2246,13 @@ const handleGeminiError = (err: any) => {
                         Voltar
                       </button>
                       {state.selectedMode > 0 && (
-                        <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-amber-400/60 border border-amber-400/20 px-2 py-0.5">
+                        <span
+                          className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5"
+                          style={{
+                            color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.7)`,
+                            border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.25)`
+                          }}
+                        >
                           {MODE_NAMES[state.selectedMode]}
                         </span>
                       )}
@@ -2305,7 +2324,7 @@ const handleGeminiError = (err: any) => {
                       <button
                         disabled={!state.caseDescription.trim() || loading}
                         onClick={handleValidate}
-                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl rounded-[14px]"
+                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
                       >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                         <ArrowRight className="w-4 h-4" />
@@ -2364,7 +2383,7 @@ const handleGeminiError = (err: any) => {
 
                   <div className="bg-[#15161A] border border-white/10 p-8 space-y-8 flex-1">
                     <div className="space-y-1">
-                      <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/60">Disponibilidade de Sementes</h3>
+                      <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/60">Disponibilidade de Agentes de IA</h3>
                       <p className="text-[10px] text-white/20 uppercase tracking-widest font-mono">Status Global Agents / Judicial Regions</p>
                     </div>
 
@@ -2389,7 +2408,7 @@ const handleGeminiError = (err: any) => {
                               initial={{ opacity: 0.5, y: -2 }}
                               animate={{ opacity: 1, y: 0 }}
                             >
-                              {stat.seeds} sementes integradas
+                              {stat.seeds} agentes integrados
                             </motion.span>
                             <span>{((stat.seeds / 1915) * 100).toFixed(1)}% core</span>
                           </div>
@@ -2406,7 +2425,7 @@ const handleGeminiError = (err: any) => {
                           </span>
                         </div>
                         <div className="text-[9px] text-white/20 leading-relaxed font-serif italic">
-                          A simulação consome sementes aleatórias de acordo com a área do conflito identificada na etapa de validação.
+                          A simulação aciona agentes especializados conforme a área do conflito identificada na etapa de validação.
                         </div>
                       </div>
                     </div>
@@ -2691,8 +2710,8 @@ const handleGeminiError = (err: any) => {
 
                 {(state.detectedArea === 'FAMILY' ||
                   state.detectedArea === 'SOCIAL_SECURITY') && (
-                  <div className="p-6 bg-amber-500/5 border border-amber-500/20 space-y-3 mt-4">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/80 block">
+                  <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.05)`, border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.2)` }}>
+                    <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.8)` }}>
                       🤝 Recursos de Apoio
                     </span>
                     <p className="text-sm text-white/60 leading-relaxed">
@@ -2819,14 +2838,14 @@ const handleGeminiError = (err: any) => {
                       </div>
                     )}
 
-                    <div className="p-4 bg-amber-500/5 border border-amber-500/20 text-[10px] text-amber-400/60 uppercase tracking-widest font-bold">
+                    <div className="p-4 text-[10px] uppercase tracking-widest font-bold" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)`, color: `rgba(${MODE_CONFIG[5].colorRgb},0.7)` }}>
                       ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
 
                     {(state.detectedArea === 'FAMILY' ||
                       state.detectedArea === 'SOCIAL_SECURITY') && (
-                      <div className="p-6 bg-amber-500/5 border border-amber-500/20 space-y-3 mt-4">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/80 block">
+                      <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)` }}>
+                        <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.8)` }}>
                           🤝 Recursos de Apoio
                         </span>
                         <p className="text-sm text-white/60 leading-relaxed">
@@ -3057,8 +3076,8 @@ const handleGeminiError = (err: any) => {
                         <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-3">Argumento do Autor</div>
                         <p className="text-sm font-sans text-white/70 leading-relaxed">{state.simulation.rounds[0].authorSummary || '—'}</p>
                       </div>
-                      <div className="p-6 bg-white/5 border border-amber-500/20">
-                        <div className="text-[9px] font-bold uppercase tracking-widest text-amber-500/60 mb-3">Argumento do Réu</div>
+                      <div className="p-6 bg-white/5" style={{ border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.2)` }}>
+                        <div className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.6)` }}>Argumento do Réu</div>
                         <p className="text-sm font-sans text-white/70 leading-relaxed">{state.simulation.rounds[0].defenseSummary || '—'}</p>
                       </div>
                     </div>
@@ -3068,7 +3087,7 @@ const handleGeminiError = (err: any) => {
                         <div className="h-full bg-white/40 flex items-center justify-end pr-3 transition-all" style={{ width: `${state.simulation.finalSuccessProbability}%` }}>
                           <span className="text-[10px] font-bold text-black whitespace-nowrap">{state.simulation.finalSuccessProbability}% AUTOR</span>
                         </div>
-                        <div className="h-full bg-amber-500/60 flex items-center justify-start pl-3 transition-all" style={{ width: `${100 - state.simulation.finalSuccessProbability}%` }}>
+                        <div className="h-full flex items-center justify-start pl-3 transition-all" style={{ width: `${100 - state.simulation.finalSuccessProbability}%`, backgroundColor: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.6)` }}>
                           <span className="text-[10px] font-bold text-black whitespace-nowrap">RÉU {100 - state.simulation.finalSuccessProbability}%</span>
                         </div>
                       </div>
@@ -3263,7 +3282,7 @@ const handleGeminiError = (err: any) => {
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-[9px] font-bold uppercase tracking-widest text-white/20">Sementes Ativadas na Sessão</h4>
+                <h4 className="text-[9px] font-bold uppercase tracking-widest text-white/20">Agentes Ativados na Sessão</h4>
                 <div className="grid grid-cols-1 gap-3">
                   {state.activeAgents.length > 0 ? (
                     state.activeAgents.map((agent, i) => (
@@ -3283,7 +3302,7 @@ const handleGeminiError = (err: any) => {
                     ))
                   ) : (
                     <div className="text-[9px] text-white/10 italic p-4 border border-dashed border-white/5 text-center">
-                      Aguardando ativação de sementes...
+                      Aguardando ativação de agentes...
                     </div>
                   )}
                 </div>
@@ -3407,7 +3426,7 @@ const handleGeminiError = (err: any) => {
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <h2 className="text-2xl font-serif italic text-white">Central de Monitoramento de Sementes</h2>
+                    <h2 className="text-2xl font-serif italic text-white">Central de Monitoramento de Agentes de IA</h2>
                   </div>
                   <p className="text-[10px] text-white/30 uppercase tracking-[0.4em] font-bold">EAI? Forge Instance: 0xFD-99 / Latency: 12ms</p>
                 </div>
@@ -3442,7 +3461,7 @@ const handleGeminiError = (err: any) => {
                       {state.regionalStats.reduce((acc, s) => acc + s.seeds, 0)}
                     </div>
                     <div className="text-[9px] text-white/20 leading-relaxed uppercase font-bold tracking-tighter">
-                      Sementes catalogadas por jurisdição regional
+                      Agentes catalogados por jurisdição regional
                     </div>
                   </div>
 
@@ -3475,7 +3494,7 @@ const handleGeminiError = (err: any) => {
                       </div>
                       <div className="flex justify-between items-center text-[9px] font-mono">
                         <div className="flex flex-col">
-                          <span className="text-white/20 uppercase tracking-tighter">Seeds</span>
+                          <span className="text-white/20 uppercase tracking-tighter">Agentes</span>
                           <span className="text-white/60">{reg.seeds}</span>
                         </div>
                         <div className="flex flex-col text-right">

@@ -287,7 +287,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                 {[
                   { label: 'Área identificada', value: 'Geral / Outros' },
                   { label: 'Foro/Comarca', value: 'Justiça Comum / JEC' },
-                  { label: 'Sementes ativadas', value: 'Aguardando ativação de sementes...' },
+                  { label: 'Agentes ativados', value: 'Aguardando ativação de agentes...' },
                 ].map(({ label, value }) => (
                   <div
                     key={label}
