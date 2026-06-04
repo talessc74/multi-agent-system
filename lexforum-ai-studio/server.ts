@@ -268,6 +268,53 @@ async function startServer() {
 
   app.use('/simulation', simulationStatus);
 
+  // ── Stripe Promo Code Validation ────────────────────────────────
+  app.post('/api/stripe/validate-promo-code', async (req, res) => {
+    const { code, mode } = req.body;
+    if (!code) {
+      res.status(400).json({ error: 'code required' });
+      return;
+    }
+    try {
+      const promoCodes = await stripe.promotionCodes.list({
+        code: (code as string).trim().toUpperCase(),
+        active: true,
+        limit: 1,
+      });
+
+      if (!promoCodes.data.length) {
+        res.json({ valid: false });
+        return;
+      }
+
+      const promoCode = promoCodes.data[0];
+      const coupon = promoCode.coupon;
+      const baseAmount = (mode === 3 || mode === 5) ? 590 : 990;
+
+      let finalAmount = baseAmount;
+      let discountLabel = '';
+
+      if (coupon.percent_off) {
+        finalAmount = Math.round(baseAmount * (1 - coupon.percent_off / 100));
+        discountLabel = `${coupon.percent_off}% off`;
+      } else if (coupon.amount_off) {
+        finalAmount = Math.max(0, baseAmount - coupon.amount_off);
+        discountLabel = `R$ ${(coupon.amount_off / 100).toFixed(2).replace('.', ',')} off`;
+      }
+
+      res.json({
+        valid: true,
+        discountLabel,
+        finalAmount,
+        finalAmountFormatted: `R$ ${(finalAmount / 100).toFixed(2).replace('.', ',')}`,
+      });
+    } catch (err: any) {
+      console.error('[Stripe] validate-promo-code error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  // ────────────────────────────────────────────────────────────
+
   // ── Stripe Checkout Session ────────────────────────────────────
   app.post('/api/stripe/create-checkout-session', async (req, res) => {
     const authHeader = req.headers.authorization;
@@ -281,7 +328,7 @@ async function startServer() {
       const decoded = await admin.auth().verifyIdToken(token);
       const uid = decoded.uid;
 
-      const { simulationId, mode } = req.body;
+      const { simulationId, mode, promoCode } = req.body;
       if (!simulationId) {
         res.status(400).json({ error: 'simulationId required' });
         return;
@@ -292,6 +339,21 @@ async function startServer() {
       if (!simSnap.exists || simSnap.data()?.userId !== uid) {
         res.status(403).json({ error: 'Forbidden' });
         return;
+      }
+
+      let sessionDiscounts: Array<{ promotion_code: string }> | undefined;
+      let allowPromoCodes = true;
+
+      if (promoCode) {
+        const promoCodes = await stripe.promotionCodes.list({
+          code: (promoCode as string).trim().toUpperCase(),
+          active: true,
+          limit: 1,
+        });
+        if (promoCodes.data.length > 0) {
+          sessionDiscounts = [{ promotion_code: promoCodes.data[0].id }];
+          allowPromoCodes = false;
+        }
       }
 
       const session = await stripe.checkout.sessions.create({
@@ -305,6 +367,7 @@ async function startServer() {
           quantity: 1,
         }],
         mode: 'payment',
+        ...(sessionDiscounts ? { discounts: sessionDiscounts } : { allow_promotion_codes: true }),
         success_url: `${process.env.APP_URL}/?session_id={CHECKOUT_SESSION_ID}&sim=${simulationId}`,
         cancel_url: `${process.env.APP_URL}/`,
         metadata: { uid, simulationId },
