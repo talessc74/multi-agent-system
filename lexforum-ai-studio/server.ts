@@ -291,6 +291,61 @@ async function startServer() {
   });
   // ────────────────────────────────────────────────────────────
 
+  // ── Stripe Checkout Session — Chat pós-sessão ─────────────────
+  app.post('/api/stripe/create-chat-checkout-session', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    try {
+      const token = authHeader.split('Bearer ')[1];
+      const decoded = await admin.auth().verifyIdToken(token);
+      const uid = decoded.uid;
+
+      const { simulationId } = req.body;
+      if (!simulationId) {
+        res.status(400).json({ error: 'simulationId required' });
+        return;
+      }
+
+      const simSnap = await adminDb.collection('simulations').doc(simulationId).get();
+      if (!simSnap.exists || simSnap.data()?.userId !== uid) {
+        res.status(403).json({ error: 'Forbidden' });
+        return;
+      }
+
+      const chatSnap = await adminDb.collection('chats').doc(simulationId).get();
+      if (chatSnap.exists && chatSnap.data()?.paidAt) {
+        res.status(409).json({ error: 'Chat já liberado para esta simulação' });
+        return;
+      }
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: 'brl',
+            product_data: { name: 'Chat com Advogado e Juiz — EAI? (5 perguntas)' },
+            unit_amount: 299,
+          },
+          quantity: 1,
+        }],
+        mode: 'payment',
+        success_url: `${process.env.APP_URL}/?session_id={CHECKOUT_SESSION_ID}&sim=${simulationId}&chat=1`,
+        cancel_url: `${process.env.APP_URL}/`,
+        metadata: { uid, simulationId, type: 'chat' },
+      });
+
+      res.json({ url: session.url });
+    } catch (err: any) {
+      console.error('[Stripe] create-chat-checkout-session error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  // ────────────────────────────────────────────────────────────
+
   // ── Stripe Webhook ──────────────────────────────────────────
   app.post(
     '/api/webhook/stripe',
@@ -309,20 +364,34 @@ async function startServer() {
         switch (event.type) {
           case 'checkout.session.completed': {
             const session = event.data.object as Stripe.Checkout.Session;
-            const { uid, simulationId } = session.metadata || {};
+            const { uid, simulationId, type } = session.metadata || {};
             if (uid && simulationId) {
-              await adminDb
-                .collection('users')
-                .doc(uid)
-                .collection('payments')
-                .doc(simulationId)
-                .set({
+              if (type === 'chat') {
+                await adminDb.collection('chats').doc(simulationId).set({
+                  userId: uid,
+                  simulationId,
                   paidAt: admin.firestore.FieldValue.serverTimestamp(),
+                  questionsUsed: 0,
+                  questionsLimit: 5,
+                  stripeSessionId: session.id,
                   amount: session.amount_total,
                   currency: session.currency,
-                  stripeSessionId: session.id,
                 });
-              console.log(`[Stripe] Pagamento liberado — uid: ${uid}, sim: ${simulationId}`);
+                console.log(`[Stripe] Chat liberado — uid: ${uid}, sim: ${simulationId}`);
+              } else {
+                await adminDb
+                  .collection('users')
+                  .doc(uid)
+                  .collection('payments')
+                  .doc(simulationId)
+                  .set({
+                    paidAt: admin.firestore.FieldValue.serverTimestamp(),
+                    amount: session.amount_total,
+                    currency: session.currency,
+                    stripeSessionId: session.id,
+                  });
+                console.log(`[Stripe] Laudo liberado — uid: ${uid}, sim: ${simulationId}`);
+              }
             }
             break;
           }
