@@ -32,7 +32,7 @@ import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode
 import { validateCausa, simulateForum, generateReport, simulateMode5, generateCounterHypotheses, expandHypothesis } from './lib/gemini';
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { getStats, getRegionalStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo } from './services/dbService';
+import { getStats, getAreaStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo } from './services/dbService';
 import TermosPage from './pages/TermosPage';
 
 
@@ -345,16 +345,9 @@ export default function App() {
         precision: Number(((stats.totalWins / Math.max(stats.totalSimulations, 1)) * 100).toFixed(1))
       });
 
-      const regional = await getRegionalStats();
+      const regional = await getAreaStats();
       if (regional && regional.length > 0) {
-        setState(prev => ({
-          ...prev,
-          regionalStats: regional.map((r: any) => ({
-            region: r.region ?? '',
-            seeds: r.seeds ?? 0,
-            active: r.active ?? 0,
-          }))
-        }));
+        setState(prev => ({ ...prev, regionalStats: regional }));
       }
     };
 
@@ -2388,40 +2381,39 @@ const handleGeminiError = (err: any) => {
                     </div>
 
                     <div className="space-y-5">
-                      {state.regionalStats.map((stat, i) => (
-                        <div key={i} className="space-y-2 group cursor-default">
-                          <div className="flex justify-between items-end">
-                            <span className="text-[11px] font-bold text-white/80 group-hover:text-white transition-colors">{stat.region}</span>
-                            <span className="text-[11px] font-mono text-emerald-500">{stat.active} online</span>
+                      {(() => {
+                        const maxSeeds = Math.max(...state.regionalStats.map(r => r.seeds), 1);
+                        return state.regionalStats.map((stat, i) => (
+                          <div key={i} className="space-y-2 group cursor-default">
+                            <div className="flex justify-between items-end">
+                              <span className="text-[11px] font-bold text-white/80 group-hover:text-white transition-colors">{stat.region}</span>
+                              <span className="text-[11px] font-mono text-emerald-500">{stat.active} vitórias</span>
+                            </div>
+                            <div className="h-[2px] bg-white/5 overflow-hidden rounded-full">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${(stat.seeds / maxSeeds) * 100}%` }}
+                                transition={{ duration: 1.5, delay: i * 0.1 }}
+                                className="h-full bg-white/20 group-hover:bg-emerald-500/50 transition-colors"
+                              />
+                            </div>
+                            <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-tighter text-white/20">
+                              <motion.span key={stat.seeds} initial={{ opacity: 0.5, y: -2 }} animate={{ opacity: 1, y: 0 }}>
+                                {stat.seeds} simulações
+                              </motion.span>
+                              <span>{stat.seeds > 0 ? ((stat.active / stat.seeds) * 100).toFixed(1) : '0.0'}% êxito</span>
+                            </div>
                           </div>
-                          <div className="h-[2px] bg-white/5 overflow-hidden rounded-full">
-                            <motion.div 
-                              initial={{ width: 0 }}
-                              animate={{ width: `${(stat.seeds / 800) * 100}%` }}
-                              transition={{ duration: 1.5, delay: i * 0.1 }}
-                              className="h-full bg-white/20 group-hover:bg-emerald-500/50 transition-colors"
-                            />
-                          </div>
-                          <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-tighter text-white/20">
-                            <motion.span
-                              key={stat.seeds}
-                              initial={{ opacity: 0.5, y: -2 }}
-                              animate={{ opacity: 1, y: 0 }}
-                            >
-                              {stat.seeds} agentes integrados
-                            </motion.span>
-                            <span>{((stat.seeds / 1915) * 100).toFixed(1)}% core</span>
-                          </div>
-                        </div>
-                      ))}
+                        ));
+                      })()}
                     </div>
 
                     <div className="pt-6 border-t border-white/5 space-y-4">
                       <div className="bg-white/5 p-4 space-y-2 border border-white/5">
                         <div className="flex justify-between items-center">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Total Ativos</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Total de Vitórias</span>
                           <span className="text-xs font-mono text-emerald-500 font-bold">
-                            {state.regionalStats.reduce((acc, s) => acc + s.active, 0)} AGENTES
+                            {state.regionalStats.reduce((acc, s) => acc + s.active, 0)} VITÓRIAS
                           </span>
                         </div>
                         <div className="text-[9px] text-white/20 leading-relaxed font-serif italic">
@@ -3455,13 +3447,13 @@ const handleGeminiError = (err: any) => {
                   <div className="bg-white/5 border border-white/5 p-6 space-y-4">
                     <div className="flex items-center gap-2 text-white/40">
                       <Database className="w-4 h-4" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Biblioteca Global</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Simulações por Área</span>
                     </div>
                     <div className="text-4xl font-serif italic text-white/60">
                       {state.regionalStats.reduce((acc, s) => acc + s.seeds, 0)}
                     </div>
                     <div className="text-[9px] text-white/20 leading-relaxed uppercase font-bold tracking-tighter">
-                      Agentes catalogados por jurisdição regional
+                      Total de simulações indexadas por área jurídica
                     </div>
                   </div>
 
@@ -3479,31 +3471,34 @@ const handleGeminiError = (err: any) => {
 
                 {/* Regional Grid */}
                 <div className="col-span-12 lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-4 h-fit overflow-y-auto pr-2 max-h-full custom-scrollbar">
-                  {state.regionalStats.map((reg, i) => (
+                  {(() => {
+                    const maxSeeds = Math.max(...state.regionalStats.map(r => r.seeds), 1);
+                    return state.regionalStats.map((reg, i) => (
                     <div key={i} className="bg-white/[0.02] border border-white/5 p-5 space-y-4 relative group">
                       <div className="absolute top-2 right-4 text-[8px] font-mono opacity-20 italic">REG_{i+1}</div>
                       <div className="space-y-1">
                         <div className="text-[11px] font-bold text-white/80">{reg.region}</div>
                         <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                          <motion.div 
+                          <motion.div
                             initial={{ width: 0 }}
-                            animate={{ width: `${(reg.seeds / 800) * 100}%` }}
+                            animate={{ width: `${(reg.seeds / maxSeeds) * 100}%` }}
                             className="h-full bg-emerald-500/50"
                           />
                         </div>
                       </div>
                       <div className="flex justify-between items-center text-[9px] font-mono">
                         <div className="flex flex-col">
-                          <span className="text-white/20 uppercase tracking-tighter">Agentes</span>
+                          <span className="text-white/20 uppercase tracking-tighter">Simulações</span>
                           <span className="text-white/60">{reg.seeds}</span>
                         </div>
                         <div className="flex flex-col text-right">
-                          <span className="text-white/20 uppercase tracking-tighter">Nodes Online</span>
+                          <span className="text-white/20 uppercase tracking-tighter">Vitórias</span>
                           <span className="text-emerald-500">{reg.active}</span>
                         </div>
                       </div>
                     </div>
-                  ))}
+                  ));
+                  })()}
                 </div>
 
                 {/* Execution Log */}
