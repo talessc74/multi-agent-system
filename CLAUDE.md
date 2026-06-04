@@ -3,34 +3,43 @@
 ## Instrução obrigatória
 
 Este projeto opera sob um sistema de seeds de governança distribuído
-em três equipes: Engenharia, UX e Segurança.
+em três equipes: Código, UX e Segurança.
 
 Antes de iniciar qualquer tarefa, leia integralmente:
-  .seeds/ORCHESTRATOR.md
+  .seeds/ARGUS.md
 
-O Orchestrator define quais seeds são ativadas para cada tipo de tarefa
-e a ordem de validação obrigatória.
+ARGUS é o orquestrador. Ele define quais seeds são ativadas para cada
+tipo de tarefa, a ordem de validação e como resolver conflitos.
 
 ## Regra absoluta
 
-Nenhum output é válido sem passar pelos decision gates
-das seeds ativas para aquele tipo de tarefa.
+Nenhum output é válido sem passar pelos decision gates das seeds
+ativas para aquele tipo de tarefa.
+
+## Como acionar
+
+- "Argus, revisa este código" → Argus roteia para as seeds corretas
+- "Argus, chama a galera do código" → ativa Scout · Flux · Literate
+- "Argus, chama a galera de UX" → ativa Compass · Empiricus · Polar Bear
+- "Argus, chama a galera de segurança" → ativa Blast · BAU · Sentinel · Sovereign · Ghost
+- "Argus, quem é o Ghost?" → Argus explica a seed solicitada
+- "Argus, apresenta a equipe" → Argus lista todos os membros e papéis
 
 ## Seeds disponíveis
 
-### Engenharia
-- .seeds/SEED_ANON_ENG_LOGIC_001.json
-- .seeds/SEED_SOFT_ARCH_001.json
-- .seeds/SEED_CS_ALG_001.json
+### Galera do Código
+- .seeds/SCOUT.json       → Clean Code, TDD, responsabilidade profissional
+- .seeds/FLUX.json        → Evolutionary Design, refatoração contínua
+- .seeds/LITERATE.json    → Algoritmos, análise assintótica, narrativa antes de execução
 
-### UX
-- .seeds/SEED_HCD_001.json
-- .seeds/SEED_USABX_001.json
-- .seeds/SEED_POLAR_BEAR_001.json
+### Galera de UX
+- .seeds/COMPASS.json     → Human-Centered Design, affordances, feedback cognitivo
+- .seeds/EMPIRICUS.json   → Usabilidade empírica, redução de carga cognitiva
+- .seeds/POLARBEAR.json   → Information Architecture, findability, wayfinding
 
-### Segurança
-- .seeds/SEED_ANON_SEC_RESILIENCE_001.json
-- .seeds/SEED_ANON_SEC_COMPLIANCE_002.json
-- .seeds/SEED_ANON_SEC_ZEROTRUST_003.json
-- .seeds/SEED_ANON_SEC_IAM_004.json
-- .seeds/SEED_ANON_SEC_PRACTICAL_005.json
+### Galera de Segurança
+- .seeds/BLAST.json       → Data minimization, transparência radical
+- .seeds/BAU.json         → Perpetual Integrity Lifecycle, compliance contínuo
+- .seeds/SENTINEL.json    → Zero Trust, micro-segmentação
+- .seeds/SOVEREIGN.json   → Identity, consentimento, minimal disclosure
+- .seeds/GHOST.json       → Attacker mindset, engenharia social, fator humano
