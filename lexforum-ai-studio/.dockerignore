@@ -5,3 +5,4 @@ dist
 !.env.example
 .git
 *.md
+firebase-applet-config.json

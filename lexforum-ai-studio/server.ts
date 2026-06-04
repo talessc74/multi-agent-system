@@ -24,6 +24,7 @@ if (!admin.apps.length) {
 const adminDb = admin.firestore();
 import simulationStatus from './simulation-status';
 import { resolveAgent, safeReadAgentFile } from './agent-resolver';
+import { requireAuth } from './src/middleware/requireAuth';
 import { Resend } from 'resend';
 
 dotenv.config();
@@ -56,6 +57,13 @@ const generalLimiter = rateLimit({
 
 const PORT = process.env.PORT || 3000;
 
+function sanitizeJudgeInput(input: string | undefined): string | undefined {
+  if (!input || input === 'null') return undefined;
+  // Allowlist: apenas caracteres válidos em nome de comarca ou magistrado
+  const sanitized = input.replace(/[^A-Za-záéíóúàâêôãõçÁÉÍÓÚÀÂÊÔÃÕÇ\s\-\.\d]/g, '').trim();
+  return sanitized.length > 0 ? sanitized : undefined;
+}
+
 async function notifySpendingCap(route: string) {
   if (!process.env.RESEND_API_KEY || !process.env.ALERT_EMAIL) return;
   const resend = new Resend(process.env.RESEND_API_KEY);
@@ -82,7 +90,7 @@ async function notifySpendingCap(route: string) {
 async function startServer() {
   console.log("Starting server...");
   // API routes FIRST
-  app.post("/api/gemini/validate", generalLimiter, async (req, res) => {
+  app.post("/api/gemini/validate", generalLimiter, requireAuth, async (req, res) => {
     try {
       const { caseDescription, attachments } = req.body;
       const data = await validateCausaServer(caseDescription, attachments);
@@ -96,13 +104,14 @@ async function startServer() {
     }
   });
 
-  app.post("/api/gemini/simulate", simulateLimiter, async (req, res) => {
+  app.post("/api/gemini/simulate", simulateLimiter, requireAuth, async (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
-    const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide } =
+    const { caseDescription, area, attachments, specificJudge: rawJudge, mode, defenseDescription, defenseAttachments, userSide } =
       req.body;
+    const specificJudge = sanitizeJudgeInput(rawJudge);
 
     const send = (event: string, data: object) => {
       res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
@@ -122,7 +131,7 @@ async function startServer() {
     try {
       const entry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
-        comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
+        comarca: specificJudge,
         tipo: 'juiz',
       });
       const agentJson = entry.conteudo ?? safeReadAgentFile(entry.arquivo);
@@ -138,7 +147,7 @@ async function startServer() {
       const lawyerSide = (mode === 2) ? 'DEFENSE' : 'AUTHOR';
       const lawyerEntry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
-        comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
+        comarca: specificJudge,
         tipo: 'advogado',
         userSide: lawyerSide,
       });
@@ -184,7 +193,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/gemini/report", generalLimiter, async (req, res) => {
+  app.post("/api/gemini/report", generalLimiter, requireAuth, async (req, res) => {
     try {
       const { lastPetition, lastJudgment } = req.body;
       const data = await generateReportServer(lastPetition, lastJudgment);
@@ -198,7 +207,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/counter-hypotheses", generalLimiter, async (req, res) => {
+  app.post("/api/counter-hypotheses", generalLimiter, requireAuth, async (req, res) => {
     try {
       const { petition, area, mode } = req.body;
       if (!petition || !area) {
@@ -215,7 +224,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/expand-hypothesis", generalLimiter, async (req, res) => {
+  app.post("/api/expand-hypothesis", generalLimiter, requireAuth, async (req, res) => {
     try {
       const { petition, hypothesis, area } = req.body;
       if (!petition || !hypothesis || !area) {
@@ -229,12 +238,13 @@ async function startServer() {
     }
   });
 
-  app.post("/api/gemini/mode5", simulateLimiter, async (req, res) => {
+  app.post("/api/gemini/mode5", simulateLimiter, requireAuth, async (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
-    const { mode5Input, area, attachments, specificJudge } = req.body;
+    const { mode5Input, area, attachments, specificJudge: rawJudge5 } = req.body;
+    const specificJudge5 = sanitizeJudgeInput(rawJudge5);
 
     const send = (event: string, data: object) => {
       res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
@@ -254,7 +264,7 @@ async function startServer() {
     try {
       const entry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
-        comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
+        comarca: specificJudge5,
         tipo: 'juiz',
       });
       const agentJson = entry.conteudo ?? safeReadAgentFile(entry.arquivo);
@@ -270,7 +280,7 @@ async function startServer() {
         mode5Input,
         area,
         attachments ?? [],
-        specificJudge ?? null,
+        specificJudge5 ?? null,
         agentInstruction,
         agentName,
         (step: string, data?: any) => {

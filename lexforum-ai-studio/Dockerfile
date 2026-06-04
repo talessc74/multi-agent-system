@@ -31,4 +31,7 @@ COPY --from=builder /app/registry ./registry
 # Cloud Run injects PORT=8080; server.ts already reads process.env.PORT
 EXPOSE 8080
 
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+USER appuser
+
 CMD ["node", "dist/server.cjs"]

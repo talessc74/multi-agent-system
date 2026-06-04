@@ -1,11 +1,19 @@
 import type { LegalArea, SimulationResult, ReportContent, Attachment, Mode5Input, Mode5Result } from "../types";
+import { auth } from './firebase';
 
 export type SimStep = 'WRITING' | 'DELIVERING' | 'JUDGING' | 'REVIEWING' | 'IDLE' | 'SEED_CREATED';
+
+async function authHeaders(): Promise<HeadersInit> {
+  const token = await auth.currentUser?.getIdToken();
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  return headers;
+}
 
 export async function validateCausa(caseDescription: string, attachments: Attachment[]) {
   const response = await fetch('/api/gemini/validate', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await authHeaders(),
     body: JSON.stringify({ caseDescription, attachments })
   });
   if (!response.ok) {
@@ -40,7 +48,7 @@ export function simulateForum(
       try {
         response = await fetch('/api/gemini/simulate', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: await authHeaders(),
           body: JSON.stringify({ caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide }),
         });
       } catch (err: any) {
@@ -134,7 +142,7 @@ export function simulateForum(
 export async function generateReport(lastPetition: string, lastJudgment: string): Promise<ReportContent> {
   const response = await fetch('/api/gemini/report', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await authHeaders(),
     body: JSON.stringify({ lastPetition, lastJudgment })
   });
   if (!response.ok) {
@@ -152,7 +160,7 @@ export async function generateCounterHypotheses(
   try {
     const response = await fetch('/api/counter-hypotheses', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(),
       body: JSON.stringify({ petition, area, mode })
     });
     if (!response.ok) return [];
@@ -171,7 +179,7 @@ export async function expandHypothesis(
   try {
     const response = await fetch('/api/expand-hypothesis', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(),
       body: JSON.stringify({ petition, hypothesis, area })
     });
     if (!response.ok) return '';
@@ -194,7 +202,7 @@ export function simulateMode5(
     try {
       response = await fetch('/api/gemini/mode5', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await authHeaders(),
         body: JSON.stringify({ mode5Input, area, attachments, specificJudge })
       });
     } catch (err: any) {
