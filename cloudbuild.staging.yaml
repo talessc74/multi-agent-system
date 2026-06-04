@@ -15,9 +15,9 @@ steps:
       - --build-arg
       - VITE_GIT_HASH=$SHORT_SHA
       - -t
-      - gcr.io/gen-lang-client-0982741688/eai-staging:$_TAG
+      - gcr.io/gen-lang-client-0783740660/eai-staging:$_TAG
       - -t
-      - gcr.io/gen-lang-client-0982741688/eai-staging:latest
+      - gcr.io/gen-lang-client-0783740660/eai-staging:latest
       - ./lexforum-ai-studio
 
   # 2. Push para o Container Registry
@@ -25,24 +25,24 @@ steps:
     args:
       - push
       - --all-tags
-      - gcr.io/gen-lang-client-0982741688/eai-staging
+      - gcr.io/gen-lang-client-0783740660/eai-staging
 
-  # 3. Deploy para Cloud Run — ambiente de staging
+  # 3. Deploy para Cloud Run — ambiente de staging (projeto EAIradiokactus)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
       - run
       - deploy
       - eai-staging
-      - --image=gcr.io/gen-lang-client-0982741688/eai-staging:$_TAG
+      - --image=gcr.io/gen-lang-client-0783740660/eai-staging:$_TAG
       - --region=us-east1
-      - --project=gen-lang-client-0982741688
+      - --project=gen-lang-client-0783740660
       - --platform=managed
       - --allow-unauthenticated
 
 images:
-  - gcr.io/gen-lang-client-0982741688/eai-staging:$_TAG
-  - gcr.io/gen-lang-client-0982741688/eai-staging:latest
+  - gcr.io/gen-lang-client-0783740660/eai-staging:$_TAG
+  - gcr.io/gen-lang-client-0783740660/eai-staging:latest
 
 options:
   logging: CLOUD_LOGGING_ONLY
