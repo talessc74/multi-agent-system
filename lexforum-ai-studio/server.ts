@@ -1,4 +1,7 @@
 import express from "express";
+import helmet from "helmet";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs";
@@ -20,16 +23,37 @@ if (!admin.apps.length) {
 
 const adminDb = admin.firestore();
 import simulationStatus from './simulation-status';
-import { resolveAgent } from './agent-resolver';
+import { resolveAgent, safeReadAgentFile } from './agent-resolver';
 import { Resend } from 'resend';
 
 dotenv.config();
 
 const app = express();
+
+app.use(helmet());
+app.use(cors({ origin: process.env.APP_URL || 'http://localhost:5173' }));
+
 app.use((req, res, next) => {
   if (req.path === '/api/webhook/stripe') return next();
-  express.json({ limit: '50mb' })(req, res, next);
+  express.json({ limit: '10mb' })(req, res, next);
 });
+
+const simulateLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Limite de simulações atingido. Aguarde um minuto.' },
+});
+
+const generalLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas requisições. Aguarde um minuto.' },
+});
+
 const PORT = process.env.PORT || 3000;
 
 async function notifySpendingCap(route: string) {
@@ -58,7 +82,7 @@ async function notifySpendingCap(route: string) {
 async function startServer() {
   console.log("Starting server...");
   // API routes FIRST
-  app.post("/api/gemini/validate", async (req, res) => {
+  app.post("/api/gemini/validate", generalLimiter, async (req, res) => {
     try {
       const { caseDescription, attachments } = req.body;
       const data = await validateCausaServer(caseDescription, attachments);
@@ -67,12 +91,12 @@ async function startServer() {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
         await notifySpendingCap('/api/gemini/validate');
       }
-      console.error("Gemini Server Error:", error);
-      res.status(500).json({ error: error.message || "Unknown error" });
+      console.error('[/api/gemini/validate]', error);
+      res.status(500).json({ error: 'Erro interno. Tente novamente.' });
     }
   });
 
-  app.post("/api/gemini/simulate", async (req, res) => {
+  app.post("/api/gemini/simulate", simulateLimiter, async (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
@@ -101,7 +125,7 @@ async function startServer() {
         comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
         tipo: 'juiz',
       });
-      const agentJson = entry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
+      const agentJson = entry.conteudo ?? safeReadAgentFile(entry.arquivo);
       agentInstruction = JSON.stringify(agentJson);
       judgeNameFromRegistry = `Magistrado ${area === 'LABOR' ? 'Trabalhista' : area === 'CONSUMER' ? 'Consumerista' : area === 'CIVIL' ? 'Cível' : area === 'FAMILY' ? 'de Família' : area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'}`;
       console.log(`[AgentResolver] Usando agente do registry: ${entry.agent_id}`);
@@ -118,7 +142,7 @@ async function startServer() {
         tipo: 'advogado',
         userSide: lawyerSide,
       });
-      const lawyerJson = lawyerEntry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), lawyerEntry.arquivo), 'utf-8'));
+      const lawyerJson = lawyerEntry.conteudo ?? safeReadAgentFile(lawyerEntry.arquivo);
       lawyerInstruction = JSON.stringify(lawyerJson);
       console.log(`[AgentResolver] Advogado do registry: ${lawyerEntry.agent_id}`);
     } catch (e) {
@@ -154,13 +178,13 @@ async function startServer() {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
         await notifySpendingCap('/api/gemini/simulate');
       }
-      send('error', { message: error.message || 'Unknown error' });
+      send('error', { message: 'Erro interno. Tente novamente.' });
     } finally {
       res.end();
     }
   });
 
-  app.post("/api/gemini/report", async (req, res) => {
+  app.post("/api/gemini/report", generalLimiter, async (req, res) => {
     try {
       const { lastPetition, lastJudgment } = req.body;
       const data = await generateReportServer(lastPetition, lastJudgment);
@@ -169,12 +193,12 @@ async function startServer() {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
         await notifySpendingCap('/api/gemini/report');
       }
-      console.error("Gemini Server Error:", error);
-      res.status(500).json({ error: error.message || "Unknown error" });
+      console.error('[/api/gemini/report]', error);
+      res.status(500).json({ error: 'Erro interno. Tente novamente.' });
     }
   });
 
-  app.post("/api/counter-hypotheses", async (req, res) => {
+  app.post("/api/counter-hypotheses", generalLimiter, async (req, res) => {
     try {
       const { petition, area, mode } = req.body;
       if (!petition || !area) {
@@ -186,12 +210,12 @@ async function startServer() {
       const hypotheses = await generateCounterHypothesesServer(petition, area, mode);
       res.json({ hypotheses });
     } catch (error: any) {
-      console.error("[counter-hypotheses] Erro:", error);
-      res.status(500).json({ error: error.message || "Unknown error" });
+      console.error('[/api/counter-hypotheses]', error);
+      res.status(500).json({ error: 'Erro interno. Tente novamente.' });
     }
   });
 
-  app.post("/api/expand-hypothesis", async (req, res) => {
+  app.post("/api/expand-hypothesis", generalLimiter, async (req, res) => {
     try {
       const { petition, hypothesis, area } = req.body;
       if (!petition || !hypothesis || !area) {
@@ -200,12 +224,12 @@ async function startServer() {
       const expanded = await expandHypothesisServer(petition, hypothesis, area);
       res.json({ expanded });
     } catch (error: any) {
-      console.error("[expand-hypothesis] Erro:", error);
-      res.status(500).json({ error: error.message || "Unknown error" });
+      console.error('[/api/expand-hypothesis]', error);
+      res.status(500).json({ error: 'Erro interno. Tente novamente.' });
     }
   });
 
-  app.post("/api/gemini/mode5", async (req, res) => {
+  app.post("/api/gemini/mode5", simulateLimiter, async (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
@@ -233,7 +257,7 @@ async function startServer() {
         comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
         tipo: 'juiz',
       });
-      const agentJson = entry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
+      const agentJson = entry.conteudo ?? safeReadAgentFile(entry.arquivo);
       agentInstruction = JSON.stringify(agentJson);
       agentName = `Magistrado ${area === 'LABOR' ? 'Trabalhista' : area === 'CONSUMER' ? 'Consumerista' : area === 'CIVIL' ? 'Cível' : area === 'FAMILY' ? 'de Família' : area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'}`;
       console.log(`[Mode5] Agente do registry: ${entry.agent_id}`);
@@ -260,7 +284,7 @@ async function startServer() {
         await notifySpendingCap('/api/gemini/mode5');
       }
       console.error('[Mode5] Erro:', error);
-      send('error', { message: error.message || 'Unknown error' });
+      send('error', { message: 'Erro interno. Tente novamente.' });
     } finally {
       res.end();
     }

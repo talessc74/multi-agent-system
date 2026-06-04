@@ -4,6 +4,15 @@ import admin from 'firebase-admin';
 import { createAgentFromScratch } from './agent-creator';
 
 const REGISTRY_PATH = path.join(process.cwd(), 'registry/index');
+const AGENTS_DIR = path.resolve(process.cwd(), 'agents');
+
+export function safeReadAgentFile(arquivo: string): Record<string, any> {
+  const resolved = path.resolve(AGENTS_DIR, path.basename(arquivo));
+  if (!resolved.startsWith(AGENTS_DIR + path.sep)) {
+    throw new Error(`Acesso negado ao caminho: ${arquivo}`);
+  }
+  return JSON.parse(fs.readFileSync(resolved, 'utf-8'));
+}
 
 interface AgentEntry {
   agent_id: string;
