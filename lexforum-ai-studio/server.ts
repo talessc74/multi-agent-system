@@ -7,6 +7,9 @@ import { validateCausaServer, simulateForumServer, generateReportServer, simulat
 import { constructWebhookEvent, stripe } from './src/lib/stripe.server.js';
 import admin from 'firebase-admin';
 import Stripe from 'stripe';
+import { setupSSE, sendSSE } from './sse-utils';
+import { notifySpendingCap } from './alerts';
+import { registerChatRoutes } from './chat-handler';
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -21,8 +24,6 @@ if (!admin.apps.length) {
 const adminDb = admin.firestore();
 import simulationStatus from './simulation-status';
 import { resolveAgent } from './agent-resolver';
-import { Resend } from 'resend';
-
 dotenv.config();
 
 const app = express();
@@ -32,28 +33,6 @@ app.use((req, res, next) => {
 });
 const PORT = process.env.PORT || 3000;
 
-async function notifySpendingCap(route: string) {
-  if (!process.env.RESEND_API_KEY || !process.env.ALERT_EMAIL) return;
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  try {
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: process.env.ALERT_EMAIL,
-      subject: '🚨 EAI? — Limite de IA atingido',
-      html: `
-        <h2>Alerta crítico — EAI?</h2>
-        <p><strong>Erro:</strong> RESOURCE_EXHAUSTED (Spending Cap)</p>
-        <p><strong>Rota:</strong> ${route}</p>
-        <p><strong>Horário:</strong> ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</p>
-        <p><strong>Ação necessária:</strong> Aumentar Spending Cap no GCP</p>
-        <hr/>
-        <p style="color:#999;font-size:12px">EAI? — eai.radiokactus.com</p>
-      `
-    });
-  } catch (e) {
-    console.error('[ALERT] Falha ao enviar email de alerta:', e);
-  }
-}
 
 async function startServer() {
   console.log("Starting server...");
@@ -73,16 +52,12 @@ async function startServer() {
   });
 
   app.post("/api/gemini/simulate", async (req, res) => {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
+    setupSSE(res);
 
     const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide } =
       req.body;
 
-    const send = (event: string, data: object) => {
-      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
-    };
+    const send = (event: string, data: object) => sendSSE(res, event, data);
 
     const areaMap: Record<string, string> = {
       CONSUMER: 'consumerista',
@@ -206,15 +181,11 @@ async function startServer() {
   });
 
   app.post("/api/gemini/mode5", async (req, res) => {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
+    setupSSE(res);
 
     const { mode5Input, area, attachments, specificJudge } = req.body;
 
-    const send = (event: string, data: object) => {
-      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
-    };
+    const send = (event: string, data: object) => sendSSE(res, event, data);
 
     const areaMap: Record<string, string> = {
       CONSUMER: 'consumerista',
@@ -265,6 +236,8 @@ async function startServer() {
       res.end();
     }
   });
+
+  registerChatRoutes(app, adminDb);
 
   app.use('/simulation', simulationStatus);
 
