@@ -1718,7 +1718,7 @@ const handleGeminiError = (err: any) => {
                         setState(prev => ({ ...prev, error: null }));
                         handleSimulate();
                       }}
-                      className="mt-4 px-6 py-3 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-[#F4F4F2] transition-all"
+                      className="mt-4 px-6 py-3 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-[#F4F4F2] transition-all rounded-[14px]"
                     >
                       Tentar Novamente
                     </button>
@@ -1761,7 +1761,7 @@ const handleGeminiError = (err: any) => {
                       {!isEditingMode4 && (
                         <button
                           onClick={() => setIsEditingMode4(true)}
-                          className="text-[10px] font-bold uppercase tracking-widest border border-white/20 px-3 py-1.5 hover:border-white/40 hover:text-white transition-all text-white/40"
+                          className="text-[10px] font-bold uppercase tracking-widest border border-white/20 px-3 py-1.5 hover:border-white/40 hover:text-white transition-all text-white/40 rounded-[10px]"
                         >
                           Editar campos
                         </button>
@@ -1877,13 +1877,13 @@ const handleGeminiError = (err: any) => {
                 <div className="flex gap-4 justify-center">
                   <button
                     onClick={() => setState(prev => ({ ...prev, userSide: 'AUTHOR' }))}
-                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'AUTHOR' ? 'bg-white text-black border-white' : 'border-white/20 text-white/40 hover:border-white/40'}`}
+                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all rounded-[14px] ${state.userSide === 'AUTHOR' ? 'bg-white text-black border-white' : 'border-white/20 text-white/40 hover:border-white/40'}`}
                   >
                     Sou o Autor
                   </button>
                   <button
                     onClick={() => setState(prev => ({ ...prev, userSide: 'DEFENSE' }))}
-                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'DEFENSE' ? 'bg-amber-500 text-black border-amber-500' : 'border-white/20 text-white/40 hover:border-white/40'}`}
+                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all rounded-[14px] ${state.userSide === 'DEFENSE' ? 'bg-amber-500 text-black border-amber-500' : 'border-white/20 text-white/40 hover:border-white/40'}`}
                   >
                     Sou o Réu
                   </button>
@@ -1893,7 +1893,7 @@ const handleGeminiError = (err: any) => {
                   <button
                     disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading}
                     onClick={handleValidate}
-                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl rounded-[14px]"
                   >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                     <ArrowRight className="w-4 h-4" />
@@ -1934,14 +1934,14 @@ const handleGeminiError = (err: any) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'RECURSO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: [] } }))}
-                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'RECURSO' ? 'bg-white text-black border-white' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
+                    className={`p-6 border text-left transition-all space-y-2 rounded-[14px] ${state.mode5Input?.subCase === 'RECURSO' ? 'bg-white text-black border-white' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
                   >
                     <span className="text-[10px] font-bold uppercase tracking-widest block">⚖️ Tenho uma Sentença</span>
                     <span className="text-xs opacity-60">Quero saber se vale recorrer</span>
                   </button>
                   <button
                     onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'ACORDO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: [] } }))}
-                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'ACORDO' ? 'bg-amber-500 text-black border-amber-500' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
+                    className={`p-6 border text-left transition-all space-y-2 rounded-[14px] ${state.mode5Input?.subCase === 'ACORDO' ? 'bg-amber-500 text-black border-amber-500' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
                   >
                     <span className="text-[10px] font-bold uppercase tracking-widest block">🤝 Tenho uma Proposta de Acordo</span>
                     <span className="text-xs opacity-60">Quero saber se aceito ou vou a julgamento</span>
@@ -2065,7 +2065,7 @@ const handleGeminiError = (err: any) => {
                       <button
                         disabled={!state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
                         onClick={handleValidate}
-                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl rounded-[14px]"
                       >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Consultar Juiz Estrategista'}
                         <ArrowRight className="w-4 h-4" />
@@ -2205,7 +2205,7 @@ const handleGeminiError = (err: any) => {
                   <button
                     disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || loading}
                     onClick={handleValidate}
-                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl rounded-[14px]"
                   >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                     <ArrowRight className="w-4 h-4" />
@@ -2305,7 +2305,7 @@ const handleGeminiError = (err: any) => {
                       <button
                         disabled={!state.caseDescription.trim() || loading}
                         onClick={handleValidate}
-                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl rounded-[14px]"
                       >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                         <ArrowRight className="w-4 h-4" />
