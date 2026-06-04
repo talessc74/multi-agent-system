@@ -1685,7 +1685,7 @@ const handleGeminiError = (err: any) => {
           className={`flex items-center gap-2 px-3 py-1.5 border transition-all ${state.showForgeMonitor ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-white/10 text-white/40 hover:text-white hover:border-white/20'}`}
         >
           <Cpu className="w-3 h-3" />
-          <span className="text-[9px] font-bold uppercase tracking-widest">Forge Monitor</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest">Monitor de Agentes</span>
         </button>
         <div className="flex flex-col items-end">
           <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold">Status da Simulação</span>
