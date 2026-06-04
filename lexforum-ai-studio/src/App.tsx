@@ -836,13 +836,13 @@ const handleGeminiError = (err: any) => {
             <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
               <button
                 onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'RECURSO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: prev.mode5Input?.attachments || [] } }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', border: state.mode5Input?.subCase === 'RECURSO' ? `2px solid ${MODE_CONFIG[5].color}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'RECURSO' ? 'rgba(0,204,136,0.1)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'RECURSO' ? MODE_CONFIG[5].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.mode5Input?.subCase === 'RECURSO' ? `2px solid ${MODE_CONFIG[5].color}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'RECURSO' ? 'rgba(0,204,136,0.1)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'RECURSO' ? MODE_CONFIG[5].color : 'var(--text-secondary)' }}
               >
                 ⚖️ Recorrer
               </button>
               <button
                 onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'ACORDO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: prev.mode5Input?.attachments || [] } }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', border: state.mode5Input?.subCase === 'ACORDO' ? `2px solid ${MODE_CONFIG[5].color}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'ACORDO' ? 'rgba(0,204,136,0.1)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'ACORDO' ? MODE_CONFIG[5].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.mode5Input?.subCase === 'ACORDO' ? `2px solid ${MODE_CONFIG[5].color}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'ACORDO' ? 'rgba(0,204,136,0.1)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'ACORDO' ? MODE_CONFIG[5].color : 'var(--text-secondary)' }}
               >
                 🤝 Acordo
               </button>
@@ -917,7 +917,7 @@ const handleGeminiError = (err: any) => {
             <button
               disabled={!state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[5].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[5].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[5].cta}
             </button>
@@ -957,7 +957,7 @@ const handleGeminiError = (err: any) => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', marginBottom: '16px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,184,0,0.7)' }}>
                 <span style={{ flex: 1 }}>Continuando a partir da sua simulação anterior.</span>
                 {!isEditingMode4 && (
-                  <button onClick={() => setIsEditingMode4(true)} style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', border: '1px solid rgba(255,184,0,0.3)', padding: '6px 12px', color: 'rgba(255,184,0,0.7)', background: 'none', cursor: 'pointer' }}>
+                  <button onClick={() => setIsEditingMode4(true)} style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', border: '1px solid rgba(255,184,0,0.3)', padding: '6px 12px', color: 'rgba(255,184,0,0.7)', background: 'none', cursor: 'pointer', borderRadius: '10px' }}>
                     Editar campos
                   </button>
                 )}
@@ -967,13 +967,13 @@ const handleGeminiError = (err: any) => {
             <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
               <button
                 onClick={() => setState(prev => ({ ...prev, userSide: 'AUTHOR' }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', border: state.userSide === 'AUTHOR' ? `2px solid ${MODE_CONFIG[4].color}` : '2px solid var(--border)', background: state.userSide === 'AUTHOR' ? `rgba(255,184,0,0.1)` : 'var(--bg-card)', color: state.userSide === 'AUTHOR' ? MODE_CONFIG[4].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.userSide === 'AUTHOR' ? `2px solid ${MODE_CONFIG[4].color}` : '2px solid var(--border)', background: state.userSide === 'AUTHOR' ? `rgba(255,184,0,0.1)` : 'var(--bg-card)', color: state.userSide === 'AUTHOR' ? MODE_CONFIG[4].color : 'var(--text-secondary)' }}
               >
                 ⚔️ Acusação
               </button>
               <button
                 onClick={() => setState(prev => ({ ...prev, userSide: 'DEFENSE' }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', border: state.userSide === 'DEFENSE' ? `2px solid ${MODE_CONFIG[4].color}` : '2px solid var(--border)', background: state.userSide === 'DEFENSE' ? `rgba(255,184,0,0.1)` : 'var(--bg-card)', color: state.userSide === 'DEFENSE' ? MODE_CONFIG[4].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.userSide === 'DEFENSE' ? `2px solid ${MODE_CONFIG[4].color}` : '2px solid var(--border)', background: state.userSide === 'DEFENSE' ? `rgba(255,184,0,0.1)` : 'var(--bg-card)', color: state.userSide === 'DEFENSE' ? MODE_CONFIG[4].color : 'var(--text-secondary)' }}
               >
                 🛡 Defesa
               </button>
@@ -1072,7 +1072,7 @@ const handleGeminiError = (err: any) => {
             <button
               disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[4].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[4].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[4].cta}
             </button>
@@ -1200,7 +1200,7 @@ const handleGeminiError = (err: any) => {
             <button
               disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[3].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[3].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[3].cta}
             </button>
@@ -1273,7 +1273,7 @@ const handleGeminiError = (err: any) => {
             <button
               disabled={!state.caseDescription.trim() || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[2].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: !state.caseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[2].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[2].cta}
             </button>
@@ -1346,7 +1346,7 @@ const handleGeminiError = (err: any) => {
             <button
               disabled={!state.caseDescription.trim() || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[1].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: !state.caseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[1].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[1].cta}
             </button>
