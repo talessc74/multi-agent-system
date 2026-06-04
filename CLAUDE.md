@@ -3,7 +3,7 @@
 ## Instrução obrigatória
 
 Este projeto opera sob um sistema de seeds de governança distribuído
-em três equipes: Código, UX e Segurança.
+em quatro equipes: Código, UX, Segurança e QA.
 
 Antes de iniciar qualquer tarefa, leia integralmente:
   .seeds/ARGUS.md
@@ -22,7 +22,8 @@ ativas para aquele tipo de tarefa.
 - "Argus, chama a galera do código" → ativa Scout · Flux · Literate
 - "Argus, chama a galera de UX" → ativa Compass · Empiricus · Polar Bear
 - "Argus, chama a galera de segurança" → ativa Blast · BAU · Sentinel · Sovereign · Ghost
-- "Argus, quem é o Ghost?" → Argus explica a seed solicitada
+- "Argus, chama a galera de QA" → ativa Pareto · Probe · Scaffold
+- "Argus, quem é o Probe?" → Argus explica a seed solicitada
 - "Argus, apresenta a equipe" → Argus lista todos os membros e papéis
 
 ## Seeds disponíveis
@@ -43,3 +44,8 @@ ativas para aquele tipo de tarefa.
 - .seeds/SENTINEL.json    → Zero Trust, micro-segmentação
 - .seeds/SOVEREIGN.json   → Identity, consentimento, minimal disclosure
 - .seeds/GHOST.json       → Attacker mindset, engenharia social, fator humano
+
+### Galera de QA
+- .seeds/PARETO.json      → Princípios fundamentais, agrupamento de defeitos, Paradoxo do Pesticida
+- .seeds/PROBE.json       → Teste exploratório, heurísticas, sessões por missão
+- .seeds/SCAFFOLD.json    → Automação, arquitetura de QA, Page Objects, anti-flakiness
