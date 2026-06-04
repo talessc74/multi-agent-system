@@ -9,6 +9,7 @@ import {
   updateDoc,
   increment,
   getDocs,
+  getCountFromServer,
   query,
   limit,
   orderBy,
@@ -251,5 +252,40 @@ export const registrarAcessoLaudo = async (uid: string, simulationId: string): P
     });
   } catch (error) {
     console.error('[registrarAcessoLaudo]', error);
+  }
+};
+
+const AREA_LABELS: Record<string, string> = {
+  CONSUMER:        'Consumidor',
+  LABOR:           'Trabalhista',
+  FAMILY:          'Família',
+  CRIMINAL:        'Criminal',
+  CIVIL:           'Cível',
+  TAX:             'Tributário / Fiscal',
+  SOCIAL_SECURITY: 'Previdência',
+  OTHER:           'Outros',
+};
+
+export const getAreaStats = async (): Promise<Array<{ region: string; seeds: number; active: number }> | null> => {
+  try {
+    const col = collection(db, 'simulations');
+    const results = await Promise.all(
+      Object.entries(AREA_LABELS).map(async ([area, label]) => {
+        const [totalSnap, winsSnap] = await Promise.all([
+          getCountFromServer(query(col, where('area', '==', area))),
+          getCountFromServer(query(col, where('area', '==', area), where('isWin', '==', true))),
+        ]);
+        return {
+          region: label,
+          seeds: totalSnap.data().count,
+          active: winsSnap.data().count,
+        };
+      })
+    );
+    const withData = results.filter(r => r.seeds > 0);
+    return withData.length > 0 ? withData : null;
+  } catch (error) {
+    console.error('[getAreaStats]', error);
+    return null;
   }
 };
