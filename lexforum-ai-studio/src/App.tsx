@@ -1661,7 +1661,7 @@ const handleGeminiError = (err: any) => {
                       disabled={promoLoading || !promoCode.trim()}
                       style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '11px', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.05em' }}
                     >
-                      {promoLoading ? '...' : 'Aplicar'}
+                      {promoLoading ? 'Validando…' : 'Aplicar'}
                     </button>
                   </div>
                 )}
@@ -2768,7 +2768,7 @@ const handleGeminiError = (err: any) => {
                               disabled={promoLoading || !promoCode.trim()}
                               className="px-4 py-2 bg-white/10 border border-white/20 text-white text-[11px] font-bold tracking-wide cursor-pointer"
                             >
-                              {promoLoading ? '...' : 'Aplicar'}
+                              {promoLoading ? 'Validando…' : 'Aplicar'}
                             </button>
                           </div>
                         )}
@@ -3633,7 +3633,7 @@ const handleGeminiError = (err: any) => {
               <p className="text-xs text-white/30 font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via cartão. Estratégia técnica detalhada.</p>
               <div className="pt-1">
                 {!showPromoInput ? (
-                  <button type="button" onClick={() => setShowPromoInput(true)} className="text-[10px] text-white/25 underline cursor-pointer bg-transparent border-none">
+                  <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-white/50 underline cursor-pointer bg-transparent border-none">
                     Tenho um código promocional
                   </button>
                 ) : (
@@ -3652,7 +3652,7 @@ const handleGeminiError = (err: any) => {
                       disabled={promoLoading || !promoCode.trim()}
                       className="px-3 py-1.5 bg-white/10 border border-white/20 text-white text-[10px] font-bold tracking-wide cursor-pointer"
                     >
-                      {promoLoading ? '...' : 'Aplicar'}
+                      {promoLoading ? 'Validando…' : 'Aplicar'}
                     </button>
                   </div>
                 )}

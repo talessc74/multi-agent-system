@@ -269,7 +269,36 @@ async function startServer() {
   app.use('/simulation', simulationStatus);
 
   // ── Stripe Promo Code Validation ────────────────────────────────
+  const promoValidateAttempts = new Map<string, { count: number; resetAt: number }>();
+
   app.post('/api/stripe/validate-promo-code', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    let uid: string;
+    try {
+      const decoded = await admin.auth().verifyIdToken(authHeader.split('Bearer ')[1]);
+      uid = decoded.uid;
+    } catch {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const now = Date.now();
+    const bucket = promoValidateAttempts.get(uid);
+    if (bucket && now < bucket.resetAt) {
+      if (bucket.count >= 5) {
+        res.status(429).json({ error: 'Muitas tentativas. Aguarde um momento.' });
+        return;
+      }
+      bucket.count++;
+    } else {
+      promoValidateAttempts.set(uid, { count: 1, resetAt: now + 60_000 });
+    }
+
     const { code, mode } = req.body;
     if (!code) {
       res.status(400).json({ error: 'code required' });
@@ -411,6 +440,7 @@ async function startServer() {
                   amount: session.amount_total,
                   currency: session.currency,
                   stripeSessionId: session.id,
+                  discountApplied: !!(session.total_details?.amount_discount && session.total_details.amount_discount > 0),
                 });
               console.log(`[Stripe] Pagamento liberado — uid: ${uid}, sim: ${simulationId}`);
             }
