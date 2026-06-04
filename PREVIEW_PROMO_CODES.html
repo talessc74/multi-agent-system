@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EAI? — Preview Promo Codes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button{cursor:pointer;font:inherit;border:none;background:none}
+input{font:inherit}
+
+:root{
+  --bg:        #111111;
+  --bg-2:      #1A1A1A;
+  --bg-3:      #222222;
+  --border:    rgba(255,255,255,0.10);
+  --border-2:  rgba(255,255,255,0.20);
+  --text:      #FFFFFF;
+  --muted:     rgba(255,255,255,0.40);
+  --faint:     rgba(255,255,255,0.20);
+  --very-faint:rgba(255,255,255,0.10);
+  --mode-color:#00FFEF;
+  --green:     #00E87F;
+  --red:       #FF5555;
+}
+
+body{
+  font-family:"Inter",sans-serif;
+  background:#0A0A0A;
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+.serif{font-family:"Cormorant Garamond",Georgia,serif}
+
+/* ── NAV BAR ── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:9999;
+  height:52px;background:#0E2448;
+  display:flex;align-items:center;gap:0;
+  padding:0 20px;border-bottom:1px solid rgba(255,255,255,0.12);
+}
+#nav .label{
+  font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,0.40);padding-right:20px;
+  border-right:1px solid rgba(255,255,255,0.12);margin-right:16px;flex-shrink:0;
+}
+.nav-btn{
+  font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,0.45);padding:6px 14px;border-radius:6px;
+  transition:all .15s;border:1px solid transparent;white-space:nowrap;flex-shrink:0;
+}
+.nav-btn:hover{color:#fff;border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);}
+.nav-btn.active{color:#fff;background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.20);}
+
+/* ── LAYOUT ── */
+body{padding-top:52px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* ── DEVICE FRAMES ── */
+.device-label{
+  font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.25);margin-bottom:12px;
+}
+.frame-mobile{
+  width:390px;border:1px solid rgba(255,255,255,0.12);border-radius:40px;
+  overflow:hidden;background:var(--bg);position:relative;
+  box-shadow:0 40px 120px rgba(0,0,0,0.8);
+}
+.frame-desktop{
+  width:100%;border:1px solid rgba(255,255,255,0.10);border-radius:12px;
+  overflow:hidden;background:var(--bg);
+  box-shadow:0 24px 80px rgba(0,0,0,0.6);
+}
+
+/* ── STATES GRID ── */
+.states-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;
+  padding:40px;max-width:1400px;margin:0 auto;
+}
+.state-card{display:flex;flex-direction:column;gap:12px;}
+
+.desktop-grid{
+  display:flex;flex-direction:column;gap:40px;
+  padding:40px;max-width:1400px;margin:0 auto;
+}
+
+/* ── SHARED APP COMPONENTS ── */
+
+/* Conteúdo simulado (blurred report) */
+.report-blur{padding:32px;opacity:.06;}
+.report-blur .line{height:10px;background:#fff;border-radius:2px;margin-bottom:12px;}
+.report-blur .line.w-full{width:100%}
+.report-blur .line.w-5\/6{width:83%}
+.report-blur .line.w-2\/3{width:66%}
+.report-blur .line.w-1\/2{width:50%}
+.report-blur .line.w-1\/3{width:33%}
+
+/* ── MOBILE: CTA STICKY ── */
+.mobile-scroll-area{
+  height:480px;overflow:hidden;position:relative;background:var(--bg);
+}
+.mobile-content{padding:24px 20px 0;}
+.mobile-content .round-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--mode-color);border:1px solid rgba(0,255,239,0.25);
+  padding:5px 10px;border-radius:100px;margin-bottom:20px;
+}
+.mobile-content h2{font-size:22px;font-weight:700;line-height:1.2;margin-bottom:8px;}
+.mobile-content p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+
+.verdict-card{
+  background:rgba(0,255,239,0.05);border:1px solid rgba(0,255,239,0.15);
+  border-radius:12px;padding:16px;margin-bottom:12px;
+}
+.verdict-card .tag{
+  font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--mode-color);margin-bottom:6px;
+}
+.verdict-card .score{font-size:32px;font-weight:800;color:#fff;line-height:1;}
+.verdict-card .score-label{font-size:10px;color:var(--muted);margin-top:4px;}
+
+.mobile-cta{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:12px 20px 24px;
+  background:linear-gradient(to bottom,transparent 0%,var(--bg) 35%);
+}
+.cta-btn{
+  width:100%;padding:16px;
+  background:var(--mode-color);color:#000;
+  border:none;font-size:15px;font-weight:700;letter-spacing:.3px;
+  border-radius:14px;cursor:pointer;
+}
+.restart-btn{
+  width:100%;padding:14px;
+  background:transparent;border:1px solid var(--border);
+  color:rgba(255,255,255,0.50);font-size:14px;font-weight:600;
+  border-radius:14px;cursor:pointer;margin-top:10px;
+}
+
+/* Promo input shared */
+.promo-link{
+  font-size:11px;color:rgba(255,255,255,0.50);text-decoration:underline;
+  background:none;border:none;cursor:pointer;width:100%;text-align:center;
+  padding:6px 0;display:block;
+}
+.promo-row{display:flex;gap:8px;margin-bottom:4px;}
+.promo-input{
+  flex:1;padding:8px 12px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);
+  border-radius:8px;color:#fff;font-size:12px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;outline:none;
+}
+.promo-apply-btn{
+  padding:8px 16px;background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);border-radius:8px;
+  color:#fff;font-size:11px;font-weight:700;letter-spacing:.05em;cursor:pointer;
+}
+.promo-feedback-ok{
+  font-size:11px;text-align:center;color:var(--green);font-weight:600;margin-top:4px;
+}
+.promo-feedback-err{
+  font-size:11px;text-align:center;color:var(--red);font-weight:600;margin-top:4px;
+}
+.promo-feedback-loading{
+  font-size:11px;text-align:center;color:var(--muted);font-weight:600;margin-top:4px;
+}
+
+/* ── DESKTOP: SIMULATION CONCLUSION ── */
+.sim-conclusion{
+  min-height:560px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:20px;
+  padding:60px 40px;text-align:center;background:var(--bg);
+}
+.sim-conclusion .subtitle{
+  font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--mode-color);margin-bottom:4px;
+}
+.sim-conclusion h3{
+  font-family:"Cormorant Garamond",serif;font-size:34px;font-style:italic;color:#fff;
+}
+.sim-conclusion p{font-size:13px;color:var(--muted);max-width:480px;line-height:1.7;text-transform:uppercase;letter-spacing:.1em;font-weight:500;}
+.liberar-btn{
+  padding:20px 48px;background:#fff;color:#000;
+  font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  border:none;cursor:pointer;
+}
+.liberar-btn:hover{transform:scale(1.02);}
+
+.trust-row{
+  display:flex;gap:32px;border-top:1px solid rgba(255,255,255,0.05);
+  padding-top:20px;font-size:9px;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;color:rgba(255,255,255,0.20);
+}
+.trust-row span{display:flex;align-items:center;gap:6px;}
+.check-icon{width:10px;height:10px;background:var(--green);border-radius:50%;flex-shrink:0;}
+
+.desktop-promo-block{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;max-width:360px;}
+.desktop-promo-block .promo-link{text-align:center;}
+.desktop-promo-block .promo-row{width:100%;}
+.desktop-promo-block .promo-input{font-size:12px;}
+
+/* ── DESKTOP: FIXED FOOTER ── */
+.fixed-footer{
+  display:flex;align-items:center;
+  border-top:1px solid rgba(255,255,255,0.20);
+  background:#111111;
+  box-shadow:0 -20px 100px rgba(0,0,0,0.90);
+}
+.footer-preview{
+  width:50%;padding:32px 40px;border-right:1px solid rgba(255,255,255,0.05);
+  position:relative;overflow:hidden;min-height:160px;
+}
+.footer-preview .fp-label{
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.20);margin-bottom:16px;
+}
+.footer-preview .blur-lines .line{
+  height:8px;background:#fff;opacity:.05;border-radius:1px;margin-bottom:10px;
+}
+.footer-preview::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to top,#111111 40%,transparent);
+  pointer-events:none;
+}
+.footer-right{
+  flex:1;padding:28px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;
+}
+.footer-text{flex:1;}
+.footer-text h4{
+  font-family:"Cormorant Garamond",serif;font-size:24px;font-style:italic;color:#fff;margin-bottom:4px;
+}
+.footer-text p{
+  font-size:11px;color:rgba(255,255,255,0.30);font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;line-height:1.6;margin-bottom:8px;
+}
+.adquirir-btn{
+  padding:20px 40px;background:#fff;color:#000;
+  font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  border:none;cursor:pointer;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;line-height:1;
+}
+.adquirir-btn span.sub{font-size:8px;opacity:.40;margin-top:4px;letter-spacing:.15em;}
+
+/* footer promo (compact) */
+.footer-promo-link{
+  font-size:11px;color:rgba(255,255,255,0.50);text-decoration:underline;
+  background:none;border:none;cursor:pointer;padding:0;text-align:left;
+}
+.footer-promo-row{display:flex;gap:8px;margin-top:6px;}
+.footer-promo-input{
+  width:160px;padding:6px 10px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);
+  color:#fff;font-size:11px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;outline:none;
+}
+.footer-promo-apply{
+  padding:6px 12px;background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  color:#fff;font-size:10px;font-weight:700;letter-spacing:.05em;cursor:pointer;
+}
+
+/* ── STATE LABEL ── */
+.state-label{
+  font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);padding:5px 12px;border-radius:6px;
+  display:inline-block;margin-bottom:8px;
+}
+
+/* ── PAGE HEADERS ── */
+.page-header{
+  padding:48px 40px 0;max-width:1400px;margin:0 auto;
+}
+.page-header h1{
+  font-family:"Cormorant Garamond",serif;font-size:28px;font-style:italic;
+  color:#fff;margin-bottom:6px;
+}
+.page-header p{font-size:12px;color:var(--muted);font-weight:500;}
+.divider{height:1px;background:rgba(255,255,255,0.06);margin:24px 0;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <span class="label">EAI? — Promo Codes</span>
+  <button class="nav-btn active" onclick="show('mobile')">📱 Mobile</button>
+  <button class="nav-btn" onclick="show('desktop-conclusion')">🖥 Desktop — Conclusão</button>
+  <button class="nav-btn" onclick="show('desktop-footer')">🖥 Desktop — Footer</button>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     SECTION 1 — MOBILE
+════════════════════════════════════════════ -->
+<section id="mobile" class="section active">
+  <div class="page-header">
+    <h1>CTA Mobile — 3 estados do promo code</h1>
+    <p>Sticky bottom bar após simulação. Aparece quando step === 'result' && !isUnlocked.</p>
+  </div>
+  <div class="divider" style="max-width:1400px;margin:24px 40px;"></div>
+
+  <div class="states-grid">
+
+    <!-- Estado 1: collapsed (padrão) -->
+    <div class="state-card">
+      <div class="state-label">Estado 1 — Padrão (link recolhido)</div>
+      <div class="device-label">iPhone 14 Pro · 390px</div>
+      <div class="frame-mobile">
+        <div class="mobile-scroll-area">
+          <div class="mobile-content">
+            <div class="round-chip">
+              <span style="width:6px;height:6px;background:var(--mode-color);border-radius:50%;"></span>
+              Modo 1 — Simulação Padrão
+            </div>
+            <h2>Simulação concluída.</h2>
+            <p>O laudo estratégico completo foi gerado. Fundamentos técnicos, valor estimado e próximos passos processuais.</p>
+            <div class="verdict-card">
+              <div class="tag">Força argumentativa</div>
+              <div class="score">74</div>
+              <div class="score-label">Probabilidade de êxito estimada</div>
+            </div>
+            <div class="report-blur">
+              <div class="line w-full"></div>
+              <div class="line w-5/6"></div>
+              <div class="line w-2/3"></div>
+              <div class="line w-full"></div>
+              <div class="line w-1/2"></div>
+            </div>
+          </div>
+          <div class="mobile-cta">
+            <button class="cta-btn">Ver laudo completo — R$ 9,90</button>
+            <div style="margin-top:8px;">
+              <button class="promo-link">Tenho um código promocional</button>
+            </div>
+            <button class="restart-btn">Reiniciar simulação</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado 2: input expandido + validando -->
+    <div class="state-card">
+      <div class="state-label">Estado 2 — Input expandido / validando</div>
+      <div class="device-label">iPhone 14 Pro · 390px</div>
+      <div class="frame-mobile">
+        <div class="mobile-scroll-area">
+          <div class="mobile-content">
+            <div class="round-chip">
+              <span style="width:6px;height:6px;background:var(--mode-color);border-radius:50%;"></span>
+              Modo 1 — Simulação Padrão
+            </div>
+            <h2>Simulação concluída.</h2>
+            <p>O laudo estratégico completo foi gerado. Fundamentos técnicos, valor estimado e próximos passos processuais.</p>
+            <div class="verdict-card">
+              <div class="tag">Força argumentativa</div>
+              <div class="score">74</div>
+              <div class="score-label">Probabilidade de êxito estimada</div>
+            </div>
+            <div class="report-blur">
+              <div class="line w-full"></div>
+              <div class="line w-5/6"></div>
+              <div class="line w-2/3"></div>
+            </div>
+          </div>
+          <div class="mobile-cta">
+            <button class="cta-btn">Ver laudo completo — R$ 9,90</button>
+            <div style="margin-top:8px;">
+              <div class="promo-row">
+                <input class="promo-input" value="LAUNCH20" placeholder="CÓDIGO PROMO" readonly/>
+                <button class="promo-apply-btn" style="opacity:.6;">Validando…</button>
+              </div>
+              <div class="promo-feedback-loading">Verificando código…</div>
+            </div>
+            <button class="restart-btn">Reiniciar simulação</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado 3: código válido -->
+    <div class="state-card">
+      <div class="state-label">Estado 3 — Código válido aplicado</div>
+      <div class="device-label">iPhone 14 Pro · 390px</div>
+      <div class="frame-mobile">
+        <div class="mobile-scroll-area">
+          <div class="mobile-content">
+            <div class="round-chip">
+              <span style="width:6px;height:6px;background:var(--mode-color);border-radius:50%;"></span>
+              Modo 1 — Simulação Padrão
+            </div>
+            <h2>Simulação concluída.</h2>
+            <p>O laudo estratégico completo foi gerado. Fundamentos técnicos, valor estimado e próximos passos processuais.</p>
+            <div class="verdict-card">
+              <div class="tag">Força argumentativa</div>
+              <div class="score">74</div>
+              <div class="score-label">Probabilidade de êxito estimada</div>
+            </div>
+            <div class="report-blur">
+              <div class="line w-full"></div>
+              <div class="line w-5/6"></div>
+            </div>
+          </div>
+          <div class="mobile-cta">
+            <button class="cta-btn" style="background:#00E87F;">Ver laudo completo — R$ 7,92</button>
+            <div style="margin-top:8px;">
+              <div class="promo-row">
+                <input class="promo-input" value="LAUNCH20" placeholder="CÓDIGO PROMO" readonly
+                  style="border-color:rgba(0,232,127,0.40);background:rgba(0,232,127,0.06);"/>
+                <button class="promo-apply-btn" style="border-color:rgba(0,232,127,0.30);color:var(--green);">✓</button>
+              </div>
+              <div class="promo-feedback-ok">✓ 20% off aplicado — R$ 7,92</div>
+            </div>
+            <button class="restart-btn">Reiniciar simulação</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /states-grid -->
+
+  <!-- Row 2: erro + modo 3 -->
+  <div class="states-grid" style="padding-top:0;">
+
+    <!-- Estado 4: código inválido -->
+    <div class="state-card">
+      <div class="state-label">Estado 4 — Código inválido</div>
+      <div class="device-label">iPhone 14 Pro · 390px</div>
+      <div class="frame-mobile">
+        <div class="mobile-scroll-area">
+          <div class="mobile-content">
+            <div class="round-chip">
+              <span style="width:6px;height:6px;background:var(--mode-color);border-radius:50%;"></span>
+              Modo 1 — Simulação Padrão
+            </div>
+            <h2>Simulação concluída.</h2>
+            <p>O laudo estratégico completo foi gerado.</p>
+            <div class="verdict-card">
+              <div class="tag">Força argumentativa</div>
+              <div class="score">74</div>
+              <div class="score-label">Probabilidade de êxito estimada</div>
+            </div>
+            <div class="report-blur">
+              <div class="line w-full"></div>
+              <div class="line w-5/6"></div>
+              <div class="line w-2/3"></div>
+              <div class="line w-full"></div>
+            </div>
+          </div>
+          <div class="mobile-cta">
+            <button class="cta-btn">Ver laudo completo — R$ 9,90</button>
+            <div style="margin-top:8px;">
+              <div class="promo-row">
+                <input class="promo-input" value="INVALIDO" placeholder="CÓDIGO PROMO" readonly
+                  style="border-color:rgba(255,85,85,0.40);background:rgba(255,85,85,0.05);"/>
+                <button class="promo-apply-btn">Aplicar</button>
+              </div>
+              <div class="promo-feedback-err">✗ Código inválido ou expirado</div>
+            </div>
+            <button class="restart-btn">Reiniciar simulação</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado 5: modo 3 (R$5,90) com desconto -->
+    <div class="state-card">
+      <div class="state-label">Estado 5 — Modo 3 · R$ 5,90 base · desconto aplicado</div>
+      <div class="device-label">iPhone 14 Pro · 390px</div>
+      <div class="frame-mobile">
+        <div class="mobile-scroll-area">
+          <div class="mobile-content">
+            <div class="round-chip" style="color:#A855F7;border-color:rgba(168,85,247,0.25);">
+              <span style="width:6px;height:6px;background:#A855F7;border-radius:50%;"></span>
+              Modo 3 — Mesa Dupla Assistida
+            </div>
+            <h2>Simulação concluída.</h2>
+            <p>O laudo estratégico completo foi gerado.</p>
+            <div class="verdict-card" style="background:rgba(168,85,247,0.05);border-color:rgba(168,85,247,0.15);">
+              <div class="tag" style="color:#A855F7;">Força argumentativa</div>
+              <div class="score">81</div>
+              <div class="score-label">Probabilidade de êxito estimada</div>
+            </div>
+            <div class="report-blur">
+              <div class="line w-full"></div>
+              <div class="line w-5/6"></div>
+              <div class="line w-2/3"></div>
+              <div class="line w-full"></div>
+            </div>
+          </div>
+          <div class="mobile-cta">
+            <button class="cta-btn" style="background:#00E87F;">Ver laudo completo — R$ 4,72</button>
+            <div style="margin-top:8px;">
+              <div class="promo-row">
+                <input class="promo-input" value="LAUNCH20" placeholder="CÓDIGO PROMO" readonly
+                  style="border-color:rgba(0,232,127,0.40);background:rgba(0,232,127,0.06);"/>
+                <button class="promo-apply-btn" style="border-color:rgba(0,232,127,0.30);color:var(--green);">✓</button>
+              </div>
+              <div class="promo-feedback-ok">✓ 20% off aplicado — R$ 4,72</div>
+            </div>
+            <button class="restart-btn">Reiniciar simulação</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notas -->
+    <div class="state-card" style="justify-content:center;">
+      <div style="padding:24px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;">
+        <p style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:16px;">Notas de implementação</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;">
+          <li style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;">
+            <strong style="color:rgba(255,255,255,0.80);">Progressive disclosure</strong> — link "Tenho um código" só expande o input quando clicado, sem poluir o CTA primário.
+          </li>
+          <li style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;">
+            <strong style="color:rgba(255,255,255,0.80);">Preço dinâmico</strong> — botão principal reflete o valor com desconto em tempo real após validação.
+          </li>
+          <li style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;">
+            <strong style="color:rgba(255,255,255,0.80);">Sem código → Stripe nativo</strong> — se usuário não preencher, o campo de promo aparece na página do Stripe (<code style="font-size:10px;background:rgba(255,255,255,0.08);padding:2px 5px;border-radius:3px;">allow_promotion_codes: true</code>).
+          </li>
+          <li style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;">
+            <strong style="color:rgba(255,255,255,0.80);">Auth obrigatória</strong> — endpoint de validação exige Firebase token (correção SENTINEL).
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SECTION 2 — DESKTOP CONCLUSÃO
+════════════════════════════════════════════ -->
+<section id="desktop-conclusion" class="section">
+  <div class="page-header">
+    <h1>Desktop — Tela de Conclusão da Simulação</h1>
+    <p>Aparece após a simulação de rodadas ser concluída. Fundo escuro, layout centralizado.</p>
+  </div>
+  <div class="divider" style="max-width:1400px;margin:24px 40px;"></div>
+
+  <div class="desktop-grid">
+
+    <!-- Estado 1: padrão -->
+    <div class="state-card">
+      <div class="state-label">Estado 1 — Padrão (link recolhido)</div>
+      <div class="frame-desktop">
+        <div class="sim-conclusion">
+          <div>
+            <div class="subtitle">Modo 1 — Simulação Padrão</div>
+          </div>
+          <h3 class="serif">Simulação de Rodadas Concluída.</h3>
+          <p>O laudo estratégico completo com fundamentos técnicos, valor estimado da causa e próximos passos processuais foi gerado.</p>
+          <button class="liberar-btn">Liberar Laudo Completo — R$ 9,90</button>
+          <div>
+            <button class="promo-link" style="font-size:11px;">Tenho um código promocional</button>
+          </div>
+          <div class="trust-row">
+            <span><span class="check-icon"></span> Pagamento seguro</span>
+            <span><span class="check-icon"></span> Acesso Vitalício</span>
+            <span><span class="check-icon"></span> Formato Profissional</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado 2: input expandido -->
+    <div class="state-card">
+      <div class="state-label">Estado 2 — Input expandido</div>
+      <div class="frame-desktop">
+        <div class="sim-conclusion">
+          <div>
+            <div class="subtitle">Modo 1 — Simulação Padrão</div>
+          </div>
+          <h3 class="serif">Simulação de Rodadas Concluída.</h3>
+          <p>O laudo estratégico completo com fundamentos técnicos, valor estimado da causa e próximos passos processuais foi gerado.</p>
+          <button class="liberar-btn">Liberar Laudo Completo — R$ 9,90</button>
+          <div class="desktop-promo-block">
+            <div class="promo-row">
+              <input class="promo-input" placeholder="CÓDIGO PROMO"/>
+              <button class="promo-apply-btn">Aplicar</button>
+            </div>
+          </div>
+          <div class="trust-row">
+            <span><span class="check-icon"></span> Pagamento seguro</span>
+            <span><span class="check-icon"></span> Acesso Vitalício</span>
+            <span><span class="check-icon"></span> Formato Profissional</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado 3: código válido -->
+    <div class="state-card">
+      <div class="state-label">Estado 3 — Código válido (20% off)</div>
+      <div class="frame-desktop">
+        <div class="sim-conclusion">
+          <div>
+            <div class="subtitle">Modo 1 — Simulação Padrão</div>
+          </div>
+          <h3 class="serif">Simulação de Rodadas Concluída.</h3>
+          <p>O laudo estratégico completo com fundamentos técnicos, valor estimado da causa e próximos passos processuais foi gerado.</p>
+          <button class="liberar-btn" style="background:#00E87F;">Liberar Laudo Completo — R$ 7,92</button>
+          <div class="desktop-promo-block">
+            <div class="promo-row">
+              <input class="promo-input" value="LAUNCH20" readonly
+                style="border-color:rgba(0,232,127,0.40);background:rgba(0,232,127,0.06);"/>
+              <button class="promo-apply-btn" style="border-color:rgba(0,232,127,0.30);color:var(--green);">✓</button>
+            </div>
+            <div class="promo-feedback-ok">✓ 20% off aplicado — R$ 7,92</div>
+          </div>
+          <div class="trust-row">
+            <span><span class="check-icon"></span> Pagamento seguro</span>
+            <span><span class="check-icon"></span> Acesso Vitalício</span>
+            <span><span class="check-icon"></span> Formato Profissional</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado 4: código inválido -->
+    <div class="state-card">
+      <div class="state-label">Estado 4 — Código inválido</div>
+      <div class="frame-desktop">
+        <div class="sim-conclusion">
+          <div>
+            <div class="subtitle">Modo 1 — Simulação Padrão</div>
+          </div>
+          <h3 class="serif">Simulação de Rodadas Concluída.</h3>
+          <p>O laudo estratégico completo com fundamentos técnicos, valor estimado da causa e próximos passos processuais foi gerado.</p>
+          <button class="liberar-btn">Liberar Laudo Completo — R$ 9,90</button>
+          <div class="desktop-promo-block">
+            <div class="promo-row">
+              <input class="promo-input" value="XPTO99" readonly
+                style="border-color:rgba(255,85,85,0.40);background:rgba(255,85,85,0.05);"/>
+              <button class="promo-apply-btn">Aplicar</button>
+            </div>
+            <div class="promo-feedback-err">✗ Código inválido ou expirado</div>
+          </div>
+          <div class="trust-row">
+            <span><span class="check-icon"></span> Pagamento seguro</span>
+            <span><span class="check-icon"></span> Acesso Vitalício</span>
+            <span><span class="check-icon"></span> Formato Profissional</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SECTION 3 — DESKTOP FOOTER
+════════════════════════════════════════════ -->
+<section id="desktop-footer" class="section">
+  <div class="page-header">
+    <h1>Desktop — Rodapé Fixo</h1>
+    <p>Barra fixa no bottom, aparece sobreposta ao laudo bloqueado. Layout horizontal.</p>
+  </div>
+  <div class="divider" style="max-width:1400px;margin:24px 40px;"></div>
+
+  <div class="desktop-grid">
+
+    <!-- Estado 1: padrão -->
+    <div class="state-card">
+      <div class="state-label">Estado 1 — Padrão (link recolhido)</div>
+      <div style="position:relative;">
+        <!-- report preview behind footer -->
+        <div class="frame-desktop" style="height:220px;overflow:hidden;background:var(--bg);">
+          <div style="padding:40px;opacity:.15;">
+            <div style="height:12px;background:#fff;border-radius:2px;margin-bottom:14px;width:60%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:100%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:85%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:72%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:90%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:40%;"></div>
+          </div>
+        </div>
+        <div class="fixed-footer">
+          <div class="footer-preview">
+            <div class="fp-label">Preview do Relatório Estratégico</div>
+            <div class="blur-lines">
+              <div class="line" style="width:100%"></div>
+              <div class="line" style="width:83%"></div>
+              <div class="line" style="width:50%"></div>
+              <div class="line" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="footer-right">
+            <div class="footer-text">
+              <h4>Obtenha o Laudo Estratégico</h4>
+              <p>Liberação imediata via cartão. Estratégia técnica detalhada.</p>
+              <button class="footer-promo-link">Tenho um código promocional</button>
+            </div>
+            <button class="adquirir-btn">
+              <span>ADQUIRIR R$ 9,90</span>
+              <span class="sub">Sessão única</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado 2: input expandido -->
+    <div class="state-card">
+      <div class="state-label">Estado 2 — Input expandido</div>
+      <div style="position:relative;">
+        <div class="frame-desktop" style="height:220px;overflow:hidden;background:var(--bg);">
+          <div style="padding:40px;opacity:.15;">
+            <div style="height:12px;background:#fff;border-radius:2px;margin-bottom:14px;width:60%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:100%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:85%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:72%;"></div>
+          </div>
+        </div>
+        <div class="fixed-footer">
+          <div class="footer-preview">
+            <div class="fp-label">Preview do Relatório Estratégico</div>
+            <div class="blur-lines">
+              <div class="line" style="width:100%"></div>
+              <div class="line" style="width:83%"></div>
+              <div class="line" style="width:50%"></div>
+              <div class="line" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="footer-right">
+            <div class="footer-text">
+              <h4>Obtenha o Laudo Estratégico</h4>
+              <p>Liberação imediata via cartão. Estratégia técnica detalhada.</p>
+              <div class="footer-promo-row">
+                <input class="footer-promo-input" placeholder="CÓDIGO PROMO"/>
+                <button class="footer-promo-apply">Aplicar</button>
+              </div>
+            </div>
+            <button class="adquirir-btn">
+              <span>ADQUIRIR R$ 9,90</span>
+              <span class="sub">Sessão única</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado 3: código válido -->
+    <div class="state-card">
+      <div class="state-label">Estado 3 — Código válido (R$ 2,00 off)</div>
+      <div style="position:relative;">
+        <div class="frame-desktop" style="height:220px;overflow:hidden;background:var(--bg);">
+          <div style="padding:40px;opacity:.15;">
+            <div style="height:12px;background:#fff;border-radius:2px;margin-bottom:14px;width:60%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:100%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:85%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:72%;"></div>
+          </div>
+        </div>
+        <div class="fixed-footer">
+          <div class="footer-preview">
+            <div class="fp-label">Preview do Relatório Estratégico</div>
+            <div class="blur-lines">
+              <div class="line" style="width:100%"></div>
+              <div class="line" style="width:83%"></div>
+              <div class="line" style="width:50%"></div>
+              <div class="line" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="footer-right">
+            <div class="footer-text">
+              <h4>Obtenha o Laudo Estratégico</h4>
+              <p>Liberação imediata via cartão. Estratégia técnica detalhada.</p>
+              <div class="footer-promo-row">
+                <input class="footer-promo-input" value="PROMO2" readonly
+                  style="border-color:rgba(0,232,127,0.40);background:rgba(0,232,127,0.05);"/>
+                <button class="footer-promo-apply" style="border-color:rgba(0,232,127,0.30);color:var(--green);">✓</button>
+              </div>
+              <div style="font-size:10px;color:var(--green);font-weight:600;margin-top:4px;">
+                ✓ R$ 2,00 off — R$ 7,90
+              </div>
+            </div>
+            <button class="adquirir-btn" style="background:#00E87F;">
+              <span>ADQUIRIR R$ 7,90</span>
+              <span class="sub">Sessão única</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado 4: código inválido -->
+    <div class="state-card">
+      <div class="state-label">Estado 4 — Código inválido</div>
+      <div style="position:relative;">
+        <div class="frame-desktop" style="height:220px;overflow:hidden;background:var(--bg);">
+          <div style="padding:40px;opacity:.15;">
+            <div style="height:12px;background:#fff;border-radius:2px;margin-bottom:14px;width:60%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:100%;"></div>
+            <div style="height:8px;background:#fff;border-radius:2px;margin-bottom:10px;width:85%;"></div>
+          </div>
+        </div>
+        <div class="fixed-footer">
+          <div class="footer-preview">
+            <div class="fp-label">Preview do Relatório Estratégico</div>
+            <div class="blur-lines">
+              <div class="line" style="width:100%"></div>
+              <div class="line" style="width:83%"></div>
+              <div class="line" style="width:50%"></div>
+              <div class="line" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="footer-right">
+            <div class="footer-text">
+              <h4>Obtenha o Laudo Estratégico</h4>
+              <p>Liberação imediata via cartão. Estratégia técnica detalhada.</p>
+              <div class="footer-promo-row">
+                <input class="footer-promo-input" value="XPTO99" readonly
+                  style="border-color:rgba(255,85,85,0.40);background:rgba(255,85,85,0.04);"/>
+                <button class="footer-promo-apply">Aplicar</button>
+              </div>
+              <div style="font-size:10px;color:var(--red);font-weight:600;margin-top:4px;">
+                ✗ Código inválido ou expirado
+              </div>
+            </div>
+            <button class="adquirir-btn">
+              <span>ADQUIRIR R$ 9,90</span>
+              <span class="sub">Sessão única</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const labels = { 'mobile': '📱 Mobile', 'desktop-conclusion': '🖥 Desktop — Conclusão', 'desktop-footer': '🖥 Desktop — Footer' };
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    if (b.textContent.trim() === labels[id]) b.classList.add('active');
+  });
+}
+</script>
+</body>
+</html>
