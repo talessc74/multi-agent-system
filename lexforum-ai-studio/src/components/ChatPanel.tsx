@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { X, Send, MessageCircle } from 'lucide-react';
 import type { ChatMessage } from '../types';
 
@@ -223,7 +224,18 @@ export default function ChatPanel({
                   fontSize: '14px', lineHeight: 1.55,
                   border: msg.role === 'agent' ? '1px solid var(--border)' : 'none',
                 }}>
-                  {msg.content}
+                  {msg.role === 'agent'
+                    ? <ReactMarkdown
+                        components={{
+                          p: ({ children }) => <p style={{ margin: '0 0 8px' }}>{children}</p>,
+                          strong: ({ children }) => <strong style={{ color: 'var(--text-primary)' }}>{children}</strong>,
+                          h3: ({ children }) => <p style={{ margin: '8px 0 4px', fontWeight: 700, color: 'var(--text-primary)' }}>{children}</p>,
+                          ul: ({ children }) => <ul style={{ paddingLeft: '16px', margin: '4px 0' }}>{children}</ul>,
+                          li: ({ children }) => <li style={{ marginBottom: '4px' }}>{children}</li>,
+                        }}
+                      >{msg.content}</ReactMarkdown>
+                    : msg.content
+                  }
                 </div>
               </div>
             ))}

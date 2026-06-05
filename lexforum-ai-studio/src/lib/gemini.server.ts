@@ -437,7 +437,7 @@ export async function chatWithAgentServer(
     config: {
       systemInstruction,
       temperature: 0.6,
-      maxOutputTokens: 1024,
+      maxOutputTokens: 4096,
     },
   });
 
