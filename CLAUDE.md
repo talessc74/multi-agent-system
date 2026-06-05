@@ -1,4 +1,4 @@
-# Contexto do Projeto — EAI? (Escritório de Advocacia Inteligente)
+# Contexto do Projeto — EAI? (Evidence-Based AI)
 
 ## Aplicação
 - **Produção:** https://eaijuridico.com.br — Cloud Run `eai-producao`, GCP `gen-lang-client-0982741688`
