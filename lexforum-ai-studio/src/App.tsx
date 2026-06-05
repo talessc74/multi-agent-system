@@ -78,6 +78,7 @@ import { ModeNavbar } from './components/ModeNavbar';
 import { SessionStatusBar } from './components/SessionStatusBar';
 import { ProgressDots } from './components/ProgressDots';
 import { MODE_CONFIG } from './config/modeConfig';
+import LoginModal from './components/LoginModal';
 
 const cleanJudgmentText = (text: string) => {
   if (!text) return "";
@@ -283,6 +284,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [userHistory, setUserHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [globalStats, setGlobalStats] = useState({ simulations: 0, winRate: 0, precision: 98.4 });
   const [state, setState] = useState<AppState>({
     step: 'boardroom',
@@ -759,7 +761,7 @@ const handleGeminiError = (err: any) => {
   // Redireciona para o Stripe Checkout
   const handleCheckout = async () => {
     if (!user) {
-      await loginWithGoogle();
+      setShowLoginModal(true);
       return;
     }
     if (!state.simulationId) {
@@ -1685,7 +1687,7 @@ const handleGeminiError = (err: any) => {
         <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
       <Navbar
         user={user}
-        onLogin={() => loginWithGoogle()}
+        onLogin={() => setShowLoginModal(true)}
         onLogout={logoutUser}
         onShowHistory={handleShowHistory}
       >
@@ -3698,6 +3700,13 @@ const handleGeminiError = (err: any) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={() => setShowLoginModal(false)}
+        />
+      )}
     </>
   );
 }
