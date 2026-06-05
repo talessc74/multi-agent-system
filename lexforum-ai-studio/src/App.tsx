@@ -376,6 +376,10 @@ const [chatIsSending, setChatIsSending] = useState(false);
 const [chatError, setChatError] = useState<string | null>(null);
 const [openChatAfterLoad, setOpenChatAfterLoad] = useState(false);
 const [isEditingMode4, setIsEditingMode4] = useState(false);
+const [promoCode, setPromoCode] = useState('');
+const [promoStatus, setPromoStatus] = useState<{ valid: boolean; discountLabel?: string; finalAmountFormatted?: string; finalAmount?: number } | null>(null);
+const [promoLoading, setPromoLoading] = useState(false);
+const [showPromoInput, setShowPromoInput] = useState(false);
 const fromPreviousSimulation = !!(state.caseDescription && state.defenseDescription && state.userSide);
 const [attachmentError, setAttachmentError] = useState<string | null>(null);
 const [defenseAttachmentError, setDefenseAttachmentError] = useState<string | null>(null);
@@ -784,14 +788,45 @@ const handleGeminiError = (err: any) => {
       return;
     }
     try {
-      const url = await initiateCheckout(user, state.simulationId, state.selectedMode);
-      if (url) {
-        window.location.href = url;
+      const token = await user.getIdToken();
+      const response = await fetch('/api/stripe/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          simulationId: state.simulationId,
+          mode: state.selectedMode,
+          ...(promoCode.trim() ? { promoCode: promoCode.trim().toUpperCase() } : {}),
+        }),
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
       } else {
         console.error('[Checkout] URL não retornada');
       }
     } catch (err) {
       console.error('[Checkout] Erro:', err);
+    }
+  };
+
+  const validatePromoCode = async (code: string) => {
+    if (!code.trim()) { setPromoStatus(null); return; }
+    setPromoLoading(true);
+    try {
+      const res = await fetch('/api/stripe/validate-promo-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code.trim().toUpperCase(), mode: state.selectedMode }),
+      });
+      const data = await res.json();
+      setPromoStatus(data);
+    } catch {
+      setPromoStatus({ valid: false });
+    } finally {
+      setPromoLoading(false);
     }
   };
 
@@ -1699,6 +1734,37 @@ const handleGeminiError = (err: any) => {
               >
                 Desbloquear Laudo Completo — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
               </button>
+              <div style={{ marginTop: '8px' }}>
+                {!showPromoInput ? (
+                  <button type="button" onClick={() => setShowPromoInput(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'underline', width: '100%', textAlign: 'center', padding: '4px 0' }}>
+                    Tenho um código promocional
+                  </button>
+                ) : (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                      type="text"
+                      value={promoCode}
+                      onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); }}
+                      onKeyDown={e => { if (e.key === 'Enter') validatePromoCode(promoCode); }}
+                      placeholder="CÓDIGO PROMO"
+                      style={{ flex: 1, padding: '8px 12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em', outline: 'none' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => validatePromoCode(promoCode)}
+                      disabled={promoLoading || !promoCode.trim()}
+                      style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '11px', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.05em' }}
+                    >
+                      {promoLoading ? 'Validando…' : 'Aplicar'}
+                    </button>
+                  </div>
+                )}
+                {promoStatus && (
+                  <p style={{ fontSize: '11px', textAlign: 'center', margin: '4px 0 0', color: promoStatus.valid ? '#00E87F' : '#FF5555', fontWeight: 600 }}>
+                    {promoStatus.valid ? `✓ ${promoStatus.discountLabel} aplicado — ${promoStatus.finalAmountFormatted}` : '✗ Código inválido ou expirado'}
+                  </p>
+                )}
+              </div>
               <button
                 onClick={() => window.location.reload()}
                 style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}
@@ -2803,12 +2869,43 @@ const handleGeminiError = (err: any) => {
                       <p className="text-sm text-white/40 max-w-lg leading-relaxed uppercase tracking-widest font-medium">
                         O laudo estratégico completo com fundamentos técnicos, valor estimado da causa e próximos passos processuais foi gerado.
                       </p>
-                      <button 
+                      <button
                         onClick={handleCheckout}
                         className="bg-white text-black px-12 py-5 text-sm font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-2xl shadow-black"
                       >
                         Desbloquear Laudo Completo — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
                       </button>
+                      <div>
+                        {!showPromoInput ? (
+                          <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-white/30 underline cursor-pointer bg-transparent border-none">
+                            Tenho um código promocional
+                          </button>
+                        ) : (
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={promoCode}
+                              onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); }}
+                              onKeyDown={e => { if (e.key === 'Enter') validatePromoCode(promoCode); }}
+                              placeholder="CÓDIGO PROMO"
+                              className="flex-1 px-3 py-2 bg-white/5 border border-white/15 text-white text-[12px] font-semibold tracking-wider uppercase outline-none"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => validatePromoCode(promoCode)}
+                              disabled={promoLoading || !promoCode.trim()}
+                              className="px-4 py-2 bg-white/10 border border-white/20 text-white text-[11px] font-bold tracking-wide cursor-pointer"
+                            >
+                              {promoLoading ? 'Validando…' : 'Aplicar'}
+                            </button>
+                          </div>
+                        )}
+                        {promoStatus && (
+                          <p className={`text-[11px] text-center mt-1 font-semibold ${promoStatus.valid ? 'text-emerald-400' : 'text-red-400'}`}>
+                            {promoStatus.valid ? `✓ ${promoStatus.discountLabel} aplicado — ${promoStatus.finalAmountFormatted}` : '✗ Código inválido ou expirado'}
+                          </p>
+                        )}
+                      </div>
                       <div className="flex gap-8 border-t border-white/5 pt-6 text-[9px] font-bold uppercase tracking-widest text-white/20">
                         <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Pagamento seguro</span>
                         <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Acesso Vitalício</span>
@@ -3647,7 +3744,7 @@ const handleGeminiError = (err: any) => {
       </AnimatePresence>
 
       {state.step === 'result' && !state.isUnlocked && (
-        <footer className="fixed bottom-0 left-0 w-full h-40 border-t border-white/20 bg-[#111111] flex items-center z-[100] shadow-[0_-20px_100px_rgba(0,0,0,0.9)] no-print">
+        <footer className="fixed bottom-0 left-0 w-full min-h-40 border-t border-white/20 bg-[#111111] flex items-center z-[100] shadow-[0_-20px_100px_rgba(0,0,0,0.9)] no-print">
           <div className="w-1/2 p-10 border-r border-white/5 hidden md:block overflow-hidden relative">
             <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-white/20">Preview do Relatório Estratégico</h4>
             <div className="space-y-3 opacity-[0.05]">
@@ -3659,9 +3756,40 @@ const handleGeminiError = (err: any) => {
             <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent pointer-events-none"></div>
           </div>
           <div className="flex-1 md:w-1/2 p-10 flex items-center justify-between gap-12">
-            <div className="space-y-1">
+            <div className="space-y-1 flex-1">
               <h4 className="text-2xl font-serif italic leading-tight text-white">Desbloquear o Laudo Completo</h4>
               <p className="text-xs text-white/30 font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via cartão. Estratégia técnica detalhada.</p>
+              <div className="pt-1">
+                {!showPromoInput ? (
+                  <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-white/50 underline cursor-pointer bg-transparent border-none">
+                    Tenho um código promocional
+                  </button>
+                ) : (
+                  <div className="flex gap-2 mt-1">
+                    <input
+                      type="text"
+                      value={promoCode}
+                      onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); }}
+                      onKeyDown={e => { if (e.key === 'Enter') validatePromoCode(promoCode); }}
+                      placeholder="CÓDIGO PROMO"
+                      className="flex-1 max-w-[160px] px-3 py-1.5 bg-white/5 border border-white/15 text-white text-[11px] font-semibold tracking-wider uppercase outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => validatePromoCode(promoCode)}
+                      disabled={promoLoading || !promoCode.trim()}
+                      className="px-3 py-1.5 bg-white/10 border border-white/20 text-white text-[10px] font-bold tracking-wide cursor-pointer"
+                    >
+                      {promoLoading ? 'Validando…' : 'Aplicar'}
+                    </button>
+                  </div>
+                )}
+                {promoStatus && (
+                  <p className={`text-[10px] mt-1 font-semibold ${promoStatus.valid ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {promoStatus.valid ? `✓ ${promoStatus.discountLabel} — ${promoStatus.finalAmountFormatted}` : '✗ Código inválido ou expirado'}
+                  </p>
+                )}
+              </div>
             </div>
             <button
                onClick={handleCheckout}
