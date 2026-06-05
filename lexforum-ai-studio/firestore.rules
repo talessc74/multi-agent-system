@@ -88,6 +88,23 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // chats collection — created and updated only via Admin SDK (server)
+    match /chats/{simulationId} {
+      allow read: if isSignedIn() &&
+                     isValidId(simulationId) &&
+                     resource.data.userId == request.auth.uid;
+      allow create: if false;  // server-only via Admin SDK
+      allow update: if false;  // server-only via Admin SDK
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if isSignedIn() &&
+                       isValidId(simulationId) &&
+                       get(/databases/$(database)/documents/chats/$(simulationId)).data.userId == request.auth.uid;
+        allow write: if false;  // server-only via Admin SDK
+      }
+    }
+
     // users collection
     match /users/{userId} {
       allow read: if isOwner(userId);

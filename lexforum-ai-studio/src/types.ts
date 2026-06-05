@@ -62,6 +62,23 @@ export interface AppState {
   showHypotheses?: boolean;
 }
 
+export interface ChatMessage {
+  id?: string;
+  role: 'user' | 'agent';
+  content: string;
+  agentType: 'lawyer' | 'judge';
+  agentName: string;
+  timestamp?: number;
+}
+
+export interface ChatSession {
+  simulationId: string;
+  questionsUsed: number;
+  questionsLimit: number;
+  isPaid: boolean;
+  messages: ChatMessage[];
+}
+
 export type Mode5SubCase = 'RECURSO' | 'ACORDO';
 
 export interface Mode5Input {

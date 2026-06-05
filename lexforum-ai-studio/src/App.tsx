@@ -28,12 +28,14 @@ import {
   Activity,
   History
 } from 'lucide-react';
-import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode5Result } from './types';
+import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode5Result, ChatMessage } from './types';
 import { validateCausa, simulateForum, generateReport, simulateMode5, generateCounterHypotheses, expandHypothesis } from './lib/gemini';
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, getAreaStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo } from './services/dbService';
 import TermosPage from './pages/TermosPage';
+import ChatPanel, { SheetState } from './components/ChatPanel';
+import { getChatStatus, createChatCheckoutSession, sendChatMessage } from './services/chatService';
 
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
@@ -111,7 +113,7 @@ function formatSimDate(createdAt: unknown): string {
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
-function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; }) {
+function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses, onOpenChat }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; onOpenChat?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
   const [isPrinting, setIsPrinting] = React.useState(false);
@@ -275,6 +277,11 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
           </>
         )}
 
+        {onOpenChat && (
+          <button onClick={onOpenChat} style={{ width: '100%', padding: '14px', background: '#00FFEF', color: '#000', border: 'none', fontSize: '14px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>
+            💬 Falar com os agentes
+          </button>
+        )}
         <button onClick={onRestart} style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>Nova simulação</button>
       </div>
     </div>
@@ -361,6 +368,13 @@ export default function App() {
 const [loading, setLoading] = useState(false);
 const [retryCount, setRetryCount] = useState(0);
 const [isExpandingHypothesis, setIsExpandingHypothesis] = useState(false);
+const [chatSheetState, setChatSheetState] = useState<SheetState>('closed');
+const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+const [chatQuestionsUsed, setChatQuestionsUsed] = useState(0);
+const [chatQuestionsLimit, setChatQuestionsLimit] = useState(5);
+const [chatIsSending, setChatIsSending] = useState(false);
+const [chatError, setChatError] = useState<string | null>(null);
+const [openChatAfterLoad, setOpenChatAfterLoad] = useState(false);
 const [isEditingMode4, setIsEditingMode4] = useState(false);
 const fromPreviousSimulation = !!(state.caseDescription && state.defenseDescription && state.userSide);
 const [attachmentError, setAttachmentError] = useState<string | null>(null);
@@ -781,6 +795,58 @@ const handleGeminiError = (err: any) => {
     }
   };
 
+  const handleOpenChat = async () => {
+    if (!state.simulationId) return;
+    setChatError(null);
+    try {
+      const status = await getChatStatus(state.simulationId);
+      if (!status.isPaid) {
+        const url = await createChatCheckoutSession(state.simulationId);
+        window.location.href = url;
+        return;
+      }
+      setChatQuestionsUsed(status.questionsUsed);
+      setChatQuestionsLimit(status.questionsLimit);
+      setChatSheetState('half');
+    } catch (err) {
+      console.error('[Chat] Erro ao abrir chat:', err);
+      setChatError('Não foi possível abrir o chat. Tente novamente.');
+    }
+  };
+
+  const handleSendChatMessage = async (agentType: 'lawyer' | 'judge', message: string) => {
+    if (!state.simulationId || chatIsSending) return;
+    setChatError(null);
+    const userMsg: ChatMessage = { role: 'user', content: message, agentType, agentName: 'Você', timestamp: Date.now() };
+    setChatMessages(prev => [...prev, userMsg]);
+    setChatIsSending(true);
+    try {
+      await sendChatMessage(state.simulationId, agentType, message, (event) => {
+        if (event.type === 'message' && event.content) {
+          const agentMsg: ChatMessage = {
+            role: 'agent', content: event.content,
+            agentType: event.agentType ?? agentType,
+            agentName: event.agentName ?? agentType,
+            timestamp: Date.now(),
+          };
+          setChatMessages(prev => [...prev, agentMsg]);
+          if (event.questionsRemaining !== undefined) {
+            setChatQuestionsUsed(u => u + 1);
+          }
+        } else if (event.type === 'error') {
+          setChatError(event.message ?? 'Erro ao enviar mensagem. Tente novamente.');
+          setChatMessages(prev => prev.slice(0, -1));
+        }
+      });
+    } catch (err) {
+      console.error('[Chat] Erro ao enviar mensagem:', err);
+      setChatError('Erro ao enviar mensagem. Tente novamente.');
+      setChatMessages(prev => prev.slice(0, -1));
+    } finally {
+      setChatIsSending(false);
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
     getUserAccessLevel(user.uid).then(level => {
@@ -790,6 +856,8 @@ const handleGeminiError = (err: any) => {
     });
     const params = new URLSearchParams(window.location.search);
     const simId = params.get('sim');
+    const chatParam = params.get('chat');
+    if (chatParam === '1') setOpenChatAfterLoad(true);
     if (!simId) return;
     hasUserPaidForSession(user.uid, simId).then(async paid => {
       if (paid) {
@@ -802,6 +870,13 @@ const handleGeminiError = (err: any) => {
       }
     });
   }, [user, state.step]);
+
+  useEffect(() => {
+    if (openChatAfterLoad && state.step === 'result' && state.isUnlocked && state.simulationId) {
+      setOpenChatAfterLoad(false);
+      handleOpenChat();
+    }
+  }, [openChatAfterLoad, state.step, state.isUnlocked, state.simulationId]);
 
   if (window.location.pathname === '/termos') return <TermosPage />;
 
@@ -1664,6 +1739,25 @@ const handleGeminiError = (err: any) => {
             const hypotheses = await generateCounterHypotheses(lastPetition, state.detectedArea, state.selectedMode);
             setState((prev: any) => ({ ...prev, counterHypotheses: hypotheses.length ? hypotheses : [] }));
           }}
+          onOpenChat={user ? handleOpenChat : undefined}
+        />
+      )}
+
+      {/* ── CHAT PANEL ───────────────────────────────────────────── */}
+      {state.step === 'result' && state.isUnlocked && user && (
+        <ChatPanel
+          lawyerName={state.simulation?.lawyerAgentName ?? 'Advogado'}
+          judgeName={state.simulation?.judgeAgentName ?? 'Juiz'}
+          area={state.detectedArea}
+          sheetState={chatSheetState}
+          onSheetChange={setChatSheetState}
+          messages={chatMessages}
+          questionsUsed={chatQuestionsUsed}
+          questionsLimit={chatQuestionsLimit}
+          isSending={chatIsSending}
+          onSend={handleSendChatMessage}
+          error={chatError}
+          onClearError={() => setChatError(null)}
         />
       )}
 
@@ -2323,7 +2417,7 @@ const handleGeminiError = (err: any) => {
                         <div className="flex flex-col gap-1">
                           <button
                             onClick={() => fileInputRef.current?.click()}
-                            className="flex items-center gap-3 px-4 py-2 border border-white/10 rounded-sm hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
+                            className="flex items-center gap-3 px-4 py-2 border border-white/10 hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
                           >
                             <Plus className="w-4 h-4" />
                             <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
@@ -3598,6 +3692,17 @@ const handleGeminiError = (err: any) => {
                 Exportar PDF
              </button>
              <div className="w-px bg-white/10"></div>
+             {user && (
+               <>
+                 <button
+                   onClick={handleOpenChat}
+                   className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+                 >
+                   💬 Chat
+                 </button>
+                 <div className="w-px bg-white/10"></div>
+               </>
+             )}
              <button
               onClick={() => window.location.reload()}
               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"

@@ -1,0 +1,48 @@
+substitutions:
+  _TAG: staging-latest  # override com SHORT_SHA no git trigger
+
+steps:
+  # 0. Copia agents/ e registry/ para dentro do contexto do Dockerfile
+  - name: 'bash'
+    args:
+      - -c
+      - 'cp -r agents lexforum-ai-studio/ && cp -r registry lexforum-ai-studio/'
+
+  # 1. Build da imagem Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - --build-arg
+      - VITE_GIT_HASH=$SHORT_SHA
+      - -t
+      - gcr.io/gen-lang-client-0783740660/eai-staging:$_TAG
+      - -t
+      - gcr.io/gen-lang-client-0783740660/eai-staging:latest
+      - ./lexforum-ai-studio
+
+  # 2. Push para o Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - --all-tags
+      - gcr.io/gen-lang-client-0783740660/eai-staging
+
+  # 3. Deploy para Cloud Run — ambiente de staging (projeto EAIradiokactus)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - eai-staging
+      - --image=gcr.io/gen-lang-client-0783740660/eai-staging:$_TAG
+      - --region=us-east1
+      - --project=gen-lang-client-0783740660
+      - --platform=managed
+      - --allow-unauthenticated
+
+images:
+  - gcr.io/gen-lang-client-0783740660/eai-staging:$_TAG
+  - gcr.io/gen-lang-client-0783740660/eai-staging:latest
+
+options:
+  logging: CLOUD_LOGGING_ONLY
