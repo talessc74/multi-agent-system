@@ -360,6 +360,9 @@ const [retryCount, setRetryCount] = useState(0);
 const [isExpandingHypothesis, setIsExpandingHypothesis] = useState(false);
 const [isEditingMode4, setIsEditingMode4] = useState(false);
 const fromPreviousSimulation = !!(state.caseDescription && state.defenseDescription && state.userSide);
+const [attachmentError, setAttachmentError] = useState<string | null>(null);
+const [defenseAttachmentError, setDefenseAttachmentError] = useState<string | null>(null);
+const [mode5AttachmentError, setMode5AttachmentError] = useState<string | null>(null);
 const scrollRef = useRef<HTMLDivElement>(null);
 const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -424,13 +427,14 @@ const handleGeminiError = (err: any) => {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
+    setAttachmentError(null);
 
     const newAttachments: Attachment[] = [];
     const fileList: File[] = Array.from(files);
-    
+
     for (const file of fileList) {
       if (file.size > 10 * 1024 * 1024) {
-        alert(`Arquivo muito grande. Limite: 10MB por arquivo (total de anexos: 20MB)`);
+        setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
         continue;
       }
 
@@ -883,9 +887,10 @@ const handleGeminiError = (err: any) => {
                     <input type="file" id="m5-file-new" className="hidden" multiple accept="image/*,application/pdf"
                       onChange={async (e) => {
                         const files = Array.from(e.target.files || []);
+                        setMode5AttachmentError(null);
                         const newAtts: import('./types').Attachment[] = [];
                         for (const file of files) {
-                          if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                          if (file.size > 10 * 1024 * 1024) { setMode5AttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`); continue; }
                           const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
                           newAtts.push({ name: file.name, type: file.type, size: file.size, data });
                         }
@@ -909,6 +914,7 @@ const handleGeminiError = (err: any) => {
                         {state.mode5Input.subCase === 'RECURSO' ? 'Anexar sentença ou documentos' : 'Anexar proposta ou documentos'}
                       </label>
                       <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                      {mode5AttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{mode5AttachmentError}</span>}
                     </div>
                   </div>
                 </div>
@@ -998,9 +1004,10 @@ const handleGeminiError = (err: any) => {
                 <input type="file" id="author-file-m4-mobile" className="hidden" multiple accept="image/*,application/pdf"
                   onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
+                    setAttachmentError(null);
                     const newAtts: import('./types').Attachment[] = [];
                     for (const file of files) {
-                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      if (file.size > 10 * 1024 * 1024) { setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`); continue; }
                       const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
                       newAtts.push({ name: file.name, type: file.type, size: file.size, data });
                     }
@@ -1023,6 +1030,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do autor
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1041,9 +1049,10 @@ const handleGeminiError = (err: any) => {
                 <input type="file" id="defense-file-m4-mobile" className="hidden" multiple accept="image/*,application/pdf"
                   onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
+                    setDefenseAttachmentError(null);
                     const newAtts: import('./types').Attachment[] = [];
                     for (const file of files) {
-                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      if (file.size > 10 * 1024 * 1024) { setDefenseAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`); continue; }
                       const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
                       newAtts.push({ name: file.name, type: file.type, size: file.size, data });
                     }
@@ -1066,6 +1075,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do réu
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1127,9 +1137,10 @@ const handleGeminiError = (err: any) => {
                 <input type="file" id="author-file-m3" className="hidden" multiple accept="image/*,application/pdf"
                   onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
+                    setAttachmentError(null);
                     const newAtts: import('./types').Attachment[] = [];
                     for (const file of files) {
-                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      if (file.size > 10 * 1024 * 1024) { setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`); continue; }
                       const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
                       newAtts.push({ name: file.name, type: file.type, size: file.size, data });
                     }
@@ -1152,6 +1163,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do autor
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1169,9 +1181,10 @@ const handleGeminiError = (err: any) => {
                 <input type="file" id="defense-file-m3" className="hidden" multiple accept="image/*,application/pdf"
                   onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
+                    setDefenseAttachmentError(null);
                     const newAtts: import('./types').Attachment[] = [];
                     for (const file of files) {
-                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      if (file.size > 10 * 1024 * 1024) { setDefenseAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`); continue; }
                       const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
                       newAtts.push({ name: file.name, type: file.type, size: file.size, data });
                     }
@@ -1194,6 +1207,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do réu
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1267,6 +1281,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas de defesa
                   </button>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1340,6 +1355,7 @@ const handleGeminiError = (err: any) => {
                     Anexar documentos
                   </button>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1809,10 +1825,11 @@ const handleGeminiError = (err: any) => {
                       <input type="file" id="author-file-m4" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
+                          setAttachmentError(null);
                           const newAtts: Attachment[] = [];
                           for (const file of files) {
                             if (file.size > 10 * 1024 * 1024) {
-                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
                               continue;
                             }
                             const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
@@ -1826,6 +1843,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -1857,10 +1875,11 @@ const handleGeminiError = (err: any) => {
                       <input type="file" id="defense-file-m4" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
+                          setDefenseAttachmentError(null);
                           const newAtts: Attachment[] = [];
                           for (const file of files) {
                             if (file.size > 10 * 1024 * 1024) {
-                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              setDefenseAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
                               continue;
                             }
                             const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
@@ -1874,6 +1893,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -2004,10 +2024,11 @@ const handleGeminiError = (err: any) => {
                           accept="image/*,application/pdf"
                           onChange={async (e) => {
                             const files = Array.from(e.target.files || []);
+                            setMode5AttachmentError(null);
                             const newAtts: Attachment[] = [];
                             for (const file of files) {
                               if (file.size > 10 * 1024 * 1024) {
-                                alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                                setMode5AttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
                                 continue;
                               }
                               const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
@@ -2037,6 +2058,7 @@ const handleGeminiError = (err: any) => {
                             <Plus className="w-3 h-3" /> Anexar Sentença ou Documentos
                           </label>
                           <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB · PDF, JPEG ou PNG</span>
+                          {mode5AttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{mode5AttachmentError}</span>}
                         </div>
                       </div>
                     </div>
@@ -2138,10 +2160,11 @@ const handleGeminiError = (err: any) => {
                       <input type="file" id="author-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
+                          setAttachmentError(null);
                           const newAtts: Attachment[] = [];
                           for (const file of files) {
                             if (file.size > 10 * 1024 * 1024) {
-                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
                               continue;
                             }
                             const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
@@ -2155,6 +2178,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -2185,10 +2209,11 @@ const handleGeminiError = (err: any) => {
                       <input type="file" id="defense-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
+                          setDefenseAttachmentError(null);
                           const newAtts: Attachment[] = [];
                           for (const file of files) {
                             if (file.size > 10 * 1024 * 1024) {
-                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              setDefenseAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
                               continue;
                             }
                             const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
@@ -2202,6 +2227,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -2309,6 +2335,7 @@ const handleGeminiError = (err: any) => {
                             <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
                           </button>
                           <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                          {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                         </div>
                         <div className="w-[1px] h-4 bg-white/10 mx-2"></div>
                         <p className="text-[10px] text-white/20 uppercase tracking-[0.2em] font-bold">PDF, JPEG ou PNG</p>
