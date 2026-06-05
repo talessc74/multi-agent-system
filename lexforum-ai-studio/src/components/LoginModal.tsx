@@ -102,7 +102,11 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
     setLoading(true);
     try {
       const credential = await registerWithEmail(email, password);
-      await registrarAceiteTermos(credential.user.uid);
+      try {
+        await registrarAceiteTermos(credential.user.uid);
+      } catch (termosErr) {
+        console.error('[handleRegister] registrarAceiteTermos falhou:', termosErr);
+      }
       onSuccess();
     } catch (e: any) {
       setError(e.message ?? 'Erro ao criar conta.');
