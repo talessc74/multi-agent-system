@@ -28,12 +28,14 @@ import {
   Activity,
   History
 } from 'lucide-react';
-import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode5Result } from './types';
+import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode5Result, ChatMessage } from './types';
 import { validateCausa, simulateForum, generateReport, simulateMode5, generateCounterHypotheses, expandHypothesis } from './lib/gemini';
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, getAreaStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo } from './services/dbService';
 import TermosPage from './pages/TermosPage';
+import ChatPanel, { SheetState } from './components/ChatPanel';
+import { getChatStatus, createChatCheckoutSession, sendChatMessage } from './services/chatService';
 
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
@@ -78,6 +80,8 @@ import { ModeNavbar } from './components/ModeNavbar';
 import { SessionStatusBar } from './components/SessionStatusBar';
 import { ProgressDots } from './components/ProgressDots';
 import { MODE_CONFIG } from './config/modeConfig';
+import LoginModal from './components/LoginModal';
+import { initiateCheckout } from './services/checkoutService';
 
 const cleanJudgmentText = (text: string) => {
   if (!text) return "";
@@ -109,7 +113,7 @@ function formatSimDate(createdAt: unknown): string {
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
-function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; }) {
+function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses, onOpenChat }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; onOpenChat?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
   const [isPrinting, setIsPrinting] = React.useState(false);
@@ -273,6 +277,11 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
           </>
         )}
 
+        {onOpenChat && (
+          <button onClick={onOpenChat} style={{ width: '100%', padding: '14px', background: '#00FFEF', color: '#000', border: 'none', fontSize: '14px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>
+            💬 Falar com os agentes
+          </button>
+        )}
         <button onClick={onRestart} style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>Nova simulação</button>
       </div>
     </div>
@@ -283,6 +292,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [userHistory, setUserHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [globalStats, setGlobalStats] = useState({ simulations: 0, winRate: 0, precision: 98.4 });
   const [state, setState] = useState<AppState>({
     step: 'boardroom',
@@ -358,8 +368,18 @@ export default function App() {
 const [loading, setLoading] = useState(false);
 const [retryCount, setRetryCount] = useState(0);
 const [isExpandingHypothesis, setIsExpandingHypothesis] = useState(false);
+const [chatSheetState, setChatSheetState] = useState<SheetState>('closed');
+const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+const [chatQuestionsUsed, setChatQuestionsUsed] = useState(0);
+const [chatQuestionsLimit, setChatQuestionsLimit] = useState(5);
+const [chatIsSending, setChatIsSending] = useState(false);
+const [chatError, setChatError] = useState<string | null>(null);
+const [openChatAfterLoad, setOpenChatAfterLoad] = useState(false);
 const [isEditingMode4, setIsEditingMode4] = useState(false);
 const fromPreviousSimulation = !!(state.caseDescription && state.defenseDescription && state.userSide);
+const [attachmentError, setAttachmentError] = useState<string | null>(null);
+const [defenseAttachmentError, setDefenseAttachmentError] = useState<string | null>(null);
+const [mode5AttachmentError, setMode5AttachmentError] = useState<string | null>(null);
 const scrollRef = useRef<HTMLDivElement>(null);
 const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -424,13 +444,14 @@ const handleGeminiError = (err: any) => {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
+    setAttachmentError(null);
 
     const newAttachments: Attachment[] = [];
     const fileList: File[] = Array.from(files);
-    
+
     for (const file of fileList) {
       if (file.size > 10 * 1024 * 1024) {
-        alert(`Arquivo muito grande. Limite: 10MB por arquivo (total de anexos: 20MB)`);
+        setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
         continue;
       }
 
@@ -755,7 +776,7 @@ const handleGeminiError = (err: any) => {
   // Redireciona para o Stripe Checkout
   const handleCheckout = async () => {
     if (!user) {
-      await loginWithGoogle();
+      setShowLoginModal(true);
       return;
     }
     if (!state.simulationId) {
@@ -763,23 +784,66 @@ const handleGeminiError = (err: any) => {
       return;
     }
     try {
-      const token = await user.getIdToken();
-      const response = await fetch('/api/stripe/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ simulationId: state.simulationId, mode: state.selectedMode }),
-      });
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
+      const url = await initiateCheckout(user, state.simulationId, state.selectedMode);
+      if (url) {
+        window.location.href = url;
       } else {
-        console.error('[Checkout] URL não retornada:', data);
+        console.error('[Checkout] URL não retornada');
       }
     } catch (err) {
       console.error('[Checkout] Erro:', err);
+    }
+  };
+
+  const handleOpenChat = async () => {
+    if (!state.simulationId) return;
+    setChatError(null);
+    try {
+      const status = await getChatStatus(state.simulationId);
+      if (!status.isPaid) {
+        const url = await createChatCheckoutSession(state.simulationId);
+        window.location.href = url;
+        return;
+      }
+      setChatQuestionsUsed(status.questionsUsed);
+      setChatQuestionsLimit(status.questionsLimit);
+      setChatSheetState('half');
+    } catch (err) {
+      console.error('[Chat] Erro ao abrir chat:', err);
+      setChatError('Não foi possível abrir o chat. Tente novamente.');
+    }
+  };
+
+  const handleSendChatMessage = async (agentType: 'lawyer' | 'judge', message: string) => {
+    if (!state.simulationId || chatIsSending) return;
+    setChatError(null);
+    const userMsg: ChatMessage = { role: 'user', content: message, agentType, agentName: 'Você', timestamp: Date.now() };
+    setChatMessages(prev => [...prev, userMsg]);
+    setChatIsSending(true);
+    try {
+      await sendChatMessage(state.simulationId, agentType, message, (event) => {
+        if (event.type === 'message' && event.content) {
+          const agentMsg: ChatMessage = {
+            role: 'agent', content: event.content,
+            agentType: event.agentType ?? agentType,
+            agentName: event.agentName ?? agentType,
+            timestamp: Date.now(),
+          };
+          setChatMessages(prev => [...prev, agentMsg]);
+          if (event.questionsRemaining !== undefined) {
+            setChatQuestionsUsed(u => u + 1);
+          }
+        } else if (event.type === 'error') {
+          setChatError(event.message ?? 'Erro ao enviar mensagem. Tente novamente.');
+          setChatMessages(prev => prev.slice(0, -1));
+        }
+      });
+    } catch (err) {
+      console.error('[Chat] Erro ao enviar mensagem:', err);
+      setChatError('Erro ao enviar mensagem. Tente novamente.');
+      setChatMessages(prev => prev.slice(0, -1));
+    } finally {
+      setChatIsSending(false);
     }
   };
 
@@ -792,6 +856,8 @@ const handleGeminiError = (err: any) => {
     });
     const params = new URLSearchParams(window.location.search);
     const simId = params.get('sim');
+    const chatParam = params.get('chat');
+    if (chatParam === '1') setOpenChatAfterLoad(true);
     if (!simId) return;
     hasUserPaidForSession(user.uid, simId).then(async paid => {
       if (paid) {
@@ -804,6 +870,13 @@ const handleGeminiError = (err: any) => {
       }
     });
   }, [user, state.step]);
+
+  useEffect(() => {
+    if (openChatAfterLoad && state.step === 'result' && state.isUnlocked && state.simulationId) {
+      setOpenChatAfterLoad(false);
+      handleOpenChat();
+    }
+  }, [openChatAfterLoad, state.step, state.isUnlocked, state.simulationId]);
 
   if (window.location.pathname === '/termos') return <TermosPage />;
 
@@ -883,9 +956,10 @@ const handleGeminiError = (err: any) => {
                     <input type="file" id="m5-file-new" className="hidden" multiple accept="image/*,application/pdf"
                       onChange={async (e) => {
                         const files = Array.from(e.target.files || []);
+                        setMode5AttachmentError(null);
                         const newAtts: import('./types').Attachment[] = [];
                         for (const file of files) {
-                          if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                          if (file.size > 10 * 1024 * 1024) { setMode5AttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`); continue; }
                           const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
                           newAtts.push({ name: file.name, type: file.type, size: file.size, data });
                         }
@@ -909,6 +983,7 @@ const handleGeminiError = (err: any) => {
                         {state.mode5Input.subCase === 'RECURSO' ? 'Anexar sentença ou documentos' : 'Anexar proposta ou documentos'}
                       </label>
                       <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                      {mode5AttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{mode5AttachmentError}</span>}
                     </div>
                   </div>
                 </div>
@@ -998,9 +1073,10 @@ const handleGeminiError = (err: any) => {
                 <input type="file" id="author-file-m4-mobile" className="hidden" multiple accept="image/*,application/pdf"
                   onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
+                    setAttachmentError(null);
                     const newAtts: import('./types').Attachment[] = [];
                     for (const file of files) {
-                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      if (file.size > 10 * 1024 * 1024) { setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`); continue; }
                       const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
                       newAtts.push({ name: file.name, type: file.type, size: file.size, data });
                     }
@@ -1023,6 +1099,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do autor
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1041,9 +1118,10 @@ const handleGeminiError = (err: any) => {
                 <input type="file" id="defense-file-m4-mobile" className="hidden" multiple accept="image/*,application/pdf"
                   onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
+                    setDefenseAttachmentError(null);
                     const newAtts: import('./types').Attachment[] = [];
                     for (const file of files) {
-                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      if (file.size > 10 * 1024 * 1024) { setDefenseAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`); continue; }
                       const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
                       newAtts.push({ name: file.name, type: file.type, size: file.size, data });
                     }
@@ -1066,6 +1144,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do réu
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1127,9 +1206,10 @@ const handleGeminiError = (err: any) => {
                 <input type="file" id="author-file-m3" className="hidden" multiple accept="image/*,application/pdf"
                   onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
+                    setAttachmentError(null);
                     const newAtts: import('./types').Attachment[] = [];
                     for (const file of files) {
-                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      if (file.size > 10 * 1024 * 1024) { setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`); continue; }
                       const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
                       newAtts.push({ name: file.name, type: file.type, size: file.size, data });
                     }
@@ -1152,6 +1232,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do autor
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1169,9 +1250,10 @@ const handleGeminiError = (err: any) => {
                 <input type="file" id="defense-file-m3" className="hidden" multiple accept="image/*,application/pdf"
                   onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
+                    setDefenseAttachmentError(null);
                     const newAtts: import('./types').Attachment[] = [];
                     for (const file of files) {
-                      if (file.size > 10 * 1024 * 1024) { alert(`${file.name} excede 10MB.`); continue; }
+                      if (file.size > 10 * 1024 * 1024) { setDefenseAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`); continue; }
                       const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
                       newAtts.push({ name: file.name, type: file.type, size: file.size, data });
                     }
@@ -1194,6 +1276,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do réu
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1267,6 +1350,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas de defesa
                   </button>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1340,6 +1424,7 @@ const handleGeminiError = (err: any) => {
                     Anexar documentos
                   </button>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1612,7 +1697,7 @@ const handleGeminiError = (err: any) => {
                 onClick={handleCheckout}
                 style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '0.3px', borderRadius: '14px', cursor: 'pointer' }}
               >
-                Ver laudo completo — {[3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90'}
+                Desbloquear Laudo Completo — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
               </button>
               <button
                 onClick={() => window.location.reload()}
@@ -1654,6 +1739,25 @@ const handleGeminiError = (err: any) => {
             const hypotheses = await generateCounterHypotheses(lastPetition, state.detectedArea, state.selectedMode);
             setState((prev: any) => ({ ...prev, counterHypotheses: hypotheses.length ? hypotheses : [] }));
           }}
+          onOpenChat={user ? handleOpenChat : undefined}
+        />
+      )}
+
+      {/* ── CHAT PANEL ───────────────────────────────────────────── */}
+      {state.step === 'result' && state.isUnlocked && user && (
+        <ChatPanel
+          lawyerName={state.simulation?.lawyerAgentName ?? 'Advogado'}
+          judgeName={state.simulation?.judgeAgentName ?? 'Juiz'}
+          area={state.detectedArea}
+          sheetState={chatSheetState}
+          onSheetChange={setChatSheetState}
+          messages={chatMessages}
+          questionsUsed={chatQuestionsUsed}
+          questionsLimit={chatQuestionsLimit}
+          isSending={chatIsSending}
+          onSend={handleSendChatMessage}
+          error={chatError}
+          onClearError={() => setChatError(null)}
         />
       )}
 
@@ -1669,7 +1773,7 @@ const handleGeminiError = (err: any) => {
         <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
       <Navbar
         user={user}
-        onLogin={() => loginWithGoogle()}
+        onLogin={() => setShowLoginModal(true)}
         onLogout={logoutUser}
         onShowHistory={handleShowHistory}
       >
@@ -1809,10 +1913,11 @@ const handleGeminiError = (err: any) => {
                       <input type="file" id="author-file-m4" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
+                          setAttachmentError(null);
                           const newAtts: Attachment[] = [];
                           for (const file of files) {
                             if (file.size > 10 * 1024 * 1024) {
-                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
                               continue;
                             }
                             const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
@@ -1826,6 +1931,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -1857,10 +1963,11 @@ const handleGeminiError = (err: any) => {
                       <input type="file" id="defense-file-m4" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
+                          setDefenseAttachmentError(null);
                           const newAtts: Attachment[] = [];
                           for (const file of files) {
                             if (file.size > 10 * 1024 * 1024) {
-                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              setDefenseAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
                               continue;
                             }
                             const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
@@ -1874,6 +1981,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -2004,10 +2112,11 @@ const handleGeminiError = (err: any) => {
                           accept="image/*,application/pdf"
                           onChange={async (e) => {
                             const files = Array.from(e.target.files || []);
+                            setMode5AttachmentError(null);
                             const newAtts: Attachment[] = [];
                             for (const file of files) {
                               if (file.size > 10 * 1024 * 1024) {
-                                alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                                setMode5AttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
                                 continue;
                               }
                               const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
@@ -2037,6 +2146,7 @@ const handleGeminiError = (err: any) => {
                             <Plus className="w-3 h-3" /> Anexar Sentença ou Documentos
                           </label>
                           <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB · PDF, JPEG ou PNG</span>
+                          {mode5AttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{mode5AttachmentError}</span>}
                         </div>
                       </div>
                     </div>
@@ -2138,10 +2248,11 @@ const handleGeminiError = (err: any) => {
                       <input type="file" id="author-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
+                          setAttachmentError(null);
                           const newAtts: Attachment[] = [];
                           for (const file of files) {
                             if (file.size > 10 * 1024 * 1024) {
-                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
                               continue;
                             }
                             const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
@@ -2155,6 +2266,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -2185,10 +2297,11 @@ const handleGeminiError = (err: any) => {
                       <input type="file" id="defense-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
+                          setDefenseAttachmentError(null);
                           const newAtts: Attachment[] = [];
                           for (const file of files) {
                             if (file.size > 10 * 1024 * 1024) {
-                              alert(`${file.name} excede 10MB. Limite por arquivo: 10MB (total: 20MB)`);
+                              setDefenseAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
                               continue;
                             }
                             const data = await new Promise<string>(res => { const r = new FileReader(); r.onload = () => res(r.result as string); r.readAsDataURL(file); });
@@ -2202,6 +2315,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -2303,12 +2417,13 @@ const handleGeminiError = (err: any) => {
                         <div className="flex flex-col gap-1">
                           <button
                             onClick={() => fileInputRef.current?.click()}
-                            className="flex items-center gap-3 px-4 py-2 border border-white/10 rounded-sm hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
+                            className="flex items-center gap-3 px-4 py-2 border border-white/10 hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
                           >
                             <Plus className="w-4 h-4" />
                             <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
                           </button>
                           <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                          {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                         </div>
                         <div className="w-[1px] h-4 bg-white/10 mx-2"></div>
                         <p className="text-[10px] text-white/20 uppercase tracking-[0.2em] font-bold">PDF, JPEG ou PNG</p>
@@ -2489,23 +2604,27 @@ const handleGeminiError = (err: any) => {
                   </div>
                 </div>
 
-                <p className="text-white/30 text-[11px] font-sans uppercase tracking-widest leading-relaxed mt-6 max-w-lg mx-auto">
-                  Deseja iniciar o fórum?
-                </p>
-                <div className="flex justify-center gap-4 pt-6">
-                  <button
-                    onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
-                    className="px-10 py-4 border border-white/10 rounded-[14px] text-[11px] uppercase tracking-widest hover:bg-white/5 transition-colors font-bold text-white/60"
-                  >
-                    Corrigir causa
-                  </button>
-                  <button
-                    onClick={handleSimulate}
-                    className="px-10 py-4 rounded-[14px] text-black text-[11px] uppercase tracking-widest hover:opacity-90 transition-colors font-bold shadow-2xl shadow-black/50"
-                    style={{ background: dcColor }}
-                  >
-                    Iniciar Fórum
-                  </button>
+                <div className="mt-10 border-t border-white/5 pt-8 space-y-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/20 text-center">
+                    Deseja iniciar o fórum?
+                  </p>
+                  <div className="flex flex-col items-center gap-4">
+                    <button
+                      onClick={handleSimulate}
+                      className="w-full max-w-xs px-8 py-5 text-black text-[11px] uppercase tracking-[0.25em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-black/50"
+                      style={{ background: dcColor }}
+                    >
+                      Iniciar Fórum
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/25 hover:text-white/50 transition-colors"
+                    >
+                      <ArrowRight className="w-3 h-3 rotate-180" />
+                      Corrigir causa
+                    </button>
+                  </div>
                 </div>
               </motion.div>
               );
@@ -2688,7 +2807,7 @@ const handleGeminiError = (err: any) => {
                         onClick={handleCheckout}
                         className="bg-white text-black px-12 py-5 text-sm font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-2xl shadow-black"
                       >
-                        Liberar Laudo Completo — {[3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90'}
+                        Desbloquear Laudo Completo — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
                       </button>
                       <div className="flex gap-8 border-t border-white/5 pt-6 text-[9px] font-bold uppercase tracking-widest text-white/20">
                         <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Pagamento seguro</span>
@@ -3541,14 +3660,14 @@ const handleGeminiError = (err: any) => {
           </div>
           <div className="flex-1 md:w-1/2 p-10 flex items-center justify-between gap-12">
             <div className="space-y-1">
-              <h4 className="text-2xl font-serif italic leading-tight text-white">Obtenha o Laudo Estratégico</h4>
+              <h4 className="text-2xl font-serif italic leading-tight text-white">Desbloquear o Laudo Completo</h4>
               <p className="text-xs text-white/30 font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via cartão. Estratégia técnica detalhada.</p>
             </div>
-            <button 
+            <button
                onClick={handleCheckout}
                className="px-10 py-5 bg-white text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:scale-[1.02] transition-transform shrink-0 shadow-2xl shadow-black flex flex-col items-center leading-none"
             >
-              <span>ADQUIRIR R$ 9,90</span>
+              <span>DESBLOQUEAR — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}</span>
               <span className="text-[8px] opacity-40 mt-1">Sessão única</span>
             </button>
           </div>
@@ -3573,6 +3692,17 @@ const handleGeminiError = (err: any) => {
                 Exportar PDF
              </button>
              <div className="w-px bg-white/10"></div>
+             {user && (
+               <>
+                 <button
+                   onClick={handleOpenChat}
+                   className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+                 >
+                   💬 Chat
+                 </button>
+                 <div className="w-px bg-white/10"></div>
+               </>
+             )}
              <button
               onClick={() => window.location.reload()}
               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
@@ -3667,6 +3797,13 @@ const handleGeminiError = (err: any) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={() => setShowLoginModal(false)}
+        />
+      )}
     </>
   );
 }

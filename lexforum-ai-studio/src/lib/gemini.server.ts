@@ -413,6 +413,37 @@ export async function expandHypothesisServer(
   return res.text || '';
 }
 
+export interface ChatTurn {
+  role: 'user' | 'model';
+  content: string;
+}
+
+export async function chatWithAgentServer(
+  systemInstruction: string,
+  history: ChatTurn[],
+  newMessage: string
+): Promise<string> {
+  const contents = [
+    ...history.map(turn => ({
+      role: turn.role,
+      parts: [{ text: turn.content }],
+    })),
+    { role: 'user' as const, parts: [{ text: newMessage }] },
+  ];
+
+  const response = await ai.models.generateContent({
+    model: MODEL_NAME,
+    contents,
+    config: {
+      systemInstruction,
+      temperature: 0.6,
+      maxOutputTokens: 4096,
+    },
+  });
+
+  return response.text || '';
+}
+
 export async function simulateMode5Server(
   mode5Input: { subCase: 'RECURSO' | 'ACORDO'; caseDescription: string; sentencaOuProposta: string },
   area: LegalArea,
