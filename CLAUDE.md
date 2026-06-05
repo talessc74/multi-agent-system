@@ -3,7 +3,6 @@
 ## Aplicação
 - **Produção:** https://eaijuridico.com.br — Cloud Run `eai-producao`, GCP `gen-lang-client-0982741688`
 - **Staging:** https://eai.radiokactus.com — Cloud Run `eai-staging`, GCP `gen-lang-client-0783740660`
-- **Branch ativa de desenvolvimento:** `claude/system-update-legal-chat-BlXdx`
 - **Stack:** Vite 6 + React 19 + Express 4 + Firebase Auth + Firestore + Gemini 2.5 Flash + Stripe + Cloud Run
 - **Código:** `lexforum-ai-studio/` (monorepo — frontend + backend no mesmo diretório)
 
@@ -15,7 +14,7 @@
 | Staging  | eai.radiokactus.com | gen-lang-client-0783740660 | eai-staging  | test mode | VnFQ (LexForum) |
 
 ## Estado atual (05/06/2026)
-- Chat pós-sessão implementado na branch ativa — aguardando teste com conta beta
+- Chat pós-sessão mergeado em main — disponível em mobile e desktop para usuários logados
 - Usuários beta (`accessLevel='beta'` no Firestore) passam sem paywall em todas as features
 - Briefing completo em `BRIEFING_2026-06-05.md`
 
