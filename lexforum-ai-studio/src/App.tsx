@@ -2489,23 +2489,27 @@ const handleGeminiError = (err: any) => {
                   </div>
                 </div>
 
-                <p className="text-white/30 text-[11px] font-sans uppercase tracking-widest leading-relaxed mt-6 max-w-lg mx-auto">
-                  Deseja iniciar o fórum?
-                </p>
-                <div className="flex justify-center gap-4 pt-6">
-                  <button
-                    onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
-                    className="px-10 py-4 border border-white/10 text-[11px] uppercase tracking-widest hover:bg-white/5 transition-colors font-bold text-white/60"
-                  >
-                    Corrigir causa
-                  </button>
-                  <button
-                    onClick={handleSimulate}
-                    className="px-10 py-4 text-black text-[11px] uppercase tracking-widest hover:opacity-90 transition-colors font-bold shadow-2xl shadow-black/50"
-                    style={{ background: dcColor }}
-                  >
-                    Iniciar Fórum
-                  </button>
+                <div className="mt-10 border-t border-white/5 pt-8 space-y-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/20 text-center">
+                    Deseja iniciar o fórum?
+                  </p>
+                  <div className="flex flex-col items-center gap-4">
+                    <button
+                      onClick={handleSimulate}
+                      className="w-full max-w-xs px-8 py-5 text-black text-[11px] uppercase tracking-[0.25em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-black/50"
+                      style={{ background: dcColor }}
+                    >
+                      Iniciar Fórum
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/25 hover:text-white/50 transition-colors"
+                    >
+                      <ArrowRight className="w-3 h-3 rotate-180" />
+                      Corrigir causa
+                    </button>
+                  </div>
                 </div>
               </motion.div>
               );
