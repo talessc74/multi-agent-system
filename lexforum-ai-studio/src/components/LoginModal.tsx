@@ -20,9 +20,13 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
   const [termosAceitos, setTermosAceitos] = useState(false);
   const [pendingGoogleUid, setPendingGoogleUid] = useState<string | null>(null);
 
-  const handleClose = () => {
+  const handleClose = async () => {
     if (mode === 'terms-google') {
-      logoutUser();
+      try {
+        await logoutUser();
+      } catch (e) {
+        console.error('[LoginModal] logout falhou ao fechar terms-google:', e);
+      }
     }
     onClose();
   };
