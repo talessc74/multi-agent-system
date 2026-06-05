@@ -1628,7 +1628,7 @@ const handleGeminiError = (err: any) => {
                 onClick={handleCheckout}
                 style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '0.3px', borderRadius: '14px', cursor: 'pointer' }}
               >
-                Ver laudo completo — {[3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90'}
+                Desbloquear Laudo Completo — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
               </button>
               <button
                 onClick={() => window.location.reload()}
@@ -2719,7 +2719,7 @@ const handleGeminiError = (err: any) => {
                         onClick={handleCheckout}
                         className="bg-white text-black px-12 py-5 text-sm font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-2xl shadow-black"
                       >
-                        Liberar Laudo Completo — {[3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90'}
+                        Desbloquear Laudo Completo — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
                       </button>
                       <div className="flex gap-8 border-t border-white/5 pt-6 text-[9px] font-bold uppercase tracking-widest text-white/20">
                         <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Pagamento seguro</span>
@@ -3572,14 +3572,14 @@ const handleGeminiError = (err: any) => {
           </div>
           <div className="flex-1 md:w-1/2 p-10 flex items-center justify-between gap-12">
             <div className="space-y-1">
-              <h4 className="text-2xl font-serif italic leading-tight text-white">Obtenha o Laudo Estratégico</h4>
+              <h4 className="text-2xl font-serif italic leading-tight text-white">Desbloquear o Laudo Completo</h4>
               <p className="text-xs text-white/30 font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via cartão. Estratégia técnica detalhada.</p>
             </div>
-            <button 
+            <button
                onClick={handleCheckout}
                className="px-10 py-5 bg-white text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:scale-[1.02] transition-transform shrink-0 shadow-2xl shadow-black flex flex-col items-center leading-none"
             >
-              <span>ADQUIRIR R$ 9,90</span>
+              <span>DESBLOQUEAR — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}</span>
               <span className="text-[8px] opacity-40 mt-1">Sessão única</span>
             </button>
           </div>
