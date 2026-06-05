@@ -133,6 +133,7 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
         {/* Close */}
         <button
           onClick={handleClose}
+          aria-label="Fechar"
           className="absolute top-4 right-4 text-white/30 hover:text-white transition-colors"
         >
           <X className="w-4 h-4" />
