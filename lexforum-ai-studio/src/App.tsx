@@ -370,6 +370,7 @@ const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 const [chatQuestionsUsed, setChatQuestionsUsed] = useState(0);
 const [chatQuestionsLimit, setChatQuestionsLimit] = useState(5);
 const [chatIsSending, setChatIsSending] = useState(false);
+const [chatError, setChatError] = useState<string | null>(null);
 const [openChatAfterLoad, setOpenChatAfterLoad] = useState(false);
 const [isEditingMode4, setIsEditingMode4] = useState(false);
 const fromPreviousSimulation = !!(state.caseDescription && state.defenseDescription && state.userSide);
@@ -798,6 +799,7 @@ const handleGeminiError = (err: any) => {
 
   const handleOpenChat = async () => {
     if (!state.simulationId) return;
+    setChatError(null);
     try {
       const status = await getChatStatus(state.simulationId);
       if (!status.isPaid) {
@@ -810,11 +812,13 @@ const handleGeminiError = (err: any) => {
       setChatSheetState('half');
     } catch (err) {
       console.error('[Chat] Erro ao abrir chat:', err);
+      setChatError('Não foi possível abrir o chat. Tente novamente.');
     }
   };
 
   const handleSendChatMessage = async (agentType: 'lawyer' | 'judge', message: string) => {
     if (!state.simulationId || chatIsSending) return;
+    setChatError(null);
     const userMsg: ChatMessage = { role: 'user', content: message, agentType, agentName: 'Você', timestamp: Date.now() };
     setChatMessages(prev => [...prev, userMsg]);
     setChatIsSending(true);
@@ -831,10 +835,15 @@ const handleGeminiError = (err: any) => {
           if (event.questionsRemaining !== undefined) {
             setChatQuestionsUsed(u => u + 1);
           }
+        } else if (event.type === 'error') {
+          setChatError(event.message ?? 'Erro ao enviar mensagem. Tente novamente.');
+          setChatMessages(prev => prev.slice(0, -1));
         }
       });
     } catch (err) {
       console.error('[Chat] Erro ao enviar mensagem:', err);
+      setChatError('Erro ao enviar mensagem. Tente novamente.');
+      setChatMessages(prev => prev.slice(0, -1));
     } finally {
       setChatIsSending(false);
     }
@@ -1737,6 +1746,8 @@ const handleGeminiError = (err: any) => {
           questionsLimit={chatQuestionsLimit}
           isSending={chatIsSending}
           onSend={handleSendChatMessage}
+          error={chatError}
+          onClearError={() => setChatError(null)}
         />
       )}
 
@@ -3660,6 +3671,17 @@ const handleGeminiError = (err: any) => {
                 Exportar PDF
              </button>
              <div className="w-px bg-white/10"></div>
+             {user && (
+               <>
+                 <button
+                   onClick={handleOpenChat}
+                   className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+                 >
+                   💬 Chat
+                 </button>
+                 <div className="w-px bg-white/10"></div>
+               </>
+             )}
              <button
               onClick={() => window.location.reload()}
               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"

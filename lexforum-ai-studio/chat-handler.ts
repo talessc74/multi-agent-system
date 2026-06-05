@@ -11,6 +11,8 @@ import { notifySpendingCap } from './alerts';
 
 const QUESTIONS_LIMIT = 5;
 
+const chatMessageAttempts = new Map<string, { count: number; resetAt: number }>();
+
 const AREA_MAP: Record<string, string> = {
   CONSUMER: 'consumerista',
   LABOR: 'trabalhista',
@@ -102,6 +104,20 @@ export function registerChatRoutes(
       const decoded = await admin.auth().verifyIdToken(token);
       const uid = decoded.uid;
 
+      // Rate limiting — 10 requests/min per user
+      const now = Date.now();
+      const bucket = chatMessageAttempts.get(uid);
+      if (bucket && now < bucket.resetAt) {
+        if (bucket.count >= 10) {
+          sendSSE(res, 'error', { code: 429, message: 'Muitas solicitações. Aguarde um momento.' });
+          res.end();
+          return;
+        }
+        bucket.count++;
+      } else {
+        chatMessageAttempts.set(uid, { count: 1, resetAt: now + 60_000 });
+      }
+
       // Guard 2 — Ownership
       const simSnap = await adminDb.collection('simulations').doc(simulationId).get();
       if (!simSnap.exists || simSnap.data()?.userId !== uid) {
@@ -136,17 +152,30 @@ export function registerChatRoutes(
       }
       const chatData = chatSnap.data()!;
 
-      // Guard 4 — Question limit
-      const questionsUsed: number = chatData.questionsUsed ?? 0;
-      if (questionsUsed >= QUESTIONS_LIMIT) {
-        sendSSE(res, 'error', { code: 429, message: 'Limite de perguntas atingido para esta sessão.' });
-        res.end();
-        return;
-      }
-
-      // LGPD: mark chat start on first message
-      if (questionsUsed === 0) {
-        await chatRef.update({ chatStartedAt: admin.firestore.FieldValue.serverTimestamp() });
+      // Guard 4 — Question limit (transaction garante atomicidade — previne TOCTOU)
+      let questionsUsedAfter: number;
+      try {
+        questionsUsedAfter = await adminDb.runTransaction(async (tx) => {
+          const snap = await tx.get(chatRef);
+          const used: number = snap.data()?.questionsUsed ?? 0;
+          if (used >= QUESTIONS_LIMIT) throw Object.assign(new Error('LIMIT_REACHED'), { code: 429 });
+          if (used === 0) {
+            tx.update(chatRef, {
+              questionsUsed: admin.firestore.FieldValue.increment(1),
+              chatStartedAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+          } else {
+            tx.update(chatRef, { questionsUsed: admin.firestore.FieldValue.increment(1) });
+          }
+          return used + 1;
+        });
+      } catch (e: any) {
+        if (e.code === 429) {
+          sendSSE(res, 'error', { code: 429, message: 'Limite de perguntas atingido para esta sessão.' });
+          res.end();
+          return;
+        }
+        throw e;
       }
 
       // Resolve agent instruction
@@ -202,10 +231,9 @@ export function registerChatRoutes(
       // Call Gemini
       const agentResponse = await chatWithAgentServer(systemInstruction, history, sanitized);
 
-      // Persist messages + increment counter (atomic batch)
-      const batch = adminDb.batch();
+      // Persist messages — commit ANTES de enviar SSE (previne perda silenciosa se batch falhar)
       const messagesRef = chatRef.collection('messages');
-
+      const batch = adminDb.batch();
       batch.set(messagesRef.doc(), {
         role: 'user',
         content: anonymizeText(sanitized),
@@ -220,12 +248,9 @@ export function registerChatRoutes(
         agentName,
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
-      batch.update(chatRef, {
-        questionsUsed: admin.firestore.FieldValue.increment(1),
-      });
       await batch.commit();
 
-      const questionsRemaining = QUESTIONS_LIMIT - (questionsUsed + 1);
+      const questionsRemaining = QUESTIONS_LIMIT - questionsUsedAfter;
       sendSSE(res, 'message', { agentName, agentType, content: agentResponse, questionsRemaining });
 
     } catch (error: any) {

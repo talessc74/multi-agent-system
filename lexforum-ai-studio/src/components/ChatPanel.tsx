@@ -13,6 +13,8 @@ interface Props {
   messages: ChatMessage[];
   questionsUsed: number;
   questionsLimit: number;
+  error?: string | null;
+  onClearError?: () => void;
   isSending: boolean;
   onSend: (agentType: 'lawyer' | 'judge', message: string) => void;
 }
@@ -31,6 +33,7 @@ export default function ChatPanel({
   sheetState, onSheetChange,
   messages, questionsUsed, questionsLimit,
   isSending, onSend,
+  error, onClearError,
 }: Props) {
   const [selectedAgent, setSelectedAgent] = useState<'lawyer' | 'judge'>('lawyer');
   const [inputValue, setInputValue] = useState('');
@@ -171,7 +174,22 @@ export default function ChatPanel({
         {/* Messages */}
         {sheetState !== 'collapsed' && (
           <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', minHeight: 0 }}>
-            {messages.length === 0 && !isSending && (
+            {/* Error banner */}
+            {error && (
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '10px 14px', borderRadius: '10px',
+                background: 'rgba(255,80,80,0.12)', border: '1px solid rgba(255,80,80,0.35)',
+                flexShrink: 0,
+              }}>
+                <span style={{ fontSize: '13px', color: '#ff6b6b', flex: 1 }}>{error}</span>
+                {onClearError && (
+                  <button onClick={onClearError} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff6b6b', padding: '0 0 0 10px', fontSize: '16px', lineHeight: 1 }}>×</button>
+                )}
+              </div>
+            )}
+
+            {messages.length === 0 && !isSending && questionsRemaining > 0 && (
               <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--text-muted)' }}>
                 <MessageCircle size={22} style={{ margin: '0 auto 10px', opacity: 0.35 }} />
                 <p style={{ fontSize: '13px', margin: '0 0 4px' }}>
@@ -180,6 +198,13 @@ export default function ChatPanel({
                 <p style={{ fontSize: '11px', opacity: 0.6, margin: 0 }}>
                   {questionsRemaining} {questionsRemaining === 1 ? 'pergunta restante' : 'perguntas restantes'}
                 </p>
+              </div>
+            )}
+
+            {questionsRemaining === 0 && messages.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--text-muted)' }}>
+                <MessageCircle size={22} style={{ margin: '0 auto 10px', opacity: 0.35 }} />
+                <p style={{ fontSize: '13px', margin: 0 }}>Limite de perguntas atingido para esta sessão.</p>
               </div>
             )}
 
@@ -269,7 +294,7 @@ export default function ChatPanel({
               Aviso de privacidade — Chat
             </p>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '20px' }}>
-              Suas mensagens são processadas pelo Google Gemini para gerar as respostas dos agentes. O conteúdo é anonimizado antes de ser salvo. Este chat é uma simulação educativa — não substitui orientação jurídica profissional.
+              Suas mensagens são processadas pelo Gemini e anonimizadas antes de serem armazenadas. Este chat é uma simulação educativa — não substitui orientação jurídica profissional.
             </p>
             <button onClick={handlePrivacyAccept} style={{ width: '100%', padding: '14px', background: DOT_COLOR, color: '#000', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', marginBottom: '10px' }}>
               Entendi — Enviar pergunta
