@@ -2386,7 +2386,7 @@ const handleGeminiError = (err: any) => {
                         <div className="flex flex-col gap-1">
                           <button
                             onClick={() => fileInputRef.current?.click()}
-                            className="flex items-center gap-3 px-4 py-2 border border-white/10 rounded-sm hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
+                            className="flex items-center gap-3 px-4 py-2 border border-white/10 hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
                           >
                             <Plus className="w-4 h-4" />
                             <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
