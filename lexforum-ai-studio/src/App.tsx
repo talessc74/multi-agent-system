@@ -816,9 +816,13 @@ const handleGeminiError = (err: any) => {
     if (!code.trim()) { setPromoStatus(null); return; }
     setPromoLoading(true);
     try {
+      const token = user ? await user.getIdToken() : null;
       const res = await fetch('/api/stripe/validate-promo-code', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ code: code.trim().toUpperCase(), mode: state.selectedMode }),
       });
       const data = await res.json();
