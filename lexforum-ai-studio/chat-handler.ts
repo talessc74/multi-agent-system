@@ -46,15 +46,18 @@ export function registerChatRoutes(
         return;
       }
 
+      const userSnap = await adminDb.collection('users').doc(uid).get();
+      const isBeta = userSnap.data()?.accessLevel === 'beta';
+
       const chatSnap = await adminDb.collection('chats').doc(simulationId).get();
       if (!chatSnap.exists) {
-        res.json({ isPaid: false, questionsUsed: 0, questionsLimit: QUESTIONS_LIMIT });
+        res.json({ isPaid: isBeta, questionsUsed: 0, questionsLimit: QUESTIONS_LIMIT });
         return;
       }
 
       const chatData = chatSnap.data()!;
       res.json({
-        isPaid: !!chatData.paidAt,
+        isPaid: isBeta || !!chatData.paidAt,
         questionsUsed: chatData.questionsUsed ?? 0,
         questionsLimit: chatData.questionsLimit ?? QUESTIONS_LIMIT,
       });
@@ -108,13 +111,28 @@ export function registerChatRoutes(
       }
       const simData = simSnap.data()!;
 
-      // Guard 3 — Payment
+      // Guard 2.5 — Beta check
+      const userSnap = await adminDb.collection('users').doc(uid).get();
+      const isBeta = userSnap.data()?.accessLevel === 'beta';
+
+      // Guard 3 — Payment (waived for beta users)
       const chatRef = adminDb.collection('chats').doc(simulationId);
-      const chatSnap = await chatRef.get();
-      if (!chatSnap.exists || !chatSnap.data()?.paidAt) {
+      let chatSnap = await chatRef.get();
+      if (!isBeta && (!chatSnap.exists || !chatSnap.data()?.paidAt)) {
         sendSSE(res, 'error', { code: 402, message: 'Chat não liberado. Efetue o pagamento para continuar.' });
         res.end();
         return;
+      }
+      if (!chatSnap.exists) {
+        await chatRef.set({
+          userId: uid,
+          simulationId,
+          betaAccess: true,
+          questionsUsed: 0,
+          questionsLimit: QUESTIONS_LIMIT,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        chatSnap = await chatRef.get();
       }
       const chatData = chatSnap.data()!;
 
