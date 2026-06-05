@@ -149,6 +149,21 @@ describe('registro por e-mail', () => {
     expect(registerWithEmail).not.toHaveBeenCalled();
   });
 
+  it('chama onSuccess mesmo se registrarAceiteTermos falhar (SV-R3)', async () => {
+    vi.mocked(registerWithEmail).mockResolvedValue({ user: { uid: 'uid-reg' } } as any);
+    vi.mocked(registrarAceiteTermos).mockRejectedValue(new Error('Firestore indisponível'));
+
+    await irParaRegistro();
+    await userEvent.type(screen.getByPlaceholderText('E-mail'), 'novo@teste.com');
+    await userEvent.type(screen.getByPlaceholderText('Senha'), 'senha123');
+    await userEvent.type(screen.getByPlaceholderText('Confirmar senha'), 'senha123');
+    await userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByRole('button', { name: /criar conta/i }));
+
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledOnce());
+    expect(screen.queryByText(/erro ao criar conta/i)).not.toBeInTheDocument();
+  });
+
   it('cria conta e registra aceite ao submeter corretamente', async () => {
     vi.mocked(registerWithEmail).mockResolvedValue({ user: { uid: 'uid-reg' } } as any);
     vi.mocked(registrarAceiteTermos).mockResolvedValue(undefined);
