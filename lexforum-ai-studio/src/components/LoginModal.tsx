@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getAdditionalUserInfo } from 'firebase/auth';
 import { loginWithGoogle, loginWithEmail, registerWithEmail, resetPassword } from '../lib/firebase';
 import { registrarAceiteTermos } from '../services/dbService';
 import { X } from 'lucide-react';
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export default function LoginModal({ onClose, onSuccess }: Props) {
-  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'terms-google'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -17,6 +18,7 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [termosAceitos, setTermosAceitos] = useState(false);
+  const [pendingGoogleUid, setPendingGoogleUid] = useState<string | null>(null);
 
   const resetForm = () => {
     setEmail('');
@@ -35,10 +37,31 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
     setError('');
     setLoading(true);
     try {
-      await loginWithGoogle();
-      onSuccess();
+      const credential = await loginWithGoogle();
+      const info = getAdditionalUserInfo(credential);
+      if (info?.isNewUser) {
+        setPendingGoogleUid(credential.user.uid);
+        setTermosAceitos(false);
+        setMode('terms-google');
+      } else {
+        onSuccess();
+      }
     } catch (e: any) {
       setError(e.message ?? 'Erro ao entrar com Google.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAcceptTermsGoogle = async () => {
+    if (!pendingGoogleUid || !termosAceitos) return;
+    setError('');
+    setLoading(true);
+    try {
+      await registrarAceiteTermos(pendingGoogleUid);
+      onSuccess();
+    } catch (e: any) {
+      setError(e.message ?? 'Erro ao registrar aceite de termos.');
     } finally {
       setLoading(false);
     }
@@ -113,6 +136,7 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
           {mode === 'login' && 'Acesse o EAI?'}
           {mode === 'register' && 'Crie sua conta'}
           {mode === 'forgot' && 'Recuperar senha'}
+          {mode === 'terms-google' && 'Quase lá'}
         </h2>
 
         {/* Login mode */}
@@ -302,6 +326,39 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
                 Entre
               </button>
             </p>
+          </>
+        )}
+
+        {/* Terms acceptance for new Google users */}
+        {mode === 'terms-google' && (
+          <>
+            <p className="text-[12px] text-white/60 leading-relaxed mb-6">
+              Sua conta Google foi criada com sucesso. Para continuar, confirme que leu e aceita nossos termos.
+            </p>
+
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', marginBottom: '16px' }}>
+              <input
+                type="checkbox"
+                checked={termosAceitos}
+                onChange={(e) => setTermosAceitos(e.target.checked)}
+              />
+              Li e aceito os{' '}
+              <a href="/termos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
+                Termos de Uso
+              </a>
+            </label>
+
+            {error && (
+              <p className="text-[10px] text-red-400 leading-relaxed mb-3">{error}</p>
+            )}
+
+            <button
+              onClick={handleAcceptTermsGoogle}
+              disabled={loading || !termosAceitos}
+              className="w-full bg-white text-black text-[11px] font-bold uppercase tracking-widest py-3 hover:bg-white/90 transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Salvando...' : 'Concluir cadastro'}
+            </button>
           </>
         )}
       </div>
