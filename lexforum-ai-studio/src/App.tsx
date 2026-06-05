@@ -79,6 +79,7 @@ import { SessionStatusBar } from './components/SessionStatusBar';
 import { ProgressDots } from './components/ProgressDots';
 import { MODE_CONFIG } from './config/modeConfig';
 import LoginModal from './components/LoginModal';
+import { initiateCheckout } from './services/checkoutService';
 
 const cleanJudgmentText = (text: string) => {
   if (!text) return "";
@@ -769,20 +770,11 @@ const handleGeminiError = (err: any) => {
       return;
     }
     try {
-      const token = await user.getIdToken();
-      const response = await fetch('/api/stripe/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ simulationId: state.simulationId, mode: state.selectedMode }),
-      });
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
+      const url = await initiateCheckout(user, state.simulationId, state.selectedMode);
+      if (url) {
+        window.location.href = url;
       } else {
-        console.error('[Checkout] URL não retornada:', data);
+        console.error('[Checkout] URL não retornada');
       }
     } catch (err) {
       console.error('[Checkout] Erro:', err);
