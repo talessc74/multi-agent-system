@@ -40,34 +40,38 @@ import { getChatStatus, createChatCheckoutSession, sendChatMessage } from './ser
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
   if (!enabled) return <>{text}</>;
-  
-  // Split into chunks to simulate blocks of redacted text
+
   const words = text.split(' ');
+  const visibleCount = Math.ceil(words.length * 0.4); // primeiros 40% sempre visíveis
+
+  const visibleText = words.slice(0, visibleCount).join(' ');
+  const hiddenWords  = words.slice(visibleCount);
+
   const result: React.ReactNode[] = [];
+  if (visibleText) result.push(<span key="visible">{visibleText} </span>);
+
+  // Últimos 60% censurados em blocos determinísticos (sem Math.random)
+  const CHUNK_SIZES = [4, 6, 3, 5, 4, 7, 3];
   let i = 0;
-  
-  while (i < words.length) {
-    // Increase probability of censorship for and ensure chunks are meaningful
-    const isCensored = (i % 7 === 0) || (i % 11 === 0);
-    const chunkSize = isCensored ? Math.floor(Math.random() * 5) + 3 : Math.floor(Math.random() * 4) + 2;
-    const chunk = words.slice(i, i + chunkSize).join(' ');
-    
-    if (isCensored && chunk.length > 3) {
+  let chunkIdx = 0;
+  while (i < hiddenWords.length) {
+    const size  = CHUNK_SIZES[chunkIdx % CHUNK_SIZES.length];
+    const chunk = hiddenWords.slice(i, i + size).join(' ');
+    if (chunk) {
       result.push(
-        <span 
-          key={i} 
+        <span
+          key={`c-${i}`}
           className="bg-black text-black select-none mx-0.5 rounded-none px-1 inline-block leading-none h-[1.1em] align-middle border-y border-white/5 shadow-sm"
           title="CONTEÚDO CENSURADO"
         >
           {chunk.replace(/./g, 'X')}
         </span>
       );
-    } else {
-      result.push(<span key={i}>{chunk} </span>);
     }
-    i += chunkSize;
+    i += size;
+    chunkIdx++;
   }
-  
+
   return <>{result}</>;
 };
 
@@ -1025,6 +1029,7 @@ const handleGeminiError = (err: any) => {
                         {state.mode5Input.subCase === 'RECURSO' ? 'Anexar sentença ou documentos' : 'Anexar proposta ou documentos'}
                       </label>
                       <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
                       {mode5AttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{mode5AttachmentError}</span>}
                     </div>
                   </div>
@@ -1142,6 +1147,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do autor
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
                   {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
@@ -1187,6 +1193,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do réu
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
                   {defenseAttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
                 </div>
               </div>
@@ -1276,6 +1283,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do autor
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
                   {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
@@ -1320,6 +1328,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas do réu
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
                   {defenseAttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
                 </div>
               </div>
@@ -1395,6 +1404,7 @@ const handleGeminiError = (err: any) => {
                     Anexar provas de defesa
                   </button>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
                   {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
@@ -1470,6 +1480,7 @@ const handleGeminiError = (err: any) => {
                     Anexar documentos
                   </button>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
                   {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
@@ -2019,6 +2030,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                         {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
@@ -2069,6 +2081,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                         {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
@@ -2235,6 +2248,7 @@ const handleGeminiError = (err: any) => {
                             <Plus className="w-3 h-3" /> Anexar Sentença ou Documentos
                           </label>
                           <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB · PDF, JPEG ou PNG</span>
+                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                           {mode5AttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{mode5AttachmentError}</span>}
                         </div>
                       </div>
@@ -2356,6 +2370,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                         {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
@@ -2405,6 +2420,7 @@ const handleGeminiError = (err: any) => {
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
                         <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                         {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
@@ -2514,6 +2530,7 @@ const handleGeminiError = (err: any) => {
                             <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
                           </button>
                           <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                           {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                         </div>
                         <div className="w-[1px] h-4 bg-white/10 mx-2"></div>
