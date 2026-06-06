@@ -1618,10 +1618,19 @@ const handleGeminiError = (err: any) => {
               <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '24px', fontStyle: 'italic', color: 'var(--text-primary)', marginBottom: '16px', lineHeight: 1.3 }}>
                 O sistema entendeu sua causa.
               </p>
+              {/* Aviso área não identificada — PR-02 */}
+              {state.detectedArea === 'OTHER' && (
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '16px', flexShrink: 0 }}>🔍</span>
+                  <p style={{ fontSize: '12px', color: '#FBBF24', lineHeight: 1.5, margin: 0 }}>
+                    Área jurídica não identificada com precisão. Você pode continuar ou descrever o caso com mais detalhes.
+                  </p>
+                </div>
+              )}
               {/* Card resumo */}
               {state.caseSummary && (
                 <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '14px', padding: '16px', marginBottom: '16px' }}>
-                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>NÚCLEO CENTRAL</p>
+                  <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>NÚCLEO CENTRAL · GERADO AUTOMATICAMENTE</p>
                   <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{state.caseSummary}</p>
                 </div>
               )}
@@ -1861,8 +1870,11 @@ const handleGeminiError = (err: any) => {
 
       {state.step === 'boardroom' ? (
         <BoardroomPage
-          onEnter={(mode) => setState(prev => ({ ...prev, step: 'input', selectedMode: mode }))}
-          onLogin={() => loginWithGoogle()}
+          onEnter={(mode) => {
+            setState(prev => ({ ...prev, step: 'input', selectedMode: mode }));
+            setPromoCode('');
+            setPromoStatus(null);
+          }}
           onLogout={() => logoutUser()}
           onShowHistory={handleShowHistory}
           user={user}
@@ -2682,6 +2694,17 @@ const handleGeminiError = (err: any) => {
                   </span>
                 </div>
 
+                {/* Aviso área não identificada — PR-02 */}
+                {state.detectedArea === 'OTHER' && (
+                  <div className="flex items-start gap-3 text-left px-5 py-4"
+                    style={{ background: 'rgba(251,191,36,0.07)', border: '1px solid rgba(251,191,36,0.25)', borderRadius: '8px' }}>
+                    <span className="text-lg flex-shrink-0">🔍</span>
+                    <p className="text-sm leading-relaxed" style={{ color: '#FBBF24', margin: 0 }}>
+                      Área jurídica não identificada com precisão. Você pode continuar ou descrever o caso com mais detalhes.
+                    </p>
+                  </div>
+                )}
+
                 <h1 className="text-4xl font-serif italic tracking-tight text-white/90">
                   O sistema entendeu<br />sua causa.
                 </h1>
@@ -2689,7 +2712,7 @@ const handleGeminiError = (err: any) => {
                 {state.caseSummary && (
                   <div className="p-8 shadow-2xl shadow-black/50 mt-8 text-left"
                     style={{ background: '#15161A', borderWidth: '1px 1px 1px 3px', borderStyle: 'solid', borderColor: `rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) ${dcColor}` }}>
-                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-white/30 mb-4 border-b border-white/5 pb-2">Núcleo Central Entendido</h4>
+                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-white/30 mb-4 border-b border-white/5 pb-2">Núcleo Central · Gerado automaticamente</h4>
                     <p className="text-xl font-sans text-white/80 leading-relaxed">
                       "{state.caseSummary}"
                     </p>
