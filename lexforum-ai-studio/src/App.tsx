@@ -79,6 +79,7 @@ import { ContextZone } from './components/ContextZone';
 import { ModeNavbar } from './components/ModeNavbar';
 import { SessionStatusBar } from './components/SessionStatusBar';
 import { ProgressDots } from './components/ProgressDots';
+import { FlowStepper } from './components/FlowStepper';
 import { MODE_CONFIG } from './config/modeConfig';
 import LoginModal from './components/LoginModal';
 import { initiateCheckout } from './services/checkoutService';
@@ -930,6 +931,7 @@ const handleGeminiError = (err: any) => {
             modeName={MODE_CONFIG[5].headline}
             color={MODE_CONFIG[5].color}
           />
+          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[5].color} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -1053,6 +1055,7 @@ const handleGeminiError = (err: any) => {
             modeName={MODE_CONFIG[4].headline}
             color={MODE_CONFIG[4].color}
           />
+          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[4].color} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -1212,6 +1215,7 @@ const handleGeminiError = (err: any) => {
             modeName={MODE_CONFIG[3].headline}
             color={MODE_CONFIG[3].color}
           />
+          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[3].color} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -1344,6 +1348,7 @@ const handleGeminiError = (err: any) => {
             modeName={MODE_CONFIG[2].headline}
             color={MODE_CONFIG[2].color}
           />
+          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[2].color} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -1418,6 +1423,7 @@ const handleGeminiError = (err: any) => {
             modeName={MODE_CONFIG[1].headline}
             color={MODE_CONFIG[1].color}
           />
+          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[1].color} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -1588,6 +1594,7 @@ const handleGeminiError = (err: any) => {
               modeName={MODE_CONFIG[state.selectedMode]?.headline ?? ''}
               color={modeColor}
             />
+            <FlowStepper currentStep="confirm" modeColor={modeColor} />
             <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, padding: '24px 16px 100px', scrollbarWidth: 'none' }}>
               {/* Badge animado */}
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: `rgba(${modeColorRgb},0.12)`, border: `1px solid rgba(${modeColorRgb},0.3)`, borderRadius: '8px', padding: '8px 14px', marginBottom: '16px' }}>
@@ -1930,6 +1937,7 @@ const handleGeminiError = (err: any) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-8"
               >
+                <FlowStepper currentStep="input" modeColor={MODE_CONFIG[4].color} variant="inline" />
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <button
@@ -2103,6 +2111,7 @@ const handleGeminiError = (err: any) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-8"
               >
+                <FlowStepper currentStep="input" modeColor={MODE_CONFIG[5].color} variant="inline" />
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <button
@@ -2280,6 +2289,7 @@ const handleGeminiError = (err: any) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-8"
               >
+                <FlowStepper currentStep="input" modeColor={MODE_CONFIG[3].color} variant="inline" />
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <button
@@ -2423,6 +2433,7 @@ const handleGeminiError = (err: any) => {
                 className="grid grid-cols-12 gap-8 lg:gap-12"
               >
                 <div className="col-span-12 xl:col-span-8 space-y-12">
+                  <FlowStepper currentStep="input" modeColor={MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF'} variant="inline" />
                   <div className="space-y-4">
                     <div className="flex items-center gap-4">
                       <button
@@ -2644,6 +2655,7 @@ const handleGeminiError = (err: any) => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="space-y-8 py-16 text-center max-w-3xl mx-auto"
               >
+                <FlowStepper currentStep="confirm" modeColor={dcColor} variant="inline" />
                 {/* Badge de área — identifica o modo e a área detectada */}
                 <div className="inline-flex items-center gap-2 px-4 py-2"
                   style={{ background: `rgba(${dcColorRgb},0.12)`, border: `1px solid rgba(${dcColorRgb},0.3)` }}>
