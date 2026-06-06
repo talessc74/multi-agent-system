@@ -505,6 +505,7 @@ const handleGeminiError = (err: any) => {
         caseSummary: data.summary,
         selectedProfile: data.detectedProfile || prev.selectedProfile,
         userPole: data.userPole || 'AUTOR',
+        attachmentsUnreadable: attsToValidate.length > 0 && data.documentsReadable === false,
         error: null
       }));
     } catch (err) {
@@ -1606,6 +1607,15 @@ const handleGeminiError = (err: any) => {
                   <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{state.caseSummary}</p>
                 </div>
               )}
+              {/* Aviso documento ilegível — PR-04 */}
+              {state.attachmentsUnreadable && (
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '16px', flexShrink: 0 }}>⚠️</span>
+                  <p style={{ fontSize: '12px', color: '#FBBF24', lineHeight: 1.5, margin: 0 }}>
+                    Um ou mais documentos não puderam ser lidos. A análise pode estar incompleta — verifique se o PDF possui texto selecionável.
+                  </p>
+                </div>
+              )}
               {/* Agentes */}
               <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: modeColor, marginBottom: '8px' }}>AGENTES ESCALADOS</p>
               <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
@@ -2653,6 +2663,17 @@ const handleGeminiError = (err: any) => {
                     <h4 className="text-[10px] uppercase font-bold tracking-widest text-white/30 mb-4 border-b border-white/5 pb-2">Núcleo Central Entendido</h4>
                     <p className="text-xl font-sans text-white/80 leading-relaxed">
                       "{state.caseSummary}"
+                    </p>
+                  </div>
+                )}
+
+                {/* Aviso documento ilegível — PR-04 */}
+                {state.attachmentsUnreadable && (
+                  <div className="flex items-start gap-3 text-left px-5 py-4"
+                    style={{ background: 'rgba(251,191,36,0.07)', border: '1px solid rgba(251,191,36,0.25)', borderRadius: '8px' }}>
+                    <span className="text-lg flex-shrink-0">⚠️</span>
+                    <p className="text-sm leading-relaxed" style={{ color: '#FBBF24', margin: 0 }}>
+                      Um ou mais documentos não puderam ser lidos. A análise pode estar incompleta — verifique se o PDF possui texto selecionável.
                     </p>
                   </div>
                 )}

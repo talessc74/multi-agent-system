@@ -43,6 +43,7 @@ export interface AppState {
   caseSummary: string | null;
   specificJudge: string | null;
   userPole?: 'AUTOR' | 'REU';
+  attachmentsUnreadable?: boolean;
   simulation: SimulationResult | null;
   report: ReportContent | null;
   isUnlocked: boolean;

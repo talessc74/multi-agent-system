@@ -47,6 +47,7 @@ export async function validateCausaServer(caseDescription: string, attachments: 
     2. Verifique se o usuário mencionou um juiz, vara ou comarca específica no relato ou nos documentos. Se sim, extraia, senão null.
     3. Crie um resumo conciso em um ou dois parágrafos do que você entendeu ser o núcleo central do problema/causa. IMPORTANTE: responda SEMPRE em português brasileiro, independentemente do idioma em que a causa foi redigida.
     4. Identifique quem é o usuário nesta ação judicial: se ele é quem MOVE a ação (polo ativo/autor) ou quem RESPONDE à ação (polo passivo/réu). Retorne 'AUTOR' ou 'REU'.
+    5. Se houver documentos anexos, informe se você conseguiu extrair conteúdo útil deles (true = conteúdo legível e relevante extraído; false = documento ilegível, escaneado sem OCR, imagem de baixa qualidade ou sem conteúdo utilizável). Se não houver documentos, retorne null.
 
     Causa: ${caseDescription}`,
     attachments
@@ -66,7 +67,8 @@ export async function validateCausaServer(caseDescription: string, attachments: 
           specificJudge: { type: Type.STRING },
           summary: { type: Type.STRING },
           detectedProfile: { type: Type.STRING },
-          userPole: { type: Type.STRING, description: "AUTOR se o usuário move a ação, REU se o usuário responde à ação" }
+          userPole: { type: Type.STRING, description: "AUTOR se o usuário move a ação, REU se o usuário responde à ação" },
+          documentsReadable: { type: Type.BOOLEAN, nullable: true, description: "true se documentos anexos tinham conteúdo utilizável, false se ilegíveis/sem OCR, null se nenhum documento foi enviado" }
         },
         required: ["area", "summary", "detectedProfile", "userPole"]
       }
@@ -86,7 +88,8 @@ export async function validateCausaServer(caseDescription: string, attachments: 
     specificJudge: parsed.specificJudge || null,
     summary: parsed.summary || null,
     detectedProfile: (parsed.detectedProfile === 'profissional' ? 'profissional' : 'leigo') as 'leigo' | 'profissional',
-    userPole: (parsed.userPole === 'REU' ? 'REU' : 'AUTOR') as 'AUTOR' | 'REU'
+    userPole: (parsed.userPole === 'REU' ? 'REU' : 'AUTOR') as 'AUTOR' | 'REU',
+    documentsReadable: parsed.documentsReadable ?? null
   };
 }
 
