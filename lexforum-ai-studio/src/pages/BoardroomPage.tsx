@@ -70,7 +70,7 @@ const FLOW_STEPS = [
 
 const FOOTER_STATS = [
   { label: 'Base de dados', value: '1.9M+ Precedentes Injetados' },
-  { label: 'Processamento', value: 'EAI_CORES_GEN_3_ANALYSIS' },
+  { label: 'Processamento', value: 'Análise Semântica Multimodal' },
   { label: 'Privacidade', value: 'Criptografia RSA-4096' },
   { label: 'Versão', value: `v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}` },
   { label: 'Contato', value: 'eaijuridico@icloud.com' },
@@ -267,7 +267,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
               ))}
             </div>
             <div className="mt-6">
-              <a href="/termos" className="text-[8px] uppercase tracking-[0.25em] font-bold" style={{ color: 'var(--text-muted)' }}>
+              <a href="/termos" className="text-[11px] uppercase tracking-[0.25em] font-bold" style={{ color: 'var(--text-muted)' }}>
                 Termos de Uso
               </a>
             </div>

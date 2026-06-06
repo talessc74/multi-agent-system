@@ -2649,8 +2649,8 @@ const handleGeminiError = (err: any) => {
                   <div className="bg-[#1C1C1F] border border-white/10 p-6 flex items-center gap-4">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">Rede Descentralizada</span>
-                      <span className="text-[9px] font-mono text-white/30 uppercase">Latency: 42ms / Node: 0xF1..2A</span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">Ambiente de Simulação</span>
+                      <span className="text-[9px] font-mono text-white/30 uppercase">Agentes de IA · EAI?</span>
                     </div>
                   </div>
                 </div>
@@ -2760,7 +2760,9 @@ const handleGeminiError = (err: any) => {
                 <div className="flex justify-between items-end border-b border-white/10 pb-6">
                   <div>
                     <h2 className="text-3xl font-serif italic text-white">Arena de Simulação</h2>
-                    <p className="text-[10px] uppercase font-bold tracking-widest text-white/20 mt-1">Sessão Virtual #72199</p>
+                    <p className="text-[10px] uppercase font-bold tracking-widest text-white/20 mt-1">
+                      Sessão de Simulação{state.simulationId ? ` · ${state.simulationId.slice(-6).toUpperCase()}` : ''}
+                    </p>
                   </div>
                   <div className="flex gap-2">
                     {[1, 2, 3].map(r => (
@@ -3690,7 +3692,7 @@ const handleGeminiError = (err: any) => {
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     <h2 className="text-2xl font-serif italic text-white">Central de Monitoramento de Agentes de IA</h2>
                   </div>
-                  <p className="text-[10px] text-white/30 uppercase tracking-[0.4em] font-bold">EAI? Forge Instance: 0xFD-99 / Latency: 12ms</p>
+                  <p className="text-[10px] text-white/30 uppercase tracking-[0.4em] font-bold">Central de Monitoramento · EAI?</p>
                 </div>
                 <button 
                   onClick={() => setState(prev => ({ ...prev, showForgeMonitor: false }))}
