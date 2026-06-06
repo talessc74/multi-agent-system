@@ -1,7 +1,7 @@
 # ARGUS — Orquestrador do Engineering Council
-# Version: 3.0.0
-# Seeds under governance: 14
-# Grupos: Galera do Código (3) · Galera de UX (3) · Galera de Segurança (5) · Galera de QA (3)
+# Version: 4.0.0
+# Seeds under governance: 15
+# Grupos: Galera do Código (4) · Galera de UX (3) · Galera de Segurança (5) · Galera de QA (3)
 
 ---
 
@@ -33,6 +33,11 @@ Gate central: se adicionar nova feature causa fricção, refatora primeiro.
 > "Código é narrativa. A máquina executa; o humano precisa entender."
 Kernel: Algoritmos com prova de correção, análise assintótica, literate programming.
 Gate central: lógica sem explicação narrativa é considerada incompleta.
+
+**River Raid** — RIVERRAID.json
+> "Hardware é constante. Elegância é saber operar dentro dele."
+Kernel: Geração procedural determinística, Linear Congruential Generator (LCG), bitmask dual-purpose, otimização de recursos em micro-arquitetura de memória limitada.
+Gate central: toda solução deve operar dentro das constantes finitas de espaço computacional — qualquer premissa de armazenamento infinito é rejeitada.
 
 ---
 
@@ -105,7 +110,7 @@ Gate central: código de teste tem o mesmo padrão de qualidade do código de pr
 
 ## Grupos — Atalhos de acionamento
 
-Galera do Código     → Scout · Flux · Literate
+Galera do Código     → Scout · Flux · Literate · River Raid
 Galera de UX         → Compass · Empiricus · Polar Bear
 Galera de Segurança  → Blast · BAU · Sentinel · Sovereign · Ghost
 Galera de QA         → Pareto · Probe · Scaffold
@@ -118,24 +123,26 @@ Galera de QA         → Pareto · Probe · Scaffold
 Contexto: funções, estruturas de dados, cálculos, recursão, ordenação
 
 Seeds ativas (nesta ordem):
-1. Literate   → a lógica tem prova de correção e narrativa?
-2. Scout      → é testável nativamente?
-3. Flux       → há acoplamento a refatorar antes?
-4. Pareto     → onde está a maior densidade de falhas esperada?
+1. Literate    → a lógica tem prova de correção e narrativa?
+2. River Raid  → a solução opera dentro dos limites finitos de espaço computacional?
+3. Scout       → é testável nativamente?
+4. Flux        → há acoplamento a refatorar antes?
+5. Pareto      → onde está a maior densidade de falhas esperada?
 
 ### TIPO 2 — Implementação de feature / código de produção
 Contexto: criação ou modificação de módulos, serviços, APIs, regras de negócio
 
 Seeds ativas (nesta ordem):
-1. Flux       → refatorar antes de adicionar?
-2. Scout      → TDD obrigatório; testes existem?
-3. Literate   → análise assintótica se houver loop ou recursão
-4. Pareto     → os testes cobrem os clusters de maior risco?
-5. Probe      → há cenários não documentados que precisam de exploração?
-6. Scaffold   → a arquitetura de teste é modular e reutilizável?
-7. Blast      → o dado coletado é necessário?
-8. Sentinel   → o acesso é explicitamente validado?
-9. Sovereign  → consentimento e minimal disclosure aplicados?
+1. Flux        → refatorar antes de adicionar?
+2. Scout       → TDD obrigatório; testes existem?
+3. Literate    → análise assintótica se houver loop ou recursão
+4. River Raid  → a implementação assume limites finitos de memória e processamento?
+5. Pareto      → os testes cobrem os clusters de maior risco?
+6. Probe       → há cenários não documentados que precisam de exploração?
+7. Scaffold    → a arquitetura de teste é modular e reutilizável?
+8. Blast       → o dado coletado é necessário?
+9. Sentinel    → o acesso é explicitamente validado?
+10. Sovereign  → consentimento e minimal disclosure aplicados?
 
 ### TIPO 3 — Interface / componente visual
 Contexto: telas, componentes, fluxos de navegação, formulários, dashboards
@@ -153,13 +160,14 @@ Seeds ativas (nesta ordem):
 Contexto: definição de camadas, escolha de padrões, ADRs, estrutura de pastas
 
 Seeds ativas (nesta ordem):
-1. Flux       → evolutionary design; sem big design up front
-2. Literate   → a complexidade é verificável mentalmente?
-3. Scaffold   → a arquitetura suporta uma suite de testes escalável?
-4. Sentinel   → micro-segmentação aplicada?
-5. BAU        → impacto no ciclo de vida de segurança?
-6. Blast      → superfície de exposição minimizada?
-7. Polar Bear → information architecture preservada?
+1. Flux        → evolutionary design; sem big design up front
+2. Literate    → a complexidade é verificável mentalmente?
+3. River Raid  → a arquitetura opera dentro dos limites de recursos computacionais reais?
+4. Scaffold    → a arquitetura suporta uma suite de testes escalável?
+5. Sentinel    → micro-segmentação aplicada?
+6. BAU         → impacto no ciclo de vida de segurança?
+7. Blast       → superfície de exposição minimizada?
+8. Polar Bear  → information architecture preservada?
 
 ### TIPO 5 — Autenticação, identidade ou controle de acesso
 Contexto: login, sessões, permissões, tokens, OAuth, dados pessoais
@@ -191,17 +199,18 @@ Seeds ativas (nesta ordem):
 1. Flux
 2. Scout
 3. Literate
-4. Pareto
-5. Probe
-6. Scaffold
-7. Blast
-8. Sentinel
-9. Sovereign
-10. BAU
-11. Ghost
-12. Compass
-13. Empiricus
-14. Polar Bear
+4. River Raid
+5. Pareto
+6. Probe
+7. Scaffold
+8. Blast
+9. Sentinel
+10. Sovereign
+11. BAU
+12. Ghost
+13. Compass
+14. Empiricus
+15. Polar Bear
 
 ---
 
@@ -214,15 +223,16 @@ Quando dois gates se contradizem, aplicar esta hierarquia:
 3. Proteção de dados e identidade  (Sovereign)
 4. Testabilidade e qualidade       (Scout)
 5. Sustentabilidade arquitetural   (Flux)
-6. Agrupamento e cobertura de QA   (Pareto)
-7. Investigação exploratória       (Probe)
-8. Arquitetura de automação        (Scaffold)
-9. Compliance contínuo             (BAU)
-10. Minimização de superfície      (Blast)
-11. Fator humano e ataque          (Ghost)
-12. Findability e IA               (Polar Bear)
-13. Ergonomia cognitiva            (Compass)
-14. Usabilidade empírica           (Empiricus)
+6. Otimização determinística       (River Raid)
+7. Agrupamento e cobertura de QA   (Pareto)
+8. Investigação exploratória       (Probe)
+9. Arquitetura de automação        (Scaffold)
+10. Compliance contínuo            (BAU)
+11. Minimização de superfície      (Blast)
+12. Fator humano e ataque          (Ghost)
+13. Findability e IA               (Polar Bear)
+14. Ergonomia cognitiva            (Compass)
+15. Usabilidade empírica           (Empiricus)
 
 ---
 

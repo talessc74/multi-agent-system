@@ -41,7 +41,7 @@ ativas para aquele tipo de tarefa.
 ## Como acionar
 
 - "Argus, revisa este código" → Argus roteia para as seeds corretas
-- "Argus, chama a galera do código" → ativa Scout · Flux · Literate
+- "Argus, chama a galera do código" → ativa Scout · Flux · Literate · River Raid
 - "Argus, chama a galera de UX" → ativa Compass · Empiricus · Polar Bear
 - "Argus, chama a galera de segurança" → ativa Blast · BAU · Sentinel · Sovereign · Ghost
 - "Argus, chama a galera de QA" → ativa Pareto · Probe · Scaffold
@@ -54,6 +54,7 @@ ativas para aquele tipo de tarefa.
 - .seeds/SCOUT.json       → Clean Code, TDD, responsabilidade profissional
 - .seeds/FLUX.json        → Evolutionary Design, refatoração contínua
 - .seeds/LITERATE.json    → Algoritmos, análise assintótica, narrativa antes de execução
+- .seeds/RIVERRAID.json   → Geração procedural determinística, LCG, otimização de recursos em espaço finito
 
 ### Galera de UX
 - .seeds/COMPASS.json     → Human-Centered Design, affordances, feedback cognitivo
