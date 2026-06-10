@@ -10,6 +10,7 @@ import Stripe from 'stripe';
 import { setupSSE, sendSSE } from './sse-utils';
 import { notifySpendingCap } from './alerts';
 import { registerChatRoutes } from './chat-handler';
+import { randomUUID } from 'crypto';
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -57,7 +58,16 @@ async function startServer() {
     const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide } =
       req.body;
 
+    const sessionId = randomUUID();
     const send = (event: string, data: object) => sendSSE(res, event, data);
+
+    adminDb.collection('simRecovery').doc(sessionId).set({
+      sessionId,
+      status: 'pending',
+      mode: mode ?? 1,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+    }).catch(() => {});
 
     const areaMap: Record<string, string> = {
       CONSUMER: 'consumerista',
@@ -107,7 +117,7 @@ async function startServer() {
       area === 'FAMILY' ? 'de Família' :
       area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'
     }`;
-    send('agents', { lawyerName: lawyerDisplayName, judgeName: judgeNameFromRegistry ?? `Magistrado Especializado` });
+    send('agents', { lawyerName: lawyerDisplayName, judgeName: judgeNameFromRegistry ?? `Magistrado Especializado`, sessionId });
 
     try {
       const data = await simulateForumServer(
@@ -125,10 +135,18 @@ async function startServer() {
         userSide
       );
       send('done', data);
+      adminDb.collection('simRecovery').doc(sessionId).update({
+        status: 'complete',
+        result: data,
+      }).catch(() => {});
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
         await notifySpendingCap('/api/gemini/simulate');
       }
+      adminDb.collection('simRecovery').doc(sessionId).update({
+        status: 'error',
+        errorMessage: error.message || 'Unknown error',
+      }).catch(() => {});
       send('error', { message: error.message || 'Unknown error' });
     } finally {
       res.end();

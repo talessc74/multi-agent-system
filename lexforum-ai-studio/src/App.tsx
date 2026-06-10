@@ -32,7 +32,7 @@ import { SimulationResult, ReportContent, AppState, Attachment, Mode5Input, Mode
 import { validateCausa, simulateForum, generateReport, simulateMode5, generateCounterHypotheses, expandHypothesis } from './lib/gemini';
 import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { getStats, getAreaStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo } from './services/dbService';
+import { getStats, getAreaStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo, subscribeSimRecovery, getSimRecovery } from './services/dbService';
 import TermosPage from './pages/TermosPage';
 import ChatPanel, { SheetState } from './components/ChatPanel';
 import { getChatStatus, createChatCheckoutSession, sendChatMessage } from './services/chatService';
@@ -372,6 +372,9 @@ export default function App() {
 
 const [loading, setLoading] = useState(false);
 const [retryCount, setRetryCount] = useState(0);
+const recoverySessionIdRef = useRef<string | null>(null);
+const simAbortRef = useRef<AbortController | null>(null);
+const recoveryUnsubRef = useRef<(() => void) | null>(null);
 const [isExpandingHypothesis, setIsExpandingHypothesis] = useState(false);
 const [chatSheetState, setChatSheetState] = useState<SheetState>('closed');
 const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -419,17 +422,21 @@ const handleGeminiError = (err: any) => {
   }
 
   if (err?.message === 'MAX_RETRIES_EXCEEDED') {
-    setState(prev => ({
-      ...prev,
-      step: 'input',
-      error: {
-        code: 503,
-        message: 'Sua conexão caiu durante a simulação. Tentamos reconectar 3 vezes sem sucesso. Seus dados estão preservados — clique em Tentar Novamente.',
-        isQuota: false,
-        isRetryable: true
-      }
-    }));
-    setRetryCount(0);
+    if (recoverySessionIdRef.current) {
+      startRecovery(recoverySessionIdRef.current);
+    } else {
+      setState(prev => ({
+        ...prev,
+        step: 'input',
+        error: {
+          code: 503,
+          message: 'Sua conexão caiu durante a simulação. Tentamos reconectar 3 vezes sem sucesso. Seus dados estão preservados — clique em Tentar Novamente.',
+          isQuota: false,
+          isRetryable: true
+        }
+      }));
+      setRetryCount(0);
+    }
     return;
   }
 
@@ -443,12 +450,97 @@ const handleGeminiError = (err: any) => {
   }));
 };
 
+const displayRecoveredResult = async (result: SimulationResult) => {
+  simAbortRef.current?.abort();
+  recoveryUnsubRef.current?.();
+  recoveryUnsubRef.current = null;
+
+  let bestRound = result.rounds[0];
+  for (const round of result.rounds) {
+    if (round.successProbability >= bestRound.successProbability) bestRound = round;
+  }
+  const finalData = { ...result, finalSuccessProbability: bestRound.successProbability };
+  setState(prev => ({ ...prev, simulation: finalData }));
+
+  let reportData = null;
+  try {
+    reportData = await generateReport(bestRound.lawyerPetition, bestRound.judgeJudgment);
+  } catch {}
+
+  setState(prev => ({ ...prev, step: 'result', report: reportData, error: null, simStep: 'IDLE' }));
+  setLoading(false);
+  setRetryCount(0);
+
+  try {
+    const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
+    if (simId) setState(prev => ({ ...prev, simulationId: simId }));
+  } catch {}
+};
+
+const startRecovery = (sessionId: string) => {
+  setState(prev => ({ ...prev, simStep: 'RECOVERING' }));
+  setRetryCount(0);
+
+  const unsubscribe = subscribeSimRecovery(sessionId, (status, result) => {
+    if (status === 'complete' && result) {
+      displayRecoveredResult(result as SimulationResult);
+    } else if (status === 'error') {
+      recoveryUnsubRef.current?.();
+      recoveryUnsubRef.current = null;
+      handleGeminiError(new Error('Simulação encerrada com erro no servidor.'));
+      setLoading(false);
+    }
+  });
+
+  recoveryUnsubRef.current = unsubscribe;
+
+  setTimeout(() => {
+    if (recoveryUnsubRef.current) {
+      recoveryUnsubRef.current();
+      recoveryUnsubRef.current = null;
+      setState(prev => {
+        if (prev.step === 'simulating') {
+          return {
+            ...prev,
+            step: 'input',
+            error: {
+              code: 503,
+              message: 'Sua conexão caiu durante a simulação. Não foi possível recuperar o resultado. Seus dados estão preservados — tente novamente.',
+              isQuota: false,
+              isRetryable: true
+            }
+          };
+        }
+        return prev;
+      });
+      setLoading(false);
+    }
+  }, 5 * 60 * 1000);
+};
+
   // Auto-scroll simulation rounds
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [state.simulation?.rounds]);
+
+  // Safari recovery: when user returns to the app, check Firestore immediately
+  useEffect(() => {
+    const handleVisibility = async () => {
+      if (document.visibilityState !== 'visible') return;
+      if (state.step !== 'simulating') return;
+      const sessionId = recoverySessionIdRef.current;
+      if (!sessionId) return;
+
+      const recovery = await getSimRecovery(sessionId);
+      if (recovery?.status === 'complete' && recovery.result) {
+        displayRecoveredResult(recovery.result as SimulationResult);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [state.step]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -603,6 +695,10 @@ const handleGeminiError = (err: any) => {
       }
       return;
     }
+    recoverySessionIdRef.current = null;
+    recoveryUnsubRef.current?.();
+    recoveryUnsubRef.current = null;
+    simAbortRef.current = new AbortController();
     setLoading(true);
     setState(prev => ({
       ...prev,
@@ -631,6 +727,10 @@ const handleGeminiError = (err: any) => {
                 seeds: newStats[idx].seeds + 1,
                 active: newStats[idx].active + 1
               };
+            }
+
+            if (step === 'SEED_CREATED' && progressData?.sessionId) {
+              recoverySessionIdRef.current = progressData.sessionId;
             }
 
             // Update agents list when they transition to visible roles
@@ -675,7 +775,8 @@ const handleGeminiError = (err: any) => {
         state.defenseDescription,
         state.defenseAttachments,
         state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR'),
-        (attempt) => { setRetryCount(attempt); }
+        (attempt) => { setRetryCount(attempt); },
+        simAbortRef.current?.signal
       );
       if (!data.rounds || data.rounds.length === 0) {
         throw new Error('Simulação retornou sem rodadas. Tente novamente.');
@@ -729,11 +830,14 @@ const handleGeminiError = (err: any) => {
         winRate: Number(newStatsResult.winRate.toFixed(1)),
         precision: 98.4
       });
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.message === 'SIMULATION_ABORTED') return;
       handleGeminiError(err);
-      setState(prev => ({ ...prev, step: 'input' }));
+      if (err?.message !== 'MAX_RETRIES_EXCEEDED') {
+        setState(prev => ({ ...prev, step: 'input' }));
+      }
     } finally {
-      setLoading(false);
+      if (!recoveryUnsubRef.current) setLoading(false);
     }
   };
 
@@ -2895,7 +2999,17 @@ const handleGeminiError = (err: any) => {
                     </div>
                   ))}
                   
-                  {retryCount > 0 && (
+                  {state.simStep === 'RECOVERING' && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex items-center gap-3 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest"
+                    >
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      Verificando sua simulação...
+                    </motion.div>
+                  )}
+                  {retryCount > 0 && state.simStep !== 'RECOVERING' && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
