@@ -375,6 +375,7 @@ const [retryCount, setRetryCount] = useState(0);
 const recoverySessionIdRef = useRef<string | null>(null);
 const simAbortRef = useRef<AbortController | null>(null);
 const recoveryUnsubRef = useRef<(() => void) | null>(null);
+const isRecoveringRef = useRef(false);
 const [isExpandingHypothesis, setIsExpandingHypothesis] = useState(false);
 const [chatSheetState, setChatSheetState] = useState<SheetState>('closed');
 const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -451,30 +452,39 @@ const handleGeminiError = (err: any) => {
 };
 
 const displayRecoveredResult = async (result: SimulationResult) => {
+  // Guarda de concorrência: impede double-call via visibilitychange + onSnapshot simultâneos
+  if (isRecoveringRef.current) return;
+  if (!result?.rounds?.length) return;
+  isRecoveringRef.current = true;
+
   simAbortRef.current?.abort();
   recoveryUnsubRef.current?.();
   recoveryUnsubRef.current = null;
 
-  let bestRound = result.rounds[0];
-  for (const round of result.rounds) {
-    if (round.successProbability >= bestRound.successProbability) bestRound = round;
+  try {
+    let bestRound = result.rounds[0];
+    for (const round of result.rounds) {
+      if (round.successProbability >= bestRound.successProbability) bestRound = round;
+    }
+    const finalData = { ...result, finalSuccessProbability: bestRound.successProbability };
+    setState(prev => ({ ...prev, simulation: finalData }));
+
+    let reportData = null;
+    try {
+      reportData = await generateReport(bestRound.lawyerPetition, bestRound.judgeJudgment);
+    } catch {}
+
+    setState(prev => ({ ...prev, step: 'result', report: reportData, error: null, simStep: 'IDLE' }));
+    setLoading(false);
+    setRetryCount(0);
+
+    try {
+      const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
+      if (simId) setState(prev => ({ ...prev, simulationId: simId }));
+    } catch {}
+  } finally {
+    isRecoveringRef.current = false;
   }
-  const finalData = { ...result, finalSuccessProbability: bestRound.successProbability };
-  setState(prev => ({ ...prev, simulation: finalData }));
-
-  let reportData = null;
-  try {
-    reportData = await generateReport(bestRound.lawyerPetition, bestRound.judgeJudgment);
-  } catch {}
-
-  setState(prev => ({ ...prev, step: 'result', report: reportData, error: null, simStep: 'IDLE' }));
-  setLoading(false);
-  setRetryCount(0);
-
-  try {
-    const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
-    if (simId) setState(prev => ({ ...prev, simulationId: simId }));
-  } catch {}
 };
 
 const startRecovery = (sessionId: string) => {
@@ -720,6 +730,7 @@ const startRecovery = (sessionId: string) => {
     recoverySessionIdRef.current = null;
     recoveryUnsubRef.current?.();
     recoveryUnsubRef.current = null;
+    isRecoveringRef.current = false;
     simAbortRef.current = new AbortController();
     setLoading(true);
     setState(prev => ({
@@ -751,7 +762,8 @@ const startRecovery = (sessionId: string) => {
               };
             }
 
-            if (step === 'SEED_CREATED' && progressData?.sessionId) {
+            // Só captura o sessionId da primeira tentativa — retries geram novas sessões no servidor
+            if (step === 'SEED_CREATED' && progressData?.sessionId && !recoverySessionIdRef.current) {
               recoverySessionIdRef.current = progressData.sessionId;
             }
 
