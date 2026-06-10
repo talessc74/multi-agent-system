@@ -542,6 +542,28 @@ const startRecovery = (sessionId: string) => {
     return () => document.removeEventListener('visibilitychange', handleVisibility);
   }, [state.step]);
 
+  // Wake Lock: impede a tela de apagar durante a simulação (Safari 16.4+)
+  useEffect(() => {
+    if (!('wakeLock' in navigator)) return;
+    let lock: WakeLockSentinel | null = null;
+
+    const acquire = async () => {
+      try { lock = await (navigator as any).wakeLock.request('screen'); } catch {}
+    };
+    const release = () => { lock?.release().catch(() => {}); lock = null; };
+
+    if (state.step === 'simulating') {
+      acquire();
+      // Re-acquire após retorno de background (Wake Lock é liberado automaticamente)
+      document.addEventListener('visibilitychange', acquire);
+    } else {
+      release();
+      document.removeEventListener('visibilitychange', acquire);
+    }
+
+    return () => { release(); document.removeEventListener('visibilitychange', acquire); };
+  }, [state.step]);
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
