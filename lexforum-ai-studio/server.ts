@@ -10,6 +10,7 @@ import Stripe from 'stripe';
 import { setupSSE, sendSSE } from './sse-utils';
 import { notifySpendingCap } from './alerts';
 import { registerChatRoutes } from './chat-handler';
+import { scheduleGeminiQuotaCheck, recordGeminiCall } from './gemini-quota-monitor';
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -52,7 +53,7 @@ async function startServer() {
   });
 
   app.post("/api/gemini/simulate", async (req, res) => {
-    setupSSE(res);
+    const sseTimer = setupSSE(res);
 
     const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide } =
       req.body;
@@ -124,6 +125,7 @@ async function startServer() {
         },
         userSide
       );
+      recordGeminiCall(0.10);
       send('done', data);
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
@@ -131,6 +133,7 @@ async function startServer() {
       }
       send('error', { message: error.message || 'Unknown error' });
     } finally {
+      clearTimeout(sseTimer);
       res.end();
     }
   });
@@ -139,6 +142,7 @@ async function startServer() {
     try {
       const { lastPetition, lastJudgment } = req.body;
       const data = await generateReportServer(lastPetition, lastJudgment);
+      recordGeminiCall(0.05);
       res.json(data);
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
@@ -181,7 +185,7 @@ async function startServer() {
   });
 
   app.post("/api/gemini/mode5", async (req, res) => {
-    setupSSE(res);
+    const sseTimer = setupSSE(res);
 
     const { mode5Input, area, attachments, specificJudge } = req.body;
 
@@ -223,7 +227,7 @@ async function startServer() {
         (step: string, data?: any) => {
           console.log(`[Mode5] ${step}`);
           send('progress', { step });
-          if (step === 'DONE' && data) send('done', data);
+          if (step === 'DONE' && data) { recordGeminiCall(0.10); send('done', data); }
         }
       );
     } catch (error: any) {
@@ -233,6 +237,7 @@ async function startServer() {
       console.error('[Mode5] Erro:', error);
       send('error', { message: error.message || 'Unknown error' });
     } finally {
+      clearTimeout(sseTimer);
       res.end();
     }
   });
@@ -240,6 +245,48 @@ async function startServer() {
   registerChatRoutes(app, adminDb);
 
   app.use('/simulation', simulationStatus);
+
+  // ── Admin — Set accessLevel (server-only, requires ADMIN_SECRET) ─
+  app.post('/api/admin/set-access-level', async (req, res) => {
+    const secret = req.headers['x-admin-secret'];
+    if (!secret || secret !== process.env.ADMIN_SECRET) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { targetUid, newLevel, reason } = req.body as {
+      targetUid?: string;
+      newLevel?: string;
+      reason?: string;
+    };
+    const VALID_LEVELS = ['free', 'beta'] as const;
+    if (!targetUid || !newLevel || !VALID_LEVELS.includes(newLevel as any)) {
+      res.status(400).json({ error: 'targetUid, newLevel (free|beta) são obrigatórios' });
+      return;
+    }
+    try {
+      const userRef = adminDb.collection('users').doc(targetUid);
+      const snap = await userRef.get();
+      if (!snap.exists) {
+        res.status(404).json({ error: 'Usuário não encontrado' });
+        return;
+      }
+      const previousLevel = snap.data()?.accessLevel ?? 'free';
+      await userRef.update({ accessLevel: newLevel });
+      await adminDb.collection('accessLevelAuditLog').add({
+        targetUid,
+        previousLevel,
+        newLevel,
+        reason: reason ?? null,
+        changedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      console.log(`[Admin] accessLevel alterado — uid: ${targetUid}, ${previousLevel} → ${newLevel}`);
+      res.json({ ok: true, targetUid, previousLevel, newLevel });
+    } catch (err: any) {
+      console.error('[Admin] set-access-level error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  // ────────────────────────────────────────────────────────────
 
   // ── Stripe Promo Code Validation ────────────────────────────────
   const promoValidateAttempts = new Map<string, { count: number; resetAt: number }>();
@@ -517,6 +564,8 @@ async function startServer() {
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
+
+  scheduleGeminiQuotaCheck();
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`>>> EAI? SERVER READY ON PORT ${PORT} <<<`);

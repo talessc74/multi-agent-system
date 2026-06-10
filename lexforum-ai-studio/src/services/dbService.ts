@@ -85,6 +85,10 @@ export const saveSimulation = async (
 
   let simulationId: string | null = null;
 
+  // Anonymous simulations (userId === null) expire after 30 days via Firestore TTL
+  const ANON_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+  const expireAt = userId === null ? new Date(Date.now() + ANON_TTL_MS) : null;
+
   try {
     const docRef = await addDoc(collection(db, 'simulations'), sanitize({
       userId,
@@ -98,7 +102,8 @@ export const saveSimulation = async (
       report: anon.report,
       mode5Result: mode5Result ?? null,
       isWin,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+      ...(expireAt ? { expireAt } : {}),
     }));
     simulationId = docRef.id;
   } catch (error) {

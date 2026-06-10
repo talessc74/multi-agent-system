@@ -71,7 +71,7 @@ export function registerChatRoutes(
 
   // Sends a message to the lawyer or judge — SSE stream
   app.post('/api/chat/message', async (req: Request, res: Response) => {
-    setupSSE(res);
+    const sseTimer = setupSSE(res);
 
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
@@ -260,6 +260,7 @@ export function registerChatRoutes(
       console.error('[Chat] Erro:', error);
       sendSSE(res, 'error', { message: error.message || 'Erro interno' });
     } finally {
+      clearTimeout(sseTimer);
       res.end();
     }
   });
