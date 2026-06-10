@@ -291,9 +291,12 @@ export async function simulateForumServer(
 
     onProgress?.('DELIVERING', i);
     onProgress?.('JUDGING', i);
+    const juiPromptText = mode === 2
+      ? `Avalie tecnicamente a solidez dos argumentos de DEFESA apresentados. Retorne um JSON com: {"success_probability":<0-100>,"judgment":"<sua decisão completa aqui>"} onde success_probability é a probabilidade de êxito do RÉU (defesa), de 0 a 100.\n\nContestação: ${currentPetition}`
+      : `Avalie tecnicamente a solidez dos argumentos apresentados. Retorne um JSON com: {"success_probability":<0-100>,"judgment":"<sua decisão completa aqui>"} onde success_probability é a probabilidade de êxito do AUTOR, de 0 a 100.\n\nPetição: ${currentPetition}`;
     const juiRes: GenerateContentResponse = await ai.models.generateContent({
       model: MODEL_NAME,
-      contents: [{ role: 'user', parts: [{ text: `Avalie tecnicamente a solidez dos argumentos apresentados. Retorne um JSON com: {"success_probability":<0-100>,"judgment":"<sua decisão completa aqui>"}\n\nPetição: ${currentPetition}` }] }],
+      contents: [{ role: 'user', parts: [{ text: juiPromptText }] }],
       config: {
         systemInstruction: judgeInstruction,
         responseMimeType: 'application/json'
@@ -303,7 +306,7 @@ export async function simulateForumServer(
     let juiParsed: any = {};
     try { juiParsed = JSON.parse(juiText); } catch {}
     currentJudgment = juiParsed.judgment || juiText;
-    lastProb = juiParsed.success_probability ?? extractProbability(juiText);
+    lastProb = typeof juiParsed.success_probability === 'number' ? juiParsed.success_probability : extractProbability(juiText);
 
     onProgress?.('REVIEWING', i);
     const briefRes: GenerateContentResponse = await ai.models.generateContent({
