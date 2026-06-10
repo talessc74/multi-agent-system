@@ -11,8 +11,8 @@ Decisions here override all other scopes.
 
 ## Content
 
-No decisions archived yet. Policies will appear here as ARGUS deliberations converge
-and are validated by the project team.
+**12 policies arquivadas** — primeira deliberação ARGUS completa em 2026-06-10.
+Todas as 17 seeds participaram. Validação humana pendente.
 
 ## How to add a policy
 
