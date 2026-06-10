@@ -293,13 +293,17 @@ export async function simulateForumServer(
     onProgress?.('JUDGING', i);
     const juiRes: GenerateContentResponse = await ai.models.generateContent({
       model: MODEL_NAME,
-      contents: [{ role: 'user', parts: [{ text: `Avalie tecnicamente a solidez dos argumentos apresentados e ao final da sua decisão inclua OBRIGATORIAMENTE o seguinte JSON: {"success_probability": <0-100>} onde o número representa sua estimativa da chance de êxito do autor.\n\nPetição: ${currentPetition}` }] }],
+      contents: [{ role: 'user', parts: [{ text: `Avalie tecnicamente a solidez dos argumentos apresentados. Retorne um JSON com: {"success_probability":<0-100>,"judgment":"<sua decisão completa aqui>"}\n\nPetição: ${currentPetition}` }] }],
       config: {
-        systemInstruction: judgeInstruction
+        systemInstruction: judgeInstruction,
+        responseMimeType: 'application/json'
       }
     });
-    currentJudgment = juiRes.text || "";
-    lastProb = extractProbability(currentJudgment);
+    const juiText = juiRes.text || '{}';
+    let juiParsed: any = {};
+    try { juiParsed = JSON.parse(juiText); } catch {}
+    currentJudgment = juiParsed.judgment || juiText;
+    lastProb = juiParsed.success_probability ?? extractProbability(juiText);
 
     onProgress?.('REVIEWING', i);
     const briefRes: GenerateContentResponse = await ai.models.generateContent({
