@@ -88,6 +88,15 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // simRecovery — written only via server Admin SDK, UUID is the access key
+    match /simRecovery/{sessionId} {
+      allow read: if (resource.data.userId != null
+                      && request.auth != null
+                      && resource.data.userId == request.auth.uid)
+                  || resource.data.userId == null;
+      allow write: if false;
+    }
+
     // chats collection — created and updated only via Admin SDK (server)
     match /chats/{simulationId} {
       allow read: if isSignedIn() &&

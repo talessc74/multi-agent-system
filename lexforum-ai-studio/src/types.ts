@@ -48,7 +48,7 @@ export interface AppState {
   report: ReportContent | null;
   isUnlocked: boolean;
   simulationId: string | null;
-  simStep: 'IDLE' | 'WRITING' | 'DELIVERING' | 'JUDGING' | 'REVIEWING' | 'SEED_CREATED';
+  simStep: 'IDLE' | 'WRITING' | 'DELIVERING' | 'JUDGING' | 'REVIEWING' | 'SEED_CREATED' | 'RECOVERING';
   selectedProfile: 'leigo' | 'profissional';
   regionalStats: { region: string; seeds: number; active: number }[];
   activeAgents: { name: string; type: string; id: string }[];
