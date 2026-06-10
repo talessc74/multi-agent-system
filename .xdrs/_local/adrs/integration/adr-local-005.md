@@ -13,7 +13,7 @@ authors: [SENTINEL, BLAST, BAU, SOVEREIGN, GHOST, SCOUT, SCRIBE, HERALD]
 
 ## Contexto
 
-O EAI? usa Stripe para processamento de pagamentos de laudos (R$ 9,90 / R$ 5,90) e
+O EAI? Jurídico (Evidence-Based AI) usa Stripe para processamento de pagamentos de laudos (R$ 9,90 / R$ 5,90) e
 chat pós-sessão (R$ 2,99). O webhook Stripe é recebido pelo servidor Express e valida
 o estado do pagamento antes de atualizar o Firestore via Admin SDK. O cliente nunca
 grava diretamente no Firestore para confirmar pagamento.

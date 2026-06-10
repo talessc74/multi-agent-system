@@ -13,7 +13,7 @@ authors: [COMPASS, EMPIRICUS, POLARBEAR, SOVEREIGN, BLAST, SCOUT, SCRIBE, HERALD
 
 ## Contexto
 
-O EAI? tem três produtos pagos via Stripe e um nível de acesso especial (beta).
+O EAI? Jurídico (Evidence-Based AI) tem três produtos pagos via Stripe e um nível de acesso especial (beta).
 Os preços são fixos em BRL. Usuários beta (`accessLevel='beta'` no Firestore) passam
 por todas as features sem pagamento. O campo `accessLevel` é gerenciado exclusivamente
 pelo servidor via Admin SDK — nenhum usuário pode alterar seu próprio `accessLevel`.

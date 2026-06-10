@@ -13,7 +13,7 @@ authors: [SCOUT, LITERATE, RIVERRAID, SENTINEL, COMPASS, EMPIRICUS, SCAFFOLD, SC
 
 ## Contexto
 
-O EAI? usa Server-Sent Events (SSE) para transmitir respostas do Gemini em tempo real
+O EAI? Jurídico (Evidence-Based AI) usa Server-Sent Events (SSE) para transmitir respostas do Gemini em tempo real
 para o frontend. O utilitário `sse-utils.ts` centraliza `setupSSE()` e `sendSSE()`.
 O sistema tem tratamento especial para Safari mobile (SSE retry). O chat pós-sessão
 também usa SSE via `/api/chat/message`.

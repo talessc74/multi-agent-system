@@ -13,7 +13,7 @@ authors: [SCOUT, FLUX, LITERATE, RIVERRAID, SENTINEL, SOVEREIGN, GHOST, COMPASS,
 
 ## Contexto
 
-O EAI? opera com múltiplos agentes jurídicos especializados (juízes, advogados, consultores)
+O EAI? Jurídico (Evidence-Based AI) opera com múltiplos agentes jurídicos especializados (juízes, advogados, consultores)
 instanciados sob demanda. Os agentes são criados via `agent-creator.ts`, resolvidos via
 `agent-resolver.ts` e registrados em `AGENTS_REGISTRY.json`. Cada agente tem um arquivo
 JSON de definição com persona, jurisdição e instruções de comportamento.

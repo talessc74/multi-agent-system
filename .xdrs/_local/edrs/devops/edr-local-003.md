@@ -13,7 +13,7 @@ authors: [RIVERRAID, BAU, BLAST, SENTINEL, SCOUT, SCRIBE, HERALD]
 
 ## Contexto
 
-O EAI? depende da API Gemini com conta de faturamento ("Minha conta de faturamento",
+O EAI? Jurídico (Evidence-Based AI) depende da API Gemini com conta de faturamento ("Minha conta de faturamento",
 saldo R$100 adicionado em 04/06/2026). O sistema já tem alerta de quota por email via
 Resend (`alerts.ts`). O endpoint `notifySpendingCap()` é chamado em caso de
 `RESOURCE_EXHAUSTED` (HTTP 429) em chamadas ao Gemini.

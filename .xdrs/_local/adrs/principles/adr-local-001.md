@@ -13,7 +13,7 @@ authors: [SCOUT, FLUX, LITERATE, SENTINEL, SOVEREIGN, BLAST, COMPASS, SCRIBE, HE
 
 ## Contexto
 
-O EAI? é uma aplicação SaaS jurídica brasileira que processa casos legais sensíveis,
+O EAI? Jurídico (Evidence-Based AI) é uma aplicação SaaS jurídica brasileira que processa casos legais sensíveis,
 realiza simulações via LLM, aceita pagamentos e mantém histórico de sessões por usuário.
 O stack foi estabelecido antes da criação formal de governança ARGUS. Este ADR registra
 a decisão existente e seus invariantes arquiteturais.

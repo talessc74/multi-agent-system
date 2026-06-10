@@ -13,7 +13,7 @@ authors: [BLAST, SOVEREIGN, BAU, SENTINEL, GHOST, SCOUT, SCRIBE, HERALD]
 
 ## Contexto
 
-O EAI? processa casos jurídicos que podem conter nomes de partes, CPFs, endereços,
+O EAI? Jurídico (Evidence-Based AI) processa casos jurídicos que podem conter nomes de partes, CPFs, endereços,
 valores e outras informações pessoais. O sistema já implementa anonimização automática
 antes de salvar no Firestore (mencionado no briefing como feature em produção).
 Este ADR formaliza o invariante e seus requisitos de implementação.

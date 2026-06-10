@@ -13,7 +13,7 @@ authors: [SOVEREIGN, BLAST, BAU, GHOST, COMPASS, SCRIBE, HERALD]
 
 ## Contexto
 
-O EAI? opera no Brasil, processa dados pessoais de pessoas físicas em contexto jurídico
+O EAI? Jurídico (Evidence-Based AI) opera no Brasil, processa dados pessoais de pessoas físicas em contexto jurídico
 (dados sensíveis por natureza, art. 11 LGPD), e cobra por seus serviços. A base legal
 de tratamento é o **consentimento** (art. 7º, I) formalizado nos Termos de Uso v1.2
 com timestamp gravado no Firestore.
@@ -32,7 +32,7 @@ deve consentir separadamente com: (a) tratamento de dados do caso para simulaç�
 armazenamento do histórico anonimizado, (c) marketing se aplicável. Consentimento único
 para tudo é violação do princípio de granularidade (art. 8º LGPD).
 
-**[BLAST]** Dados coletados no EAI? devem obedecer estrito princípio de minimização:
+**[BLAST]** Dados coletados no EAI? Jurídico devem obedecer estrito princípio de minimização:
 apenas o necessário para a simulação. Campos opcionais não devem ser pré-preenchidos
 nem sugeridos. O produto não deve ser monetizado via dados do usuário — apenas via
 serviço prestado.
