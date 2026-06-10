@@ -12,7 +12,10 @@ Decisions here override all other scopes.
 ## Content
 
 **12 policies arquivadas** — primeira deliberação ARGUS completa em 2026-06-10.
-Todas as 17 seeds participaram. Validação humana pendente.
+Todas as 17 seeds participaram.
+
+**Status das pendências:** 11 de 13 resolvidas em código/documentação.
+Pendências abertas remanescentes: auditoria LGPD externa + alerta de uso anormal Gemini (requerem terceiros/baseline histórico).
 
 ## How to add a policy
 

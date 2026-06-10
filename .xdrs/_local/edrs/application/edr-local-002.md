@@ -62,10 +62,10 @@ stream completo, stream interrompido no meio, timeout do servidor, e reconexão 
 3. Toda conexão SSE tem timeout máximo configurado no servidor
 4. Cliente exibe estado de erro explícito quando o stream é interrompido
 
-## Pendências Registradas
+## Pendências Resolvidas
 
-- Auditoria de timeout configurado em cada endpoint SSE existente
-- Testes automatizados para cenários de stream interrompido e timeout
+- ✅ Timeout de 120s implementado em `sse-utils.ts` — todos os endpoints SSE cobertos (2026-06-10)
+- ✅ Testes automatizados implementados em `__tests__/sse-utils.test.ts` — timeout, close, writableEnded
 
 ## Consequências
 

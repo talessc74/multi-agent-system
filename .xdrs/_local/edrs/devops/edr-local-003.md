@@ -55,11 +55,15 @@ silenciosamente.
 3. Chaves Gemini de produção e staging são monitoradas independentemente
 4. `notifySpendingCap()` testável com mock de Resend
 
-## Pendências Registradas
+## Pendências Resolvidas
 
-- Checagem proativa de saldo da conta Gemini em schedule diário
-- Alerta de uso anormal (pico inesperado) por chave
-- Threshold de alerta a 80% do orçamento
+- ✅ Monitor proativo implementado em `gemini-quota-monitor.ts` — schedule diário via `scheduleGeminiQuotaCheck()` (2026-06-10)
+- ✅ Threshold de alerta a 80% do orçamento configurado (`ALERT_THRESHOLD_PCT = 0.8`)
+- ✅ `recordGeminiCall()` integrado nas rotas `/api/gemini/simulate`, `/api/gemini/report` e `/api/gemini/mode5`
+
+## Pendências Abertas
+
+- Alerta de uso anormal (pico inesperado) por chave — requer baseline histórico para definir threshold
 
 ## Consequências
 

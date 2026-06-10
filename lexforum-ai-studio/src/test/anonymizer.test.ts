@@ -34,6 +34,16 @@ describe('anonymizeText — identificadores diretos', () => {
     expect(anonymizeText('processo n. 1234567-89.2023.8.26.0100')).toContain('[NÚMERO DO PROCESSO]');
   });
 
+  it('substitui número de agência bancária', () => {
+    expect(anonymizeText('agência 0341-7')).toContain('[AGÊNCIA BANCÁRIA]');
+    expect(anonymizeText('Ag. 1234')).toContain('[AGÊNCIA BANCÁRIA]');
+  });
+
+  it('substitui número de conta bancária', () => {
+    expect(anonymizeText('conta 12345-6')).toContain('[CONTA BANCÁRIA]');
+    expect(anonymizeText('c/c 987654321-0')).toContain('[CONTA BANCÁRIA]');
+  });
+
   it('preserva texto sem identificadores', () => {
     const clean = 'O contrato foi firmado entre as partes.';
     expect(anonymizeText(clean)).toBe(clean);

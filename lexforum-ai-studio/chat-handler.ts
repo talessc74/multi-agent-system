@@ -257,7 +257,8 @@ export function registerChatRoutes(
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
         await notifySpendingCap('/api/chat/message');
       }
-      console.error('[Chat] Erro:', error);
+      const safeMsg = error?.message?.slice(0, 200) ?? String(error).slice(0, 200);
+      console.error('[Chat] Erro:', safeMsg);
       sendSSE(res, 'error', { message: error.message || 'Erro interno' });
     } finally {
       clearTimeout(sseTimer);

@@ -7,6 +7,10 @@ const DIRECT_ID_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /\b(Rua|Av\.|Avenida|Travessa|Alameda|Rod\.|Rodovia)\s+[A-ZÀ-Ú][^\n,]{3,50}/gi, label: '[ENDEREÇO]' },
   { pattern: /\bprocesso\s+n[°º.]?\s*[\d\.\-\/]+/gi, label: '[NÚMERO DO PROCESSO]' },
   { pattern: /\b\d{4,5}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}\b/g, label: '[NÚMERO DO PROCESSO]' },
+  // Bank account numbers — agência/conta (G4 audit gap)
+  // Must run before RG pattern to avoid partial match on account digits
+  { pattern: /\b(agência|ag\.?)\s*\d{4}-?\d?\b/gi, label: '[AGÊNCIA BANCÁRIA]' },
+  { pattern: /\b(conta|c\/c|c\.c\.)\s*\d{4,10}-?\d?\b/gi, label: '[CONTA BANCÁRIA]' },
   // RG patterns (common Brazilian formats)
   { pattern: /\b\d{1,2}\.?\d{3}\.?\d{3}-?[\dxX]\b/g, label: '[RG]' },
   // PIS/NIT/PASEP

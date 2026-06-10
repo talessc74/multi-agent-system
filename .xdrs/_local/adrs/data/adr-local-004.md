@@ -63,10 +63,15 @@ anonimizados. Sem cobertura de teste, a garantia é apenas declarativa.
 3. Logs de acesso contêm apenas `userId` e `simulationId` — sem descrição do caso
 4. A função de anonimização tem cobertura de testes automatizados
 
-## Pendências Registradas
+## Pendências Resolvidas
 
-- Heurística de quasi-identificadores para reduzir risco de re-identificação por correlação
-- Auditoria do pipeline de anonimização por entidade externa (compliance LGPD)
+- ✅ Heurística de quasi-identificadores — implementada em `src/lib/anonymizer.ts` (2026-06-10):
+  valores monetários por faixa, datas → ano, comarcas, nomes processuais, números de conta bancária
+- ✅ Auditoria interna do pipeline concluída — ver `docs/auditoria-pipeline-anonimizacao.md`
+
+## Pendências Abertas
+
+- Auditoria do pipeline de anonimização por entidade externa especializada em LGPD
 
 ## Consequências
 

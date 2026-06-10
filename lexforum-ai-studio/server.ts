@@ -12,6 +12,14 @@ import { notifySpendingCap } from './alerts';
 import { registerChatRoutes } from './chat-handler';
 import { scheduleGeminiQuotaCheck, recordGeminiCall } from './gemini-quota-monitor';
 
+// Strips any fragment that looks like user-supplied text from Gemini error messages
+// before writing to logs — prevents accidental PII leakage in Cloud Run logs (G2).
+function sanitizeErrorForLog(error: any): string {
+  const raw: string = error?.message || String(error);
+  // Gemini errors sometimes echo back the prompt in the message body — truncate after status code
+  return raw.replace(/(\b(INVALID_ARGUMENT|RESOURCE_EXHAUSTED|PERMISSION_DENIED|NOT_FOUND|INTERNAL)\b.{0,120}).*/s, '$1…').slice(0, 300);
+}
+
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -47,7 +55,7 @@ async function startServer() {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
         await notifySpendingCap('/api/gemini/validate');
       }
-      console.error("Gemini Server Error:", error);
+      console.error('[/api/gemini/validate]', sanitizeErrorForLog(error));
       res.status(500).json({ error: error.message || "Unknown error" });
     }
   });
@@ -148,7 +156,7 @@ async function startServer() {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
         await notifySpendingCap('/api/gemini/report');
       }
-      console.error("Gemini Server Error:", error);
+      console.error('[/api/gemini/report]', sanitizeErrorForLog(error));
       res.status(500).json({ error: error.message || "Unknown error" });
     }
   });
@@ -165,7 +173,7 @@ async function startServer() {
       const hypotheses = await generateCounterHypothesesServer(petition, area, mode);
       res.json({ hypotheses });
     } catch (error: any) {
-      console.error("[counter-hypotheses] Erro:", error);
+      console.error('[counter-hypotheses]', sanitizeErrorForLog(error));
       res.status(500).json({ error: error.message || "Unknown error" });
     }
   });
@@ -179,7 +187,7 @@ async function startServer() {
       const expanded = await expandHypothesisServer(petition, hypothesis, area);
       res.json({ expanded });
     } catch (error: any) {
-      console.error("[expand-hypothesis] Erro:", error);
+      console.error('[expand-hypothesis]', sanitizeErrorForLog(error));
       res.status(500).json({ error: error.message || "Unknown error" });
     }
   });
@@ -234,7 +242,7 @@ async function startServer() {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
         await notifySpendingCap('/api/gemini/mode5');
       }
-      console.error('[Mode5] Erro:', error);
+      console.error('[Mode5]', sanitizeErrorForLog(error));
       send('error', { message: error.message || 'Unknown error' });
     } finally {
       clearTimeout(sseTimer);

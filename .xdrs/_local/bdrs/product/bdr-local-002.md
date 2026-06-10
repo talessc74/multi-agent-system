@@ -67,10 +67,10 @@ faz isso; garantir que todo paywall consulte essa função.
 4. Paywall nunca aparece antes de o usuário ver valor demonstrado do produto
 5. Toda lógica de bypass de paywall passa por `getUserAccessLevel()`
 
-## Pendências Registradas
+## Pendências Resolvidas
 
-- Implementação de log auditável para alterações de `accessLevel`
-- Processo formal de concessão e revogação de acesso beta
+- ✅ Log auditável implementado — endpoint `/api/admin/set-access-level` + coleção `accessLevelAuditLog` no Firestore (2026-06-10)
+- ✅ Processo formal documentado — ver `docs/processo-acesso-beta.md` (2026-06-10)
 
 ## Consequências
 

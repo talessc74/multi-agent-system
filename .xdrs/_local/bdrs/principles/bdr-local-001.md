@@ -59,11 +59,16 @@ livre (art. 8º LGPD).
 4. Plano de resposta a incidente inclui notificação à ANPD (72h) e ao titular
 5. UI de aceite de termos sem dark patterns
 
-## Pendências Registradas
+## Pendências Resolvidas
 
-- Revisão da granularidade do aceite atual (Termos v1.2) por jurista LGPD
-- Documentação do processo de resposta a pedidos de titulares
-- Plano formal de resposta a incidente de segurança
+- ✅ Processo de resposta a pedidos de titulares documentado — ver `docs/lgpd-direitos-titular.md` (2026-06-10)
+- ✅ Plano formal de resposta a incidente documentado — ver `docs/plano-resposta-incidente.md` (2026-06-10)
+- ✅ Análise interna de granularidade do aceite concluída — ver `docs/lgpd-analise-aceite-termos.md` (2026-06-10)
+
+## Pendências Abertas
+
+- Revisão dos gaps identificados na análise interna por jurista especializado em LGPD (Termos v1.3)
+- Nomeação de DPO ou responsável formal pelo tratamento de dados
 
 ## Consequências
 
