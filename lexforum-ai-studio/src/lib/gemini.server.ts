@@ -15,7 +15,7 @@ const MODEL_NAME = "gemini-2.5-flash";
 
 const dynamicAgents: Record<string, { id: string, name: string, instruction: string }> = {};
 
-function extractProbability(text: string): number {
+export function extractProbability(text: string): number {
   if (!text) return 50;
   const match = text.match(/{\s*"success_probability"\s*:\s*(\d+)\s*}/);
   if (match) return parseInt(match[1]);
