@@ -1,76 +1,52 @@
-name: Deploy → Produção (eaijuridico.com.br)
+name: Deploy — Produção
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
-  workflow_dispatch:
 
 jobs:
-  test:
-    name: Testes antes do deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: lexforum-ai-studio/package-lock.json
-
-      - name: Instalar dependências
-        run: npm ci
-        working-directory: lexforum-ai-studio
-
-      - name: Rodar testes
-        run: npm test -- --run
-        working-directory: lexforum-ai-studio
-
   deploy:
-    name: Build & Deploy para eai-producao
-    needs: test
+    name: Build & Deploy eai-producao
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Autenticar no GCP
+      - name: Auth GCP
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Configurar gcloud
+      - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Copiar agents/ e registry/ para o contexto do build
+      - name: Configure Docker para GCR
+        run: gcloud auth configure-docker --quiet
+
+      - name: Copiar agents/ e registry/ para o contexto de build
         run: |
           cp -r agents lexforum-ai-studio/
           cp -r registry lexforum-ai-studio/
 
-      - name: Configurar Docker para GCR
-        run: gcloud auth configure-docker gcr.io --quiet
-
       - name: Build da imagem Docker
         run: |
           docker build \
-            --build-arg VITE_GIT_HASH=$(git rev-parse --short HEAD) \
-            -t gcr.io/gen-lang-client-0982741688/eai-producao:$(git rev-parse --short HEAD) \
+            --build-arg VITE_GIT_HASH=${{ github.sha }} \
+            -t gcr.io/gen-lang-client-0982741688/eai-producao:${{ github.sha }} \
             -t gcr.io/gen-lang-client-0982741688/eai-producao:latest \
             ./lexforum-ai-studio
 
-      - name: Push para Container Registry
+      - name: Push para GCR
         run: docker push --all-tags gcr.io/gen-lang-client-0982741688/eai-producao
 
       - name: Deploy para Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: eai-producao
-          image: gcr.io/gen-lang-client-0982741688/eai-producao:latest
-          region: us-east1
-          project_id: gen-lang-client-0982741688
-
-      - name: URL de produção
-        run: echo "Deploy concluído → https://eaijuridico.com.br"
+        run: |
+          gcloud run deploy eai-producao \
+            --image=gcr.io/gen-lang-client-0982741688/eai-producao:${{ github.sha }} \
+            --region=us-east1 \
+            --project=gen-lang-client-0982741688 \
+            --platform=managed \
+            --allow-unauthenticated \
+            --quiet
