@@ -78,16 +78,6 @@ async function startServer() {
       OTHER: 'geral',
     };
 
-    // Resolve agents with timeout: local/Firestore lookups are fast (<2s).
-    // createAgentFromScratch calls Gemini and can take 30-60s — if that path
-    // is triggered, we abort early and let getOrGenerateAgent inside
-    // simulateForumServer handle it with its own in-memory cache.
-    const resolveWithTimeout = (params: Parameters<typeof resolveAgent>[0], ms = 10_000) =>
-      Promise.race([
-        resolveAgent(params),
-        new Promise<never>((_, rej) => setTimeout(() => rej(new Error('agent-resolve-timeout')), ms)),
-      ]);
-
     const lawyerDisplayName = `Advogado ${
       area === 'LABOR' ? 'Trabalhista' :
       area === 'CONSUMER' ? 'Consumerista' :
@@ -96,18 +86,21 @@ async function startServer() {
       area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'
     }`;
 
-    // Send connection-established signal immediately so the client doesn't
-    // see a blank "Peticionando" while agents are being resolved.
+    // Heartbeat: establish SSE connection immediately before any async work
+    // so the client doesn't show a frozen "Peticionando" during agent lookup.
     send('agents', { lawyerName: lawyerDisplayName, judgeName: `Magistrado Especializado`, sessionId });
 
+    // findOnly=true: never creates agents here — avoids duplicate concurrent
+    // Gemini calls. If not found, simulateForumServer's getOrGenerateAgent
+    // (in-memory cache) handles creation once.
     let agentInstruction: string | undefined;
     let judgeNameFromRegistry: string | undefined;
     try {
-      const entry = await resolveWithTimeout({
+      const entry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
         comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
         tipo: 'juiz',
-      });
+      }, true);
       const agentJson = entry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
       agentInstruction = JSON.stringify(agentJson);
       judgeNameFromRegistry = `Magistrado ${area === 'LABOR' ? 'Trabalhista' : area === 'CONSUMER' ? 'Consumerista' : area === 'CIVIL' ? 'Cível' : area === 'FAMILY' ? 'de Família' : area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'}`;
@@ -119,12 +112,12 @@ async function startServer() {
     let lawyerInstruction: string | undefined;
     try {
       const lawyerSide = (mode === 2) ? 'DEFENSE' : 'AUTHOR';
-      const lawyerEntry = await resolveWithTimeout({
+      const lawyerEntry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
         comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
         tipo: 'advogado',
         userSide: lawyerSide,
-      });
+      }, true);
       const lawyerJson = lawyerEntry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), lawyerEntry.arquivo), 'utf-8'));
       lawyerInstruction = JSON.stringify(lawyerJson);
       console.log(`[AgentResolver] Advogado do registry: ${lawyerEntry.agent_id}`);

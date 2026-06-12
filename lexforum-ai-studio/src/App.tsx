@@ -1657,11 +1657,12 @@ const startRecovery = (sessionId: string) => {
           REVIEWING: 3,
         };
         const currentStep = (simStepMap[state.simStep] ?? 0) as 0 | 1 | 2 | 3;
+        const roundSuffix = (state.selectedMode === 4 && state.currentRound > 0) ? ` · Rodada ${state.currentRound}/3` : '';
         const statusText =
-          state.simStep === 'WRITING' ? 'Peticionando' :
-          state.simStep === 'DELIVERING' ? 'Protocolando' :
-          state.simStep === 'JUDGING' ? `Julgando · Rodada ${state.currentRound}` :
-          state.simStep === 'REVIEWING' ? 'Revisando' :
+          state.simStep === 'WRITING' ? `Peticionando${roundSuffix}` :
+          state.simStep === 'DELIVERING' ? `Protocolando${roundSuffix}` :
+          state.simStep === 'JUDGING' ? `Julgando${roundSuffix}` :
+          state.simStep === 'REVIEWING' ? `Revisando${roundSuffix}` :
           'Iniciando simulação';
         const steps = [
           { icon: '📋', name: 'Peticionando', desc: 'Advogado elaborando argumentos' },
