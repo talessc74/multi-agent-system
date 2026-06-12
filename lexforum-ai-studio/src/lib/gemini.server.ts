@@ -214,19 +214,17 @@ export async function simulateForumServer(
       const authorText = userSide === 'DEFENSE' ? staticSide : currentPetition;
       const defenseText = userSide === 'DEFENSE' ? currentPetition : staticSide;
 
-      const juiPrompt = `Analise ambos os lados e emita veredito.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON onde success_probability é a probabilidade de êxito do AUTOR (procedência do pedido), de 0 a 100:\n{"success_probability":<0-100>,"author_summary":"<resumo>","defense_summary":"<resumo>","judgment":"<veredito>"}`;
+      const juiPrompt = `Analise ambos os lados e emita veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nAo final da sua análise, inclua obrigatoriamente:\n{"success_probability": <inteiro de 0 a 100 representando a chance de êxito do AUTOR>}`;
 
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
-        config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
+        config: { systemInstruction: judgeInstruction }
       });
 
-      const juiText = juiRes.text || '{}';
-      let juiParsed: any = {};
-      try { juiParsed = JSON.parse(juiText); } catch {}
-      currentJudgment = juiParsed.judgment || juiText;
-      lastProb = typeof juiParsed.success_probability === 'number' ? juiParsed.success_probability : extractProbability(juiText);
+      const juiText = juiRes.text || '';
+      currentJudgment = juiText;
+      lastProb = extractProbability(juiText);
 
       onProgress?.('REVIEWING', i);
       rounds.push({
@@ -252,21 +250,19 @@ export async function simulateForumServer(
 
     if (mode === 3) {
       onProgress?.('JUDGING', i);
-      const juiPrompt = `Você recebeu a petição do Autor e a contestação do Réu. Analise ambos os lados de forma imparcial e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${caseDescription}\n\nCONTESTAÇÃO DO RÉU:\n${defenseDescription}\n\nRetorne um JSON com o seguinte formato:\n{\n  "success_probability": <0-100, chance de procedência do AUTOR>,\n  "author_summary": "<resumo em 1-2 frases do argumento central do Autor>",\n  "defense_summary": "<resumo em 1-2 frases do argumento central do Réu>",\n  "judgment": "<veredito técnico completo fundamentado em lei>"\n}`;
+      const juiPrompt = `Você recebeu a petição do Autor e a contestação do Réu. Analise ambos os lados de forma imparcial e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${caseDescription}\n\nCONTESTAÇÃO DO RÉU:\n${defenseDescription}\n\nAo final da sua análise, inclua obrigatoriamente:\n{"success_probability": <inteiro de 0 a 100 representando a chance de êxito do AUTOR>}`;
       const authorParts = prepareParts(juiPrompt, attachments);
       const defenseParts = defenseAttachments.length > 0 ? prepareParts('', defenseAttachments).slice(1) : [];
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: [...authorParts, ...defenseParts] }],
-        config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
+        config: { systemInstruction: judgeInstruction }
       });
-      const juiText = juiRes.text || '{}';
-      let juiParsed: any = {};
-      try { juiParsed = JSON.parse(juiText); } catch {}
-      currentJudgment = juiParsed.judgment || juiText;
-      lastProb = juiParsed.success_probability ?? extractProbability(juiText);
+      const juiText = juiRes.text || '';
+      currentJudgment = juiText;
+      lastProb = extractProbability(juiText);
       onProgress?.('REVIEWING', i);
-      rounds.push({ round: i, lawyerPetition: caseDescription, judgeJudgment: currentJudgment, successProbability: lastProb, authorSummary: juiParsed.author_summary, defenseSummary: juiParsed.defense_summary });
+      rounds.push({ round: i, lawyerPetition: caseDescription, judgeJudgment: currentJudgment, successProbability: lastProb });
       break;
     }
 
