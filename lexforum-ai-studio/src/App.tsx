@@ -309,7 +309,7 @@ export default function App() {
   const [userHistory, setUserHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [globalStats, setGlobalStats] = useState({ simulations: 0, winRate: 0, precision: 98.4 });
+  const [globalStats, setGlobalStats] = useState({ simulations: 0, winRate: 0, precision: 0 });
   const [state, setState] = useState<AppState>({
     step: 'boardroom',
     selectedMode: 0,
@@ -330,14 +330,7 @@ export default function App() {
   selectedProfile: 'leigo',
   activeAgents: [],
   showForgeMonitor: false,
-  regionalStats: [
-    { region: "TRF1 (Norte / CO)", seeds: 412, active: 18 },
-    { region: "TRF2 (RJ / ES)", seeds: 284, active: 12 },
-    { region: "TRF3 (SP / MS)", seeds: 567, active: 31 },
-    { region: "TRF4 (Sul)", seeds: 319, active: 22 },
-    { region: "TRF5 (Nordeste)", seeds: 245, active: 9 },
-    { region: "Supremos (STJ / STF)", seeds: 88, active: 41 }
-  ],
+  regionalStats: [],
   error: null
 });
 
@@ -873,7 +866,7 @@ const startRecovery = (sessionId: string) => {
       setGlobalStats({
         simulations: newStatsResult.totalSimulations,
         winRate: Number(newStatsResult.winRate.toFixed(1)),
-        precision: 98.4
+        precision: Number(((newStatsResult.totalWins / Math.max(newStatsResult.totalSimulations, 1)) * 100).toFixed(1))
       });
     } catch (err: any) {
       if (err?.message === 'SIMULATION_ABORTED') return;
@@ -2737,13 +2730,14 @@ const startRecovery = (sessionId: string) => {
 
                 <div className="col-span-12 xl:col-span-4 flex flex-col gap-6">
                   {/* Resumo Analítico - Global Stats */}
+                  {globalStats.simulations > 0 && (
                   <div className="bg-[#1C1C1F] text-white p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-white/10">
                     <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
                     <div className="flex justify-between items-center opacity-30">
                       <span className="text-[9px] uppercase tracking-widest font-bold">Performance Global EAI?</span>
                       <TrendingUp className="w-4 h-4" />
                     </div>
-                    
+
                     <div className="grid grid-cols-1 gap-6">
                       <div className="space-y-1">
                         <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
@@ -2751,16 +2745,18 @@ const startRecovery = (sessionId: string) => {
                           {globalStats.winRate}%
                         </div>
                       </div>
-                      
+
                       <div className="flex justify-between items-end border-t border-white/5 pt-6">
                         <div className="space-y-1">
                           <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Simulações Concluídas</div>
                           <div className="text-2xl font-mono text-white/80">{globalStats.simulations.toLocaleString()}</div>
                         </div>
+                        {globalStats.precision > 0 && (
                         <div className="text-right space-y-1">
                           <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Precisão Média</div>
                           <div className="text-2xl font-mono text-emerald-500 font-bold">{globalStats.precision}%</div>
                         </div>
+                        )}
                       </div>
                     </div>
 
@@ -2769,7 +2765,9 @@ const startRecovery = (sessionId: string) => {
                        <span>STATUS: OPTIMIZED</span>
                     </div>
                   </div>
+                  )}
 
+                  {state.regionalStats.length > 0 && (
                   <div className="bg-[#15161A] border border-white/10 p-8 space-y-8 flex-1">
                     <div className="space-y-1">
                       <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/60">Disponibilidade de Agentes de IA</h3>
@@ -2779,7 +2777,7 @@ const startRecovery = (sessionId: string) => {
                     <div className="space-y-5">
                       {(() => {
                         const maxSeeds = Math.max(...state.regionalStats.map(r => r.seeds), 1);
-                        return state.regionalStats.map((stat, i) => (
+                        return state.regionalStats.filter(r => r.seeds > 0).map((stat, i) => (
                           <div key={i} className="space-y-2 group cursor-default">
                             <div className="flex justify-between items-end">
                               <span className="text-[11px] font-bold text-white/80 group-hover:text-white transition-colors">{stat.region}</span>
@@ -2818,6 +2816,7 @@ const startRecovery = (sessionId: string) => {
                       </div>
                     </div>
                   </div>
+                  )}
 
                   <div className="bg-[#1C1C1F] border border-white/10 p-6 flex items-center gap-4">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
@@ -3910,6 +3909,7 @@ const startRecovery = (sessionId: string) => {
                     </div>
                   </div>
 
+                  {state.regionalStats.length > 0 && (
                   <div className="bg-white/5 border border-white/5 p-6 space-y-4">
                     <div className="flex items-center gap-2 text-white/40">
                       <Database className="w-4 h-4" />
@@ -3922,7 +3922,9 @@ const startRecovery = (sessionId: string) => {
                       Total de simulações indexadas por área jurídica
                     </div>
                   </div>
+                  )}
 
+                  {globalStats.simulations > 0 && (
                   <div className="bg-white/5 border border-white/5 p-6 space-y-4">
                     <div className="flex items-center gap-2 text-white/40">
                       <History className="w-4 h-4" />
@@ -3933,13 +3935,15 @@ const startRecovery = (sessionId: string) => {
                       Cargas de treinamento processadas desde a v1.0
                     </div>
                   </div>
+                  )}
                 </div>
 
                 {/* Regional Grid */}
+                {state.regionalStats.length > 0 && (
                 <div className="col-span-12 lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-4 h-fit overflow-y-auto pr-2 max-h-full custom-scrollbar">
                   {(() => {
                     const maxSeeds = Math.max(...state.regionalStats.map(r => r.seeds), 1);
-                    return state.regionalStats.map((reg, i) => (
+                    return state.regionalStats.filter(r => r.seeds > 0).map((reg, i) => (
                     <div key={i} className="bg-white/[0.02] border border-white/5 p-5 space-y-4 relative group">
                       <div className="absolute top-2 right-4 text-[8px] font-mono opacity-20 italic">REG_{i+1}</div>
                       <div className="space-y-1">
@@ -3966,6 +3970,7 @@ const startRecovery = (sessionId: string) => {
                   ));
                   })()}
                 </div>
+                )}
 
                 {/* Execution Log */}
                 <div className="col-span-12 lg:col-span-3 border-l border-white/10 pl-8 flex flex-col overflow-hidden">
