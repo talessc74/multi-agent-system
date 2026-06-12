@@ -849,25 +849,27 @@ const startRecovery = (sessionId: string) => {
       }
       setState(prev => ({ ...prev, step: 'result', report: reportData, error: null }));
 
-      // Save simulation to Firebase with the optimized result
-      const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
-      if (simId) {
-        setState(prev => ({ ...prev, simulationId: simId }));
-      }
-      
-      // Refresh history if logged in
+      // Secondary operations: failures must never revert the result screen
+      try {
+        const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
+        if (simId) setState(prev => ({ ...prev, simulationId: simId }));
+      } catch (e) { console.error('[handleSimulate] saveSimulation falhou:', e); }
+
       if (user) {
-        const history = await getUserSimulations(user.uid);
-        setUserHistory(history ?? []);
+        try {
+          const history = await getUserSimulations(user.uid);
+          setUserHistory(history ?? []);
+        } catch (e) { console.error('[handleSimulate] getUserSimulations falhou:', e); }
       }
 
-      // Update local stats display
-      const newStatsResult = await getStats();
-      setGlobalStats({
-        simulations: newStatsResult.totalSimulations,
-        winRate: Number(newStatsResult.winRate.toFixed(1)),
-        precision: Number(((newStatsResult.totalWins / Math.max(newStatsResult.totalSimulations, 1)) * 100).toFixed(1))
-      });
+      try {
+        const newStatsResult = await getStats();
+        setGlobalStats({
+          simulations: newStatsResult.totalSimulations,
+          winRate: Number(newStatsResult.winRate.toFixed(1)),
+          precision: Number(((newStatsResult.totalWins / Math.max(newStatsResult.totalSimulations, 1)) * 100).toFixed(1))
+        });
+      } catch (e) { console.error('[handleSimulate] getStats falhou:', e); }
     } catch (err: any) {
       if (err?.message === 'SIMULATION_ABORTED') return;
       handleGeminiError(err);
