@@ -214,7 +214,7 @@ export async function simulateForumServer(
       const authorText = userSide === 'DEFENSE' ? staticSide : currentPetition;
       const defenseText = userSide === 'DEFENSE' ? currentPetition : staticSide;
 
-      const juiPrompt = `Analise ambos os lados e emita veredito.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100>,"author_summary":"<resumo>","defense_summary":"<resumo>","judgment":"<veredito>"}`;
+      const juiPrompt = `Analise ambos os lados e emita veredito.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON onde success_probability é a probabilidade de êxito do AUTOR (procedência do pedido), de 0 a 100:\n{"success_probability":<0-100>,"author_summary":"<resumo>","defense_summary":"<resumo>","judgment":"<veredito>"}`;
 
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
@@ -226,7 +226,7 @@ export async function simulateForumServer(
       let juiParsed: any = {};
       try { juiParsed = JSON.parse(juiText); } catch {}
       currentJudgment = juiParsed.judgment || juiText;
-      lastProb = juiParsed.success_probability ?? extractProbability(juiText);
+      lastProb = typeof juiParsed.success_probability === 'number' ? juiParsed.success_probability : extractProbability(juiText);
 
       onProgress?.('REVIEWING', i);
       rounds.push({

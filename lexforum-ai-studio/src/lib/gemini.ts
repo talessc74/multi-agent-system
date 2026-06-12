@@ -117,7 +117,13 @@ export function simulateForum(
         }
         if (!settled) reject(new Error('Conexão SSE encerrada inesperadamente'));
       } catch (err: any) {
-        if (!settled) reject(new Error(err.message || 'Erro na simulação SSE'));
+        if (!settled) {
+          if (err?.name === 'AbortError') {
+            reject(new Error('SIMULATION_ABORTED'));
+          } else {
+            reject(new Error(err.message || 'Erro na simulação SSE'));
+          }
+        }
       }
     });
 
