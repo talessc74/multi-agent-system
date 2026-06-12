@@ -208,7 +208,7 @@ export const getStats = async (): Promise<GlobalStats> => {
   } catch (error) {
     handleFirestoreError(error, OperationType.GET, path);
   }
-  return { totalSimulations: 14282, totalWins: 10682, winRate: 74.8 };
+  return { totalSimulations: 0, totalWins: 0, winRate: 0 };
 };
 
 export const getRegionalStats = async () => {
