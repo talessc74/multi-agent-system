@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 // We inline the identical implementation here so the contract is explicit.
 function extractProbability(text: string): number {
   if (!text) return 50;
-  const match = text.match(/{\s*"success_probability"\s*:\s*(\d+)\s*}/);
+  const match = text.match(/"success_probability"\s*:\s*(\d+)/);
   if (match) return parseInt(match[1]);
   return 50;
 }
@@ -50,6 +50,21 @@ describe('extractProbability', () => {
 
   it('retorna 50 quando a chave é diferente', () => {
     expect(extractProbability('{"probability":80}')).toBe(50);
+  });
+
+  // ── Regressão: JSON com múltiplas chaves ─────────────────────────────────
+  // O regex anterior exigia que success_probability fosse a ÚNICA chave.
+  // Com responseMimeType:'application/json', o Gemini retorna JSON completo
+  // com judgment, author_summary, defense_summary — o regex antigo não casava
+  // e o fallback retornava 50 para todas as simulações.
+  it('extrai probabilidade de JSON completo com múltiplas chaves', () => {
+    const jsonCompleto = '{"success_probability":73,"author_summary":"arg forte","defense_summary":"arg fraco","judgment":"Procedente."}';
+    expect(extractProbability(jsonCompleto)).toBe(73);
+  });
+
+  it('extrai probabilidade de JSON com chaves em ordem diferente', () => {
+    const jsonOrdemDiferente = '{"judgment":"Improcedente.","author_summary":"fraco","success_probability":28,"defense_summary":"sólido"}';
+    expect(extractProbability(jsonOrdemDiferente)).toBe(28);
   });
 
   // ── Regressão: bug modo 2 ────────────────────────────────────────────────

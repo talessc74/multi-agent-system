@@ -17,7 +17,7 @@ const dynamicAgents: Record<string, { id: string, name: string, instruction: str
 
 export function extractProbability(text: string): number {
   if (!text) return 50;
-  const match = text.match(/{\s*"success_probability"\s*:\s*(\d+)\s*}/);
+  const match = text.match(/"success_probability"\s*:\s*(\d+)/);
   if (match) return parseInt(match[1]);
   return 50;
 }
