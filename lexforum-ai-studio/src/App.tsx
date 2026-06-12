@@ -759,11 +759,13 @@ const startRecovery = (sessionId: string) => {
 
             if (step === 'SEED_CREATED' && progressData?.regionIndex !== undefined) {
               const idx = progressData.regionIndex;
-              newStats[idx] = {
-                ...newStats[idx],
-                seeds: newStats[idx].seeds + 1,
-                active: newStats[idx].active + 1
-              };
+              if (newStats[idx]) {
+                newStats[idx] = {
+                  ...newStats[idx],
+                  seeds: newStats[idx].seeds + 1,
+                  active: newStats[idx].active + 1
+                };
+              }
             }
 
             // Só captura o sessionId da primeira tentativa — retries geram novas sessões no servidor
