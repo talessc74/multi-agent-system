@@ -31,7 +31,10 @@ export async function interpretJudgmentForSide(
   const response = await ai.models.generateContent({
     model: MODEL_NAME,
     contents: [{ role: "user", parts: [{ text: prompt }] }],
-    config: { responseMimeType: "application/json" },
+    config: {
+      systemInstruction: "Você é um intérprete de vereditos jurídicos. Sua única função é extrair a probabilidade de êxito de uma parte específica com base no texto da sentença fornecida. Retorne sempre um JSON válido com o campo 'probabilidade' como número inteiro entre 0 e 100. Nunca retorne null ou omita o campo.",
+      responseMimeType: "application/json",
+    },
   });
 
   const text = response.text || '{"probabilidade": 50}';
@@ -41,7 +44,10 @@ export async function interpretJudgmentForSide(
     if (typeof prob === "number" && prob >= 0 && prob <= 100) {
       return Math.round(prob);
     }
-  } catch {}
+    console.warn('[JudgmentInterpreter] Campo probabilidade inválido:', parsed);
+  } catch (e) {
+    console.warn('[JudgmentInterpreter] Falha ao parsear resposta:', text.substring(0, 80));
+  }
 
   return 50;
 }

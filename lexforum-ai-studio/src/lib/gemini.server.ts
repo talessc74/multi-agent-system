@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import type { LegalArea, SimulationRound, SimulationResult, ReportContent, Attachment } from "../types";
+import { interpretJudgmentForSide } from "./judgment-interpreter";
 
 // server-side only
 const ai = new GoogleGenAI({ 
@@ -239,6 +240,13 @@ export async function simulateForumServer(
         try { juiParsed = JSON.parse(juiText); } catch {}
         currentJudgment = juiParsed.judgment || juiText;
         lastProb = juiParsed.success_probability ?? extractProbability(juiText);
+
+        // Normaliza para perspectiva do autor (EDR _local-edr-policy-001)
+        try {
+          lastProb = await interpretJudgmentForSide(currentJudgment, 'AUTHOR');
+        } catch (interpErr) {
+          console.warn('[Mode4] Revisor indisponível — usando success_probability do juiz:', interpErr instanceof Error ? interpErr.message : interpErr);
+        }
 
         onProgress?.('REVIEWING', i);
 
