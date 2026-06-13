@@ -223,6 +223,8 @@ export async function simulateForumServer(
       });
 
       const juiText = juiRes.text || '';
+      let juiParsed: any = {};
+      try { juiParsed = JSON.parse(juiText); } catch {}
       currentJudgment = juiText;
       lastProb = extractProbability(juiText);
 
