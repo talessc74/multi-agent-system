@@ -196,7 +196,7 @@ export async function simulateForumServer(
 
       const lawPrompt = i === 1
         ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente: ${userPetition}`
-        : `Sentença anterior: ${currentJudgment}\nMelhore ainda mais: ${userPetition}`;
+        : `Sentença anterior: ${currentJudgment}\nBreves estratégicos acumulados: ${allBriefs}\nMelhore ainda mais: ${userPetition}`;
 
       const sideContext = userSide === 'DEFENSE'
         ? '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do RÉU (DEFESA). Sua função é defender os interesses do réu, contestar os argumentos do autor e construir a melhor estratégia de defesa possível. Nunca argumente pelo lado do autor.'
@@ -229,13 +229,23 @@ export async function simulateForumServer(
       lastProb = juiParsed.success_probability ?? extractProbability(juiText);
 
       onProgress?.('REVIEWING', i);
+
+      const briefRes4 = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: [{ role: 'user', parts: [{ text: `Analise a petição e a sentença da rodada ${i} e gere um resumo conciso de argumentos e citações para o próximo round.\nPetição: ${currentPetition}\nSentença: ${currentJudgment}\nBreves Anteriores: ${allBriefs}` }] }],
+        config: {
+          systemInstruction: `Você é um Estrategista Jurídico. Sua tarefa é analisar o progresso de um caso e gerar um "Lawyer's Brief": um resumo conciso dos argumentos chave e citações recorrentes que foram bem-sucedidos ou que precisam ser reforçados. Este resumo será usado pelo advogado na próxima rodada.`
+        }
+      });
+      const currentBrief4 = briefRes4.text || '';
+      allBriefs += `\n--- Brief Rodada ${i} ---\n${currentBrief4}`;
+
       rounds.push({
         round: i,
         lawyerPetition: currentPetition,
         judgeJudgment: currentJudgment,
         successProbability: lastProb,
-        authorSummary: juiParsed.author_summary,
-        defenseSummary: juiParsed.defense_summary
+        lawyerBrief: currentBrief4,
       });
 
       onProgress?.('ROUND_DONE', i, rounds[rounds.length - 1]);
