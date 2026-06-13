@@ -860,7 +860,7 @@ const startRecovery = (sessionId: string) => {
 
       // Secondary operations: failures must never revert the result screen
       try {
-        const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
+        const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData, null, state.selectedMode, state.userSide ?? undefined);
         if (simId) setState(prev => ({ ...prev, simulationId: simId }));
       } catch (e) { console.error('[handleSimulate] saveSimulation falhou:', e); }
 

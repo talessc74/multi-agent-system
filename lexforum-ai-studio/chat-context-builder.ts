@@ -19,6 +19,8 @@ export interface SimulationSnapshot {
   finalSuccessProbability: number;
   lawyerAgentName?: string;
   judgeAgentName?: string;
+  mode?: number;
+  userSide?: 'AUTHOR' | 'DEFENSE' | null;
   mode5Result?: {
     recommendation?: string;
     strategistAnalysis?: string;
@@ -54,12 +56,20 @@ export function buildChatContext(
     : (snapshot.judgeAgentName ?? 'Magistrado da Simulação');
 
   const caseSummary = snapshot.caseSummary || snapshot.caseDescription.slice(0, 500);
-  const successLabel = snapshot.finalSuccessProbability >= 50 ? 'procedente' : 'improcedente';
+  const isDefenseMode = snapshot.mode === 4 && snapshot.userSide === 'DEFENSE';
+  const userSuccessProbability = isDefenseMode
+    ? 100 - snapshot.finalSuccessProbability
+    : snapshot.finalSuccessProbability;
+  const successLabel = userSuccessProbability >= 50 ? 'procedente' : 'improcedente';
+  const sideLabel = isDefenseMode ? 'do RÉU (DEFESA)' : 'do AUTOR';
 
   const caseBlock = [
     `ÁREA JURÍDICA: ${snapshot.area}`,
     `RESUMO DO CASO: ${caseSummary}`,
-    `RESULTADO DA SIMULAÇÃO: ${snapshot.finalSuccessProbability}% de probabilidade de êxito — resultado considerado ${successLabel}`,
+    isDefenseMode
+      ? `POLO DO USUÁRIO: RÉU (DEFESA) — você atuou como advogado de defesa nesta simulação`
+      : null,
+    `RESULTADO DA SIMULAÇÃO: ${userSuccessProbability}% de probabilidade de êxito ${sideLabel} — resultado considerado ${successLabel}`,
     snapshot.mode5Result
       ? `ANÁLISE ESTRATÉGICA: Recomendação foi ${snapshot.mode5Result.recommendation ?? '—'}. ${snapshot.mode5Result.strategistAnalysis ?? ''}`
       : null,

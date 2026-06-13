@@ -205,6 +205,8 @@ export function registerChatRoutes(
           finalSuccessProbability: simData.finalSuccessProbability as number,
           lawyerAgentName: simData.lawyerAgentName as string | undefined,
           judgeAgentName: simData.judgeAgentName as string | undefined,
+          mode: simData.mode as number | undefined,
+          userSide: simData.userSide as 'AUTHOR' | 'DEFENSE' | null | undefined,
           mode5Result: simData.mode5Result ?? null,
         },
         agentType,
