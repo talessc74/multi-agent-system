@@ -187,20 +187,20 @@ export async function simulateForumServer(
   let lastProb = 0;
 
   if (mode === 4) {
+    const userPetition = userSide === 'DEFENSE' ? defenseDescription : caseDescription;
+    const staticSide = userSide === 'DEFENSE' ? caseDescription : defenseDescription;
+    const userAtts = userSide === 'DEFENSE' ? defenseAttachments : attachments;
+    const sideContext = userSide === 'DEFENSE'
+      ? '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do RÉU (DEFESA). Sua função é defender os interesses do réu, contestar os argumentos do autor e construir a melhor estratégia de defesa possível. Nunca argumente pelo lado do autor.'
+      : '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do AUTOR. Sua função é defender os interesses do autor e construir a melhor estratégia para procedência do pedido.';
+
     for (let i = 1; i <= 3; i++) {
       onProgress?.('WRITING', i);
 
-      const userPetition = userSide === 'DEFENSE' ? defenseDescription : caseDescription;
-      const staticSide = userSide === 'DEFENSE' ? caseDescription : defenseDescription;
-      const userAtts = userSide === 'DEFENSE' ? defenseAttachments : attachments;
-
+      // Bug fix: rounds 2+ pass the previous improved petition, not the original user input
       const lawPrompt = i === 1
-        ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente: ${userPetition}`
-        : `Sentença anterior: ${currentJudgment}\nMelhore ainda mais: ${userPetition}`;
-
-      const sideContext = userSide === 'DEFENSE'
-        ? '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do RÉU (DEFESA). Sua função é defender os interesses do réu, contestar os argumentos do autor e construir a melhor estratégia de defesa possível. Nunca argumente pelo lado do autor.'
-        : '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do AUTOR. Sua função é defender os interesses do autor e construir a melhor estratégia para procedência do pedido.';
+        ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente:\n${userPetition}`
+        : `Você escreveu esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} na rodada anterior:\n${currentPetition}\n\nO juiz emitiu esta sentença:\n${currentJudgment}\n\nReescreva e fortaleça sua ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} corrigindo as fraquezas apontadas pelo juiz. Descrição original do caso:\n${userPetition}`;
 
       const lawRes = await ai.models.generateContent({
         model: MODEL_NAME,
@@ -223,23 +223,31 @@ export async function simulateForumServer(
       });
 
       const juiText = juiRes.text || '';
-      let juiParsed: any = {};
-      try { juiParsed = JSON.parse(juiText); } catch {}
       currentJudgment = juiText;
       lastProb = extractProbability(juiText);
 
+      // Bug fix: generate strategic brief so next round's lawyer builds on what worked
       onProgress?.('REVIEWING', i);
+      const briefRes = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: [{ role: 'user', parts: [{ text: `Analise a ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} e a sentença da rodada ${i} e gere um resumo conciso dos argumentos que funcionaram e das fraquezas identificadas pelo juiz para guiar a próxima rodada.\n${userSide === 'DEFENSE' ? 'Contestação' : 'Petição'}: ${currentPetition}\nSentença: ${currentJudgment}` }] }],
+        config: { systemInstruction: `Você é um Estrategista Jurídico. Gere um "Lawyer's Brief" conciso: pontos fortes mantidos e fraquezas a corrigir na próxima rodada.` }
+      });
+      const currentBrief = briefRes.text || '';
+
       rounds.push({
         round: i,
         lawyerPetition: currentPetition,
         judgeJudgment: currentJudgment,
         successProbability: lastProb,
-        authorSummary: juiParsed.author_summary,
-        defenseSummary: juiParsed.defense_summary
+        lawyerBrief: currentBrief
       });
 
       onProgress?.('ROUND_DONE', i, rounds[rounds.length - 1]);
-      if (lastProb >= 95) break;
+
+      // Bug fix: for DEFENSE mode, 95% success = AUTHOR has ≤5% (lastProb is AUTHOR's probability)
+      const userWins95 = userSide === 'DEFENSE' ? lastProb <= 5 : lastProb >= 95;
+      if (userWins95) break;
     }
     return { area, rounds, finalSuccessProbability: lastProb,
              lawyerAgentName: lawAgent.name, judgeAgentName: judgeName };
