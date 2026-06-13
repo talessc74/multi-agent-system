@@ -199,70 +199,79 @@ export async function simulateForumServer(
   let lastProb = 0;
 
   if (mode === 4) {
+    const userPetition = userSide === 'DEFENSE' ? defenseDescription : caseDescription;
+    const staticSide = userSide === 'DEFENSE' ? caseDescription : defenseDescription;
+    const userAtts = userSide === 'DEFENSE' ? defenseAttachments : attachments;
+    const sideContext = userSide === 'DEFENSE'
+      ? '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do RÉU (DEFESA). Sua função é defender os interesses do réu, contestar os argumentos do autor e construir a melhor estratégia de defesa possível. Nunca argumente pelo lado do autor.'
+      : '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do AUTOR. Sua função é defender os interesses do autor e construir a melhor estratégia para procedência do pedido.';
+
     for (let i = 1; i <= 3; i++) {
-      onProgress?.('WRITING', i);
+      try {
+        onProgress?.('WRITING', i);
 
-      const userPetition = userSide === 'DEFENSE' ? defenseDescription : caseDescription;
-      const staticSide = userSide === 'DEFENSE' ? caseDescription : defenseDescription;
-      const userAtts = userSide === 'DEFENSE' ? defenseAttachments : attachments;
+        const lawPrompt = i === 1
+          ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente: ${userPetition}`
+          : `Você é o advogado do ${userSide === 'DEFENSE' ? 'RÉU (DEFESA)' : 'AUTOR'}. O juiz emitiu a seguinte sentença após sua última ${userSide === 'DEFENSE' ? 'contestação' : 'petição'}:\n\nSENTENÇA DO JUIZ:\n${currentJudgment}\n\nSUA ${userSide === 'DEFENSE' ? 'CONTESTAÇÃO' : 'PETIÇÃO'} ANTERIOR:\n${currentPetition}\n\nBREVES ESTRATÉGICOS ACUMULADOS:\n${allBriefs}\n\nAnalise a sentença do juiz para identificar exatamente onde sua ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} foi fraca ou insuficiente. Reescreva-a endereçando diretamente as objeções do juiz, reforçando os pontos favoráveis e introduzindo novos argumentos jurídicos que possam reverter ou melhorar o resultado.`;
 
-      const lawPrompt = i === 1
-        ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente: ${userPetition}`
-        : `Você é o advogado do ${userSide === 'DEFENSE' ? 'RÉU (DEFESA)' : 'AUTOR'}. O juiz emitiu a seguinte sentença após sua última ${userSide === 'DEFENSE' ? 'contestação' : 'petição'}:\n\nSENTENÇA DO JUIZ:\n${currentJudgment}\n\nSUA ${userSide === 'DEFENSE' ? 'CONTESTAÇÃO' : 'PETIÇÃO'} ANTERIOR:\n${currentPetition}\n\nBREVES ESTRATÉGICOS ACUMULADOS:\n${allBriefs}\n\nAnalise a sentença do juiz para identificar exatamente onde sua ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} foi fraca ou insuficiente. Reescreva-a endereçando diretamente as objeções do juiz, reforçando os pontos favoráveis e introduzindo novos argumentos jurídicos que possam reverter ou melhorar o resultado.`;
+        const lawRes = await ai.models.generateContent({
+          model: MODEL_NAME,
+          contents: [{ role: 'user', parts: prepareParts(lawPrompt, userAtts) }],
+          config: { systemInstruction: lawAgent.instruction + sideContext }
+        });
+        currentPetition = lawRes.text || '';
 
-      const sideContext = userSide === 'DEFENSE'
-        ? '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do RÉU (DEFESA). Sua função é defender os interesses do réu, contestar os argumentos do autor e construir a melhor estratégia de defesa possível. Nunca argumente pelo lado do autor.'
-        : '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do AUTOR. Sua função é defender os interesses do autor e construir a melhor estratégia para procedência do pedido.';
+        onProgress?.('JUDGING', i);
 
-      const lawRes = await ai.models.generateContent({
-        model: MODEL_NAME,
-        contents: [{ role: 'user', parts: prepareParts(lawPrompt, userAtts) }],
-        config: { systemInstruction: lawAgent.instruction + sideContext }
-      });
-      currentPetition = lawRes.text || '';
+        const authorText = userSide === 'DEFENSE' ? staticSide : currentPetition;
+        const defenseText = userSide === 'DEFENSE' ? currentPetition : staticSide;
 
-      onProgress?.('JUDGING', i);
+        const juiPrompt = `Analise ambos os lados e emita veredito.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100>,"author_summary":"<resumo>","defense_summary":"<resumo>","judgment":"<veredito>"}`;
 
-      const authorText = userSide === 'DEFENSE' ? staticSide : currentPetition;
-      const defenseText = userSide === 'DEFENSE' ? currentPetition : staticSide;
+        const juiRes = await ai.models.generateContent({
+          model: MODEL_NAME,
+          contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
+          config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
+        });
 
-      const juiPrompt = `Analise ambos os lados e emita veredito.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100>,"author_summary":"<resumo>","defense_summary":"<resumo>","judgment":"<veredito>"}`;
+        const juiText = juiRes.text || '{}';
+        let juiParsed: any = {};
+        try { juiParsed = JSON.parse(juiText); } catch {}
+        currentJudgment = juiParsed.judgment || juiText;
+        lastProb = juiParsed.success_probability ?? extractProbability(juiText);
 
-      const juiRes = await ai.models.generateContent({
-        model: MODEL_NAME,
-        contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
-        config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
-      });
+        onProgress?.('REVIEWING', i);
 
-      const juiText = juiRes.text || '{}';
-      let juiParsed: any = {};
-      try { juiParsed = JSON.parse(juiText); } catch {}
-      currentJudgment = juiParsed.judgment || juiText;
-      lastProb = juiParsed.success_probability ?? extractProbability(juiText);
+        const briefRes4 = await ai.models.generateContent({
+          model: MODEL_NAME,
+          contents: [{ role: 'user', parts: [{ text: `Analise a petição e a sentença da rodada ${i} e gere um resumo conciso de argumentos e citações para o próximo round.\nPetição: ${currentPetition}\nSentença: ${currentJudgment}\nBreves Anteriores: ${allBriefs}` }] }],
+          config: {
+            systemInstruction: `Você é um Estrategista Jurídico. Sua tarefa é analisar o progresso de um caso e gerar um "Lawyer's Brief": um resumo conciso dos argumentos chave e citações recorrentes que foram bem-sucedidos ou que precisam ser reforçados. Este resumo será usado pelo advogado na próxima rodada.`
+          }
+        });
+        const currentBrief4 = briefRes4.text || '';
+        allBriefs += `\n--- Brief Rodada ${i} ---\n${currentBrief4}`;
 
-      onProgress?.('REVIEWING', i);
+        rounds.push({
+          round: i,
+          lawyerPetition: currentPetition,
+          judgeJudgment: currentJudgment,
+          successProbability: lastProb,
+          lawyerBrief: currentBrief4,
+        });
 
-      const briefRes4 = await ai.models.generateContent({
-        model: MODEL_NAME,
-        contents: [{ role: 'user', parts: [{ text: `Analise a petição e a sentença da rodada ${i} e gere um resumo conciso de argumentos e citações para o próximo round.\nPetição: ${currentPetition}\nSentença: ${currentJudgment}\nBreves Anteriores: ${allBriefs}` }] }],
-        config: {
-          systemInstruction: `Você é um Estrategista Jurídico. Sua tarefa é analisar o progresso de um caso e gerar um "Lawyer's Brief": um resumo conciso dos argumentos chave e citações recorrentes que foram bem-sucedidos ou que precisam ser reforçados. Este resumo será usado pelo advogado na próxima rodada.`
-        }
-      });
-      const currentBrief4 = briefRes4.text || '';
-      allBriefs += `\n--- Brief Rodada ${i} ---\n${currentBrief4}`;
+        onProgress?.('ROUND_DONE', i, rounds[rounds.length - 1]);
+        if (lastProb >= 95) break;
 
-      rounds.push({
-        round: i,
-        lawyerPetition: currentPetition,
-        judgeJudgment: currentJudgment,
-        successProbability: lastProb,
-        lawyerBrief: currentBrief4,
-      });
-
-      onProgress?.('ROUND_DONE', i, rounds[rounds.length - 1]);
-      if (lastProb >= 95) break;
+      } catch (roundErr) {
+        console.error(`[Mode4] Round ${i} falhou:`, roundErr instanceof Error ? roundErr.message : roundErr);
+        // Se já temos rodadas anteriores, entrega o melhor resultado disponível em vez de crashar
+        if (rounds.length > 0) break;
+        throw roundErr; // Round 1 sem resultado — propaga o erro normalmente
+      }
     }
+
+    if (rounds.length === 0) throw new Error('Simulação não produziu rodadas.');
     return { area, rounds, finalSuccessProbability: lastProb,
              lawyerAgentName: lawAgent.name, judgeAgentName: judgeName };
   }
