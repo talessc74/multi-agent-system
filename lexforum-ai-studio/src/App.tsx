@@ -120,7 +120,8 @@ function formatSimDate(createdAt: unknown): string {
 
 function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses, onOpenChat }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; onOpenChat?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
-  const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
+  const finalPctRaw = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
+  const finalPct = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPctRaw : finalPctRaw;
   const [isPrinting, setIsPrinting] = React.useState(false);
   const [isExpanding, setIsExpanding] = React.useState(false);
   const [showMode4Preview, setShowMode4Preview] = React.useState(false);
@@ -1839,7 +1840,8 @@ const startRecovery = (sessionId: string) => {
       {state.step === 'result' && !state.isUnlocked && (() => {
         const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
         const rounds = state.simulation?.rounds ?? [];
-        const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
+        const finalPctRaw2 = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
+        const finalPct = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPctRaw2 : finalPctRaw2;
 
         return (
           <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
@@ -3099,9 +3101,10 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 {state.step === 'result' && !state.isUnlocked && (() => {
-                  const finalPct = state.selectedMode === 5
+                  const finalPctRaw3 = state.selectedMode === 5
                     ? (state.mode5Result?.successProbability ?? 0)
                     : (state.simulation?.finalSuccessProbability ?? 0);
+                  const finalPct = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPctRaw3 : finalPctRaw3;
                   return (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -3682,8 +3685,12 @@ const startRecovery = (sessionId: string) => {
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Aproveitamento</div>
-                              <div className="text-xl font-serif italic text-white print:text-black">{round.successProbability}%</div>
+                              <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">
+                                {state.selectedMode === 4 && state.userSide === 'DEFENSE' ? 'Aproveitamento · RÉU' : 'Aproveitamento'}
+                              </div>
+                              <div className="text-xl font-serif italic text-white print:text-black">
+                                {state.selectedMode === 4 && state.userSide === 'DEFENSE' ? (100 - round.successProbability) : round.successProbability}%
+                              </div>
                             </div>
                           </div>
                           
@@ -3864,10 +3871,11 @@ const startRecovery = (sessionId: string) => {
                 <div className="space-y-1">
                   <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Índice de Força Argumentativa</div>
                   <div className="text-5xl font-serif italic text-white/90">
-                    { (state.simulation?.rounds && state.simulation.rounds.length > 0) 
-                      ? (state.simulation.finalSuccessProbability || state.simulation.rounds[state.simulation.rounds.length - 1]?.successProbability || 0)
-                      : "--"
-                    }%
+                    {(() => {
+                      if (!state.simulation?.rounds?.length) return "--";
+                      const raw = state.simulation.finalSuccessProbability || state.simulation.rounds[state.simulation.rounds.length - 1]?.successProbability || 0;
+                      return state.selectedMode === 4 && state.userSide === 'DEFENSE' ? 100 - raw : raw;
+                    })()}%
                   </div>
                 </div>
                 <div className="text-[10px] font-mono text-emerald-500/60 font-bold border-t border-white/5 pt-4 flex justify-between">
