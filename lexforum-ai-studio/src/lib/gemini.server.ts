@@ -211,9 +211,11 @@ export async function simulateForumServer(
       try {
         onProgress?.('WRITING', i);
 
+        const opposingLabel = userSide === 'DEFENSE' ? 'PETIÇÃO DO AUTOR' : 'CONTESTAÇÃO DO RÉU';
+        const ownLabel = userSide === 'DEFENSE' ? 'contestação' : 'petição';
         const lawPrompt = i === 1
-          ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente: ${userPetition}`
-          : `Você é o advogado do ${userSide === 'DEFENSE' ? 'RÉU (DEFESA)' : 'AUTOR'}. O juiz emitiu a seguinte sentença após sua última ${userSide === 'DEFENSE' ? 'contestação' : 'petição'}:\n\nSENTENÇA DO JUIZ:\n${currentJudgment}\n\nSUA ${userSide === 'DEFENSE' ? 'CONTESTAÇÃO' : 'PETIÇÃO'} ANTERIOR:\n${currentPetition}\n\nBREVES ESTRATÉGICOS ACUMULADOS:\n${allBriefs}\n\nAnalise a sentença do juiz para identificar exatamente onde sua ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} foi fraca ou insuficiente. Reescreva-a endereçando diretamente as objeções do juiz, reforçando os pontos favoráveis e introduzindo novos argumentos jurídicos que possam reverter ou melhorar o resultado.`;
+          ? `${opposingLabel} (lado contrário — você deve rebater estes argumentos):\n${staticSide}\n\nMelhore esta ${ownLabel} tornando-a mais forte tecnicamente, rebatendo diretamente os argumentos do lado contrário:\n${userPetition}`
+          : `Você é o advogado do ${userSide === 'DEFENSE' ? 'RÉU (DEFESA)' : 'AUTOR'}.\n\n${opposingLabel} (texto original do lado contrário — não muda entre rodadas):\n${staticSide}\n\nSENTENÇA DO JUIZ:\n${currentJudgment}\n\nSUA ${ownLabel.toUpperCase()} ANTERIOR:\n${currentPetition}\n\nBREVES ESTRATÉGICOS ACUMULADOS:\n${allBriefs}\n\nRebata ponto a ponto os argumentos do lado contrário. Identifique onde o juiz deu razão ao ${userSide === 'DEFENSE' ? 'autor' : 'réu'} e reforce os pontos que derrubam esses argumentos. Reescreva sua ${ownLabel} endereçando diretamente as objeções do juiz e os pontos fracos identificados.`;
 
         const lawRes = await ai.models.generateContent({
           model: MODEL_NAME,
