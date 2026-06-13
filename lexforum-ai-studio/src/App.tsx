@@ -120,8 +120,8 @@ function formatSimDate(createdAt: unknown): string {
 
 function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses, onOpenChat }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; onOpenChat?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
-  const finalPctRaw = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
-  const finalPct = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPctRaw : finalPctRaw;
+  const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
+  const displayPct = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPct : finalPct;
   const [isPrinting, setIsPrinting] = React.useState(false);
   const [isExpanding, setIsExpanding] = React.useState(false);
   const [showMode4Preview, setShowMode4Preview] = React.useState(false);
@@ -142,7 +142,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
       <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingBottom: 'calc(96px + env(safe-area-inset-bottom))', scrollbarWidth: 'none' }}>
         <div style={{ textAlign: 'center', padding: '24px 20px 16px' }}>
           <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 8px' }}>Índice de força argumentativa</p>
-          <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '56px', fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, color: modeColor, margin: '0 0 6px' }}>{state.selectedMode === 5 ? `${state.mode5Result?.successProbability ?? 0}%` : `${finalPct}%`}</p>
+          <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '56px', fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, color: modeColor, margin: '0 0 6px' }}>{state.selectedMode === 5 ? `${state.mode5Result?.successProbability ?? 0}%` : `${displayPct}%`}</p>
           <p style={{ fontSize: '10px', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: '240px', margin: '0 auto' }}>Estimativa baseada na sua descrição. Não é probabilidade estatística.</p>
         </div>
         {(state.selectedMode === 3 || state.selectedMode === 4) && (
@@ -1840,8 +1840,8 @@ const startRecovery = (sessionId: string) => {
       {state.step === 'result' && !state.isUnlocked && (() => {
         const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
         const rounds = state.simulation?.rounds ?? [];
-        const finalPctRaw2 = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
-        const finalPct = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPctRaw2 : finalPctRaw2;
+        const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
+        const displayPct2 = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPct : finalPct;
 
         return (
           <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
@@ -1872,7 +1872,7 @@ const startRecovery = (sessionId: string) => {
                   Índice de força argumentativa
                 </p>
                 <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '72px', fontWeight: 900, letterSpacing: '-3px', lineHeight: 1, color: modeColor, margin: '0 0 10px' }}>
-                  {finalPct}%
+                  {displayPct2}%
                 </p>
                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: '260px', margin: '0 auto' }}>
                   Estimativa baseada na sua descrição. Não é probabilidade estatística. Resultados reais variam.
@@ -3873,7 +3873,7 @@ const startRecovery = (sessionId: string) => {
                   <div className="text-5xl font-serif italic text-white/90">
                     {(() => {
                       if (!state.simulation?.rounds?.length) return "--";
-                      const raw = state.simulation.finalSuccessProbability || state.simulation.rounds[state.simulation.rounds.length - 1]?.successProbability || 0;
+                      const raw = state.simulation.finalSuccessProbability ?? state.simulation.rounds[state.simulation.rounds.length - 1]?.successProbability ?? 0;
                       return state.selectedMode === 4 && state.userSide === 'DEFENSE' ? 100 - raw : raw;
                     })()}%
                   </div>
