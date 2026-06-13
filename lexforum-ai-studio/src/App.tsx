@@ -466,9 +466,12 @@ const displayRecoveredResult = async (result: SimulationResult) => {
   recoveryUnsubRef.current = null;
 
   try {
+    const isDefenseModeRecovery = state.selectedMode === 4 && state.userSide === 'DEFENSE';
     let bestRound = result.rounds[0];
     for (const round of result.rounds) {
-      if (round.successProbability >= bestRound.successProbability) bestRound = round;
+      if (isDefenseModeRecovery
+        ? round.successProbability <= bestRound.successProbability
+        : round.successProbability >= bestRound.successProbability) bestRound = round;
     }
     const finalData = { ...result, finalSuccessProbability: bestRound.successProbability };
     setState(prev => ({ ...prev, simulation: finalData }));
@@ -822,10 +825,13 @@ const startRecovery = (sessionId: string) => {
         throw new Error('Simulação retornou sem rodadas. Tente novamente.');
       }
 
-      // Select the best round based on probability (highest, then latest if tie)
+      // For DEFENSE mode 4, best round is lowest AUTOR probability (= highest RÉU success)
+      const isDefenseMode = state.selectedMode === 4 && state.userSide === 'DEFENSE';
       let bestRound = data.rounds[0];
       for (const round of data.rounds) {
-        if (round.successProbability >= bestRound.successProbability) {
+        if (isDefenseMode
+          ? round.successProbability <= bestRound.successProbability
+          : round.successProbability >= bestRound.successProbability) {
           bestRound = round;
         }
       }
