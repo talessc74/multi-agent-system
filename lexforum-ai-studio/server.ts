@@ -78,21 +78,6 @@ async function startServer() {
       OTHER: 'geral',
     };
 
-    const lawyerDisplayName = `Advogado ${
-      area === 'LABOR' ? 'Trabalhista' :
-      area === 'CONSUMER' ? 'Consumerista' :
-      area === 'CIVIL' ? 'Civilista' :
-      area === 'FAMILY' ? 'de Família' :
-      area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'
-    }`;
-
-    // Heartbeat: establish SSE connection immediately before any async work
-    // so the client doesn't show a frozen "Peticionando" during agent lookup.
-    send('agents', { lawyerName: lawyerDisplayName, judgeName: `Magistrado Especializado`, sessionId });
-
-    // findOnly=true: never creates agents here — avoids duplicate concurrent
-    // Gemini calls. If not found, simulateForumServer's getOrGenerateAgent
-    // (in-memory cache) handles creation once.
     let agentInstruction: string | undefined;
     let judgeNameFromRegistry: string | undefined;
     try {
@@ -100,7 +85,7 @@ async function startServer() {
         area: areaMap[area] ?? area.toLowerCase(),
         comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
         tipo: 'juiz',
-      }, true);
+      });
       const agentJson = entry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), entry.arquivo), 'utf-8'));
       agentInstruction = JSON.stringify(agentJson);
       judgeNameFromRegistry = `Magistrado ${area === 'LABOR' ? 'Trabalhista' : area === 'CONSUMER' ? 'Consumerista' : area === 'CIVIL' ? 'Cível' : area === 'FAMILY' ? 'de Família' : area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'}`;
@@ -111,19 +96,28 @@ async function startServer() {
 
     let lawyerInstruction: string | undefined;
     try {
-      const lawyerSide = (mode === 2 || (mode === 4 && userSide === 'DEFENSE')) ? 'DEFENSE' : 'AUTHOR';
+      const lawyerSide = (mode === 2) ? 'DEFENSE' : 'AUTHOR';
       const lawyerEntry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
         comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
         tipo: 'advogado',
         userSide: lawyerSide,
-      }, true);
+      });
       const lawyerJson = lawyerEntry.conteudo ?? JSON.parse(fs.readFileSync(path.join(process.cwd(), lawyerEntry.arquivo), 'utf-8'));
       lawyerInstruction = JSON.stringify(lawyerJson);
       console.log(`[AgentResolver] Advogado do registry: ${lawyerEntry.agent_id}`);
     } catch (e) {
       console.warn('[AgentResolver] Advogado fallback dinâmico:', e instanceof Error ? e.message : e);
     }
+
+    const lawyerDisplayName = `Advogado ${
+      area === 'LABOR' ? 'Trabalhista' :
+      area === 'CONSUMER' ? 'Consumerista' :
+      area === 'CIVIL' ? 'Civilista' :
+      area === 'FAMILY' ? 'de Família' :
+      area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'
+    }`;
+    send('agents', { lawyerName: lawyerDisplayName, judgeName: judgeNameFromRegistry ?? `Magistrado Especializado`, sessionId });
 
     try {
       const data = await simulateForumServer(

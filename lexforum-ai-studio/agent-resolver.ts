@@ -103,10 +103,7 @@ async function createAndSaveAgent(params: ResolveParams): Promise<AgentEntry> {
   return entry;
 }
 
-// findOnly=true: returns null instead of creating — lets simulateForumServer's
-// getOrGenerateAgent (with in-memory cache) handle creation once, avoiding
-// duplicate concurrent Gemini API calls when the agent is not yet cached.
-export async function resolveAgent(params: ResolveParams, findOnly = false): Promise<AgentEntry> {
+export async function resolveAgent(params: ResolveParams): Promise<AgentEntry> {
   const local = findAgentLocal(params);
   if (local) {
     console.log(`[AgentResolver] Registry local: ${local.agent_id}`);
@@ -115,8 +112,6 @@ export async function resolveAgent(params: ResolveParams, findOnly = false): Pro
 
   const firestore = await findAgentFirestore(params);
   if (firestore) return firestore;
-
-  if (findOnly) throw new Error(`agent-not-found: ${params.area}/${params.tipo}`);
 
   console.log(`[AgentResolver] Lacuna detectada — acionando criação para área: ${params.area} tipo: ${params.tipo}`);
   return await createAndSaveAgent(params);

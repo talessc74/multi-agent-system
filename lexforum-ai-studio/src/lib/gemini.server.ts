@@ -17,7 +17,7 @@ const dynamicAgents: Record<string, { id: string, name: string, instruction: str
 
 export function extractProbability(text: string): number {
   if (!text) return 50;
-  const match = text.match(/"success_probability"\s*:\s*(\d+)/);
+  const match = text.match(/{\s*"success_probability"\s*:\s*(\d+)\s*}/);
   if (match) return parseInt(match[1]);
   return 50;
 }
@@ -187,20 +187,20 @@ export async function simulateForumServer(
   let lastProb = 0;
 
   if (mode === 4) {
-    const userPetition = userSide === 'DEFENSE' ? defenseDescription : caseDescription;
-    const staticSide = userSide === 'DEFENSE' ? caseDescription : defenseDescription;
-    const userAtts = userSide === 'DEFENSE' ? defenseAttachments : attachments;
-    const sideContext = userSide === 'DEFENSE'
-      ? '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do RÉU (DEFESA). Sua função é defender os interesses do réu, contestar os argumentos do autor e construir a melhor estratégia de defesa possível. Nunca argumente pelo lado do autor.'
-      : '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do AUTOR. Sua função é defender os interesses do autor e construir a melhor estratégia para procedência do pedido.';
-    let allBriefs4 = '';
-
     for (let i = 1; i <= 3; i++) {
       onProgress?.('WRITING', i);
 
+      const userPetition = userSide === 'DEFENSE' ? defenseDescription : caseDescription;
+      const staticSide = userSide === 'DEFENSE' ? caseDescription : defenseDescription;
+      const userAtts = userSide === 'DEFENSE' ? defenseAttachments : attachments;
+
       const lawPrompt = i === 1
-        ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente:\n${userPetition}`
-        : `Você escreveu esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} na rodada anterior:\n${currentPetition}\n\nO juiz emitiu esta sentença:\n${currentJudgment}\n\nBreves estratégicos das rodadas anteriores:\n${allBriefs4}\n\nReescreva e fortaleça sua ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} corrigindo as fraquezas apontadas pelo juiz. Descrição original do caso:\n${userPetition}`;
+        ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente: ${userPetition}`
+        : `Sentença anterior: ${currentJudgment}\nMelhore ainda mais: ${userPetition}`;
+
+      const sideContext = userSide === 'DEFENSE'
+        ? '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do RÉU (DEFESA). Sua função é defender os interesses do réu, contestar os argumentos do autor e construir a melhor estratégia de defesa possível. Nunca argumente pelo lado do autor.'
+        : '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do AUTOR. Sua função é defender os interesses do autor e construir a melhor estratégia para procedência do pedido.';
 
       const lawRes = await ai.models.generateContent({
         model: MODEL_NAME,
@@ -214,39 +214,32 @@ export async function simulateForumServer(
       const authorText = userSide === 'DEFENSE' ? staticSide : currentPetition;
       const defenseText = userSide === 'DEFENSE' ? currentPetition : staticSide;
 
-      const juiPrompt = `Analise ambos os lados e emita veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nAo final da sua análise, inclua obrigatoriamente:\n{"success_probability": <inteiro de 0 a 100 representando a chance de êxito do AUTOR>}`;
+      const juiPrompt = `Analise ambos os lados e emita veredito.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100>,"author_summary":"<resumo>","defense_summary":"<resumo>","judgment":"<veredito>"}`;
 
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
-        config: { systemInstruction: judgeInstruction }
+        config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
       });
 
-      const juiText = juiRes.text || '';
-      currentJudgment = juiText;
-      lastProb = extractProbability(juiText);
+      const juiText = juiRes.text || '{}';
+      let juiParsed: any = {};
+      try { juiParsed = JSON.parse(juiText); } catch {}
+      currentJudgment = juiParsed.judgment || juiText;
+      lastProb = juiParsed.success_probability ?? extractProbability(juiText);
 
       onProgress?.('REVIEWING', i);
-      const briefRes = await ai.models.generateContent({
-        model: MODEL_NAME,
-        contents: [{ role: 'user', parts: [{ text: `Analise a ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} e a sentença da rodada ${i} e gere um resumo conciso dos argumentos que funcionaram e das fraquezas identificadas pelo juiz para guiar a próxima rodada.\n${userSide === 'DEFENSE' ? 'Contestação' : 'Petição'}: ${currentPetition}\nSentença: ${currentJudgment}` }] }],
-        config: { systemInstruction: `Você é um Estrategista Jurídico. Gere um "Lawyer's Brief" conciso: pontos fortes mantidos e fraquezas a corrigir na próxima rodada.` }
-      });
-      const currentBrief = briefRes.text || '';
-      allBriefs4 += `\n--- Brief Rodada ${i} ---\n${currentBrief}`;
-
       rounds.push({
         round: i,
         lawyerPetition: currentPetition,
         judgeJudgment: currentJudgment,
         successProbability: lastProb,
-        lawyerBrief: currentBrief
+        authorSummary: juiParsed.author_summary,
+        defenseSummary: juiParsed.defense_summary
       });
 
       onProgress?.('ROUND_DONE', i, rounds[rounds.length - 1]);
-
-      const userWins95 = userSide === 'DEFENSE' ? lastProb <= 5 : lastProb >= 95;
-      if (userWins95) break;
+      if (lastProb >= 95) break;
     }
     return { area, rounds, finalSuccessProbability: lastProb,
              lawyerAgentName: lawAgent.name, judgeAgentName: judgeName };
@@ -259,19 +252,21 @@ export async function simulateForumServer(
 
     if (mode === 3) {
       onProgress?.('JUDGING', i);
-      const juiPrompt = `Você recebeu a petição do Autor e a contestação do Réu. Analise ambos os lados de forma imparcial e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${caseDescription}\n\nCONTESTAÇÃO DO RÉU:\n${defenseDescription}\n\nAo final da sua análise, inclua obrigatoriamente:\n{"success_probability": <inteiro de 0 a 100 representando a chance de êxito do AUTOR>}`;
+      const juiPrompt = `Você recebeu a petição do Autor e a contestação do Réu. Analise ambos os lados de forma imparcial e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${caseDescription}\n\nCONTESTAÇÃO DO RÉU:\n${defenseDescription}\n\nRetorne um JSON com o seguinte formato:\n{\n  "success_probability": <0-100, chance de procedência do AUTOR>,\n  "author_summary": "<resumo em 1-2 frases do argumento central do Autor>",\n  "defense_summary": "<resumo em 1-2 frases do argumento central do Réu>",\n  "judgment": "<veredito técnico completo fundamentado em lei>"\n}`;
       const authorParts = prepareParts(juiPrompt, attachments);
       const defenseParts = defenseAttachments.length > 0 ? prepareParts('', defenseAttachments).slice(1) : [];
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: [...authorParts, ...defenseParts] }],
-        config: { systemInstruction: judgeInstruction }
+        config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
       });
-      const juiText = juiRes.text || '';
-      currentJudgment = juiText;
-      lastProb = extractProbability(juiText);
+      const juiText = juiRes.text || '{}';
+      let juiParsed: any = {};
+      try { juiParsed = JSON.parse(juiText); } catch {}
+      currentJudgment = juiParsed.judgment || juiText;
+      lastProb = juiParsed.success_probability ?? extractProbability(juiText);
       onProgress?.('REVIEWING', i);
-      rounds.push({ round: i, lawyerPetition: caseDescription, judgeJudgment: currentJudgment, successProbability: lastProb });
+      rounds.push({ round: i, lawyerPetition: caseDescription, judgeJudgment: currentJudgment, successProbability: lastProb, authorSummary: juiParsed.author_summary, defenseSummary: juiParsed.defense_summary });
       break;
     }
 
