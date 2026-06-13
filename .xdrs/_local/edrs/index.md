@@ -6,8 +6,9 @@ Engineering workflow and implementation decisions for EAI?.
 
 Code-level implementation patterns and conventions.
 
-- [001-judge-area-binding](application/001-judge-area-binding.md) — Mandatory INSTRUCAO VINCULANTE prefix binds judge and lawyer to session's legal area
+- [001-judge-area-binding](application/001-judge-area-binding.md) — Mandatory INSTRUCAO VINCULANTE prefix binds judge and lawyer to session's legal area (defense-in-depth; see EDR-007 for primary fix)
 - [002-dynamic-legal-areas](application/002-dynamic-legal-areas.md) — All legal areas supported via dynamic agent creation and Firestore caching
+- [003-judge-impartiality-in-creation](application/003-judge-impartiality-in-creation.md) — Judge and desembargadora descriptions to Shaw must always be impartial — userSide must never influence judge creation
 
 ## principles
 
