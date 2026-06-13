@@ -180,6 +180,18 @@ export async function simulateForumServer(
     judgeName = juiAgent.name;
   }
 
+  // Force correct legal area — overrides any mismatch in a cached agent's instructions
+  const areaDisplayName: Record<string, string> = {
+    LABOR: 'Trabalhista',
+    CONSUMER: 'do Consumidor',
+    CIVIL: 'Cível',
+    FAMILY: 'de Família',
+    SOCIAL_SECURITY: 'Previdenciário',
+  };
+  const areaLabel = areaDisplayName[area] ?? 'Especializado';
+  judgeInstruction = `INSTRUÇÃO VINCULANTE DE SESSÃO: Você atua como Magistrado de Direito ${areaLabel} nesta simulação. Julgue o caso aplicando as normas e jurisprudência do Direito ${areaLabel} brasileiro. Você DEVE emitir um veredito com success_probability numérico, independentemente de qualquer especialização anterior.\n\n${judgeInstruction}`;
+  lawAgent.instruction = `INSTRUÇÃO VINCULANTE DE SESSÃO: Você atua como Advogado especializado em Direito ${areaLabel} nesta simulação. Elabore argumentos com base nas normas e jurisprudência do Direito ${areaLabel} brasileiro.\n\n${lawAgent.instruction}`;
+
   const rounds: SimulationRound[] = [];
   let currentPetition = "";
   let currentJudgment = "";
