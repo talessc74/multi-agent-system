@@ -41,11 +41,15 @@ function findAgentLocal(params: ResolveParams): AgentEntry | null {
 async function findAgentFirestore(params: ResolveParams): Promise<AgentEntry | null> {
   try {
     const db = admin.firestore();
-    const lado = params.userSide === 'DEFENSE' ? 'defesa' : 'acusacao';
     let query = db.collection('agents')
       .where('area', '==', params.area)
-      .where('tipo', '==', params.tipo)
-      .where('lado', '==', lado);
+      .where('tipo', '==', params.tipo);
+
+    // Juiz é imparcial — sem filtro de lado
+    if (params.tipo !== 'juiz') {
+      const lado = params.userSide === 'DEFENSE' ? 'defesa' : 'acusacao';
+      query = query.where('lado', '==', lado);
+    }
 
     if (params.comarca) {
       query = query.where('comarca', '==', params.comarca);
@@ -55,6 +59,10 @@ async function findAgentFirestore(params: ResolveParams): Promise<AgentEntry | n
     if (snapshot.empty) return null;
 
     const doc = snapshot.docs[0].data();
+    if (!doc.conteudo) {
+      console.warn(`[AgentResolver] Agente ${doc.agent_id} sem conteudo — regenerando`);
+      return null;
+    }
     console.log(`[AgentResolver] Prateleira Firestore: ${doc.agent_id}`);
     return doc as AgentEntry;
   } catch (e) {
@@ -87,14 +95,18 @@ async function createAndSaveAgent(params: ResolveParams): Promise<AgentEntry> {
 
   try {
     const db = admin.firestore();
-    await db.collection('agents').doc(result.agent_id).set({
+    const docData: Record<string, any> = {
       ...entry,
       area: params.area,
-      lado: params.userSide === 'DEFENSE' ? 'defesa' : 'acusacao',
       criadoEm: admin.firestore.FieldValue.serverTimestamp(),
       criadoPor: 'EspecialistaV1',
       versao: '1.0',
-    });
+    };
+    // Juiz é imparcial — não armazena lado
+    if (params.tipo !== 'juiz') {
+      docData.lado = params.userSide === 'DEFENSE' ? 'defesa' : 'acusacao';
+    }
+    await db.collection('agents').doc(result.agent_id).set(docData);
     console.log(`[AgentResolver] Criado e salvo na prateleira: ${result.agent_id}`);
   } catch (e) {
     console.warn('[AgentResolver] Erro ao salvar no Firestore:', e instanceof Error ? e.message : e);
