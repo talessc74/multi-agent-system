@@ -219,7 +219,7 @@ export async function simulateForumServer(
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
-        config: { systemInstruction: judgeInstruction, temperature: 0.1 }
+        config: { systemInstruction: judgeInstruction }
       });
 
       const juiText = juiRes.text || '';
