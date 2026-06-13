@@ -2,8 +2,6 @@ name: Deploy — Produção
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 jobs:
   deploy:
