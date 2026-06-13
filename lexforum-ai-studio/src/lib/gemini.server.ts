@@ -208,7 +208,7 @@ export async function simulateForumServer(
 
       const lawPrompt = i === 1
         ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente: ${userPetition}`
-        : `Sentença anterior: ${currentJudgment}\nBreves estratégicos acumulados: ${allBriefs}\nMelhore ainda mais: ${userPetition}`;
+        : `Sentença anterior: ${currentJudgment}\nBreves estratégicos acumulados: ${allBriefs}\nMelhore ainda mais: ${currentPetition}`;
 
       const sideContext = userSide === 'DEFENSE'
         ? '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do RÉU (DEFESA). Sua função é defender os interesses do réu, contestar os argumentos do autor e construir a melhor estratégia de defesa possível. Nunca argumente pelo lado do autor.'
