@@ -38,6 +38,9 @@ function findAgentLocal(params: ResolveParams): AgentEntry | null {
   return agentes.find(a => a.tipo === params.tipo) ?? null;
 }
 
+// Agentes criados antes das correções EDR-007/BDR-003 são rejeitados e regerados
+const AGENT_MIN_VERSION = '1.1';
+
 async function findAgentFirestore(params: ResolveParams): Promise<AgentEntry | null> {
   try {
     const db = admin.firestore();
@@ -61,6 +64,10 @@ async function findAgentFirestore(params: ResolveParams): Promise<AgentEntry | n
     const doc = snapshot.docs[0].data();
     if (!doc.conteudo) {
       console.warn(`[AgentResolver] Agente ${doc.agent_id} sem conteudo — regenerando`);
+      return null;
+    }
+    if (!doc.versao || doc.versao < AGENT_MIN_VERSION) {
+      console.warn(`[AgentResolver] Agente ${doc.agent_id} versão ${doc.versao ?? 'ausente'} abaixo do mínimo ${AGENT_MIN_VERSION} — regenerando`);
       return null;
     }
     console.log(`[AgentResolver] Prateleira Firestore: ${doc.agent_id}`);
@@ -100,8 +107,8 @@ async function createAndSaveAgent(params: ResolveParams): Promise<AgentEntry> {
       ...entry,
       area: params.area,
       criadoEm: admin.firestore.FieldValue.serverTimestamp(),
-      criadoPor: 'EspecialistaV1',
-      versao: '1.0',
+      criadoPor: 'EspecialistaV2',
+      versao: '1.1',
     };
     // Juiz é imparcial — não armazena lado
     if (params.tipo !== 'juiz') {
