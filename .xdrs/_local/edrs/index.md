@@ -2,6 +2,13 @@
 
 Engineering workflow and implementation decisions for EAI?.
 
+## application
+
+Code-level implementation patterns and conventions.
+
+- [001-judge-area-binding](application/001-judge-area-binding.md) — Mandatory INSTRUCAO VINCULANTE prefix binds judge and lawyer to session's legal area
+- [002-dynamic-legal-areas](application/002-dynamic-legal-areas.md) — All legal areas supported via dynamic agent creation and Firestore caching
+
 ## principles
 
 Engineering principles and non-functional quality defaults.
