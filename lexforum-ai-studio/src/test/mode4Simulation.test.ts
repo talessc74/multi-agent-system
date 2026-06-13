@@ -199,51 +199,125 @@ describe('mode4 — estrutura do objeto round', () => {
   });
 });
 
-// ── 5. Condição de saída antecipada ──────────────────────────────────────────
+// ── 5. Condição de saída antecipada (isDecisiveWin) ─────────────────────────
+//
+// lastProb = sempre probabilidade do AUTOR (normalizado pelo revisor)
+// AUTHOR vence decisivamente quando lastProb >= 95
+// DEFENSE vence decisivamente quando lastProb <= 5 (autor perdendo feio)
 
-describe('mode4 — saída antecipada em 95%', () => {
-  it('não executa rodada 2 quando rodada 1 retorna 95%', () => {
-    const executed: number[] = [];
-    let lastProb = 0;
-    const maxRounds = 3;
+function isDecisiveWin(userSide: 'AUTHOR' | 'DEFENSE', lastProb: number): boolean {
+  return userSide === 'DEFENSE' ? lastProb <= 5 : lastProb >= 95;
+}
 
-    for (let i = 1; i <= maxRounds; i++) {
-      executed.push(i);
-      lastProb = i === 1 ? 95 : 70; // rodada 1 retorna 95
-      if (lastProb >= 95) break;
-    }
+function simulateLoop(
+  userSide: 'AUTHOR' | 'DEFENSE',
+  probsByRound: number[]
+): { executed: number[]; lastProb: number } {
+  const executed: number[] = [];
+  let lastProb = 0;
+  for (let i = 1; i <= probsByRound.length; i++) {
+    executed.push(i);
+    lastProb = probsByRound[i - 1];
+    if (isDecisiveWin(userSide, lastProb)) break;
+  }
+  return { executed, lastProb };
+}
 
+describe('mode4 — saída antecipada (AUTHOR)', () => {
+  it('AUTHOR: para na rodada 1 quando prob = 95 (vitória decisiva)', () => {
+    const { executed, lastProb } = simulateLoop('AUTHOR', [95, 70, 60]);
     expect(executed).toEqual([1]);
     expect(lastProb).toBe(95);
   });
 
-  it('executa as 3 rodadas quando probabilidade fica abaixo de 95', () => {
-    const executed: number[] = [];
-    const probs = [60, 70, 80];
-    let lastProb = 0;
-
-    for (let i = 1; i <= 3; i++) {
-      executed.push(i);
-      lastProb = probs[i - 1];
-      if (lastProb >= 95) break;
-    }
-
+  it('AUTHOR: executa as 3 rodadas quando prob fica abaixo de 95', () => {
+    const { executed, lastProb } = simulateLoop('AUTHOR', [60, 70, 80]);
     expect(executed).toEqual([1, 2, 3]);
     expect(lastProb).toBe(80);
   });
 
-  it('para na rodada 2 quando probabilidade >= 95 na rodada 2', () => {
-    const executed: number[] = [];
-    const probs = [70, 96, 50];
-    let lastProb = 0;
-
-    for (let i = 1; i <= 3; i++) {
-      executed.push(i);
-      lastProb = probs[i - 1];
-      if (lastProb >= 95) break;
-    }
-
+  it('AUTHOR: para na rodada 2 quando prob >= 95 na rodada 2', () => {
+    const { executed, lastProb } = simulateLoop('AUTHOR', [70, 96, 50]);
     expect(executed).toEqual([1, 2]);
     expect(lastProb).toBe(96);
+  });
+
+  it('AUTHOR: prob = 5 (autor perdendo) NÃO aciona saída antecipada', () => {
+    const { executed } = simulateLoop('AUTHOR', [5, 30, 60]);
+    expect(executed).toEqual([1, 2, 3]);
+  });
+});
+
+describe('mode4 — saída antecipada (DEFENSE)', () => {
+  it('DEFENSE: para na rodada 1 quando prob = 5 (defesa vencendo decisivamente)', () => {
+    const { executed, lastProb } = simulateLoop('DEFENSE', [5, 50, 70]);
+    expect(executed).toEqual([1]);
+    expect(lastProb).toBe(5);
+  });
+
+  it('DEFENSE: prob = 95 (autor dominando) NÃO aciona saída antecipada para defesa', () => {
+    // Anti-regressão — bug original encerrava aqui por engano
+    const { executed } = simulateLoop('DEFENSE', [95, 80, 70]);
+    expect(executed).toEqual([1, 2, 3]);
+  });
+
+  it('DEFENSE: executa as 3 rodadas quando prob fica acima de 5', () => {
+    const { executed, lastProb } = simulateLoop('DEFENSE', [60, 40, 20]);
+    expect(executed).toEqual([1, 2, 3]);
+    expect(lastProb).toBe(20);
+  });
+
+  it('DEFENSE: para na rodada 2 quando prob = 3 na rodada 2', () => {
+    const { executed, lastProb } = simulateLoop('DEFENSE', [50, 3, 40]);
+    expect(executed).toEqual([1, 2]);
+    expect(lastProb).toBe(3);
+  });
+});
+
+// ── 6. Extração de sentença do juiz ──────────────────────────────────────────
+//
+// Campo judgment pode vir vazio do modelo — fallback usa author_summary/defense_summary
+
+function extractJudgment(juiParsed: {
+  judgment?: string;
+  author_summary?: string;
+  defense_summary?: string;
+}, juiText: string): string {
+  const rawJudgment = (juiParsed.judgment as string | undefined)?.trim() ?? '';
+  if (rawJudgment) return rawJudgment;
+  const authorPart = juiParsed.author_summary ? `AUTOR: ${juiParsed.author_summary}` : '';
+  const defensePart = juiParsed.defense_summary ? `\nDEFESA: ${juiParsed.defense_summary}` : '';
+  return (authorPart + defensePart).trim() || juiText;
+}
+
+describe('mode4 — extração de sentença do juiz', () => {
+  it('retorna judgment quando campo está preenchido', () => {
+    const result = extractJudgment({ judgment: 'Sentença completa do juiz.' }, '{}');
+    expect(result).toBe('Sentença completa do juiz.');
+  });
+
+  it('judgment com espaços em branco é tratado como vazio', () => {
+    const result = extractJudgment({ judgment: '   ', author_summary: 'Autor tem razão' }, '{}');
+    expect(result).toContain('AUTOR: Autor tem razão');
+  });
+
+  it('usa author_summary + defense_summary quando judgment é vazio', () => {
+    const result = extractJudgment(
+      { judgment: '', author_summary: 'Autor tem razão', defense_summary: 'Defesa é fraca' },
+      '{}'
+    );
+    expect(result).toContain('AUTOR: Autor tem razão');
+    expect(result).toContain('DEFESA: Defesa é fraca');
+  });
+
+  it('usa juiText como último recurso quando todos os campos são vazios', () => {
+    const juiText = '{"success_probability":50}';
+    const result = extractJudgment({ judgment: '', author_summary: '', defense_summary: '' }, juiText);
+    expect(result).toBe(juiText);
+  });
+
+  it('campo judgment ausente (undefined) não quebra — usa fallback', () => {
+    const result = extractJudgment({ author_summary: 'Autor procedente' }, 'fallback');
+    expect(result).toContain('AUTOR: Autor procedente');
   });
 });

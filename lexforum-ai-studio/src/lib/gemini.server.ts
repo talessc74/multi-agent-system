@@ -240,7 +240,18 @@ export async function simulateForumServer(
         const juiText = juiRes.text || '{}';
         let juiParsed: any = {};
         try { juiParsed = JSON.parse(juiText); } catch {}
-        currentJudgment = juiParsed.judgment || juiText;
+
+        // Extrai texto legível da sentença — campo judgment pode vir vazio do modelo
+        const rawJudgment = (juiParsed.judgment as string | undefined)?.trim() ?? '';
+        if (rawJudgment) {
+          currentJudgment = rawJudgment;
+        } else {
+          const authorPart = juiParsed.author_summary ? `AUTOR: ${juiParsed.author_summary}` : '';
+          const defensePart = juiParsed.defense_summary ? `\nDEFESA: ${juiParsed.defense_summary}` : '';
+          currentJudgment = (authorPart + defensePart).trim() || juiText;
+          console.warn('[Mode4] Campo judgment vazio — usando campos alternativos para exibição.');
+        }
+
         lastProb = juiParsed.success_probability ?? extractProbability(juiText);
 
         // Normaliza para perspectiva do autor (EDR _local-edr-policy-001)
@@ -271,7 +282,8 @@ export async function simulateForumServer(
         });
 
         onProgress?.('ROUND_DONE', i, rounds[rounds.length - 1]);
-        if (lastProb >= 95) break;
+        const isDecisiveWin = userSide === 'DEFENSE' ? lastProb <= 5 : lastProb >= 95;
+        if (isDecisiveWin) break;
 
       } catch (roundErr) {
         console.error(`[Mode4] Round ${i} falhou:`, roundErr instanceof Error ? roundErr.message : roundErr);
