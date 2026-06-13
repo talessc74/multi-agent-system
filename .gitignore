@@ -220,3 +220,6 @@ __marimo__/
 # Pseudonymization — private seed registry (never commit)
 PRIVATE_SEED_REGISTRY.json
 seeds/PRIVATE_SEED_REGISTRY.json
+
+# Governance tooling (reinstall via: node ./node_modules/argus-xdrs-governance/bin/filedist.js --force)
+node_modules/

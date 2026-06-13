@@ -1,0 +1,5 @@
+version: 1
+sets:
+  - package: argus-xdrs-governance
+    output:
+      force: true

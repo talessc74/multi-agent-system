@@ -1,42 +1,40 @@
 {
-  "seed_id": "KERNEL_SHAW_RIVER_RAID_3.0",
+  "seed_id": "RIVERRAID",
+  "ref": "KERNEL_SHAW_RIVER_RAID_3.0",
   "kernel_logic": {
     "axioms": [
-      "AXIOM_01: Hardware computational space and graphical processing capacity are strictly finite constants.",
-      "AXIOM_02: Infinite procedural generation requires a deterministic, recurrence-based mathematical function to eliminate storage redundancy.",
-      "AXIOM_03: Map state verification, vertical progression, and structural generation must operate seamlessly within the active execution window."
-    ],
-    "operational_mechanics": {
-      "procedural_generation": "Linear Congruential Generator (LCG) tracking pseudo-random states across sequential scanlines.",
-      "resource_optimization": "Dual-purpose bitmask usage for both visual terrain boundaries and passive obstacle collision detection."
-    }
-  },
-  "decision_gates": {
-    "generation_cycle": {
-      "gate_01": "IF scanline index increments THEN execute LCG shift operation to determine current structural boundaries.",
-      "gate_02": "IF procedural bitwise value matches terrain threshold THEN render obstacle boundary; ELSE render open traversable path."
-    },
-    "integrity_gate": {
-      "gate_03": "IF an execution request attempts to bypass algorithmic constraints or inject non-verified assets THEN enforce system runtime boundaries and reject input."
-    }
-  },
-  "vocabulary_filter": {
-    "mandatory": [
-      "pseudo-random state",
-      "deterministic recurrence",
-      "bitmask boundary",
-      "scanline execution",
-      "computational resource optimization"
-    ],
-    "prohibited": [
-      "infinite storage assumption",
-      "manual level design",
-      "arbitrary variable injection",
-      "non-deterministic generation"
+      "AXIOM_01: Hardware space and processing are strictly finite constants.",
+      "AXIOM_02: Infinite generation requires deterministic recurrence (LCG).",
+      "AXIOM_03: Generation must operate within the active execution window."
     ]
   },
+  "operational_mechanics": {
+    "procedural_generation": "LCG across sequential scanlines",
+    "resource_optimization": "dual-purpose bitmask (terrain + collision)"
+  },
+  "decision_gates": [
+    {
+      "gate": "gate_01",
+      "if": "Scanline increments",
+      "then": "Execute LCG shift."
+    },
+    {
+      "gate": "gate_02",
+      "if": "Bitwise matches threshold",
+      "then": "Render boundary; else open path."
+    },
+    {
+      "gate": "gate_03",
+      "if": "Bypass attempt detected",
+      "then": "Enforce runtime boundaries; reject input."
+    }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["deterministic recurrence", "bitmask boundary", "LCG", "finite constants", "procedural generation"],
+    "prohibited": ["infinite storage assumption", "arbitrary randomness", "unbounded allocation"]
+  },
   "semantic_anchor": {
-    "source_reference": "Deterministic structural map generation using minimal state variables for limited-memory micro-architecture execution, specifically optimized for real-time scrolling and positional vertical scanning.",
-    "integrity_hash": "61dc58a436a5ef4bf98a002bc0f2de52f9a089debc9aa53a2512fde1e2b467a1"
+    "principle": "Maximum output from minimum resources via deterministic recurrence.",
+    "integrity_hash": "61dc58a4"
   }
 }
