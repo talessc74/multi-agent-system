@@ -96,7 +96,7 @@ async function startServer() {
 
     let lawyerInstruction: string | undefined;
     try {
-      const lawyerSide = (mode === 2) ? 'DEFENSE' : 'AUTHOR';
+      const lawyerSide = (mode === 2 || (mode === 4 && userSide === 'DEFENSE')) ? 'DEFENSE' : 'AUTHOR';
       const lawyerEntry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
         comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,

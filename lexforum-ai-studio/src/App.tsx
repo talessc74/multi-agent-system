@@ -121,6 +121,7 @@ function formatSimDate(createdAt: unknown): string {
 function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses, onOpenChat }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; onOpenChat?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
+  const displayPct = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPct : finalPct;
   const [isPrinting, setIsPrinting] = React.useState(false);
   const [isExpanding, setIsExpanding] = React.useState(false);
   const [showMode4Preview, setShowMode4Preview] = React.useState(false);
@@ -141,7 +142,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
       <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingBottom: 'calc(96px + env(safe-area-inset-bottom))', scrollbarWidth: 'none' }}>
         <div style={{ textAlign: 'center', padding: '24px 20px 16px' }}>
           <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 8px' }}>Índice de força argumentativa</p>
-          <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '56px', fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, color: modeColor, margin: '0 0 6px' }}>{state.selectedMode === 5 ? `${state.mode5Result?.successProbability ?? 0}%` : `${finalPct}%`}</p>
+          <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '56px', fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, color: modeColor, margin: '0 0 6px' }}>{state.selectedMode === 5 ? `${state.mode5Result?.successProbability ?? 0}%` : `${displayPct}%`}</p>
           <p style={{ fontSize: '10px', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: '240px', margin: '0 auto' }}>Estimativa baseada na sua descrição. Não é probabilidade estatística.</p>
         </div>
         {(state.selectedMode === 3 || state.selectedMode === 4) && (
@@ -473,9 +474,12 @@ const displayRecoveredResult = async (result: SimulationResult) => {
   recoveryUnsubRef.current = null;
 
   try {
+    const isDefenseMode = state.selectedMode === 4 && state.userSide === 'DEFENSE';
     let bestRound = result.rounds[0];
     for (const round of result.rounds) {
-      if (round.successProbability >= bestRound.successProbability) bestRound = round;
+      if (isDefenseMode
+        ? round.successProbability <= bestRound.successProbability
+        : round.successProbability >= bestRound.successProbability) bestRound = round;
     }
     const finalData = { ...result, finalSuccessProbability: bestRound.successProbability };
     setState(prev => ({ ...prev, simulation: finalData }));
@@ -766,11 +770,13 @@ const startRecovery = (sessionId: string) => {
 
             if (step === 'SEED_CREATED' && progressData?.regionIndex !== undefined) {
               const idx = progressData.regionIndex;
-              newStats[idx] = {
-                ...newStats[idx],
-                seeds: newStats[idx].seeds + 1,
-                active: newStats[idx].active + 1
-              };
+              if (newStats[idx]) {
+                newStats[idx] = {
+                  ...newStats[idx],
+                  seeds: newStats[idx].seeds + 1,
+                  active: newStats[idx].active + 1
+                };
+              }
             }
 
             // Só captura o sessionId da primeira tentativa — retries geram novas sessões no servidor
@@ -827,10 +833,13 @@ const startRecovery = (sessionId: string) => {
         throw new Error('Simulação retornou sem rodadas. Tente novamente.');
       }
 
-      // Select the best round based on probability (highest, then latest if tie)
+      // Select the best round: DEFENSE mode4 wants lowest author probability (= best for defense)
+      const isDefenseMode = state.selectedMode === 4 && state.userSide === 'DEFENSE';
       let bestRound = data.rounds[0];
       for (const round of data.rounds) {
-        if (round.successProbability >= bestRound.successProbability) {
+        if (isDefenseMode
+          ? round.successProbability <= bestRound.successProbability
+          : round.successProbability >= bestRound.successProbability) {
           bestRound = round;
         }
       }
@@ -856,25 +865,35 @@ const startRecovery = (sessionId: string) => {
       }
       setState(prev => ({ ...prev, step: 'result', report: reportData, error: null }));
 
-      // Save simulation to Firebase with the optimized result
-      const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
-      if (simId) {
-        setState(prev => ({ ...prev, simulationId: simId }));
-      }
-      
-      // Refresh history if logged in
-      if (user) {
-        const history = await getUserSimulations(user.uid);
-        setUserHistory(history ?? []);
+      // Secondary ops are isolated — any Firebase failure must NOT revert result screen
+      try {
+        const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
+        if (simId) {
+          setState(prev => ({ ...prev, simulationId: simId }));
+        }
+      } catch (e) {
+        console.error('[handleSimulate] saveSimulation falhou:', e);
       }
 
-      // Update local stats display
-      const newStatsResult = await getStats();
-      setGlobalStats({
-        simulations: newStatsResult.totalSimulations,
-        winRate: Number(newStatsResult.winRate.toFixed(1)),
-        precision: 98.4
-      });
+      if (user) {
+        try {
+          const history = await getUserSimulations(user.uid);
+          setUserHistory(history ?? []);
+        } catch (e) {
+          console.error('[handleSimulate] getUserSimulations falhou:', e);
+        }
+      }
+
+      try {
+        const newStatsResult = await getStats();
+        setGlobalStats({
+          simulations: newStatsResult.totalSimulations,
+          winRate: Number(newStatsResult.winRate.toFixed(1)),
+          precision: 98.4
+        });
+      } catch (e) {
+        console.error('[handleSimulate] getStats falhou:', e);
+      }
     } catch (err: any) {
       if (err?.message === 'SIMULATION_ABORTED') return;
       handleGeminiError(err);
@@ -1836,6 +1855,7 @@ const startRecovery = (sessionId: string) => {
         const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
         const rounds = state.simulation?.rounds ?? [];
         const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
+        const displayPct = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPct : finalPct;
 
         return (
           <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
@@ -1866,7 +1886,7 @@ const startRecovery = (sessionId: string) => {
                   Índice de força argumentativa
                 </p>
                 <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '72px', fontWeight: 900, letterSpacing: '-3px', lineHeight: 1, color: modeColor, margin: '0 0 10px' }}>
-                  {finalPct}%
+                  {displayPct}%
                 </p>
                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: '260px', margin: '0 auto' }}>
                   Estimativa baseada na sua descrição. Não é probabilidade estatística. Resultados reais variam.
