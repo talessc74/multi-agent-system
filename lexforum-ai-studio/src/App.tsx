@@ -145,17 +145,23 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
           <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '56px', fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, color: modeColor, margin: '0 0 6px' }}>{state.selectedMode === 5 ? `${state.mode5Result?.successProbability ?? 0}%` : `${displayPct}%`}</p>
           <p style={{ fontSize: '10px', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: '240px', margin: '0 auto' }}>Estimativa baseada na sua descrição. Não é probabilidade estatística.</p>
         </div>
-        {(state.selectedMode === 3 || state.selectedMode === 4) && (
-          <div style={{ margin: '0 20px 16px', padding: '12px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: modeColor }}>{finalPct}% Autor</span>
-              <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Réu {100 - finalPct}%</span>
+        {(state.selectedMode === 3 || state.selectedMode === 4) && (() => {
+          const isDefenseBar = state.selectedMode === 4 && state.userSide === 'DEFENSE';
+          const barFill = isDefenseBar ? displayPct : finalPct;
+          const leftLabel = isDefenseBar ? `Réu ${displayPct}%` : `${finalPct}% Autor`;
+          const rightLabel = isDefenseBar ? `Autor ${100 - displayPct}%` : `Réu ${100 - finalPct}%`;
+          return (
+            <div style={{ margin: '0 20px 16px', padding: '12px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: modeColor }}>{leftLabel}</span>
+                <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{rightLabel}</span>
+              </div>
+              <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ width: `${barFill}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, #00CC88)`, transition: 'width 0.6s ease' }} />
+              </div>
             </div>
-            <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
-              <div style={{ width: `${finalPct}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, #00CC88)`, transition: 'width 0.6s ease' }} />
-            </div>
-          </div>
-        )}
+          );
+        })()}
         {state.selectedMode === 5 && state.mode5Result && (
           <div style={{ margin: '0 20px 16px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', textAlign: 'center' }}>
             <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Recomendação</p>
@@ -1893,17 +1899,23 @@ const startRecovery = (sessionId: string) => {
                 </p>
               </div>
               {/* VEREDITO BAR — dual para modos 3/4, unilateral para os demais */}
-              {(state.selectedMode === 3 || state.selectedMode === 4) ? (
-                <div style={{ margin: '0 20px 20px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: modeColor }}>{finalPct}% Autor</span>
-                    <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Réu {100 - finalPct}%</span>
+              {(state.selectedMode === 3 || state.selectedMode === 4) ? (() => {
+                const isDefenseBar = state.selectedMode === 4 && state.userSide === 'DEFENSE';
+                const barFill = isDefenseBar ? displayPct : finalPct;
+                const leftLabel = isDefenseBar ? `Réu ${displayPct}%` : `${finalPct}% Autor`;
+                const rightLabel = isDefenseBar ? `Autor ${100 - displayPct}%` : `Réu ${100 - finalPct}%`;
+                return (
+                  <div style={{ margin: '0 20px 20px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: modeColor }}>{leftLabel}</span>
+                      <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{rightLabel}</span>
+                    </div>
+                    <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ width: `${barFill}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, #00CC88)`, transition: 'width 0.6s ease' }} />
+                    </div>
                   </div>
-                  <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${finalPct}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, #00CC88)`, transition: 'width 0.6s ease' }} />
-                  </div>
-                </div>
-              ) : (
+                );
+              })() : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px', margin: '0 20px 20px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', flexShrink: 0, minWidth: '36px' }}>Autor</span>
                   <div style={{ flex: 1, height: '6px', background: 'var(--border)', borderRadius: '3px', overflow: 'hidden' }}>
