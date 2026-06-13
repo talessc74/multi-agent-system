@@ -87,7 +87,8 @@ async function createAndSaveAgent(params: ResolveParams): Promise<AgentEntry> {
   const entry: AgentEntry = {
     agent_id: result.agent_id,
     tipo: params.tipo,
-    comarca: params.comarca ?? null,
+    // BDR-003: juiz nunca armazena comarca — evita identificação por localização
+    comarca: params.tipo === 'juiz' ? null : (params.comarca ?? null),
     arquivo: `agents/${result.agent_id}_v1.0.json`,
     seed: result.seed_id,
     conteudo: result.agente,
