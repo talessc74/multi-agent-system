@@ -121,7 +121,8 @@ function formatSimDate(createdAt: unknown): string {
 function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses, onOpenChat }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; onOpenChat?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
-  const displayPct = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPct : finalPct;
+  const effectiveSide = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
+  const displayPct = (state.selectedMode === 4 && effectiveSide === 'DEFENSE') ? 100 - finalPct : finalPct;
   const [isPrinting, setIsPrinting] = React.useState(false);
   const [isExpanding, setIsExpanding] = React.useState(false);
   const [showMode4Preview, setShowMode4Preview] = React.useState(false);
@@ -146,7 +147,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
           <p style={{ fontSize: '10px', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: '240px', margin: '0 auto' }}>Estimativa baseada na sua descrição. Não é probabilidade estatística.</p>
         </div>
         {(state.selectedMode === 3 || state.selectedMode === 4) && (() => {
-          const isDefenseBar = state.selectedMode === 4 && state.userSide === 'DEFENSE';
+          const isDefenseBar = state.selectedMode === 4 && effectiveSide === 'DEFENSE';
           const barFill = isDefenseBar ? displayPct : finalPct;
           const leftLabel = isDefenseBar ? `Réu ${displayPct}%` : `${finalPct}% Autor`;
           const rightLabel = isDefenseBar ? `Autor ${100 - displayPct}%` : `Réu ${100 - finalPct}%`;
@@ -480,7 +481,7 @@ const displayRecoveredResult = async (result: SimulationResult) => {
   recoveryUnsubRef.current = null;
 
   try {
-    const isDefenseMode = state.selectedMode === 4 && state.userSide === 'DEFENSE';
+    const isDefenseMode = state.selectedMode === 4 && (state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR')) === 'DEFENSE';
     let bestRound = result.rounds[0];
     for (const round of result.rounds) {
       if (isDefenseMode
@@ -840,7 +841,7 @@ const startRecovery = (sessionId: string) => {
       }
 
       // Select the best round: DEFENSE mode4 wants lowest author probability (= best for defense)
-      const isDefenseMode = state.selectedMode === 4 && state.userSide === 'DEFENSE';
+      const isDefenseMode = state.selectedMode === 4 && (state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR')) === 'DEFENSE';
       let bestRound = data.rounds[0];
       for (const round of data.rounds) {
         if (isDefenseMode
@@ -1861,7 +1862,8 @@ const startRecovery = (sessionId: string) => {
         const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
         const rounds = state.simulation?.rounds ?? [];
         const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
-        const displayPct = (state.selectedMode === 4 && state.userSide === 'DEFENSE') ? 100 - finalPct : finalPct;
+        const effectiveSide = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
+        const displayPct = (state.selectedMode === 4 && effectiveSide === 'DEFENSE') ? 100 - finalPct : finalPct;
 
         return (
           <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
@@ -1900,7 +1902,7 @@ const startRecovery = (sessionId: string) => {
               </div>
               {/* VEREDITO BAR — dual para modos 3/4, unilateral para os demais */}
               {(state.selectedMode === 3 || state.selectedMode === 4) ? (() => {
-                const isDefenseBar = state.selectedMode === 4 && state.userSide === 'DEFENSE';
+                const isDefenseBar = state.selectedMode === 4 && effectiveSide === 'DEFENSE';
                 const barFill = isDefenseBar ? displayPct : finalPct;
                 const leftLabel = isDefenseBar ? `Réu ${displayPct}%` : `${finalPct}% Autor`;
                 const rightLabel = isDefenseBar ? `Autor ${100 - displayPct}%` : `Réu ${100 - finalPct}%`;
