@@ -193,14 +193,14 @@ export async function simulateForumServer(
     const sideContext = userSide === 'DEFENSE'
       ? '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do RÉU (DEFESA). Sua função é defender os interesses do réu, contestar os argumentos do autor e construir a melhor estratégia de defesa possível. Nunca argumente pelo lado do autor.'
       : '\n\nATENÇÃO: Nesta simulação você está atuando EXCLUSIVAMENTE como advogado do AUTOR. Sua função é defender os interesses do autor e construir a melhor estratégia para procedência do pedido.';
+    let allBriefs4 = '';
 
     for (let i = 1; i <= 3; i++) {
       onProgress?.('WRITING', i);
 
-      // Bug fix: rounds 2+ pass the previous improved petition, not the original user input
       const lawPrompt = i === 1
         ? `Melhore esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} tornando-a mais forte tecnicamente:\n${userPetition}`
-        : `Você escreveu esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} na rodada anterior:\n${currentPetition}\n\nO juiz emitiu esta sentença:\n${currentJudgment}\n\nReescreva e fortaleça sua ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} corrigindo as fraquezas apontadas pelo juiz. Descrição original do caso:\n${userPetition}`;
+        : `Você escreveu esta ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} na rodada anterior:\n${currentPetition}\n\nO juiz emitiu esta sentença:\n${currentJudgment}\n\nBreves estratégicos das rodadas anteriores:\n${allBriefs4}\n\nReescreva e fortaleça sua ${userSide === 'DEFENSE' ? 'contestação' : 'petição'} corrigindo as fraquezas apontadas pelo juiz. Descrição original do caso:\n${userPetition}`;
 
       const lawRes = await ai.models.generateContent({
         model: MODEL_NAME,
@@ -219,14 +219,13 @@ export async function simulateForumServer(
       const juiRes = await ai.models.generateContent({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
-        config: { systemInstruction: judgeInstruction }
+        config: { systemInstruction: judgeInstruction, temperature: 0.1 }
       });
 
       const juiText = juiRes.text || '';
       currentJudgment = juiText;
       lastProb = extractProbability(juiText);
 
-      // Bug fix: generate strategic brief so next round's lawyer builds on what worked
       onProgress?.('REVIEWING', i);
       const briefRes = await ai.models.generateContent({
         model: MODEL_NAME,
@@ -234,6 +233,7 @@ export async function simulateForumServer(
         config: { systemInstruction: `Você é um Estrategista Jurídico. Gere um "Lawyer's Brief" conciso: pontos fortes mantidos e fraquezas a corrigir na próxima rodada.` }
       });
       const currentBrief = briefRes.text || '';
+      allBriefs4 += `\n--- Brief Rodada ${i} ---\n${currentBrief}`;
 
       rounds.push({
         round: i,
@@ -245,7 +245,6 @@ export async function simulateForumServer(
 
       onProgress?.('ROUND_DONE', i, rounds[rounds.length - 1]);
 
-      // Bug fix: for DEFENSE mode, 95% success = AUTHOR has ≤5% (lastProb is AUTHOR's probability)
       const userWins95 = userSide === 'DEFENSE' ? lastProb <= 5 : lastProb >= 95;
       if (userWins95) break;
     }
