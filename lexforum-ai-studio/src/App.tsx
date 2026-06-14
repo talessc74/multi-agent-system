@@ -3891,8 +3891,7 @@ const startRecovery = (sessionId: string) => {
                     { (state.simulation?.rounds && state.simulation.rounds.length > 0)
                       ? (() => {
                           const _fp = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
-                          const _side = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
-                          return (state.selectedMode === 4 && _side === 'DEFENSE') ? 100 - _fp : _fp;
+                          return _fp >= 50 ? _fp : 100 - _fp;
                         })()
                       : "--"
                     }%
