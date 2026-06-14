@@ -508,7 +508,7 @@ const displayRecoveredResult = async (result: SimulationResult) => {
     setRetryCount(0);
 
     try {
-      const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
+      const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData, null, state.selectedMode, state.userSide, state.userPole);
       if (simId) setState(prev => ({ ...prev, simulationId: simId }));
     } catch {}
   } finally {
@@ -680,7 +680,9 @@ const startRecovery = (sessionId: string) => {
       caseDescription: sim.caseDescription,
       detectedArea: sim.area || 'OTHER',
       caseSummary: sim.caseSummary,
-      selectedMode: sim.mode5Result ? 5 : prev.selectedMode,
+      selectedMode: sim.mode5Result ? 5 : (sim.selectedMode ?? prev.selectedMode),
+      userSide: sim.userSide ?? prev.userSide,
+      userPole: sim.userPole ?? prev.userPole,
       simulation: {
         area: sim.area,
         rounds: sim.rounds || [],
@@ -881,7 +883,7 @@ const startRecovery = (sessionId: string) => {
 
       // Secondary ops are isolated — any Firebase failure must NOT revert result screen
       try {
-        const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData);
+        const simId = await saveSimulation(user?.uid || null, state.caseDescription, finalData, state.caseSummary, reportData, null, state.selectedMode, state.userSide, state.userPole);
         if (simId) {
           setState(prev => ({ ...prev, simulationId: simId }));
         }
@@ -3091,8 +3093,16 @@ const startRecovery = (sessionId: string) => {
                            </div>
                            <div className="flex justify-between items-end">
                              <div className="bg-white/5 px-3 py-1.5 flex flex-col">
-                               <span className="text-[8px] font-bold text-white/30 uppercase">Probabilidade de Êxito</span>
-                               <span className="text-lg font-serif italic font-bold text-white/90">{round.successProbability}%</span>
+                               {(() => {
+                                 const _es = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
+                                 const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
+                                 return (
+                                   <>
+                                     <span className="text-[8px] font-bold text-white/30 uppercase">Prob. {_es === 'DEFENSE' ? 'Réu' : 'Autor'}</span>
+                                     <span className="text-lg font-serif italic font-bold text-white/90">{_rp}%</span>
+                                   </>
+                                 );
+                               })()}
                              </div>
                              <span className="text-[9px] font-mono font-bold text-white/20">ISENÇÃO 100%</span>
                            </div>
@@ -3625,7 +3635,11 @@ const startRecovery = (sessionId: string) => {
                         <div className="flex items-center gap-3">
                           <span className="text-[9px] font-mono font-bold text-white/20">RODADA {i + 1}</span>
                           <div className="h-px bg-white/5 flex-1" />
-                          <span className="text-[9px] font-mono font-bold text-white/30">APROVEITAMENTO {round.successProbability}%</span>
+                          {(() => {
+                            const _es = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
+                            const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
+                            return <span className="text-[9px] font-mono font-bold text-white/30">APROVEITAMENTO ({_es === 'DEFENSE' ? 'RÉU' : 'AUTOR'}) {_rp}%</span>;
+                          })()}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
@@ -3762,8 +3776,16 @@ const startRecovery = (sessionId: string) => {
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Aproveitamento</div>
-                              <div className="text-xl font-serif italic text-white print:text-black">{round.successProbability}%</div>
+                              {(() => {
+                                const _es = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
+                                const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
+                                return (
+                                  <>
+                                    <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest print:text-black">Aproveitamento ({_es === 'DEFENSE' ? 'Réu' : 'Autor'})</div>
+                                    <div className="text-xl font-serif italic text-white print:text-black">{_rp}%</div>
+                                  </>
+                                );
+                              })()}
                             </div>
                           </div>
                           

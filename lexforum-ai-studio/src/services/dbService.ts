@@ -59,7 +59,10 @@ export const saveSimulation = async (
   result: SimulationResult,
   caseSummary: string | null = null,
   report: any = null,
-  mode5Result: any = null
+  mode5Result: any = null,
+  selectedMode: number | null = null,
+  userSide: 'AUTHOR' | 'DEFENSE' | null = null,
+  userPole: 'AUTOR' | 'REU' | null = null
 ): Promise<string | null> => {
   const isWin = result.finalSuccessProbability >= 50;
 
@@ -98,6 +101,9 @@ export const saveSimulation = async (
       rounds: anon.rounds,
       report: anon.report,
       mode5Result: mode5Result ?? null,
+      selectedMode: selectedMode ?? null,
+      userSide: userSide ?? null,
+      userPole: userPole ?? null,
       isWin,
       createdAt: serverTimestamp()
     }));
