@@ -1,8 +1,9 @@
 ---
 name: _local-edr-policy-001-success-probability-interpretation
 description: Defines the semantic contract for the success_probability field returned by the judge in all simulation modes. Use whenever reading, displaying, or prompting for this value.
-apply-to: All simulation modes — gemini.server.ts, App.tsx, judgment-interpreter.ts
+apply-to: All simulation modes — gemini.server.ts, App.tsx
 valid-from: 2026-06-13
+updated: 2026-06-14
 ---
 
 # _local-edr-policy-001: success_probability Interpretation
@@ -37,10 +38,10 @@ converts to the user's chosen side perspective.
 Every mode's judge prompt MUST include the explicit phrase:
 > `success_probability` é a probabilidade de êxito do AUTOR, de 0 a 100
 
-- Mode 1 (Mono): already compliant
-- Mode 2 (Defesa): already compliant (returns defense's probability explicitly renamed)
-- Mode 3 (Bilateral): already compliant
-- Mode 4 (Mesa Dupla): **pending fix** — currently ambiguous
+- Mode 1 (Mono): compliant
+- Mode 2 (Defesa): compliant (returns defense's probability explicitly renamed)
+- Mode 3 (Bilateral): compliant
+- Mode 4 (Mesa Dupla): **compliant** — fixed 2026-06-14 (commit 5856949)
 
 #### Display Layer (App.tsx)
 
@@ -55,6 +56,8 @@ const displayPct = (state.selectedMode === 4 && effectiveSide === 'DEFENSE')
 
 #### Reviewer (judgment-interpreter.ts)
 
-The `interpretJudgmentForSide` function reads the full judgment text and extracts the
-correct probability from the user's chosen side perspective. It is the safety net for
-cases where the judge prompt ambiguity has not yet been corrected in production.
+`interpretJudgmentForSide` was a temporary safety net for Mode 4 while the judge prompt
+ambiguity existed. It was removed from Mode 4 on 2026-06-14 after the prompt was
+corrected. The file and its tests remain in the codebase but the function is no longer
+called in any active simulation flow. Removal of the file is deferred to a future
+deliberation.
