@@ -177,10 +177,10 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
                 <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}>{state.mode5Result.strategistAnalysis}</p>
               </div>
             )}
-            {state.selectedMode !== 5 && state.report?.layman && (
+            {state.selectedMode !== 5 && state.report && (state.report.layman || state.report.professional) && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
                 <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#00CC88', marginBottom: '12px' }}>Orientação ao Cliente</p>
-                <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}><ReactMarkdown>{state.report.layman}</ReactMarkdown></div>
+                <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}><ReactMarkdown>{state.report.layman || state.report.professional || ''}</ReactMarkdown></div>
               </div>
             )}
             {(state.selectedMode === 1 || state.selectedMode === 2) && state.report?.causeSummary && (
@@ -3566,11 +3566,19 @@ const startRecovery = (sessionId: string) => {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-6 bg-white/5 border border-white/10">
                         <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-3">Argumento do Autor</div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">{state.simulation.rounds[0].authorSummary || '—'}</p>
+                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                          {(state.selectedMode === 4 && state.userSide === 'AUTHOR')
+                            ? (state.simulation.rounds[0].lawyerPetition || '—')
+                            : (state.caseDescription || '—')}
+                        </p>
                       </div>
                       <div className="p-6 bg-white/5" style={{ border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.2)` }}>
                         <div className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.6)` }}>Argumento do Réu</div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">{state.simulation.rounds[0].defenseSummary || '—'}</p>
+                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                          {(state.selectedMode === 4 && state.userSide === 'DEFENSE')
+                            ? (state.simulation.rounds[0].lawyerPetition || '—')
+                            : (state.defenseDescription || '—')}
+                        </p>
                       </div>
                     </div>
                     <div className="p-6 bg-white/5 border border-white/10 space-y-4">
@@ -3591,6 +3599,41 @@ const startRecovery = (sessionId: string) => {
                           : `Resultado equilibrado — ${state.simulation.finalSuccessProbability}% para o Autor, ${100 - state.simulation.finalSuccessProbability}% para o Réu.`}
                       </p>
                     </div>
+                  </div>
+                )}
+
+                {state.simulation?.rounds && state.simulation.rounds.length > 0 && (
+                  <div className="space-y-4 mb-8 print:hidden">
+                    <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 border-b border-white/10 pb-3">
+                      Histórico de Rodadas
+                    </div>
+                    {state.simulation.rounds.map((round, i) => (
+                      <div key={i} className="p-6 bg-white/5 border border-white/10 space-y-4">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[9px] font-mono font-bold text-white/20">RODADA {i + 1}</span>
+                          <div className="h-px bg-white/5 flex-1" />
+                          <span className="text-[9px] font-mono font-bold text-white/30">APROVEITAMENTO {round.successProbability}%</span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <div className="text-[8px] font-bold uppercase tracking-widest text-white/20 mb-2">
+                              {state.selectedMode === 4
+                                ? (state.userSide === 'AUTHOR' ? 'Advogado do Autor' : 'Advogado do Réu')
+                                : 'Advogado'}
+                            </div>
+                            <p className="text-xs text-white/60 leading-relaxed font-serif italic line-clamp-6">
+                              "{round.lawyerPetition}"
+                            </p>
+                          </div>
+                          <div>
+                            <div className="text-[8px] font-bold uppercase tracking-widest text-white/20 mb-2">Magistrado Técnico</div>
+                            <p className="text-xs text-white/60 leading-relaxed font-sans line-clamp-6">
+                              "{cleanJudgmentText(round.judgeJudgment) || round.judgeJudgment || ''}"
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
 
