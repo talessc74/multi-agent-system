@@ -7,6 +7,10 @@ import { validateCausaServer, simulateForumServer, generateReportServer, simulat
 import { constructWebhookEvent, stripe } from './src/lib/stripe.server.js';
 import admin from 'firebase-admin';
 import Stripe from 'stripe';
+import { setupSSE, sendSSE } from './sse-utils';
+import { notifySpendingCap } from './alerts';
+import { registerChatRoutes } from './chat-handler';
+import { randomUUID } from 'crypto';
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -21,8 +25,6 @@ if (!admin.apps.length) {
 const adminDb = admin.firestore();
 import simulationStatus from './simulation-status';
 import { resolveAgent } from './agent-resolver';
-import { Resend } from 'resend';
-
 dotenv.config();
 
 const app = express();
@@ -32,28 +34,6 @@ app.use((req, res, next) => {
 });
 const PORT = process.env.PORT || 3000;
 
-async function notifySpendingCap(route: string) {
-  if (!process.env.RESEND_API_KEY || !process.env.ALERT_EMAIL) return;
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  try {
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: process.env.ALERT_EMAIL,
-      subject: '🚨 EAI? — Limite de IA atingido',
-      html: `
-        <h2>Alerta crítico — EAI?</h2>
-        <p><strong>Erro:</strong> RESOURCE_EXHAUSTED (Spending Cap)</p>
-        <p><strong>Rota:</strong> ${route}</p>
-        <p><strong>Horário:</strong> ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</p>
-        <p><strong>Ação necessária:</strong> Aumentar Spending Cap no GCP</p>
-        <hr/>
-        <p style="color:#999;font-size:12px">EAI? — eai.radiokactus.com</p>
-      `
-    });
-  } catch (e) {
-    console.error('[ALERT] Falha ao enviar email de alerta:', e);
-  }
-}
 
 async function startServer() {
   console.log("Starting server...");
@@ -73,16 +53,21 @@ async function startServer() {
   });
 
   app.post("/api/gemini/simulate", async (req, res) => {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
+    setupSSE(res);
 
     const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide } =
       req.body;
 
-    const send = (event: string, data: object) => {
-      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
-    };
+    const sessionId = randomUUID();
+    const send = (event: string, data: object) => sendSSE(res, event, data);
+
+    adminDb.collection('simRecovery').doc(sessionId).set({
+      sessionId,
+      status: 'pending',
+      mode: mode ?? 1,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+    }).catch(() => {});
 
     const areaMap: Record<string, string> = {
       CONSUMER: 'consumerista',
@@ -111,7 +96,7 @@ async function startServer() {
 
     let lawyerInstruction: string | undefined;
     try {
-      const lawyerSide = (mode === 2) ? 'DEFENSE' : 'AUTHOR';
+      const lawyerSide = (mode === 2 || (mode === 4 && userSide === 'DEFENSE')) ? 'DEFENSE' : 'AUTHOR';
       const lawyerEntry = await resolveAgent({
         area: areaMap[area] ?? area.toLowerCase(),
         comarca: specificJudge && specificJudge !== 'null' ? specificJudge : undefined,
@@ -132,7 +117,7 @@ async function startServer() {
       area === 'FAMILY' ? 'de Família' :
       area === 'SOCIAL_SECURITY' ? 'Previdenciário' : 'Especializado'
     }`;
-    send('agents', { lawyerName: lawyerDisplayName, judgeName: judgeNameFromRegistry ?? `Magistrado Especializado` });
+    send('agents', { lawyerName: lawyerDisplayName, judgeName: judgeNameFromRegistry ?? `Magistrado Especializado`, sessionId });
 
     try {
       const data = await simulateForumServer(
@@ -150,10 +135,18 @@ async function startServer() {
         userSide
       );
       send('done', data);
+      adminDb.collection('simRecovery').doc(sessionId).update({
+        status: 'complete',
+        result: data,
+      }).catch(() => {});
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
         await notifySpendingCap('/api/gemini/simulate');
       }
+      adminDb.collection('simRecovery').doc(sessionId).update({
+        status: 'error',
+        errorMessage: error.message || 'Unknown error',
+      }).catch(() => {});
       send('error', { message: error.message || 'Unknown error' });
     } finally {
       res.end();
@@ -206,15 +199,11 @@ async function startServer() {
   });
 
   app.post("/api/gemini/mode5", async (req, res) => {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
+    setupSSE(res);
 
     const { mode5Input, area, attachments, specificJudge } = req.body;
 
-    const send = (event: string, data: object) => {
-      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
-    };
+    const send = (event: string, data: object) => sendSSE(res, event, data);
 
     const areaMap: Record<string, string> = {
       CONSUMER: 'consumerista',
@@ -266,7 +255,85 @@ async function startServer() {
     }
   });
 
+  registerChatRoutes(app, adminDb);
+
   app.use('/simulation', simulationStatus);
+
+  // ── Stripe Promo Code Validation ────────────────────────────────
+  const promoValidateAttempts = new Map<string, { count: number; resetAt: number }>();
+
+  app.post('/api/stripe/validate-promo-code', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    let uid: string;
+    try {
+      const decoded = await admin.auth().verifyIdToken(authHeader.split('Bearer ')[1]);
+      uid = decoded.uid;
+    } catch {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const now = Date.now();
+    const bucket = promoValidateAttempts.get(uid);
+    if (bucket && now < bucket.resetAt) {
+      if (bucket.count >= 5) {
+        res.status(429).json({ error: 'Muitas tentativas. Aguarde um momento.' });
+        return;
+      }
+      bucket.count++;
+    } else {
+      promoValidateAttempts.set(uid, { count: 1, resetAt: now + 60_000 });
+    }
+
+    const { code, mode } = req.body;
+    if (!code) {
+      res.status(400).json({ error: 'code required' });
+      return;
+    }
+    try {
+      const promoCodes = await stripe.promotionCodes.list({
+        code: (code as string).trim().toUpperCase(),
+        active: true,
+        limit: 1,
+      });
+
+      if (!promoCodes.data.length) {
+        res.json({ valid: false });
+        return;
+      }
+
+      const promoCode = promoCodes.data[0];
+      const coupon = promoCode.coupon;
+      const baseAmount = (mode === 3 || mode === 5) ? 590 : 990;
+
+      let finalAmount = baseAmount;
+      let discountLabel = '';
+
+      if (coupon.percent_off) {
+        finalAmount = Math.round(baseAmount * (1 - coupon.percent_off / 100));
+        discountLabel = `${coupon.percent_off}% off`;
+      } else if (coupon.amount_off) {
+        finalAmount = Math.max(0, baseAmount - coupon.amount_off);
+        discountLabel = `R$ ${(coupon.amount_off / 100).toFixed(2).replace('.', ',')} off`;
+      }
+
+      res.json({
+        valid: true,
+        discountLabel,
+        finalAmount,
+        finalAmountFormatted: `R$ ${(finalAmount / 100).toFixed(2).replace('.', ',')}`,
+      });
+    } catch (err: any) {
+      console.error('[Stripe] validate-promo-code error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  // ────────────────────────────────────────────────────────────
 
   // ── Stripe Checkout Session ────────────────────────────────────
   app.post('/api/stripe/create-checkout-session', async (req, res) => {
@@ -281,7 +348,7 @@ async function startServer() {
       const decoded = await admin.auth().verifyIdToken(token);
       const uid = decoded.uid;
 
-      const { simulationId, mode } = req.body;
+      const { simulationId, mode, promoCode } = req.body;
       if (!simulationId) {
         res.status(400).json({ error: 'simulationId required' });
         return;
@@ -292,6 +359,21 @@ async function startServer() {
       if (!simSnap.exists || simSnap.data()?.userId !== uid) {
         res.status(403).json({ error: 'Forbidden' });
         return;
+      }
+
+      let sessionDiscounts: Array<{ promotion_code: string }> | undefined;
+      let allowPromoCodes = true;
+
+      if (promoCode) {
+        const promoCodes = await stripe.promotionCodes.list({
+          code: (promoCode as string).trim().toUpperCase(),
+          active: true,
+          limit: 1,
+        });
+        if (promoCodes.data.length > 0) {
+          sessionDiscounts = [{ promotion_code: promoCodes.data[0].id }];
+          allowPromoCodes = false;
+        }
       }
 
       const session = await stripe.checkout.sessions.create({
@@ -305,6 +387,7 @@ async function startServer() {
           quantity: 1,
         }],
         mode: 'payment',
+        ...(sessionDiscounts ? { discounts: sessionDiscounts } : { allow_promotion_codes: true }),
         success_url: `${process.env.APP_URL}/?session_id={CHECKOUT_SESSION_ID}&sim=${simulationId}`,
         cancel_url: `${process.env.APP_URL}/`,
         metadata: { uid, simulationId },
@@ -313,6 +396,61 @@ async function startServer() {
       res.json({ url: session.url });
     } catch (err: any) {
       console.error('[Stripe] create-checkout-session error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  // ────────────────────────────────────────────────────────────
+
+  // ── Stripe Checkout Session — Chat pós-sessão ─────────────────
+  app.post('/api/stripe/create-chat-checkout-session', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    try {
+      const token = authHeader.split('Bearer ')[1];
+      const decoded = await admin.auth().verifyIdToken(token);
+      const uid = decoded.uid;
+
+      const { simulationId } = req.body;
+      if (!simulationId) {
+        res.status(400).json({ error: 'simulationId required' });
+        return;
+      }
+
+      const simSnap = await adminDb.collection('simulations').doc(simulationId).get();
+      if (!simSnap.exists || simSnap.data()?.userId !== uid) {
+        res.status(403).json({ error: 'Forbidden' });
+        return;
+      }
+
+      const chatSnap = await adminDb.collection('chats').doc(simulationId).get();
+      if (chatSnap.exists && chatSnap.data()?.paidAt) {
+        res.status(409).json({ error: 'Chat já liberado para esta simulação' });
+        return;
+      }
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: 'brl',
+            product_data: { name: 'Chat com Advogado e Juiz — EAI? (5 perguntas)' },
+            unit_amount: 299,
+          },
+          quantity: 1,
+        }],
+        mode: 'payment',
+        success_url: `${process.env.APP_URL}/?session_id={CHECKOUT_SESSION_ID}&sim=${simulationId}&chat=1`,
+        cancel_url: `${process.env.APP_URL}/`,
+        metadata: { uid, simulationId, type: 'chat' },
+      });
+
+      res.json({ url: session.url });
+    } catch (err: any) {
+      console.error('[Stripe] create-chat-checkout-session error:', err);
       res.status(500).json({ error: err.message });
     }
   });
@@ -336,20 +474,35 @@ async function startServer() {
         switch (event.type) {
           case 'checkout.session.completed': {
             const session = event.data.object as Stripe.Checkout.Session;
-            const { uid, simulationId } = session.metadata || {};
+            const { uid, simulationId, type } = session.metadata || {};
             if (uid && simulationId) {
-              await adminDb
-                .collection('users')
-                .doc(uid)
-                .collection('payments')
-                .doc(simulationId)
-                .set({
+              if (type === 'chat') {
+                await adminDb.collection('chats').doc(simulationId).set({
+                  userId: uid,
+                  simulationId,
                   paidAt: admin.firestore.FieldValue.serverTimestamp(),
+                  questionsUsed: 0,
+                  questionsLimit: 5,
+                  stripeSessionId: session.id,
                   amount: session.amount_total,
                   currency: session.currency,
-                  stripeSessionId: session.id,
+                  discountApplied: !!(session.total_details?.amount_discount && session.total_details.amount_discount > 0),
                 });
-              console.log(`[Stripe] Pagamento liberado — uid: ${uid}, sim: ${simulationId}`);
+                console.log(`[Stripe] Chat liberado — uid: ${uid}, sim: ${simulationId}`);
+              } else {
+                await adminDb
+                  .collection('users')
+                  .doc(uid)
+                  .collection('payments')
+                  .doc(simulationId)
+                  .set({
+                    paidAt: admin.firestore.FieldValue.serverTimestamp(),
+                    amount: session.amount_total,
+                    currency: session.currency,
+                    stripeSessionId: session.id,
+                  });
+                console.log(`[Stripe] Laudo liberado — uid: ${uid}, sim: ${simulationId}`);
+              }
             }
             break;
           }

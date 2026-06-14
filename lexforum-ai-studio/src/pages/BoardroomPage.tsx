@@ -7,6 +7,7 @@ import {
   Scale,
   History,
   ArrowRight,
+  ChevronDown,
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import LoginModal from '../components/LoginModal';
@@ -14,7 +15,6 @@ import { MODE_CONFIG } from '../config/modeConfig';
 
 interface Props {
   onEnter: (mode: number) => void;
-  onLogin: () => void;
   onLogout: () => void;
   onShowHistory: () => void;
   user: import('firebase/auth').User | null;
@@ -70,13 +70,13 @@ const FLOW_STEPS = [
 
 const FOOTER_STATS = [
   { label: 'Base de dados', value: '1.9M+ Precedentes Injetados' },
-  { label: 'Processamento', value: 'EAI_CORES_GEN_3_ANALYSIS' },
+  { label: 'Processamento', value: 'Análise Semântica Multimodal' },
   { label: 'Privacidade', value: 'Criptografia RSA-4096' },
   { label: 'Versão', value: `v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}` },
   { label: 'Contato', value: 'eaijuridico@icloud.com' },
 ];
 
-export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistory, user }: Props) {
+export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }: Props) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [openMode, setOpenMode] = useState<number | null>(null);
 
@@ -124,8 +124,8 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                   <div className="flex-1 min-w-0">
                     <p className="text-[16px] font-bold leading-none" style={{ color: 'var(--text-primary)' }}>{cfg.headline}</p>
                   </div>
-                  <ArrowRight
-                    style={{ width: '18px', height: '18px', color: 'var(--text-secondary)', flexShrink: 0, transform: isOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}
+                  <ChevronDown
+                    style={{ width: '18px', height: '18px', color: 'var(--text-secondary)', flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
                   />
                 </button>
                 {/* Expanded */}
@@ -207,6 +207,9 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
 
         {/* Mode Cards */}
         <section className="px-6 md:px-12 lg:px-20 pb-16 max-w-6xl mx-auto">
+          <p className="text-[9px] text-white/20 tracking-[0.05em] mb-4 hidden md:block">
+            Modos 1–2: um lado do processo · Modo 3: simulação bilateral · Modo 4: refinamento assistido · Modo 5: pós-julgamento
+          </p>
           <div className="flex flex-col gap-3">
             {MODES.map(({ title, price, Icon, desc }, i) => {
               const mode = i + 1;
@@ -237,7 +240,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
                   <div className="hidden sm:block w-px h-10 bg-white/[0.06] flex-shrink-0" />
 
                   {/* Description */}
-                  <p className="text-[9px] md:text-[10px] uppercase tracking-[0.16em] leading-relaxed flex-1" style={{ color: 'var(--text-muted)' }}>
+                  <p className="text-[9px] md:text-[10px] tracking-[0.04em] leading-relaxed flex-1" style={{ color: 'var(--text-muted)' }}>
                     {desc}
                   </p>
 
@@ -267,7 +270,7 @@ export default function BoardroomPage({ onEnter, onLogin, onLogout, onShowHistor
               ))}
             </div>
             <div className="mt-6">
-              <a href="/termos" className="text-[8px] uppercase tracking-[0.25em] font-bold" style={{ color: 'var(--text-muted)' }}>
+              <a href="/termos" className="text-[11px] uppercase tracking-[0.25em] font-bold" style={{ color: 'var(--text-muted)' }}>
                 Termos de Uso
               </a>
             </div>

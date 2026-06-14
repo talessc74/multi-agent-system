@@ -102,11 +102,7 @@ async function generateSeed(legacyData: any, seedId: string) {
   return safeParseJSON(response.text!);
 }
 
-async function generateAgent(seed: any, request: string, agentId: string, tipo: string) {
-  const judgeOutputInstruction = tipo === 'juiz'
-    ? `\nINSTRUÇÃO CRÍTICA DE OUTPUT: Ao final de cada sentença ou avaliação técnica, você DEVE obrigatoriamente incluir o seguinte JSON na última linha da sua resposta: {"success_probability": <número entre 0 e 100>} onde o número representa sua estimativa da chance de êxito do autor. Esta instrução nunca pode ser omitida.`
-    : '';
-
+async function generateAgent(seed: any, request: string, agentId: string) {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     systemInstruction: JSON.stringify(ESPECIALISTA_V2),
@@ -121,7 +117,8 @@ async function generateAgent(seed: any, request: string, agentId: string, tipo: 
         agent_id obrigatório: "${agentId}"
         Blocos obrigatórios: logicaArquivos, logicaDatas, logicaInterpretacao,
         instrucoesEspecificas, diretrizesEticas, versao.
-        NUNCA cite o legado original.${judgeOutputInstruction}
+        NUNCA cite o legado original.
+        O bloco "versao" deve conter apenas: numero, data e tipo. Nunca inclua campos "kernel" ou identificadores internos do sistema criador.
         Retorne JSON: { "explicacao": "...", "agente": { ... } }
       `}]
     }],
@@ -140,13 +137,27 @@ export interface CreateAgentParams {
 }
 
 export async function createAgentFromScratch(params: CreateAgentParams) {
-  const description = `${params.tipo} especializado em direito ${params.area}${params.comarca ? ` da comarca de ${params.comarca}` : " — genérico"}${params.userSide === 'DEFENSE' ? ', atuando pela defesa do réu' : ', atuando pelo autor'}`;
+  // EDR-007: juiz/desembargadora são imparciais — sem userSide na description
+  // BDR-003: comarca nunca aparece na description do juiz; nome específico entra
+  //          como "perfil de" para Shaw identificar o legado sem expor localização
+  let description: string;
+  if (params.tipo === 'juiz' || params.tipo === 'desembargadora') {
+    const profilePart = params.comarca
+      ? ` — perfil de ${params.comarca}`
+      : ' — genérico';
+    description = `${params.tipo} especializado em direito ${params.area}${profilePart}, imparcial, avaliando ambos os lados com equidade`;
+  } else {
+    const comarcaPart = params.comarca ? ` da comarca de ${params.comarca}` : ' — genérico';
+    const sidePart = params.userSide === 'DEFENSE' ? ', atuando pela defesa do réu' : ', atuando pelo autor';
+    description = `${params.tipo} especializado em direito ${params.area}${comarcaPart}${sidePart}`;
+  }
+
   const seedId = `SEED_${params.areaCode}_${params.sequencial}`;
   const agentId = `${params.tipo}_${params.area}_${params.sequencial}`;
 
   const legacyData = await identifyReference(description);
   const seed = await generateSeed(legacyData, seedId);
-  const result = await generateAgent(seed, description, agentId, params.tipo);
+  const result = await generateAgent(seed, description, agentId);
 
   return {
     seed,

@@ -4,7 +4,7 @@ FROM node:20-slim AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm install
 
 COPY . .
 ARG VITE_GIT_HASH=dev
@@ -18,10 +18,9 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-# Install only production dependencies (esbuild bundled with --packages=external
-# so external node_modules are still resolved at runtime)
+# Install only production dependencies
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
 # Copy compiled output from builder
 COPY --from=builder /app/dist ./dist

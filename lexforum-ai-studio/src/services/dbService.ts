@@ -13,7 +13,8 @@ import {
   query,
   limit,
   orderBy,
-  where
+  where,
+  onSnapshot
 } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
 import type { SimulationResult, LegalArea } from '../types';
@@ -288,4 +289,31 @@ export const getAreaStats = async (): Promise<Array<{ region: string; seeds: num
     console.error('[getAreaStats]', error);
     return null;
   }
+};
+
+export const getSimRecovery = async (sessionId: string): Promise<{ status: string; result?: any } | null> => {
+  try {
+    const snap = await getDoc(doc(db, 'simRecovery', sessionId));
+    if (!snap.exists()) return null;
+    const data = snap.data();
+    return { status: data.status, result: data.result };
+  } catch {
+    return null;
+  }
+};
+
+export const subscribeSimRecovery = (
+  sessionId: string,
+  onChange: (status: string, result?: any) => void
+): (() => void) => {
+  const docRef = doc(db, 'simRecovery', sessionId);
+  return onSnapshot(
+    docRef,
+    (snap) => {
+      if (!snap.exists()) return;
+      const data = snap.data();
+      onChange(data.status, data.result);
+    },
+    () => onChange('error')
+  );
 };

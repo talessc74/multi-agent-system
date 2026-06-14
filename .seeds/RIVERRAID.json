@@ -1,0 +1,40 @@
+{
+  "seed_id": "RIVERRAID",
+  "ref": "KERNEL_SHAW_RIVER_RAID_3.0",
+  "kernel_logic": {
+    "axioms": [
+      "AXIOM_01: Hardware space and processing are strictly finite constants.",
+      "AXIOM_02: Infinite generation requires deterministic recurrence (LCG).",
+      "AXIOM_03: Generation must operate within the active execution window."
+    ]
+  },
+  "operational_mechanics": {
+    "procedural_generation": "LCG across sequential scanlines",
+    "resource_optimization": "dual-purpose bitmask (terrain + collision)"
+  },
+  "decision_gates": [
+    {
+      "gate": "gate_01",
+      "if": "Scanline increments",
+      "then": "Execute LCG shift."
+    },
+    {
+      "gate": "gate_02",
+      "if": "Bitwise matches threshold",
+      "then": "Render boundary; else open path."
+    },
+    {
+      "gate": "gate_03",
+      "if": "Bypass attempt detected",
+      "then": "Enforce runtime boundaries; reject input."
+    }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["deterministic recurrence", "bitmask boundary", "LCG", "finite constants", "procedural generation"],
+    "prohibited": ["infinite storage assumption", "arbitrary randomness", "unbounded allocation"]
+  },
+  "semantic_anchor": {
+    "principle": "Maximum output from minimum resources via deterministic recurrence.",
+    "integrity_hash": "61dc58a4"
+  }
+}

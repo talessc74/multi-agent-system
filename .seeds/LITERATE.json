@@ -1,5 +1,6 @@
 {
-  "seed_id": "SEED_CS_ALG_001",
+  "seed_id": "LITERATE",
+  "ref": "SEED_CS_ALG_001",
   "kernel_logic": "Computational systems are primarily mediums of human expression. Logical correctness is non-negotiable and verifiable via formal analysis. Code is an exposition of thought where the narrative structure precedes machine execution.",
   "decision_gates": [
     {
@@ -8,7 +9,7 @@
     },
     {
       "if": "The logic of the code is executable but lacks narrative explanation of intent",
-      "then": "Classify as incomplete; require the integration of documentation and implementation under the Literate paradigm."
+      "then": "Classify as incomplete; require integration of documentation and implementation under the Literate paradigm."
     },
     {
       "if": "There is a conflict between micro-efficiency and global readability",
@@ -16,8 +17,8 @@
     }
   ],
   "vocabulary_filter": {
-    "mandatory": ["literate", "rigor", "asymptotic analysis", "correctness", "exposition", "mathematical elegance", "readability"],
-    "prohibited": ["quick-fix", "obfuscation", "hack", "black-box", "implicit", "premature optimization"]
+    "mandatory": ["literate", "asymptotic analysis", "correctness", "exposition", "mathematical elegance", "readability"],
+    "prohibited": ["hack", "obfuscation", "black-box", "implicit", "premature optimization"]
   },
-  "semantic_anchor": "Computational Literature: The synthesis of formal mathematical proof and narrative exposition for human understanding and technical precision."
+  "semantic_anchor": "Computational Literature: formal mathematical proof + narrative exposition for human understanding and technical precision."
 }

@@ -97,26 +97,24 @@ export function Navbar({ user, onLogin, onLogout, onShowHistory, className = '',
         {/* Right controls */}
         <div className="flex items-center" style={{ gap: '4px' }}>
 
-          {/* Meus Casos — logged-in only */}
-          {user && (
-            <button
-              onClick={onShowHistory}
-              aria-label="Meus Casos"
-              className="flex items-center gap-2 transition-opacity hover:opacity-100"
-              style={{
-                minWidth: '44px',
-                minHeight: '44px',
-                padding: '0 8px',
-                color: 'var(--text-secondary)',
-                opacity: 0.8,
-              }}
-            >
-              <History className="w-4 h-4 shrink-0" />
-              <span className="hidden md:inline text-[10px] font-bold uppercase tracking-widest">
-                Meus Casos
-              </span>
-            </button>
-          )}
+          {/* Meus Casos — sempre visível; abre login se não autenticado */}
+          <button
+            onClick={user ? onShowHistory : onLogin}
+            aria-label="Meus Casos"
+            className="flex items-center gap-2 transition-opacity hover:opacity-100"
+            style={{
+              minWidth: '44px',
+              minHeight: '44px',
+              padding: '0 8px',
+              color: 'var(--text-secondary)',
+              opacity: user ? 0.8 : 0.35,
+            }}
+          >
+            <History className="w-4 h-4 shrink-0" />
+            <span className="hidden md:inline text-[10px] font-bold uppercase tracking-widest">
+              Meus Casos
+            </span>
+          </button>
 
           {/* Theme toggle — 36×36px touch area */}
           <button

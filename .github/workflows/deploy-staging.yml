@@ -1,0 +1,58 @@
+name: Deploy → Staging (eai.radiokactus.com)
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch para deployar'
+        required: false
+        default: 'claude/promo-codes-RJBN7'
+
+jobs:
+  deploy:
+    name: Build & Deploy para eai-staging
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
+
+      - name: Autenticar no GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configurar gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Copiar agents/ e registry/ para o contexto do build
+        run: |
+          cp -r agents lexforum-ai-studio/
+          cp -r registry lexforum-ai-studio/
+
+      - name: Configurar Docker para GCR
+        run: gcloud auth configure-docker gcr.io --quiet
+
+      - name: Build da imagem Docker
+        run: |
+          docker build \
+            --build-arg VITE_GIT_HASH=$(git rev-parse --short HEAD) \
+            -t gcr.io/gen-lang-client-0783740660/eai-staging:$(git rev-parse --short HEAD) \
+            -t gcr.io/gen-lang-client-0783740660/eai-staging:latest \
+            ./lexforum-ai-studio
+
+      - name: Push para Container Registry
+        run: docker push --all-tags gcr.io/gen-lang-client-0783740660/eai-staging
+
+      - name: Deploy para Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: eai-staging
+          image: gcr.io/gen-lang-client-0783740660/eai-staging:latest
+          region: us-east1
+          project_id: gen-lang-client-0783740660
+
+      - name: URL do staging
+        run: echo "✅ Deploy concluído → https://eai.radiokactus.com"

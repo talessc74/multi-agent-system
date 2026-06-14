@@ -20,12 +20,13 @@ export function simulateForum(
   area: LegalArea,
   attachments: Attachment[],
   specificJudge: string | null,
-  onProgress: (step: SimStep, data?: { lawyerName?: string; judgeName?: string; round?: number; rounds?: any; regionIndex?: number }) => void,
+  onProgress: (step: SimStep, data?: { lawyerName?: string; judgeName?: string; round?: number; rounds?: any; regionIndex?: number; sessionId?: string }) => void,
   mode: number = 1,
   defenseDescription: string = '',
   defenseAttachments: Attachment[] = [],
   userSide?: 'AUTHOR' | 'DEFENSE',
-  onRetry?: (attempt: number) => void
+  onRetry?: (attempt: number) => void,
+  signal?: AbortSignal
 ): Promise<SimulationResult> {
   const MAX_RETRIES = 3;
 
@@ -42,8 +43,13 @@ export function simulateForum(
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide }),
+          signal,
         });
       } catch (err: any) {
+        if (err?.name === 'AbortError') {
+          reject(new Error('SIMULATION_ABORTED'));
+          return;
+        }
         reject(new Error(err.message || 'Erro na simulação SSE'));
         return;
       }
@@ -73,7 +79,7 @@ export function simulateForum(
             const { step, round } = data;
             onProgress(step as SimStep, { round });
           } else if (eventName === 'agents') {
-            onProgress('SEED_CREATED', { lawyerName: data.lawyerName, judgeName: data.judgeName });
+            onProgress('SEED_CREATED', { lawyerName: data.lawyerName, judgeName: data.judgeName, sessionId: data.sessionId });
           } else if (eventName === 'round') {
             onProgress('REVIEWING', { round: data.round, rounds: [data] });
           } else if (eventName === 'done') {
@@ -119,6 +125,7 @@ export function simulateForum(
     try {
       return await attemptFetch(attempt);
     } catch (err: any) {
+      if (err?.message === 'SIMULATION_ABORTED') throw err;
       if (attempt < MAX_RETRIES) {
         onRetry?.(attempt + 1);
         await new Promise(res => setTimeout(res, 1500 * attempt));

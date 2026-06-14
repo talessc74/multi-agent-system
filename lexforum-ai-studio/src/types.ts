@@ -43,11 +43,12 @@ export interface AppState {
   caseSummary: string | null;
   specificJudge: string | null;
   userPole?: 'AUTOR' | 'REU';
+  attachmentsUnreadable?: boolean;
   simulation: SimulationResult | null;
   report: ReportContent | null;
   isUnlocked: boolean;
   simulationId: string | null;
-  simStep: 'IDLE' | 'WRITING' | 'DELIVERING' | 'JUDGING' | 'REVIEWING' | 'SEED_CREATED';
+  simStep: 'IDLE' | 'WRITING' | 'DELIVERING' | 'JUDGING' | 'REVIEWING' | 'SEED_CREATED' | 'RECOVERING';
   selectedProfile: 'leigo' | 'profissional';
   regionalStats: { region: string; seeds: number; active: number }[];
   activeAgents: { name: string; type: string; id: string }[];
@@ -60,6 +61,23 @@ export interface AppState {
   selectedHypothesis?: string;
   expandedHypothesis?: string;
   showHypotheses?: boolean;
+}
+
+export interface ChatMessage {
+  id?: string;
+  role: 'user' | 'agent';
+  content: string;
+  agentType: 'lawyer' | 'judge';
+  agentName: string;
+  timestamp?: number;
+}
+
+export interface ChatSession {
+  simulationId: string;
+  questionsUsed: number;
+  questionsLimit: number;
+  isPaid: boolean;
+  messages: ChatMessage[];
 }
 
 export type Mode5SubCase = 'RECURSO' | 'ACORDO';
