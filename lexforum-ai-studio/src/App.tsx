@@ -3889,7 +3889,11 @@ const startRecovery = (sessionId: string) => {
                   <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Índice de Força Argumentativa</div>
                   <div className="text-5xl font-serif italic text-white/90">
                     { (state.simulation?.rounds && state.simulation.rounds.length > 0)
-                      ? displayPct
+                      ? (() => {
+                          const _fp = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
+                          const _side = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
+                          return (state.selectedMode === 4 && _side === 'DEFENSE') ? 100 - _fp : _fp;
+                        })()
                       : "--"
                     }%
                   </div>
