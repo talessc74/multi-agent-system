@@ -323,3 +323,52 @@ describe('mode4 — extração de sentença do juiz', () => {
     expect(result).toContain('AUTOR: Autor procedente');
   });
 });
+
+// ── 7. Contrato do prompt do juiz (frame por userSide) ────────────────────────
+//
+// Quando userSide='DEFENSE': juiz avalia qualidade da defesa (frame estável)
+// Quando userSide='AUTHOR':  juiz declara vencedor bilateral (frame original)
+
+function buildJuiPrompt(
+  userSide: 'AUTHOR' | 'DEFENSE',
+  authorText: string,
+  defenseText: string
+): string {
+  return userSide === 'DEFENSE'
+    ? `Você é um magistrado avaliando a solidez técnica dos argumentos da DEFESA/RÉU.\n\nPETIÇÃO DO AUTOR (contexto — argumento sendo contestado):\n${authorText}\n\nCONTESTAÇÃO DA DEFESA (avalie a eficácia deste argumento):\n${defenseText}\n\nAvalie tecnicamente a solidez dos argumentos da DEFESA diante da petição apresentada. Retorne JSON:\n{"success_probability":<0-100, probabilidade de êxito do AUTOR — valor BAIXO indica defesa eficaz>,"author_summary":"<resumo do argumento do Autor>","defense_summary":"<resumo do argumento do Réu>","judgment":"<veredito técnico completo — campo obrigatório, nunca vazio>"}`
+    : `Você é um magistrado imparcial. Analise ambos os lados e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100, probabilidade de êxito do AUTOR>,"author_summary":"<resumo do argumento do Autor>","defense_summary":"<resumo do argumento do Réu>","judgment":"<veredito técnico completo — campo obrigatório, nunca vazio>"}`;
+}
+
+describe('mode4 — contrato do prompt do juiz por userSide', () => {
+  it('userSide=DEFENSE: prompt avalia solidez da defesa (frame estável)', () => {
+    const prompt = buildJuiPrompt('DEFENSE', 'Petição do autor', 'Contestação da defesa');
+    expect(prompt).toContain('solidez técnica dos argumentos da DEFESA/RÉU');
+    expect(prompt).toContain('valor BAIXO indica defesa eficaz');
+    expect(prompt).toContain('PETIÇÃO DO AUTOR (contexto');
+    expect(prompt).toContain('CONTESTAÇÃO DA DEFESA (avalie a eficácia');
+    expect(prompt).not.toContain('Analise ambos os lados');
+  });
+
+  it('userSide=AUTHOR: prompt declara vencedor bilateral (frame original)', () => {
+    const prompt = buildJuiPrompt('AUTHOR', 'Petição do autor', 'Contestação do réu');
+    expect(prompt).toContain('magistrado imparcial');
+    expect(prompt).toContain('Analise ambos os lados');
+    expect(prompt).toContain('PETIÇÃO DO AUTOR:');
+    expect(prompt).toContain('CONTESTAÇÃO DO RÉU:');
+    expect(prompt).not.toContain('solidez técnica dos argumentos da DEFESA');
+  });
+
+  it('ambos os prompts exigem judgment obrigatório não vazio', () => {
+    const d = buildJuiPrompt('DEFENSE', 'a', 'b');
+    const a = buildJuiPrompt('AUTHOR', 'a', 'b');
+    expect(d).toContain('campo obrigatório, nunca vazio');
+    expect(a).toContain('campo obrigatório, nunca vazio');
+  });
+
+  it('ambos os prompts mantêm success_probability como prob. do AUTOR', () => {
+    const d = buildJuiPrompt('DEFENSE', 'a', 'b');
+    const a = buildJuiPrompt('AUTHOR', 'a', 'b');
+    expect(d).toContain('probabilidade de êxito do AUTOR');
+    expect(a).toContain('probabilidade de êxito do AUTOR');
+  });
+});

@@ -229,7 +229,9 @@ export async function simulateForumServer(
         const authorText = userSide === 'DEFENSE' ? staticSide : currentPetition;
         const defenseText = userSide === 'DEFENSE' ? currentPetition : staticSide;
 
-        const juiPrompt = `Você é um magistrado imparcial. Analise ambos os lados e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100, probabilidade de êxito do AUTOR>,"author_summary":"<resumo do argumento do Autor>","defense_summary":"<resumo do argumento do Réu>","judgment":"<veredito técnico completo — campo obrigatório, nunca vazio>"}`;
+        const juiPrompt = userSide === 'DEFENSE'
+          ? `Você é um magistrado avaliando a solidez técnica dos argumentos da DEFESA/RÉU.\n\nPETIÇÃO DO AUTOR (contexto — argumento sendo contestado):\n${authorText}\n\nCONTESTAÇÃO DA DEFESA (avalie a eficácia deste argumento):\n${defenseText}\n\nAvalie tecnicamente a solidez dos argumentos da DEFESA diante da petição apresentada. Retorne JSON:\n{"success_probability":<0-100, probabilidade de êxito do AUTOR — valor BAIXO indica defesa eficaz>,"author_summary":"<resumo do argumento do Autor>","defense_summary":"<resumo do argumento do Réu>","judgment":"<veredito técnico completo — campo obrigatório, nunca vazio>"}`
+          : `Você é um magistrado imparcial. Analise ambos os lados e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100, probabilidade de êxito do AUTOR>,"author_summary":"<resumo do argumento do Autor>","defense_summary":"<resumo do argumento do Réu>","judgment":"<veredito técnico completo — campo obrigatório, nunca vazio>"}`;
 
         const juiRes = await ai.models.generateContent({
           model: MODEL_NAME,
