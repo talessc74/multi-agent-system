@@ -90,16 +90,23 @@ import { initiateCheckout } from './services/checkoutService';
 
 const cleanJudgmentText = (text: string) => {
   if (!text) return "";
-  // Remove markdown json blocks if they contain the probability
+  try {
+    const parsed = JSON.parse(text);
+    if (parsed && typeof parsed === 'object') {
+      if (parsed.judgment) return (parsed.judgment as string).trim();
+      const parts = [
+        parsed.author_summary ? `AUTOR: ${parsed.author_summary}` : '',
+        parsed.defense_summary ? `DEFESA: ${parsed.defense_summary}` : ''
+      ].filter(Boolean);
+      if (parts.length > 0) return parts.join('\n').trim();
+    }
+  } catch {}
   let cleaned = text.replace(/```json\s*\{\s*"success_probability"\s*:\s*\d+\s*\}\s*```/gs, '');
-  // Remove raw json if it contains the probability
   cleaned = cleaned.replace(/\{\s*"success_probability"\s*:\s*\d+\s*\}/gs, '');
   cleaned = cleaned.trim();
-  
   if (cleaned.length < 5 && text.includes('success_probability')) {
     return "A análise técnica foi processada e a probabilidade de êxito calculada com base nos fundamentos apresentados pelo Magistrado.";
   }
-  
   return cleaned;
 };
 
