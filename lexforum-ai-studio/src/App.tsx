@@ -1937,7 +1937,11 @@ const startRecovery = (sessionId: string) => {
               <div style={{ padding: '0 20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflow: 'hidden' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>Argumento do autor</span>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      {state.selectedMode === 4 && (state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR')) === 'DEFENSE'
+                        ? 'Argumento do réu'
+                        : 'Argumento do autor'}
+                    </span>
                   </div>
                   {rounds.length > 0 && (
                     <div style={{ padding: '0 16px 14px', fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, maxHeight: '80px', overflow: 'hidden', position: 'relative' }}>
@@ -3133,6 +3137,8 @@ const startRecovery = (sessionId: string) => {
                   const finalPct = state.selectedMode === 5
                     ? (state.mode5Result?.successProbability ?? 0)
                     : (state.simulation?.finalSuccessProbability ?? 0);
+                  const effectiveSide = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
+                  const displayPct = (state.selectedMode === 4 && effectiveSide === 'DEFENSE') ? 100 - finalPct : finalPct;
                   return (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -3143,10 +3149,10 @@ const startRecovery = (sessionId: string) => {
                       <Lock className="text-white/5 w-24 h-24 -rotate-12" />
                     </div>
                     <div className="relative z-10 flex flex-col items-center text-center space-y-6">
-                      {finalPct > 0 && (
+                      {displayPct > 0 && (
                         <div className="flex flex-col items-center mb-4">
                           <span className="text-7xl font-serif italic font-bold text-white">
-                            {finalPct}%
+                            {displayPct}%
                           </span>
                           <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold mt-1">
                             Índice de força argumentativa
@@ -3941,6 +3947,8 @@ const startRecovery = (sessionId: string) => {
                     { (state.simulation?.rounds && state.simulation.rounds.length > 0)
                       ? (() => {
                           const _fp = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
+                          const _effectiveSide = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
+                          if (state.selectedMode === 4 && _effectiveSide === 'DEFENSE') return 100 - _fp;
                           return _fp >= 50 ? _fp : 100 - _fp;
                         })()
                       : "--"
