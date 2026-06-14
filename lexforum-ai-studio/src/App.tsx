@@ -98,7 +98,7 @@ const cleanJudgmentText = (text: string) => {
         parsed.author_summary ? `AUTOR: ${parsed.author_summary}` : '',
         parsed.defense_summary ? `DEFESA: ${parsed.defense_summary}` : ''
       ].filter(Boolean);
-      if (parts.length > 0) return parts.join('\n');
+      if (parts.length > 0) return parts.join('\n').trim();
     }
   } catch {}
   let cleaned = text.replace(/```json\s*\{\s*"success_probability"\s*:\s*\d+\s*\}\s*```/gs, '');

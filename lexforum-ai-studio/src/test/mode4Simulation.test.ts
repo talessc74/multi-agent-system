@@ -278,46 +278,48 @@ describe('mode4 — saída antecipada (DEFENSE)', () => {
 //
 // Campo judgment pode vir vazio do modelo — fallback usa author_summary/defense_summary
 
+const JUDGMENT_FALLBACK_MSG = 'A análise técnica foi processada pelo Magistrado com base nos argumentos apresentados.';
+
 function extractJudgment(juiParsed: {
   judgment?: string;
   author_summary?: string;
   defense_summary?: string;
-}, juiText: string): string {
+}): string {
   const rawJudgment = (juiParsed.judgment as string | undefined)?.trim() ?? '';
   if (rawJudgment) return rawJudgment;
   const authorPart = juiParsed.author_summary ? `AUTOR: ${juiParsed.author_summary}` : '';
   const defensePart = juiParsed.defense_summary ? `\nDEFESA: ${juiParsed.defense_summary}` : '';
-  return (authorPart + defensePart).trim() || juiText;
+  return (authorPart + defensePart).trim() || JUDGMENT_FALLBACK_MSG;
 }
 
 describe('mode4 — extração de sentença do juiz', () => {
   it('retorna judgment quando campo está preenchido', () => {
-    const result = extractJudgment({ judgment: 'Sentença completa do juiz.' }, '{}');
+    const result = extractJudgment({ judgment: 'Sentença completa do juiz.' });
     expect(result).toBe('Sentença completa do juiz.');
   });
 
   it('judgment com espaços em branco é tratado como vazio', () => {
-    const result = extractJudgment({ judgment: '   ', author_summary: 'Autor tem razão' }, '{}');
+    const result = extractJudgment({ judgment: '   ', author_summary: 'Autor tem razão' });
     expect(result).toContain('AUTOR: Autor tem razão');
   });
 
   it('usa author_summary + defense_summary quando judgment é vazio', () => {
     const result = extractJudgment(
-      { judgment: '', author_summary: 'Autor tem razão', defense_summary: 'Defesa é fraca' },
-      '{}'
+      { judgment: '', author_summary: 'Autor tem razão', defense_summary: 'Defesa é fraca' }
     );
     expect(result).toContain('AUTOR: Autor tem razão');
     expect(result).toContain('DEFESA: Defesa é fraca');
   });
 
-  it('usa juiText como último recurso quando todos os campos são vazios', () => {
-    const juiText = '{"success_probability":50}';
-    const result = extractJudgment({ judgment: '', author_summary: '', defense_summary: '' }, juiText);
-    expect(result).toBe(juiText);
+  it('retorna mensagem segura (não JSON bruto) quando todos os campos são vazios', () => {
+    const result = extractJudgment({ judgment: '', author_summary: '', defense_summary: '' });
+    expect(result).toBe(JUDGMENT_FALLBACK_MSG);
+    expect(result).not.toContain('success_probability');
+    expect(result).not.toContain('{');
   });
 
-  it('campo judgment ausente (undefined) não quebra — usa fallback', () => {
-    const result = extractJudgment({ author_summary: 'Autor procedente' }, 'fallback');
+  it('campo judgment ausente (undefined) não quebra — usa fallback de summary', () => {
+    const result = extractJudgment({ author_summary: 'Autor procedente' });
     expect(result).toContain('AUTOR: Autor procedente');
   });
 });
