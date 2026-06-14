@@ -138,11 +138,11 @@ export function simulateForum(
   return runWithRetry(1);
 }
 
-export async function generateReport(lastPetition: string, lastJudgment: string): Promise<ReportContent> {
+export async function generateReport(lastPetition: string, lastJudgment: string, clientSide: 'AUTHOR' | 'DEFENSE' = 'AUTHOR'): Promise<ReportContent> {
   const response = await fetch('/api/gemini/report', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ lastPetition, lastJudgment })
+    body: JSON.stringify({ lastPetition, lastJudgment, clientSide })
   });
   if (!response.ok) {
     const err = await response.json();

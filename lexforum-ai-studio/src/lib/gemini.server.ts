@@ -383,27 +383,31 @@ export async function simulateForumServer(
   return { area, rounds, finalSuccessProbability: lastProb, lawyerAgentName: lawAgent.name, judgeAgentName: judgeName };
 }
 
-export async function generateReportServer(lastPetition: string, lastJudgment: string): Promise<ReportContent> {
+export async function generateReportServer(lastPetition: string, lastJudgment: string, clientSide: 'AUTHOR' | 'DEFENSE' = 'AUTHOR'): Promise<ReportContent> {
+  const perspective = clientSide === 'DEFENSE'
+    ? 'PERSPECTIVA OBRIGATÓRIA: O CLIENTE QUE LÊ ESTE LAUDO É O RÉU (parte demandada/Reclamada/Executado). Todo o laudo deve ser redigido inteiramente da perspectiva do RÉU. Veredito, Pontos Fortes, Riscos e orientações referem-se à posição do RÉU. Se o pedido do AUTOR tem alta probabilidade de ser acolhido, isso representa um RISCO para o cliente RÉU — nunca uma vitória. Jamais trate o cliente como Autor/Reclamante/Exequente. O objetivo é orientar o RÉU sobre como se defender. '
+    : 'PERSPECTIVA OBRIGATÓRIA: O CLIENTE QUE LÊ ESTE LAUDO É O AUTOR (parte que move a ação/Reclamante/Exequente). Todo o laudo deve ser redigido inteiramente da perspectiva do AUTOR. Veredito, Pontos Fortes, Riscos e orientações referem-se à posição do AUTOR. Jamais trate o cliente como Réu/Reclamada/Executado. ';
+
   const [laymanRes, profRes, summaryRes] = await Promise.all([
     ai.models.generateContent({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nSentença: ${lastJudgment}` }] }],
       config: {
-        systemInstruction: "Você é um Consultor Jurídico sênior. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Ao citar argumentos da parte contrária, use sempre conectores explícitos como 'A parte adversa alega que...' ou 'O argumento do Exequente, que não merece acolhimento, é que...'. Gere um laudo em linguagem LEIGA seguindo: 1. Veredito. 2. Pontos Fortes. 3. Riscos. 4. Passo a passo prático."
+        systemInstruction: perspective + "Você é um Consultor Jurídico sênior. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Ao citar argumentos da parte contrária, use sempre conectores explícitos como 'A parte adversa alega que...' ou 'O argumento do Exequente, que não merece acolhimento, é que...'. Gere um laudo em linguagem LEIGA seguindo: 1. Veredito. 2. Pontos Fortes. 3. Riscos. 4. Passo a passo prático."
       }
     }),
     ai.models.generateContent({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nSentença: ${lastJudgment}` }] }],
       config: {
-        systemInstruction: "Você é um Chief Legal Officer. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Ao citar argumentos da parte contrária, use sempre conectores explícitos como 'A Exequente alega que...', 'O argumento da parte adversa, que não merece acolhimento, é que...'. Proibido parafrasear argumentos adversos sem identificá-los claramente como sendo da parte contrária. Gere um LAUDO ESTRATÉGICO seguindo: 1. Resultados. 2. Fundamentação. 3. Riscos. 4. Plano Estratégico."
+        systemInstruction: perspective + "Você é um Chief Legal Officer. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Ao citar argumentos da parte contrária, use sempre conectores explícitos como 'A Exequente alega que...', 'O argumento da parte adversa, que não merece acolhimento, é que...'. Proibido parafrasear argumentos adversos sem identificá-los claramente como sendo da parte contrária. Gere um LAUDO ESTRATÉGICO seguindo: 1. Resultados. 2. Fundamentação. 3. Riscos. 4. Plano Estratégico."
       }
     }),
     ai.models.generateContent({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nAvaliação técnica: ${lastJudgment}` }] }],
       config: {
-        systemInstruction: "Você é um organizador de informações jurídicas. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Com base na petição e na avaliação técnica, organize um resumo claro e objetivo da causa para que o usuário possa apresentar a um advogado real. Use linguagem simples. Não use linguagem de petição ou peça processual. Estruture em: Situação relatada, Argumentos identificados, Pontos de atenção, Área jurídica identificada, Próximos passos."
+        systemInstruction: perspective + "Você é um organizador de informações jurídicas. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Com base na petição e na avaliação técnica, organize um resumo claro e objetivo da causa para que o usuário possa apresentar a um advogado real. Use linguagem simples. Não use linguagem de petição ou peça processual. Estruture em: Situação relatada, Argumentos identificados, Pontos de atenção, Área jurídica identificada, Próximos passos."
       }
     })
   ]);

@@ -155,8 +155,8 @@ async function startServer() {
 
   app.post("/api/gemini/report", async (req, res) => {
     try {
-      const { lastPetition, lastJudgment } = req.body;
-      const data = await generateReportServer(lastPetition, lastJudgment);
+      const { lastPetition, lastJudgment, clientSide } = req.body;
+      const data = await generateReportServer(lastPetition, lastJudgment, clientSide);
       res.json(data);
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {

@@ -500,7 +500,8 @@ const displayRecoveredResult = async (result: SimulationResult) => {
 
     let reportData = null;
     try {
-      reportData = await generateReport(bestRound.lawyerPetition, bestRound.judgeJudgment);
+      const _es = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
+      reportData = await generateReport(bestRound.lawyerPetition, bestRound.judgeJudgment, _es);
     } catch {}
 
     setState(prev => ({ ...prev, step: 'result', report: reportData, error: null, simStep: 'IDLE' }));
@@ -872,9 +873,11 @@ const startRecovery = (sessionId: string) => {
       // generateReport failure must NOT block result display — show result with null report
       let reportData = null;
       try {
+        const _clientSide = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
         reportData = await generateReport(
           bestRound.lawyerPetition,
-          bestRound.judgeJudgment
+          bestRound.judgeJudgment,
+          _clientSide
         );
       } catch (reportErr) {
         console.error('[handleSimulate] generateReport falhou — exibindo resultado sem laudo:', reportErr);
