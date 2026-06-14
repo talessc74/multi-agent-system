@@ -229,7 +229,7 @@ export async function simulateForumServer(
         const authorText = userSide === 'DEFENSE' ? staticSide : currentPetition;
         const defenseText = userSide === 'DEFENSE' ? currentPetition : staticSide;
 
-        const juiPrompt = `Analise ambos os lados e emita veredito.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100>,"author_summary":"<resumo>","defense_summary":"<resumo>","judgment":"<veredito>"}`;
+        const juiPrompt = `Você é um magistrado imparcial. Analise ambos os lados e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100, probabilidade de êxito do AUTOR>,"author_summary":"<resumo do argumento do Autor>","defense_summary":"<resumo do argumento do Réu>","judgment":"<veredito técnico completo — campo obrigatório, nunca vazio>"}`;
 
         const juiRes = await ai.models.generateContent({
           model: MODEL_NAME,
@@ -248,18 +248,13 @@ export async function simulateForumServer(
         } else {
           const authorPart = juiParsed.author_summary ? `AUTOR: ${juiParsed.author_summary}` : '';
           const defensePart = juiParsed.defense_summary ? `\nDEFESA: ${juiParsed.defense_summary}` : '';
-          currentJudgment = (authorPart + defensePart).trim() || juiText;
+          currentJudgment = (authorPart + defensePart).trim() || 'A análise técnica foi processada pelo Magistrado com base nos argumentos apresentados.';
           console.warn('[Mode4] Campo judgment vazio — usando campos alternativos para exibição.');
         }
 
-        lastProb = juiParsed.success_probability ?? extractProbability(juiText);
-
-        // Normaliza para perspectiva do autor (EDR _local-edr-policy-001)
-        try {
-          lastProb = await interpretJudgmentForSide(currentJudgment, 'AUTHOR');
-        } catch (interpErr) {
-          console.warn('[Mode4] Revisor indisponível — usando success_probability do juiz:', interpErr instanceof Error ? interpErr.message : interpErr);
-        }
+        lastProb = typeof juiParsed.success_probability === 'number'
+          ? juiParsed.success_probability
+          : extractProbability(juiText);
 
         onProgress?.('REVIEWING', i);
 
