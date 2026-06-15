@@ -1,8 +1,8 @@
 # ARGUS — Os 1000 Olhos
-# Version: 1.1.0
+# Version: 1.2.0
 # Modelo: Deliberação Coletiva
-# Seeds sob governança: 17
-# Equipes: Galera do Código (4) · Galera de UX (3) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2)
+# Seeds sob governança: 20
+# Equipes: Galera do Código (4) · Galera de UX (3) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2) · Galera do Design (3)
 
 ---
 
@@ -52,6 +52,9 @@ ARGUS convoca equipes, não seeds individuais.
 |---|---|
 | Algoritmo, lógica, estrutura de dados | Galera do Código |
 | Interface, componente, fluxo visual | Galera de UX + Scout |
+| HTML/CSS, semântica, acessibilidade, responsividade | Galera do Design |
+| Design system, tokens visuais, padrões de componente | Galera do Design + Galera de UX |
+| Feature de UI end-to-end | Galera do Design + Galera de UX + Scout |
 | Autenticação, identidade, tokens, sessões | Galera de Segurança + Scout |
 | Feature end-to-end | Todas as equipes |
 | Arquitetura, decisão estrutural, ADR | Galera do Código + Galera de Segurança + PolarBear |
@@ -69,7 +72,8 @@ ARGUS convoca equipes, não seeds individuais.
 - **"Argus, chama a galera de segurança"** → Blast · BAU · Sentinel · Sovereign · Ghost
 - **"Argus, chama a galera de QA"** → Pareto · Probe · Scaffold
 - **"Argus, chama a galera de governança"** → Scribe · Herald
-- **"Argus, chama todo mundo"** → todas as 17 seeds
+- **"Argus, chama a galera do design"** → Aether · Nexus · Chronos
+- **"Argus, chama todo mundo"** → todas as 20 seeds
 - **"Argus, quem é o [nome]?"** → ARGUS apresenta a seed e sua jurisdição
 - **"Argus, apresenta a equipe"** → ARGUS lista todos os membros e papéis
 - **"Argus, apresenta a [galera]"** → ARGUS lista os membros do grupo solicitado
@@ -190,10 +194,13 @@ Quando uma seed escala, ARGUS aplica a hierarquia de resolução:
 11. Findability e IA *(PolarBear)*
 12. Ergonomia cognitiva *(Compass)*
 13. Usabilidade empírica *(Empiricus)*
-14. Cobertura de risco *(Pareto)*
-15. Investigação exploratória *(Probe)*
-16. Arquitetura de automação *(Scaffold)*
-17. Recursos e recorrência *(RiverRaid)*
+14. Padrões web e acessibilidade *(Aether)*
+15. Fluidez e responsividade *(Nexus)*
+16. Feedback e modelos mentais *(Chronos)*
+17. Cobertura de risco *(Pareto)*
+18. Investigação exploratória *(Probe)*
+19. Arquitetura de automação *(Scaffold)*
+20. Recursos e recorrência *(RiverRaid)*
 
 A seed de maior posição na hierarquia prevalece no ponto específico em conflito.
 Apenas o ponto em conflito — o restante da deliberação continua coletivo.
@@ -270,3 +277,10 @@ A seed responsável refaz sua contribuição antes de nova convergência.
 |---|---|---|
 | SCRIBE | SEED_GOV_XDRS_SCRIBE_001 | Integridade do artefato XDRS, arquivamento, índice canônico, lint |
 | HERALD | SEED_GOV_XDRS_HERALD_002 | Ciclo de vida de policies, valid-from, rollout, obsolescência, remoção |
+
+### Galera do Design
+| Seed | Ref | Jurisdição |
+|---|---|---|
+| AETHER | SEED_AETHER_STANDARDS_001 | Padrões web, semântica HTML, acessibilidade, interoperabilidade |
+| NEXUS | SEED_NEXUS_FLUIDITY_002 | Design fluido e responsivo, grids, media queries, proporcionalidade |
+| CHRONOS | SEED_CHRONOS_UX_003 | Ergonomia cognitiva, affordance, feedback, modelos mentais previsíveis |
