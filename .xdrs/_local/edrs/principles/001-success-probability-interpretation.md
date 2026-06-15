@@ -1,9 +1,9 @@
 ---
 name: _local-edr-policy-001-success-probability-interpretation
 description: Defines the semantic contract for the success_probability field returned by the judge in all simulation modes. Use whenever reading, displaying, or prompting for this value.
-apply-to: All simulation modes — gemini.server.ts, App.tsx
+apply-to: All simulation modes — gemini.server.ts, App.tsx, dbService.ts
 valid-from: 2026-06-13
-updated: 2026-06-14
+updated: 2026-06-15
 ---
 
 # _local-edr-policy-001: success_probability Interpretation
@@ -61,3 +61,26 @@ ambiguity existed. It was removed from Mode 4 on 2026-06-14 after the prompt was
 corrected. The file and its tests remain in the codebase but the function is no longer
 called in any active simulation flow. Removal of the file is deferred to a future
 deliberation.
+
+#### UserSide Persistence (saveSimulation / loadSimulation)
+
+`userSide`, `userPole`, and `selectedMode` must be persisted in Firestore via
+`saveSimulation` and restored via `loadSimulation`. Without persistence, a simulation
+loaded after the user has left the mode-selection screen loses side context and
+incorrectly defaults to AUTHOR perspective for a RÉU user.
+
+Fields added to `dbService.ts` `saveSimulation` (fix I6, 2026-06-14):
+- `selectedMode: number | null`
+- `userSide: 'AUTHOR' | 'DEFENSE' | null`
+- `userPole: 'AUTOR' | 'REU' | null`
+
+Fields restored in `App.tsx` `loadSimulation`:
+```typescript
+selectedMode: sim.selectedMode ?? prev.selectedMode,
+userSide: sim.userSide ?? prev.userSide,
+userPole: sim.userPole ?? prev.userPole,
+```
+
+These three fields must always be written together. Persisting `userSide` without
+`userPole` (or vice versa) creates a partial fallback chain that may produce unexpected
+side inversion on reload.

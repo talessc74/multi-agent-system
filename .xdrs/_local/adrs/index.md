@@ -8,6 +8,7 @@ System and service design decisions.
 
 - [001-simulation-pipeline](application/001-simulation-pipeline.md) — How the five simulation modes and the agent resolution pipeline are structured
 - [002-sse-streaming](application/002-sse-streaming.md) — Server-Sent Events for streaming real-time simulation progress to the client
+- [003-mode4-production-incident-2026-06](application/003-mode4-production-incident-2026-06.md) — Complete incident record: Mode 4 bugs, root causes, fixes, false positives, canonical patterns and lessons learned (June 2026)
 
 ## platform
 
