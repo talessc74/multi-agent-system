@@ -1,0 +1,14 @@
+{
+  "name": "eai-juridico",
+  "version": "1.0.0",
+  "description": "EAI? Jurídico (Evidence-Based AI) — multi-agent system governed by ARGUS + XDRS",
+  "private": true,
+  "scripts": {
+    "governance:extract": "npx argus-xdrs-governance extract",
+    "governance:check": "npx argus-xdrs-governance check",
+    "governance:lint": "npx xdrs-core lint ."
+  },
+  "devDependencies": {
+    "argus-xdrs-governance": "^1.2.0"
+  }
+}
