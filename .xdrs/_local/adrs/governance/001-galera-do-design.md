@@ -1,12 +1,8 @@
 ---
-id: adr-local-governance-001
-title: Inclusão da Galera do Design na governança ARGUS
-type: adr
-scope: governance
-status: accepted
+name: _local-adr-policy-005-galera-do-design
+description: Registra a inclusão da Galera do Design (Canvas · Forge · Quill) na governança ARGUS v1.2.0. Use ao referenciar a composição da mesa de design ou ao avaliar mudanças na estrutura de seeds.
+apply-to: Governança — .seeds/ARGUS.md, .seeds/CANVAS.json, .seeds/FORGE.json, .seeds/QUILL.json, CLAUDE.md
 valid-from: 2026-06-16
-authors: [CANVAS, FORGE, QUILL, SCRIBE, HERALD]
-argus-version: 1.2.0
 ---
 
 ## Contexto
