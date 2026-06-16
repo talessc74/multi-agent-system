@@ -438,7 +438,7 @@ body{
 .ws-result-list li::before{content:'—';position:absolute;left:0;color:var(--mode-color, var(--accent));}
 .ws-save{width:100%;height:50px;border:none;border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;color:#06121A;box-shadow:inset 0 1px 0 rgba(255,255,255,0.5);position:relative;z-index:2;transition:filter .15s;}
 .ws-save:hover{filter:brightness(0.95);}
-.ws-saved-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-muted);position:relative;z-index:2;}
+.ws-saved-badge{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-muted);position:relative;z-index:2;margin-bottom:14px;}
 
 .cases-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px;gap:12px;}
 .cases-title{font-family:"Playfair Display",serif;font-style:italic;font-weight:700;font-size:26px;color:var(--text-primary);}
@@ -859,7 +859,8 @@ document.addEventListener('click', (e) => {
 });
 
 /* ══ WORKSPACE DO MODO / MEUS CASOS — navegação e estado ══ */
-let appState = { screen: 'home', modeId: null, wsState: 'input', viewingCaseId: null, lastScore: null };
+/* Premissa: toda consulta concluída é salva automaticamente em Meus Casos. */
+let appState = { screen: 'home', modeId: null, wsState: 'input', viewingCaseId: null };
 let SAVED_CASES = [
   { id: 1, modeId: 1, title: 'Tese Estratégica', date: '14/06/2026', status: 'Concluído', score: 78 },
   { id: 2, modeId: 4, title: 'Mesa Dupla — Assistida', date: '10/06/2026', status: 'Concluído', score: 64 },
@@ -903,38 +904,36 @@ function runSimulation() {
   appState.wsState = 'processing';
   renderApp();
   setTimeout(() => {
-    appState.lastScore = Math.floor(55 + Math.random() * 40);
+    const m = MODES[appState.modeId];
+    const score = Math.floor(55 + Math.random() * 40);
+    const newCase = { id: nextCaseId++, modeId: appState.modeId, title: m.title, date: '16/06/2026', status: 'Concluído', score };
+    SAVED_CASES.unshift(newCase);
+    appState.viewingCaseId = newCase.id;
     appState.wsState = 'result';
     renderApp();
   }, 1100);
 }
 
-function saveCase() {
-  const m = MODES[appState.modeId];
-  const newCase = { id: nextCaseId++, modeId: appState.modeId, title: m.title, date: '16/06/2026', status: 'Concluído', score: appState.lastScore };
-  SAVED_CASES.unshift(newCase);
-  appState.viewingCaseId = newCase.id;
-  goCases();
-}
-
-function resultBlock(m, score, caseObj) {
+function resultBlock(m, caseObj) {
   return `
     <div class="ws-result glass" style="--mode-color:${m.color};">
       <p class="ws-result-label">Probabilidade de êxito</p>
-      <p class="ws-result-score mono" style="color:${m.color};">${score}%</p>
+      <p class="ws-result-score mono" style="color:${m.color};">${caseObj.score}%</p>
       <p class="ws-result-disclaimer">Estimativa baseada em precedentes — não é parecer jurídico nem garante o resultado do processo.</p>
       <ul class="ws-result-list">
         ${m.receive.map(r => `<li>${r}</li>`).join('')}
       </ul>
-      ${caseObj
-        ? `<span class="ws-saved-badge">✓ Salvo em ${caseObj.date}</span>`
-        : `<button class="ws-save" style="background:${m.color};" onclick="saveCase()">Salvar como caso</button>`}
+      <p class="ws-saved-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+        Salvo automaticamente em Meus Casos · ${caseObj.date}
+      </p>
+      <button class="ws-save" style="background:${m.color};" onclick="goCases()">Ver em Meus Casos →</button>
     </div>
   `;
 }
 
 function workspaceBody(m, caseObj) {
-  if (caseObj) return resultBlock(m, caseObj.score, caseObj);
+  if (caseObj) return resultBlock(m, caseObj);
   if (appState.wsState === 'processing') {
     return `
       <div class="ws-processing">
@@ -943,7 +942,6 @@ function workspaceBody(m, caseObj) {
       </div>
     `;
   }
-  if (appState.wsState === 'result') return resultBlock(m, appState.lastScore, null);
   return `
     <label class="ws-label">Descreva sua situação</label>
     <textarea class="ws-textarea" id="ws-input" style="--mode-color:${m.color};" placeholder="Conte o que aconteceu, com suas palavras…"></textarea>
