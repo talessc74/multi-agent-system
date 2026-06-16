@@ -97,3 +97,17 @@
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
 }
+
+/*
+ * Mode accent colors (cfg.color from modeConfig.ts) are tuned for the dark
+ * theme's near-black backgrounds — e.g. #00FFEF against light theme's pale
+ * card fill drops to ~1.3:1 contrast, well under WCAG AA's 4.5:1. This class
+ * darkens the accent for text only in light theme; icons/badges/CTAs that
+ * sit on a tinted or solid background keep the raw --mode-color.
+ */
+.mode-text-accent {
+  color: var(--mode-color);
+}
+[data-theme='light'] .mode-text-accent {
+  color: color-mix(in srgb, var(--mode-color) 60%, black 35%);
+}

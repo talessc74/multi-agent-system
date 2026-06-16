@@ -169,10 +169,10 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                     <p className="text-[13px] leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
                       {cfg.description}
                     </p>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.15em] mb-4" style={{ color: cfg.color }}>
+                    <p className="mode-text-accent text-[11px] font-bold uppercase tracking-[0.15em] mb-4" style={{ '--mode-color': cfg.color } as React.CSSProperties}>
                       Ideal para: <span className="normal-case font-normal tracking-normal">{cfg.tagline}</span>
                     </p>
-                    <p className="text-[13px] font-mono mb-3" style={{ color: cfg.color }}>{price}</p>
+                    <p className="mode-text-accent text-[13px] font-mono mb-3" style={{ '--mode-color': cfg.color } as React.CSSProperties}>{price}</p>
                     <button
                       onClick={() => onEnter(mode)}
                       className="w-full font-bold text-[13px] flex items-center justify-center"
@@ -277,7 +277,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                         >
                           <span className="text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>0{mode}</span>{' '}
                           <span className="text-[13px] font-bold" style={{ color: 'var(--text-primary)' }}>{cfg.headline}</span>
-                          <span className="text-[11px] font-mono ml-2" style={{ color: cfg.color }}>{MODE_PRICE[mode]}</span>
+                          <span className="mode-text-accent text-[11px] font-mono ml-2" style={{ '--mode-color': cfg.color } as React.CSSProperties}>{MODE_PRICE[mode]}</span>
                           <p className="text-[11px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>{cfg.tagline}</p>
                         </button>
                       );
@@ -306,14 +306,14 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                         <PreviewIcon style={{ width: '25px', height: '25px', color: cfg.color }} />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: cfg.color }}>Dossiê · Modo 0{previewMode}</p>
+                        <p className="mode-text-accent text-[10px] font-bold uppercase tracking-[0.2em]" style={{ '--mode-color': cfg.color } as React.CSSProperties}>Dossiê · Modo 0{previewMode}</p>
                       </div>
                     </div>
                     <h3 className="relative text-[32px] font-bold" style={{ color: 'var(--text-primary)', marginBottom: '10px' }}>{cfg.headline}</h3>
-                    <p className="relative text-[14px] font-bold" style={{ color: cfg.color, marginBottom: '18px' }}>{cfg.tagline}</p>
+                    <p className="mode-text-accent relative text-[14px] font-bold" style={{ '--mode-color': cfg.color, marginBottom: '18px' } as React.CSSProperties}>{cfg.tagline}</p>
                     <p className="relative text-[15px] leading-relaxed max-w-xl" style={{ color: 'var(--text-secondary)', marginBottom: '28px' }}>{cfg.description}</p>
                     <div className="relative flex items-center gap-6 pt-5" style={{ borderTop: '1px solid var(--glass-border)' }}>
-                      <span className="font-mono text-[18px] font-bold" style={{ color: cfg.color }}>{MODE_PRICE[previewMode]}</span>
+                      <span className="mode-text-accent font-mono text-[18px] font-bold" style={{ '--mode-color': cfg.color } as React.CSSProperties}>{MODE_PRICE[previewMode]}</span>
                       <button
                         onClick={() => onEnter(previewMode)}
                         className="flex items-center gap-2 text-[13px] font-bold"
