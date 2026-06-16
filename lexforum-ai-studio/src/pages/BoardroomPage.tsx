@@ -12,6 +12,7 @@ import {
 import { Navbar } from '../components/Navbar';
 import LoginModal from '../components/LoginModal';
 import { MODE_CONFIG } from '../config/modeConfig';
+import { LIQUID_GLASS_ENABLED } from '../config/liquidGlass';
 
 interface Props {
   onEnter: (mode: number) => void;
@@ -108,7 +109,13 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
             const cfg = MODE_CONFIG[mode];
             const isOpen = openMode === mode;
             return (
-              <div key={mode} style={{ border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden' }}>
+              <div
+                key={mode}
+                className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''}
+                style={LIQUID_GLASS_ENABLED
+                  ? { borderRadius: '12px', overflow: 'hidden' }
+                  : { border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden' }}
+              >
                 {/* Header */}
                 <button
                   onClick={() => setOpenMode(isOpen ? null : mode)}
@@ -220,7 +227,8 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.45, delay: 0.08 * i + 0.1 }}
                 onClick={() => onEnter(mode)}
-                className="border border-white/[0.07] hover:border-amber-400/25 transition-all duration-200 group cursor-pointer" style={{ background: 'var(--bg-card)' }}
+                className={`${LIQUID_GLASS_ENABLED ? 'glass-static hover:border-amber-400/25' : 'border border-white/[0.07] hover:border-amber-400/25'} transition-all duration-200 group cursor-pointer`}
+                style={LIQUID_GLASS_ENABLED ? undefined : { background: 'var(--bg-card)' }}
               >
                 <div className="p-5 md:p-7 flex flex-col sm:flex-row sm:items-center gap-5 md:gap-8">
                   {/* Icon + Title */}

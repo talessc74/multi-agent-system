@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { User } from 'firebase/auth';
 import { History } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { LIQUID_GLASS_ENABLED } from '../config/liquidGlass';
 
 interface NavbarProps {
   user: User | null;
@@ -56,8 +57,11 @@ export function Navbar({ user, onLogin, onLogout, onShowHistory, className = '',
 
   return (
     <header
-      className={`sticky top-0 z-50 no-print ${className}`}
-      style={{
+      className={`sticky top-0 z-50 no-print ${LIQUID_GLASS_ENABLED ? 'glass' : ''} ${className}`}
+      style={LIQUID_GLASS_ENABLED ? {
+        height: '56px',
+        borderBottom: '1px solid var(--glass-border)',
+      } : {
         height: '56px',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',

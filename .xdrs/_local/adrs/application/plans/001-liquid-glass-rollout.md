@@ -71,7 +71,7 @@ Due date: 2026-07-07
 Map every real screen of the system (Home, Auth, Mode Workspace, Meus Casos, Payment, expanded Result), not only the ones already prototyped, so later phases have a complete picture of scope.
 
 **Acceptance checklist:**
-- [ ] Sitemap reviewed and approved by product owner — draft ready: `lexforum-ai-studio/docs/sitemap.md` (21 screens mapped, no router, state-machine based); awaiting product owner sign-off
+- [x] Sitemap reviewed and approved by product owner — `lexforum-ai-studio/docs/sitemap.md` (21 screens mapped, no router, state-machine based); approved 2026-06-16
 
 ### Milestone 2: Shell and navigation
 Owner: Scout, Flux
@@ -80,8 +80,8 @@ Due date: 2026-07-21
 Port Home, navbar, rail, and mobile folder views into React components behind a feature flag, using the Phase 0 tokens, with no behavior change versus current production navigation.
 
 **Acceptance checklist:**
-- [ ] Visual parity with prototype confirmed in both themes and viewports
-- [ ] No regression in existing navigation tests
+- [ ] Visual parity with prototype confirmed in both themes and viewports — implemented behind `VITE_LIQUID_GLASS` flag (off by default): Navbar uses `.glass` (1 blurred surface, within the Phase 0 budget), mode cards use `.glass-static` (same fill/border/shadow tokens, no backdrop-filter, so the 5-card list doesn't blow the blur budget); **visual confirmation in a real browser still pending** — needs someone to set `VITE_LIQUID_GLASS=true` and look at it in both themes/viewports
+- [x] No regression in existing navigation tests — `npm run build` and `npm test` clean with the flag both off and on (135 passed, 0 regressions, no behavior/structure change — same onClick handlers, same DOM structure, only background/border/shadow swapped)
 
 ### Milestone 3: Mode Workspace on real pipeline
 Owner: Scout, Literate, Sentinel
