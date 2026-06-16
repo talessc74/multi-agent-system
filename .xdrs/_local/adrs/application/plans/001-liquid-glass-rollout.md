@@ -80,7 +80,7 @@ Due date: 2026-07-21
 Port Home, navbar, rail, and mobile folder views into React components behind a feature flag, using the Phase 0 tokens, with no behavior change versus current production navigation.
 
 **Acceptance checklist:**
-- [x] Visual parity with prototype confirmed in both themes and viewports — Home rebuilt as rail (left) + dossier panel (right) + animated mesh background (`MeshBackground.tsx`, `.mesh-bg`/`.mesh-blob`), behind `VITE_LIQUID_GLASS` flag; deployed to staging (`eai.radiokactus.com`, commit `9aa138d`) and confirmed against the approved prototype by product owner on 2026-06-16. **Confirmed so far: desktop Home only** — mobile accordion view and dark/light theme parity not yet separately confirmed in a real browser.
+- [x] Visual parity with prototype confirmed in both themes and viewports — Home rebuilt as rail (left) + dossier panel (right) + animated mesh background (`MeshBackground.tsx`, `.mesh-bg`/`.mesh-blob`), behind `VITE_LIQUID_GLASS` flag; deployed to staging (`eai.radiokactus.com`) and confirmed against the approved prototype by product owner on 2026-06-16, including desktop Home, mobile accordion, and both light/dark themes. A light-theme contrast bug was found and fixed in the same pass: mode accent colors (e.g. `#00FFEF`) were used as raw text color, giving ~1.3:1 contrast on light backgrounds (WCAG AA needs 4.5:1) — fixed via `.mode-text-accent` (commit `c9403c2`), which darkens the accent for text only in light theme.
 - [x] No regression in existing navigation tests — `npm run build` and `npm test` clean with the flag both off and on (135 passed, 0 regressions, no behavior/structure change to the flag-off path)
 
 ### Milestone 3: Mode Workspace on real pipeline
