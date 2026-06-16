@@ -2097,7 +2097,24 @@ const startRecovery = (sessionId: string) => {
           user={user}
         />
       ) : (
-        <div className={`min-h-screen ${LIQUID_GLASS_ENABLED ? '' : 'bg-[#0A0A0B]'} text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black`}>
+        <div
+          className={`min-h-screen ${LIQUID_GLASS_ENABLED ? '' : 'bg-[#0A0A0B]'} text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black`}
+          style={LIQUID_GLASS_ENABLED ? {
+            // Console identity stays dark on purpose (Milestone 3b deliberation):
+            // every text-white/* class in this console is calibrated against a
+            // dark fill, so the glass/mesh tokens are pinned to their dark values
+            // here regardless of the global light/dark theme toggle.
+            '--glass-fill': 'rgba(255, 255, 255, 0.06)',
+            '--glass-fill-2': 'rgba(255, 255, 255, 0.1)',
+            '--glass-border': 'rgba(255, 255, 255, 0.16)',
+            '--glass-spec': 'rgba(255, 255, 255, 0.55)',
+            '--glass-shadow': '0 20px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            '--mesh-bg': '#050610',
+            '--mesh-1': '#1b6bff',
+            '--mesh-2': '#a23bff',
+            '--mesh-3': '#00e0c7',
+          } as React.CSSProperties : undefined}
+        >
       {LIQUID_GLASS_ENABLED && <MeshBackground />}
       <Navbar
         user={user}
@@ -2827,7 +2844,7 @@ const startRecovery = (sessionId: string) => {
                     </div>
                   </div>
 
-                  <div className="bg-[#15161A] border border-white/10 p-8 space-y-8 flex-1">
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-white/10'} p-8 space-y-8 flex-1`}>
                     <div className="space-y-1">
                       <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/60">Disponibilidade de Agentes de IA</h3>
                       <p className="text-[10px] text-white/20 uppercase tracking-widest font-mono">Status Global Agents / Judicial Regions</p>
@@ -2876,7 +2893,7 @@ const startRecovery = (sessionId: string) => {
                     </div>
                   </div>
 
-                  <div className="bg-[#1C1C1F] border border-white/10 p-6 flex items-center gap-4">
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-white/10'} p-6 flex items-center gap-4`}>
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                     <div className="flex flex-col">
                       <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">Ambiente de Simulação</span>
