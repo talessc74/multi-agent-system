@@ -1,5 +1,5 @@
 ---
-name: _local-adr-policy-003-mode4-production-incident-2026-06
+name: _local-adr-policy-004-mode4-production-incident-2026-06
 description: Complete incident record for the Mode 4 (Mesa Dupla Assistida) production debugging session of June 2026. Use as a reference guide whenever debugging similar symptoms in any simulation mode: display inconsistencies, probability variance, laudo addressing wrong party, or judge frame ambiguity.
 apply-to: gemini.server.ts · App.tsx · gemini.ts · server.ts · dbService.ts — all simulation modes
 valid-from: 2026-06-15

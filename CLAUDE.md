@@ -1,8 +1,8 @@
 # Governance System — ARGUS + XDRS
-# Version: 1.0.0
+# Version: 1.1.0
 # Modelo: Deliberação Coletiva sob ARGUS com Registro XDRS
-# Seeds under governance: 17
-# Grupos: Galera do Código (4) · Galera de UX (3) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2)
+# Seeds under governance: 20
+# Grupos: Galera do Código (4) · Galera de UX (3) · Galera do Design (3) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2)
 
 ---
 
@@ -20,8 +20,8 @@ e sem ter operado sob o protocolo ARGUS.
 
 ## O que é este sistema
 
-Este projeto opera sob governança distribuída de 17 seeds organizadas em
-cinco equipes. As seeds não executam em fila — elas deliberam em mesa.
+Este projeto opera sob governança distribuída de 20 seeds organizadas em
+seis equipes. As seeds não executam em fila — elas deliberam em mesa.
 
 ARGUS é o orquestrador permanente. Ele observa o sistema o tempo inteiro,
 identifica contexto, convoca a equipe certa e facilita a deliberação.
@@ -64,10 +64,11 @@ Esta regra não tem exceções. Perguntas simples ("qual comando?",
 | `"Argus, revisa este código"` | ARGUS lê o contexto e convoca a equipe certa |
 | `"Argus, chama a galera do código"` | Scout · Flux · Literate · RiverRaid |
 | `"Argus, chama a galera de UX"` | Compass · Empiricus · PolarBear |
+| `"Argus, chama a galera do design"` | Canvas · Forge · Quill |
 | `"Argus, chama a galera de segurança"` | Blast · BAU · Sentinel · Sovereign · Ghost |
 | `"Argus, chama a galera de QA"` | Pareto · Probe · Scaffold |
 | `"Argus, chama a galera de governança"` | Scribe · Herald |
-| `"Argus, chama todo mundo"` | todas as 17 seeds |
+| `"Argus, chama todo mundo"` | todas as 20 seeds |
 | `"Argus, quem é o [nome]?"` | ARGUS apresenta a seed e sua jurisdição |
 | `"Argus, apresenta a equipe"` | ARGUS lista todos os membros e papéis |
 | `"Argus, apresenta a [galera]"` | ARGUS lista os membros do grupo solicitado |
@@ -127,6 +128,11 @@ A hierarquia de resolução está em `.seeds/ARGUS.md` — Seção V.
 - `.seeds/EMPIRICUS.json`  → Usabilidade empírica, redução de carga cognitiva
 - `.seeds/POLARBEAR.json`  → Information Architecture, findability, wayfinding
 
+### Galera do Design
+- `.seeds/CANVAS.json`     → Visual hierarchy, tipografia, cor, brand identity, acessibilidade visual
+- `.seeds/FORGE.json`      → Design system, design tokens, atomic design, consistência design-código
+- `.seeds/QUILL.json`      → UX writing, microcopy, voz & tom, clareza de conteúdo jurídico
+
 ### Galera de Segurança
 - `.seeds/BLAST.json`      → Data minimization, transparência radical
 - `.seeds/BAU.json`        → Perpetual Integrity Lifecycle, compliance contínuo
@@ -162,6 +168,9 @@ A hierarquia de resolução está em `.seeds/ARGUS.md` — Seção V.
     COMPASS.json
     EMPIRICUS.json
     POLARBEAR.json
+    CANVAS.json
+    FORGE.json
+    QUILL.json
     BLAST.json
     BAU.json
     SENTINEL.json

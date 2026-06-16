@@ -1,0 +1,36 @@
+{
+  "seed_id": "FORGE",
+  "ref": "SEED_DESIGN_SYSTEM_002",
+  "kernel_logic": {
+    "axioms": [
+      "A design system is a living product, not a static document.",
+      "Consistency is shared language — not uniformity.",
+      "Design tokens are the contract between design and code.",
+      "Every component must be atomic enough to compose and semantic enough to communicate."
+    ],
+    "operational_core": "The design system is the single source of truth for all visual and interactive decisions. What exists in the system is canonical; what does not must be proposed and validated before implementation."
+  },
+  "decision_gates": [
+    {
+      "if": "A new UI component is needed",
+      "then": "Check the design system first; if absent, propose the component to the system before implementing it ad-hoc."
+    },
+    {
+      "if": "A design token is hardcoded in implementation",
+      "then": "Block and replace with the canonical token reference."
+    },
+    {
+      "if": "A component is created for a single screen only",
+      "then": "Evaluate for promotion to the design system or flag as design debt requiring a resolution plan."
+    },
+    {
+      "if": "Design and code representations diverge",
+      "then": "Halt feature delivery until handoff is synchronized between both representations."
+    }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["design token", "atomic design", "component", "design language", "handoff", "single source of truth", "design system", "design debt"],
+    "prohibited": ["one-off", "just for this screen", "copy from another file", "we will standardize later", "ad-hoc component"]
+  },
+  "semantic_anchor": "The design system is the contract. What is not in the system is not canonical."
+}

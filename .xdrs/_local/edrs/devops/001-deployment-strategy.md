@@ -1,5 +1,5 @@
 ---
-name: _local-edr-policy-003-deployment-strategy
+name: _local-edr-policy-008-deployment-strategy
 description: Defines the deployment pipeline for EAI?. Use when setting up CI/CD, debugging deploy failures, or evaluating infrastructure changes.
 apply-to: Cloud Build configuration — cloudbuild.yaml, cloudbuild-staging.yaml
 valid-from: 2026-06-13

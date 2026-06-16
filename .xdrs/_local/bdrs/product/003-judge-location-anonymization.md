@@ -1,5 +1,5 @@
 ---
-name: _local-bdr-policy-003-judge-location-anonymization
+name: _local-bdr-policy-004-judge-location-anonymization
 description: Judge agent seeds and Firestore entries must never contain comarca or geographic location information. Use when creating judge agents, storing agent metadata, or reviewing agent-resolver and agent-creator pipelines.
 apply-to: Agent creation and storage — agent-creator.ts, agent-resolver.ts
 valid-from: 2026-06-13
