@@ -101,7 +101,7 @@ body{
   width:390px;min-height:860px;background:var(--bg-primary);border-radius:44px;overflow:hidden;position:relative;
   box-shadow:0 0 0 9px #1C1F25,0 0 0 11px #0A0C0F,0 40px 100px rgba(0,0,0,0.85);
 }
-.phone-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:32px;background:#1C1F25;border-radius:0 0 20px 20px;z-index:100;}
+.phone-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:100px;height:30px;background:#1C1F25;border-radius:0 0 20px 20px;z-index:100;}
 .phone-scroll{overflow-y:auto;overflow-x:hidden;max-height:860px;}
 
 /* ── DESKTOP FRAME ── */
@@ -382,10 +382,6 @@ body{
               <span class="nav-logo-main">EAI</span><span class="nav-logo-tick">✓?</span>
             </a>
             <div class="nav-right">
-              <button class="nav-icon-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M8 12h8M8 16h5"/></svg>
-                <span>Casos</span>
-              </button>
               <button class="nav-theme-btn" onclick="setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark')">
                 <svg id="m-theme-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"></svg>
               </button>
