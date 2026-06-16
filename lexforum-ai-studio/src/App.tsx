@@ -36,6 +36,8 @@ import { getStats, getAreaStats, saveSimulation, getUserSimulations, hasUserPaid
 import TermosPage from './pages/TermosPage';
 import ChatPanel, { SheetState } from './components/ChatPanel';
 import { getChatStatus, createChatCheckoutSession, sendChatMessage } from './services/chatService';
+import { MeshBackground } from './components/MeshBackground';
+import { LIQUID_GLASS_ENABLED } from './config/liquidGlass';
 
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
@@ -1711,7 +1713,8 @@ const startRecovery = (sessionId: string) => {
           { icon: '🔍', name: 'Revisando',     desc: 'Consolidando análise' },
         ];
         return (
-          <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+          <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-primary)' }}>
+            {LIQUID_GLASS_ENABLED && <MeshBackground />}
             <style>{`@keyframes eai-spin { to { transform: rotate(360deg); } }`}</style>
             <div style={{ opacity: 0.4, pointerEvents: 'none' }}>
               <ModeNavbar
@@ -1739,11 +1742,11 @@ const startRecovery = (sessionId: string) => {
                   const isActive = index === currentStep;
                   const isDone = index < currentStep;
                   return (
-                    <div key={index} style={{
+                    <div key={index} className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{
                       display: 'flex', alignItems: 'center', gap: '12px',
                       padding: '14px 16px',
-                      background: 'var(--bg-card)',
-                      border: `1px solid ${isActive ? modeColor : 'var(--border)'}`,
+                      background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)',
+                      border: LIQUID_GLASS_ENABLED ? (isActive ? `1px solid ${modeColor}` : undefined) : `1px solid ${isActive ? modeColor : 'var(--border)'}`,
                       borderRadius: '10px',
                       opacity: isDone ? 0.5 : 1,
                       transition: 'border-color 0.2s ease, opacity 0.2s ease',
