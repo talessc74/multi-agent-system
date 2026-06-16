@@ -1,1021 +1,447 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EAI? — Proposta de Design v2 · ARGUS Review</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    /* ══ TOKENS ══════════════════════════════════════════════════════ */
-    :root, [data-theme="dark"] {
-      --bg-primary:     #0A0C0F;
-      --bg-secondary:   #11141A;
-      --bg-card:        #161A22;
-      --bg-card-hover:  #1C2130;
-      --bg-glass:       rgba(22,26,34,0.8);
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EAI? — Proposta de Design v3 · Dossiê · ARGUS Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* ══ TOKENS ═══════════════════════════════════════════════════════ */
+:root, [data-theme="dark"] {
+  --bg-primary:     #0A0B0E;
+  --bg-rail:        #0D0F13;
+  --bg-panel:       #12141A;
+  --bg-card:        #14161D;
+  --bg-glass:       rgba(10,11,14,0.82);
 
-      --text-primary:   #F0F2F5;
-      --text-secondary: #9AAABB;
-      --text-muted:     #8A95A5;
+  --text-primary:   #F1F3F6;
+  --text-secondary: #9CACBC;
+  --text-muted:     #828FA0;
 
-      --accent:         #00FFEF;
-      --accent-muted:   rgba(0,255,239,0.10);
-      --highlight:      #E8C200;
-      --highlight-dim:  rgba(232,194,0,0.12);
+  --accent:         #00FFEF;
+  --accent-muted:   rgba(0,255,239,0.10);
+  --highlight:      #E8C200;
+  --highlight-dim:  rgba(232,194,0,0.12);
 
-      --border:         rgba(255,255,255,0.06);
-      --border-strong:  rgba(255,255,255,0.12);
+  --border:         rgba(255,255,255,0.07);
+  --border-strong:  rgba(255,255,255,0.14);
+  --ghost-num:       rgba(255,255,255,0.035);
 
-      --shadow-card:    none;
-      --shadow-hover:   0 0 0 1px rgba(255,255,255,0.10), 0 8px 32px rgba(0,0,0,0.5);
+  --shadow-panel:   none;
+}
+[data-theme="light"] {
+  --bg-primary:     #F3F1EB;
+  --bg-rail:        #EBE8E0;
+  --bg-panel:       #FFFFFF;
+  --bg-card:        #FFFFFF;
+  --bg-glass:       rgba(243,241,235,0.85);
 
-      --icon-on-solid:  #FFFFFF;  /* não usado no dark */
-      --icon-mode:      use-color; /* sinal para lógica de tema */
-    }
+  --text-primary:   #0D1520;
+  --text-secondary: #495568;
+  --text-muted:     #6B7A8D;
 
-    [data-theme="light"] {
-      --bg-primary:     #F4F2EC;
-      --bg-secondary:   #E8E5DD;
-      --bg-card:        #FFFFFF;
-      --bg-card-hover:  #F9F7F3;
-      --bg-glass:       rgba(255,255,255,0.85);
+  --accent:         #0D1520;
+  --accent-muted:   rgba(13,21,32,0.07);
+  --highlight:      #1A3A6B;
+  --highlight-dim:  rgba(26,58,107,0.10);
 
-      --text-primary:   #0D1520;
-      --text-secondary: #4A5568;
-      --text-muted:     #718096;
+  --border:         rgba(0,0,0,0.08);
+  --border-strong:  rgba(0,0,0,0.16);
+  --ghost-num:       rgba(13,21,32,0.04);
 
-      --accent:         #0D1520;
-      --accent-muted:   rgba(13,21,32,0.07);
-      --highlight:      #1A3A6B;
-      --highlight-dim:  rgba(26,58,107,0.10);
+  --shadow-panel:   0 2px 8px rgba(0,0,0,0.05), 0 12px 40px rgba(0,0,0,0.06);
+}
 
-      --border:         rgba(0,0,0,0.07);
-      --border-strong:  rgba(0,0,0,0.14);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;}
+body{
+  font-family:"Inter",ui-sans-serif,system-ui,sans-serif;
+  background:#050608; color:var(--text-primary);
+  -webkit-font-smoothing:antialiased;
+}
+.serif{font-family:"Playfair Display",serif;}
+.mono{font-family:"JetBrains Mono",monospace;}
 
-      --shadow-card:    0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
-      --shadow-hover:   0 4px 20px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.08);
+/* ══ CONTROL BAR ══════════════════════════════════════════════════ */
+.ctrl-bar{
+  position:fixed;top:0;left:0;right:0;z-index:9999;height:46px;
+  background:#07080B;border-bottom:1px solid rgba(255,255,255,0.07);
+  display:flex;align-items:center;gap:10px;padding:0 16px;
+}
+.ctrl-badge{
+  font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;
+  color:#00FFEF;border:1px solid rgba(0,255,239,0.25);padding:3px 8px;border-radius:3px;
+}
+.ctrl-sep{width:1px;height:18px;background:rgba(255,255,255,0.08);}
+.ctrl-group{display:flex;align-items:center;gap:3px;}
+.ctrl-label{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-right:4px;}
+.ctrl-btn{
+  font-size:10px;font-weight:600;letter-spacing:0.06em;padding:4px 12px;border-radius:4px;
+  border:1px solid rgba(255,255,255,0.10);background:transparent;color:rgba(255,255,255,0.4);
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.ctrl-btn:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.75);}
+.ctrl-btn.on{background:rgba(0,255,239,0.10);border-color:rgba(0,255,239,0.35);color:#00FFEF;}
+.ctrl-btn.on-light{background:rgba(255,255,255,0.10);border-color:rgba(255,255,255,0.3);color:#fff;}
+.ctrl-archive{
+  margin-left:auto;font-size:10px;font-weight:600;letter-spacing:0.06em;
+  color:rgba(255,255,255,0.35);text-decoration:none;border:1px solid rgba(255,255,255,0.10);
+  padding:4px 10px;border-radius:4px;transition:all .15s;
+}
+.ctrl-archive:hover{color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.25);}
 
-      --icon-on-solid:  #FFFFFF;
-    }
+/* ══ VIEWPORT ═════════════════════════════════════════════════════ */
+.vp-wrap{padding-top:46px;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;transition:background .3s;}
 
-    /* ══ RESET ═══════════════════════════════════════════════════════ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
-    body {
-      font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
-      background: #060709;
-      color: var(--text-primary);
-      -webkit-font-smoothing: antialiased;
-    }
-    .font-playfair { font-family: "Playfair Display", serif; }
-    .font-mono     { font-family: "JetBrains Mono", monospace; }
+/* ── MOBILE FRAME ── */
+#mobile-view{padding:28px 0 48px;display:flex;justify-content:center;}
+.phone-shell{
+  width:390px;min-height:860px;background:var(--bg-primary);border-radius:44px;overflow:hidden;position:relative;
+  box-shadow:0 0 0 9px #1C1F25,0 0 0 11px #0A0C0F,0 40px 100px rgba(0,0,0,0.85);
+}
+.phone-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:32px;background:#1C1F25;border-radius:0 0 20px 20px;z-index:100;}
+.phone-scroll{overflow-y:auto;overflow-x:hidden;max-height:860px;}
 
-    /* ══ BARRA DE CONTROLE ═══════════════════════════════════════════ */
-    .ctrl-bar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
-      height: 46px;
-      background: #08090D;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-      display: flex; align-items: center; gap: 10px; padding: 0 16px;
-    }
-    .ctrl-badge {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
-      text-transform: uppercase; color: #00FFEF;
-      border: 1px solid rgba(0,255,239,0.25); padding: 3px 8px; border-radius: 3px;
-    }
-    .ctrl-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.08); }
-    .ctrl-group { display: flex; align-items: center; gap: 3px; }
-    .ctrl-label {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
-      text-transform: uppercase; color: rgba(255,255,255,0.28); margin-right: 4px;
-    }
-    .ctrl-btn {
-      font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
-      padding: 4px 12px; border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: transparent; color: rgba(255,255,255,0.4);
-      cursor: pointer; transition: all 0.15s; white-space: nowrap;
-    }
-    .ctrl-btn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.75); }
-    .ctrl-btn.on { background: rgba(0,255,239,0.10); border-color: rgba(0,255,239,0.35); color: #00FFEF; }
-    .ctrl-btn.on-light { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.3); color: #fff; }
-    .ctrl-version {
-      margin-left: auto;
-      font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
-      text-transform: uppercase; color: rgba(255,255,255,0.18);
-    }
+/* ── DESKTOP FRAME ── */
+#desktop-view{width:100%;max-width:1280px;display:none;background:var(--bg-primary);min-height:calc(100vh - 46px);border-left:1px solid var(--border);border-right:1px solid var(--border);transition:background .3s;}
 
-    /* ══ VIEWPORT WRAPPER ════════════════════════════════════════════ */
-    .vp-wrap {
-      padding-top: 46px;
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      transition: background 0.3s;
-    }
+/* ══ NAVBAR ═══════════════════════════════════════════════════════ */
+.navbar{
+  position:sticky;top:0;z-index:50;height:56px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;background:var(--bg-glass);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:background .3s,border-color .3s;
+}
+.nav-logo{display:flex;align-items:baseline;text-decoration:none;user-select:none;}
+.nav-logo-main{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--text-primary);}
+.nav-logo-tick{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:2px;}
+.nav-icon-btn{display:flex;align-items:center;gap:6px;min-width:44px;min-height:44px;padding:0 10px;background:none;border:none;cursor:pointer;color:var(--text-secondary);border-radius:6px;transition:color .15s,background .15s;}
+.nav-icon-btn:hover{color:var(--text-primary);background:var(--accent-muted);}
+.nav-icon-btn span{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;white-space:nowrap;}
+.nav-icon-btn svg{width:16px;height:16px;flex-shrink:0;}
+.nav-theme-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--text-secondary);border-radius:4px;transition:color .15s;}
+.nav-theme-btn:hover{color:var(--text-primary);}
+.nav-cta{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0 14px;height:34px;border:1px solid var(--border-strong);background:none;color:var(--text-primary);cursor:pointer;border-radius:4px;transition:all .15s;display:flex;align-items:center;}
+.nav-cta:hover{border-color:var(--accent);background:var(--accent-muted);color:var(--accent);}
 
-    /* ══ MOBILE FRAME ════════════════════════════════════════════════ */
-    #mobile-view {
-      padding: 28px 0 48px;
-      display: flex; justify-content: center;
-    }
-    .phone-shell {
-      width: 390px;
-      min-height: 850px;
-      background: var(--bg-primary);
-      border-radius: 44px;
-      overflow: hidden;
-      position: relative;
-      box-shadow:
-        0 0 0 9px #1C1F25,
-        0 0 0 11px #0A0C0F,
-        0 40px 100px rgba(0,0,0,0.85);
-    }
-    .phone-notch {
-      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-      width: 120px; height: 32px;
-      background: #1C1F25; border-radius: 0 0 20px 20px; z-index: 100;
-    }
-    .phone-scroll {
-      overflow-y: auto; overflow-x: hidden;
-      max-height: 850px;
-    }
+/* ══ DESKTOP HERO ═════════════════════════════════════════════════ */
+.hero{padding:56px 48px 36px;max-width:1200px;margin:0 auto;position:relative;}
+.hero-case-num{
+  font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:500;letter-spacing:0.08em;
+  color:var(--text-muted);margin-bottom:18px;display:flex;align-items:center;gap:10px;
+}
+.hero-case-num .dot{width:6px;height:6px;border-radius:50%;background:#00CC88;flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:0.35;}}
+.hero-h1{
+  font-family:"Playfair Display",serif;font-style:italic;font-weight:700;
+  font-size:clamp(34px,4.2vw,58px);line-height:1.08;letter-spacing:-0.01em;color:var(--text-primary);
+  max-width:680px;margin-bottom:16px;
+}
+.hero-sub{font-size:15px;color:var(--text-secondary);max-width:460px;line-height:1.6;}
 
-    /* ══ DESKTOP FRAME ═══════════════════════════════════════════════ */
-    #desktop-view {
-      width: 100%;
-      max-width: 1200px;
-      display: none;
-      background: var(--bg-primary);
-      min-height: calc(100vh - 46px);
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      transition: background 0.3s;
-    }
+/* ══ DISCLAIMER ═══════════════════════════════════════════════════ */
+.disclaimer{padding:0 48px 28px;max-width:1200px;margin:0 auto;}
+.disclaimer-inner{border-left:2px solid var(--highlight-dim);padding:7px 0 7px 14px;}
+.disclaimer-text{font-size:12px;font-weight:500;color:var(--text-muted);line-height:1.5;}
 
-    /* ══ NAVBAR ══════════════════════════════════════════════════════ */
-    .navbar {
-      position: sticky; top: 0; z-index: 50;
-      height: 56px; display: flex; align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      background: var(--bg-glass);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      transition: background 0.3s, border-color 0.3s;
-    }
-    .nav-logo {
-      display: flex; align-items: baseline;
-      text-decoration: none; user-select: none;
-    }
-    .nav-logo-main  { font-family: "Playfair Display", serif; font-size: 21px; font-weight: 700; color: var(--text-primary); }
-    .nav-logo-tick  { font-family: "Playfair Display", serif; font-size: 21px; font-weight: 700; color: var(--accent); }
-    .nav-right { display: flex; align-items: center; gap: 2px; }
-    .nav-icon-btn {
-      display: flex; align-items: center; gap: 6px;
-      min-width: 44px; min-height: 44px; padding: 0 10px;
-      background: none; border: none; cursor: pointer;
-      color: var(--text-secondary); border-radius: 6px;
-      transition: color 0.15s, background 0.15s;
-    }
-    .nav-icon-btn:hover { color: var(--text-primary); background: var(--accent-muted); }
-    .nav-icon-btn span {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; white-space: nowrap;
-    }
-    .nav-icon-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .nav-theme-btn {
-      width: 36px; height: 36px; display: flex; align-items: center;
-      justify-content: center; background: none; border: none; cursor: pointer;
-      color: var(--text-secondary); border-radius: 4px; transition: color 0.15s;
-    }
-    .nav-theme-btn:hover { color: var(--text-primary); }
-    .nav-cta {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; padding: 0 14px; height: 34px;
-      border: 1px solid var(--border-strong); background: none;
-      color: var(--text-primary); cursor: pointer; border-radius: 4px;
-      transition: all 0.15s; display: flex; align-items: center;
-    }
-    .nav-cta:hover { border-color: var(--accent); background: var(--accent-muted); color: var(--accent); }
+/* ══ SPLIT SELECTOR — O CORAÇÃO DA V3 ════════════════════════════ */
+.selector{
+  display:flex;max-width:1200px;margin:0 auto;
+  border-top:1px solid var(--border);
+  min-height:480px;
+}
 
-    /* ══ PAGE BASE ═══════════════════════════════════════════════════ */
-    .page { background: var(--bg-primary); color: var(--text-primary); transition: background 0.3s, color 0.3s; }
+/* Rail — esquerda */
+.rail{
+  width:320px;flex-shrink:0;border-right:1px solid var(--border);
+  background:var(--bg-rail);padding:28px 0;
+}
+.rail-cat{margin-bottom:8px;}
+.rail-cat-header{display:flex;align-items:center;gap:8px;padding:10px 28px 8px;}
+.rail-cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.rail-cat-label{font-size:9px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--text-muted);}
 
-    /* ══ HERO — DESKTOP ══════════════════════════════════════════════ */
-    .hero-desktop {
-      padding: 72px 52px 48px;
-      max-width: 1100px; margin: 0 auto;
-      position: relative; overflow: hidden;
-    }
-    /* Decorative scale glyph */
-    .hero-deco {
-      position: absolute; right: 40px; top: 40px;
-      font-size: 220px; line-height: 1;
-      color: var(--text-primary); opacity: 0.025;
-      font-family: "Playfair Display", serif;
-      pointer-events: none; user-select: none;
-      transition: opacity 0.3s;
-    }
-    .hero-eyebrow {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.35em;
-      text-transform: uppercase; color: var(--text-muted);
-      margin-bottom: 22px; display: flex; align-items: center; gap: 10px;
-    }
-    .hero-eyebrow::after {
-      content: ''; display: block; width: 40px; height: 1px;
-      background: var(--border-strong);
-    }
-    .hero-h1 {
-      font-family: "Playfair Display", serif; font-style: italic;
-      font-weight: 700; font-size: clamp(38px, 4.5vw, 66px);
-      line-height: 1.06; letter-spacing: -0.01em;
-      color: var(--text-primary); margin-bottom: 20px;
-      max-width: 700px;
-    }
-    .hero-sub {
-      font-size: 15px; font-weight: 400; color: var(--text-secondary);
-      max-width: 480px; line-height: 1.65; margin-bottom: 0;
-    }
+.rail-item{
+  display:flex;align-items:baseline;gap:14px;
+  padding:13px 28px;cursor:pointer;position:relative;
+  border-left:3px solid transparent;transition:border-color .2s,background .2s;
+}
+.rail-item:hover{background:var(--accent-muted);}
+.rail-item.active{border-left-color:var(--item-color);background:color-mix(in srgb, var(--item-color) 7%, transparent);}
+.rail-item-num{
+  font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:500;
+  color:var(--text-muted);flex-shrink:0;transition:color .2s;
+}
+.rail-item.active .rail-item-num{color:var(--item-color);}
+.rail-item-title{
+  font-size:14px;font-weight:600;color:var(--text-secondary);
+  transition:color .2s;line-height:1.3;
+}
+.rail-item.active .rail-item-title{color:var(--text-primary);font-weight:700;}
 
-    /* ══ DISCLAIMER ══════════════════════════════════════════════════ */
-    .disclaimer {
-      padding: 0 52px 36px;
-      max-width: 1100px; margin: 0 auto;
-    }
-    .disclaimer-inner {
-      border-left: 2px solid var(--highlight-dim);
-      padding: 7px 0 7px 14px;
-    }
-    .disclaimer-text {
-      font-size: 12px; font-weight: 500;
-      color: var(--text-muted); line-height: 1.5;
-    }
+/* Preview — direita */
+.preview{
+  flex:1;position:relative;overflow:hidden;
+  padding:40px 48px;display:flex;flex-direction:column;
+  background:var(--bg-panel);
+}
+.preview-wash{
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 85% 0%, color-mix(in srgb, var(--mode-color) 10%, transparent), transparent 60%);
+  transition:background .4s ease;pointer-events:none;
+}
+.preview-ghost-num{
+  position:absolute;right:16px;top:-10px;
+  font-family:"Playfair Display",serif;font-style:italic;font-weight:700;
+  font-size:200px;line-height:1;color:var(--ghost-num);
+  pointer-events:none;user-select:none;transition:color .3s;
+}
+#preview-content{position:relative;z-index:2;transition:opacity .18s ease;}
 
-    /* ══ MODO CATEGORIA ══════════════════════════════════════════════ */
-    .modes-wrap { padding: 0 52px 52px; max-width: 1100px; margin: 0 auto; }
-    .mode-cat { margin-bottom: 36px; }
-    .mode-cat:last-child { margin-bottom: 0; }
-    .cat-header {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
-    }
-    .cat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .cat-label {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.3em;
-      text-transform: uppercase; color: var(--text-muted); white-space: nowrap;
-    }
-    .cat-line { flex: 1; height: 1px; background: var(--border); }
+.preview-icon-row{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
+.preview-icon{
+  width:52px;height:52px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb, var(--mode-color) 14%, transparent);
+  transition:background .3s;
+}
+.preview-icon svg{width:24px;height:24px;stroke:var(--mode-color);transition:stroke .3s;}
+[data-theme="light"] .preview-icon{background:var(--mode-color);}
+[data-theme="light"] .preview-icon svg{stroke:#fff;}
 
-    /* ══ MODE CARD — DESKTOP ═════════════════════════════════════════ */
-    .mode-card {
-      display: flex; align-items: stretch;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      cursor: pointer; overflow: hidden;
-      margin-bottom: 6px; position: relative;
-      box-shadow: var(--shadow-card);
-      transition: box-shadow 0.2s, background 0.2s, border-color 0.2s, transform 0.15s;
-    }
-    .mode-card:last-child { margin-bottom: 0; }
-    .mode-card:hover {
-      background: var(--bg-card-hover);
-      box-shadow: var(--shadow-hover);
-      border-color: var(--border-strong);
-      transform: translateY(-1px);
-    }
+.preview-meta{display:flex;flex-direction:column;gap:2px;}
+.preview-cat-tag{font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--mode-color);}
+.preview-num{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--text-muted);}
 
-    /* Left accent stripe — always visible, mode color */
-    .mode-stripe {
-      width: 4px; flex-shrink: 0;
-      background: var(--mode-color);
-      opacity: 0.5; transition: opacity 0.2s;
-    }
-    .mode-card:hover .mode-stripe { opacity: 1; }
+.preview-title{
+  font-size:32px;font-weight:700;color:var(--text-primary);line-height:1.12;
+  margin-bottom:14px;letter-spacing:-0.01em;
+}
+.preview-tagline{font-size:14px;font-weight:600;color:var(--mode-color);margin-bottom:18px;}
+.preview-desc{font-size:15px;color:var(--text-secondary);line-height:1.7;max-width:560px;margin-bottom:28px;}
 
-    /* Icon zone:
-       DARK  → tinted bg (rgba) + colored icon
-       LIGHT → solid mode color + white icon         */
-    .mode-icon-zone {
-      width: 68px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      border-right: 1px solid var(--border);
-      transition: border-color 0.2s;
-    }
-    .mode-card:hover .mode-icon-zone { border-color: var(--border-strong); }
+.preview-footer{display:flex;align-items:center;gap:24px;margin-top:auto;padding-top:20px;border-top:1px solid var(--border);}
+.preview-price{font-family:"JetBrains Mono",monospace;font-size:18px;font-weight:700;color:var(--mode-color);}
+.preview-cta{
+  display:flex;align-items:center;gap:10px;
+  background:var(--mode-color);color:#0A1220;border:none;cursor:pointer;
+  font-size:13px;font-weight:700;letter-spacing:0.04em;
+  padding:13px 24px;border-radius:8px;transition:filter .15s,transform .15s;
+}
+.preview-cta:hover{filter:brightness(0.92);transform:translateY(-1px);}
+.preview-cta svg{width:16px;height:16px;}
 
-    .mode-icon-bubble {
-      width: 36px; height: 36px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      /* Dark: tinted background */
-      background: color-mix(in srgb, var(--mode-color) 12%, transparent);
-      transition: background 0.2s;
-    }
-    .mode-card:hover .mode-icon-bubble {
-      background: color-mix(in srgb, var(--mode-color) 20%, transparent);
-    }
-    .mode-icon-bubble svg {
-      width: 17px; height: 17px;
-      stroke: var(--mode-color);          /* Dark: colored icon */
-      transition: stroke 0.2s;
-    }
+/* Bring/Receive micro-grid */
+.preview-br{display:flex;gap:32px;margin-top:8px;}
+.preview-br-col{flex:1;}
+.preview-br-label{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+.preview-br-item{
+  font-size:12px;color:var(--text-secondary);line-height:1.6;
+  display:flex;align-items:baseline;gap:6px;margin-bottom:4px;
+}
+.preview-br-item::before{content:'—';color:var(--mode-color);flex-shrink:0;}
 
-    /* LIGHT MODE override — solid fill + white icon */
-    [data-theme="light"] .mode-icon-bubble {
-      background: var(--mode-color);
-    }
-    [data-theme="light"] .mode-card:hover .mode-icon-bubble {
-      background: var(--mode-color);
-      filter: brightness(0.9);
-    }
-    [data-theme="light"] .mode-icon-bubble svg {
-      stroke: #FFFFFF;                    /* Light: white icon on solid */
-    }
+/* ══ TECH FOOTER ══════════════════════════════════════════════════ */
+.tech-footer{border-top:1px solid var(--border);padding:28px 48px 36px;max-width:1200px;margin:0 auto;}
+.tech-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-bottom:22px;}
+.tech-item-label{font-size:9px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
+.tech-item-val{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--text-secondary);line-height:1.4;}
+.tech-links{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.tech-link{font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;transition:color .15s;}
+.tech-link:hover{color:var(--text-secondary);}
+.tech-note{font-size:11px;color:var(--text-muted);}
 
-    /* Card body */
-    .mode-body {
-      flex: 1; display: flex; align-items: center;
-      gap: 20px; padding: 20px 24px; min-width: 0;
-    }
-    .mode-title-block { flex-shrink: 0; min-width: 160px; }
-    .mode-num {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px;
-    }
-    .mode-title {
-      font-size: 15px; font-weight: 700; color: var(--text-primary);
-      line-height: 1.2; margin-bottom: 5px;
-      transition: color 0.2s;
-    }
-    .mode-card:hover .mode-title { color: var(--mode-color); }
-    .mode-price {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 12px; font-weight: 500; color: var(--mode-color);
-    }
-    .mode-vline {
-      width: 1px; height: 36px;
-      background: var(--border); flex-shrink: 0;
-    }
-    .mode-desc {
-      font-size: 14px; color: var(--text-secondary);
-      line-height: 1.6; flex: 1; min-width: 0;
-    }
-    .mode-cta-zone {
-      flex-shrink: 0; padding: 0 20px;
-      display: flex; align-items: center;
-    }
-    .mode-cta-btn {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--text-muted);
-      background: none; border: none; cursor: pointer;
-      transition: color 0.2s; white-space: nowrap; padding: 8px 0;
-    }
-    .mode-card:hover .mode-cta-btn { color: var(--mode-color); }
-    .mode-cta-btn svg {
-      width: 14px; height: 14px;
-      transition: transform 0.2s;
-    }
-    .mode-card:hover .mode-cta-btn svg { transform: translateX(4px); }
+/* ══ MOBILE — FOLDER STACK ════════════════════════════════════════ */
+.mobile-page{background:var(--bg-primary);min-height:860px;transition:background .3s;}
+.mobile-hero{padding:40px 20px 14px;position:relative;}
+.mobile-case-num{
+  font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:500;letter-spacing:0.06em;
+  color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.mobile-case-num .dot{width:5px;height:5px;border-radius:50%;background:#00CC88;flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite;}
+.mobile-h1{font-family:"Playfair Display",serif;font-style:italic;font-weight:700;font-size:34px;line-height:1.1;color:var(--text-primary);margin-bottom:10px;}
+.mobile-sub{font-size:14px;color:var(--text-secondary);line-height:1.55;margin-bottom:18px;}
 
-    /* ══ HERO — MOBILE ═══════════════════════════════════════════════ */
-    .mobile-page { background: var(--bg-primary); min-height: 850px; transition: background 0.3s; }
-    .mobile-hero { padding: 44px 20px 16px; }
-    .mobile-eyebrow {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.3em;
-      text-transform: uppercase; color: var(--text-muted);
-      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
-    }
-    .mobile-eyebrow::after {
-      content: ''; display: block; width: 24px; height: 1px;
-      background: var(--border-strong);
-    }
-    .mobile-h1 {
-      font-family: "Playfair Display", serif; font-style: italic;
-      font-weight: 700; font-size: 38px; line-height: 1.07;
-      color: var(--text-primary); margin-bottom: 12px;
-    }
-    .mobile-sub {
-      font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 20px;
-    }
+.mobile-disclaimer{margin:0 20px 22px;padding:10px 14px;border-left:2px solid var(--highlight-dim);background:var(--highlight-dim);border-radius:0 6px 6px 0;}
+.mobile-disclaimer p{font-size:12px;font-weight:500;color:var(--text-muted);line-height:1.45;}
 
-    /* Mobile disclaimer */
-    .mobile-disclaimer {
-      margin: 0 20px 20px;
-      padding: 10px 14px;
-      border-left: 2px solid var(--highlight-dim);
-      background: var(--highlight-dim);
-      border-radius: 0 6px 6px 0;
-    }
-    .mobile-disclaimer p {
-      font-size: 12px; font-weight: 500; color: var(--text-muted); line-height: 1.45;
-    }
+.mobile-modes{padding:0 16px 32px;}
+.mobile-cat-header{display:flex;align-items:center;gap:8px;margin:22px 4px 10px;}
+.mobile-cat-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.mobile-cat-label{font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--text-muted);}
 
-    /* Mobile modes */
-    .mobile-modes { padding: 0 16px 32px; }
-    .mobile-cat-header {
-      display: flex; align-items: center; gap: 8px;
-      margin: 20px 4px 10px;
-    }
-    .mobile-cat-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-    .mobile-cat-label {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.25em;
-      text-transform: uppercase; color: var(--text-muted);
-    }
+/* Folder card */
+.m-folder{
+  position:relative;overflow:hidden;border-radius:10px;
+  border:1px solid var(--border);background:var(--bg-card);margin-bottom:8px;
+  box-shadow:var(--shadow-panel);
+}
+.m-folder-ghost{
+  position:absolute;right:-6px;top:-18px;
+  font-family:"Playfair Display",serif;font-style:italic;font-weight:700;
+  font-size:96px;color:var(--ghost-num);pointer-events:none;user-select:none;
+}
+.m-folder-tab{
+  position:absolute;left:16px;top:0;width:28px;height:4px;border-radius:0 0 3px 3px;
+  background:var(--mode-color);
+}
+.m-folder-header{
+  display:flex;align-items:center;gap:12px;padding:18px 16px 16px;
+  background:none;border:none;width:100%;text-align:left;cursor:pointer;position:relative;z-index:2;
+}
+.m-folder-icon{
+  width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  background:color-mix(in srgb, var(--mode-color) 14%, transparent);
+}
+.m-folder-icon svg{width:17px;height:17px;stroke:var(--mode-color);}
+[data-theme="light"] .m-folder-icon{background:var(--mode-color);}
+[data-theme="light"] .m-folder-icon svg{stroke:#fff;}
+.m-folder-title-block{flex:1;}
+.m-folder-cat-tag{font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mode-color);margin-bottom:2px;}
+.m-folder-title{font-size:15px;font-weight:700;color:var(--text-primary);line-height:1.2;}
+.m-folder-chevron{width:18px;height:18px;color:var(--text-muted);flex-shrink:0;transition:transform .25s;}
+.m-folder.open .m-folder-chevron{transform:rotate(180deg);}
 
-    .m-card {
-      border: 1px solid var(--border);
-      border-radius: 10px; overflow: hidden;
-      background: var(--bg-card);
-      margin-bottom: 6px;
-      box-shadow: var(--shadow-card);
-      transition: box-shadow 0.2s;
-    }
-    .m-card-header {
-      display: flex; align-items: center; gap: 12px;
-      padding: 0 16px; height: 60px;
-      background: none; border: none; width: 100%;
-      text-align: left; cursor: pointer;
-    }
+.m-folder-expanded{max-height:0;overflow:hidden;transition:max-height .3s ease;position:relative;z-index:2;}
+.m-folder.open .m-folder-expanded{max-height:480px;}
+.m-folder-inner{padding:0 16px 18px;}
+.m-folder-desc{font-size:14px;color:var(--text-secondary);line-height:1.55;margin-bottom:14px;}
+.m-folder-tagline{font-size:12px;font-weight:600;color:var(--mode-color);margin-bottom:16px;}
+.m-folder-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.m-folder-price{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:700;}
+.m-folder-cta{
+  flex:1;height:46px;border:none;border-radius:8px;font-size:13px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
+  background:var(--mode-color);color:#0A1220;transition:filter .15s;
+  max-width:200px;
+}
+.m-folder-cta:hover{filter:brightness(0.92);}
 
-    /* Mobile icon: same logic — dark = tinted, light = solid */
-    .m-icon {
-      width: 34px; height: 34px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      background: color-mix(in srgb, var(--mode-color) 12%, transparent);
-      transition: background 0.2s;
-    }
-    .m-icon svg { width: 17px; height: 17px; stroke: var(--mode-color); }
+.mobile-footer{padding:20px 20px 36px;text-align:center;border-top:1px solid var(--border);margin-top:8px;}
+.mobile-footer-note{font-size:11px;font-weight:500;color:var(--text-muted);line-height:1.6;margin-bottom:8px;}
+.mobile-footer-link{font-size:11px;font-weight:600;color:var(--text-muted);text-decoration:underline;text-underline-offset:3px;}
 
-    [data-theme="light"] .m-icon {
-      background: var(--mode-color);
-    }
-    [data-theme="light"] .m-icon svg { stroke: #FFFFFF; }
-
-    .m-title {
-      flex: 1; font-size: 15px; font-weight: 700;
-      color: var(--text-primary); line-height: 1.2;
-    }
-    .m-chevron {
-      width: 18px; height: 18px; color: var(--text-muted); flex-shrink: 0;
-      transition: transform 0.25s, color 0.2s;
-    }
-    .m-card.open .m-chevron { transform: rotate(180deg); }
-
-    .m-expanded {
-      max-height: 0; overflow: hidden;
-      transition: max-height 0.3s ease;
-    }
-    .m-card.open .m-expanded { max-height: 400px; }
-    .m-expanded-inner { padding: 0 16px 16px; }
-    .m-desc {
-      font-size: 14px; color: var(--text-secondary);
-      line-height: 1.55; margin-bottom: 10px;
-    }
-    .m-tagline {
-      font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 14px;
-    }
-    .m-price {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 13px; font-weight: 500; margin-bottom: 14px;
-    }
-    .m-cta-btn {
-      width: 100%; height: 46px; border: none; border-radius: 8px;
-      font-size: 14px; font-weight: 700; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      transition: filter 0.15s;
-      background: var(--mode-color); color: #0A1220;
-    }
-    .m-cta-btn:hover { filter: brightness(0.9); }
-
-    /* ══ TECH FOOTER ═════════════════════════════════════════════════ */
-    .tech-footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 52px 40px;
-      max-width: 1100px; margin: 0 auto;
-    }
-    .tech-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 24px; margin-bottom: 24px;
-    }
-    .tech-item-label {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.28em;
-      text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
-    }
-    .tech-item-val {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 12px; color: var(--text-secondary); line-height: 1.4;
-    }
-    .tech-links {
-      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
-    }
-    .tech-link {
-      font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--text-muted);
-      text-decoration: none; transition: color 0.15s;
-    }
-    .tech-link:hover { color: var(--text-secondary); }
-    .tech-note { font-size: 11px; color: var(--text-muted); }
-
-    /* Mobile footer */
-    .mobile-footer { padding: 20px 20px 36px; text-align: center; border-top: 1px solid var(--border); margin-top: 8px; }
-    .mobile-footer-note {
-      font-size: 11px; font-weight: 500; color: var(--text-muted);
-      line-height: 1.6; margin-bottom: 8px;
-    }
-    .mobile-footer-link {
-      font-size: 11px; font-weight: 600; color: var(--text-muted);
-      text-decoration: underline; text-underline-offset: 3px;
-    }
-
-    /* ══ SCROLLBAR ═══════════════════════════════════════════════════ */
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    [data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); }
-  </style>
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:10px;}
+[data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);}
+</style>
 </head>
 <body>
 
-<!-- ══ BARRA DE CONTROLE ══════════════════════════════════════════════ -->
 <div class="ctrl-bar">
-  <span class="ctrl-badge">ARGUS · Design v2</span>
+  <span class="ctrl-badge">ARGUS · Design v3 — Dossiê</span>
   <div class="ctrl-sep"></div>
-
   <div class="ctrl-group">
     <span class="ctrl-label">Viewport</span>
-    <button class="ctrl-btn on"  id="btn-mobile"   onclick="setView('mobile')">Mobile</button>
-    <button class="ctrl-btn"     id="btn-desktop"  onclick="setView('desktop')">Desktop</button>
+    <button class="ctrl-btn on" id="btn-mobile" onclick="setView('mobile')">Mobile</button>
+    <button class="ctrl-btn" id="btn-desktop" onclick="setView('desktop')">Desktop</button>
   </div>
-
   <div class="ctrl-sep"></div>
-
   <div class="ctrl-group">
     <span class="ctrl-label">Tema</span>
-    <button class="ctrl-btn on"  id="btn-dark"     onclick="setTheme('dark')">Dark</button>
-    <button class="ctrl-btn"     id="btn-light"    onclick="setTheme('light')">Light</button>
+    <button class="ctrl-btn on" id="btn-dark" onclick="setTheme('dark')">Dark</button>
+    <button class="ctrl-btn" id="btn-light" onclick="setTheme('light')">Light</button>
   </div>
-
-  <span class="ctrl-version">Canvas · Forge · Quill</span>
+  <a class="ctrl-archive" href="v2-aprovada.html">← v2 arquivada</a>
 </div>
 
-<!-- ══ VIEWPORT ════════════════════════════════════════════════════════ -->
 <div class="vp-wrap" id="vp-wrap">
 
-  <!-- ────────────────── MOBILE ────────────────── -->
+  <!-- ═══════════ MOBILE ═══════════ -->
   <div id="mobile-view">
     <div class="phone-shell">
       <div class="phone-notch"></div>
       <div class="phone-scroll">
         <div class="mobile-page">
 
-          <!-- Navbar -->
           <nav class="navbar">
             <a class="nav-logo" href="#">
-              <span class="nav-logo-main">EAI</span>
-              <span class="nav-logo-tick">✓?</span>
+              <span class="nav-logo-main">EAI</span><span class="nav-logo-tick">✓?</span>
             </a>
             <div class="nav-right">
               <button class="nav-icon-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/>
-                  <rect x="3" y="8" width="18" height="13" rx="1"/>
-                  <path d="M8 12h8M8 16h5"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M8 12h8M8 16h5"/></svg>
                 <span>Casos</span>
               </button>
               <button class="nav-theme-btn" onclick="setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark')">
-                <svg id="m-theme-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                  <circle cx="12" cy="12" r="5"/>
-                  <line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
-                  <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
-                  <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/>
-                  <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/>
-                </svg>
+                <svg id="m-theme-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"></svg>
               </button>
               <button class="nav-cta">Entrar</button>
             </div>
           </nav>
 
-          <!-- Hero -->
           <div class="mobile-hero">
-            <p class="mobile-eyebrow">Simulador Jurídico</p>
+            <p class="mobile-case-num"><span class="dot"></span>PROCESSO Nº 2026.000142 · ABERTO</p>
             <h1 class="mobile-h1">A incerteza jurídica tem uma saída.</h1>
             <p class="mobile-sub">Antes do tribunal, o teste.</p>
           </div>
 
-          <!-- Disclaimer -->
           <div class="mobile-disclaimer">
             <p>Não é consulta jurídica. Não garante vitória. Ferramenta de apoio analítico baseada em IA.</p>
           </div>
 
-          <!-- Modos -->
-          <div class="mobile-modes">
+          <div class="mobile-modes" id="mobile-modes"></div>
 
-            <!-- Cat 1 -->
-            <div class="mobile-cat-header">
-              <div class="mobile-cat-dot" style="background:#00FFEF;"></div>
-              <span class="mobile-cat-label">Um lado do processo</span>
-            </div>
-
-            <!-- Modo 1 -->
-            <div class="m-card" id="mc1" style="--mode-color:#00FFEF;">
-              <button class="m-card-header" onclick="toggleCard(1)">
-                <div class="m-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-                  </svg>
-                </div>
-                <span class="m-title">Tese Estratégica</span>
-                <svg class="m-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </button>
-              <div class="m-expanded">
-                <div class="m-expanded-inner">
-                  <p class="m-desc">Descreva sua situação com suas próprias palavras. O sistema avalia a força dos seus argumentos, identifica o que o outro lado pode alegar e calcula sua chance real de êxito.</p>
-                  <p class="m-tagline">Você traz o fato. Descubra se tem razão.</p>
-                  <p class="m-price" style="color:#00FFEF;">R$ 9,90</p>
-                  <button class="m-cta-btn">Validar causa →</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Modo 2 -->
-            <div class="m-card" id="mc2" style="--mode-color:#FF6B6B;">
-              <button class="m-card-header" onclick="toggleCard(2)">
-                <div class="m-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  </svg>
-                </div>
-                <span class="m-title">Defesa sob Ataque</span>
-                <svg class="m-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </button>
-              <div class="m-expanded">
-                <div class="m-expanded-inner">
-                  <p class="m-desc">Descreva a acusação que você recebeu e sua versão dos fatos. O sistema constrói sua defesa técnica, avalia seus argumentos em ciclos e identifica vulnerabilidades antes que o outro lado as explore.</p>
-                  <p class="m-tagline">Você está sendo acusado. A IA constrói sua defesa.</p>
-                  <p class="m-price" style="color:#FF6B6B;">R$ 9,90</p>
-                  <button class="m-cta-btn" style="background:#FF6B6B;">Validar defesa →</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Cat 2 -->
-            <div class="mobile-cat-header">
-              <div class="mobile-cat-dot" style="background:#A882FF;"></div>
-              <span class="mobile-cat-label">Dois lados do processo</span>
-            </div>
-
-            <!-- Modo 3 -->
-            <div class="m-card" id="mc3" style="--mode-color:#A882FF;">
-              <button class="m-card-header" onclick="toggleCard(3)">
-                <div class="m-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                  </svg>
-                </div>
-                <span class="m-title">Mesa Dupla — Juiz</span>
-                <svg class="m-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </button>
-              <div class="m-expanded">
-                <div class="m-expanded-inner">
-                  <p class="m-desc">Você traz a acusação e a defesa prontas. O sistema aciona o magistrado mais especializado para emitir uma sentença direta. O caminho mais rápido para um veredito.</p>
-                  <p class="m-tagline">Você já tem os dois lados. O juiz decide.</p>
-                  <p class="m-price" style="color:#A882FF;">R$ 5,90</p>
-                  <button class="m-cta-btn" style="background:#A882FF;">Consultar magistrado →</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Modo 4 -->
-            <div class="m-card" id="mc4" style="--mode-color:#FFB800;">
-              <button class="m-card-header" onclick="toggleCard(4)">
-                <div class="m-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                  </svg>
-                </div>
-                <span class="m-title">Mesa Dupla — Assistida</span>
-                <svg class="m-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </button>
-              <div class="m-expanded">
-                <div class="m-expanded-inner">
-                  <p class="m-desc">Você já sabe qual argumento quer defender. O sistema melhora ativamente sua tese antes do julgamento — você não entra no debate sozinho.</p>
-                  <p class="m-tagline">Você escolhe seu lado. A IA reforça sua tese.</p>
-                  <p class="m-price" style="color:#FFB800;">R$ 9,90</p>
-                  <button class="m-cta-btn" style="background:#FFB800; color:#0A1220;">Iniciar simulação →</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Cat 3 -->
-            <div class="mobile-cat-header">
-              <div class="mobile-cat-dot" style="background:#00CC88;"></div>
-              <span class="mobile-cat-label">Pós-julgamento</span>
-            </div>
-
-            <!-- Modo 5 -->
-            <div class="m-card" id="mc5" style="--mode-color:#00CC88;">
-              <button class="m-card-header" onclick="toggleCard(5)">
-                <div class="m-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
-                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                    <polyline points="17 6 23 6 23 12"/>
-                  </svg>
-                </div>
-                <span class="m-title">Revisão Pós-Conflito</span>
-                <svg class="m-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </button>
-              <div class="m-expanded">
-                <div class="m-expanded-inner">
-                  <p class="m-desc">Você já tem uma sentença ou proposta de acordo. O sistema analisa se vale recorrer ou se o acordo é justo — e te diz qual caminho tem menos risco.</p>
-                  <p class="m-tagline">Já existe uma decisão. Vale a pena ir adiante?</p>
-                  <p class="m-price" style="color:#00CC88;">R$ 5,90</p>
-                  <button class="m-cta-btn" style="background:#00CC88;">Analisar agora →</button>
-                </div>
-              </div>
-            </div>
-
-          </div><!-- /mobile-modes -->
-
-          <!-- Mobile footer -->
           <div class="mobile-footer">
-            <p class="mobile-footer-note">
-              Não é consulta jurídica · Não garante vitória<br>
-              Simulação gratuita · Laudo completo R$ 9,90
-            </p>
+            <p class="mobile-footer-note">Não é consulta jurídica · Não garante vitória<br>Simulação gratuita · Laudo completo R$ 9,90</p>
             <a href="#" class="mobile-footer-link">Termos de Uso</a>
           </div>
 
-        </div><!-- /mobile-page -->
-      </div><!-- /phone-scroll -->
-    </div><!-- /phone-shell -->
-  </div><!-- /mobile-view -->
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- ────────────────── DESKTOP ────────────────── -->
+  <!-- ═══════════ DESKTOP ═══════════ -->
   <div id="desktop-view">
     <div class="page">
 
-      <!-- Navbar -->
-      <nav class="navbar" style="padding: 0 32px; max-width: none;">
+      <nav class="navbar" style="padding:0 32px;max-width:none;">
         <a class="nav-logo" href="#">
-          <span class="nav-logo-main">EAI</span>
-          <span class="nav-logo-tick">✓?</span>
+          <span class="nav-logo-main">EAI</span><span class="nav-logo-tick">✓?</span>
         </a>
         <div class="nav-right">
           <button class="nav-icon-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
-              <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/>
-              <rect x="3" y="8" width="18" height="13" rx="1"/>
-              <path d="M8 12h8M8 16h5"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M8 12h8M8 16h5"/></svg>
             <span>Meus Casos</span>
           </button>
           <button class="nav-theme-btn" onclick="setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark')">
-            <svg id="d-theme-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
-              <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
-              <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/>
-              <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/>
-            </svg>
+            <svg id="d-theme-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"></svg>
           </button>
           <button class="nav-cta">Entrar</button>
         </div>
       </nav>
 
-      <!-- Hero -->
-      <section class="hero-desktop">
-        <div class="hero-deco">⚖</div>
-        <p class="hero-eyebrow">Simulador Jurídico · IA Especializada</p>
+      <section class="hero">
+        <p class="hero-case-num"><span class="dot"></span>PROCESSO Nº 2026.000142 · SIMULAÇÃO DISPONÍVEL</p>
         <h1 class="hero-h1">A incerteza jurídica agora tem<br>uma arena de testes.</h1>
-        <p class="hero-sub">Antes do tribunal, o teste. Cinco modos de simulação com IA — do argumento à sentença.</p>
+        <p class="hero-sub">Antes do tribunal, o teste. Escolha um modo à esquerda para abrir o dossiê completo.</p>
       </section>
 
-      <!-- Disclaimer -->
       <div class="disclaimer">
         <div class="disclaimer-inner">
           <p class="disclaimer-text">O EAI? é uma ferramenta de apoio analítico baseada em modelos de linguagem avançados. Não substitui o aconselhamento jurídico profissional.</p>
         </div>
       </div>
 
-      <!-- Modos desktop -->
-      <section class="modes-wrap">
-
-        <!-- Cat 1 -->
-        <div class="mode-cat">
-          <div class="cat-header">
-            <div class="cat-dot" style="background:#00FFEF;"></div>
-            <span class="cat-label">Um lado do processo</span>
-            <div class="cat-line"></div>
-          </div>
-
-          <!-- Modo 1 -->
-          <div class="mode-card" style="--mode-color:#00FFEF;">
-            <div class="mode-stripe"></div>
-            <div class="mode-icon-zone">
-              <div class="mode-icon-bubble">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                </svg>
-              </div>
-            </div>
-            <div class="mode-body">
-              <div class="mode-title-block">
-                <p class="mode-num">Modo 01</p>
-                <h3 class="mode-title">Tese Estratégica</h3>
-                <span class="mode-price">R$ 9,90</span>
-              </div>
-              <div class="mode-vline"></div>
-              <p class="mode-desc">Descreva sua situação com suas próprias palavras. O sistema avalia a força dos seus argumentos, identifica o que o outro lado pode alegar contra você e calcula sua chance real de êxito.</p>
-            </div>
-            <div class="mode-cta-zone">
-              <button class="mode-cta-btn">
-                Validar causa
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Modo 2 -->
-          <div class="mode-card" style="--mode-color:#FF6B6B;">
-            <div class="mode-stripe"></div>
-            <div class="mode-icon-zone">
-              <div class="mode-icon-bubble">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-              </div>
-            </div>
-            <div class="mode-body">
-              <div class="mode-title-block">
-                <p class="mode-num">Modo 02</p>
-                <h3 class="mode-title">Defesa sob Ataque</h3>
-                <span class="mode-price" style="color:#FF6B6B;">R$ 9,90</span>
-              </div>
-              <div class="mode-vline"></div>
-              <p class="mode-desc">Descreva a acusação que você recebeu e sua versão dos fatos. O sistema constrói sua defesa técnica, avalia a força dos seus argumentos em ciclos e identifica vulnerabilidades antes que o outro lado as explore.</p>
-            </div>
-            <div class="mode-cta-zone">
-              <button class="mode-cta-btn">
-                Validar defesa
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-              </button>
-            </div>
-          </div>
+      <div class="selector">
+        <div class="rail" id="rail"></div>
+        <div class="preview" id="preview-wrap">
+          <div class="preview-wash"></div>
+          <div class="preview-ghost-num" id="preview-ghost"></div>
+          <div id="preview-content"></div>
         </div>
+      </div>
 
-        <!-- Cat 2 -->
-        <div class="mode-cat">
-          <div class="cat-header">
-            <div class="cat-dot" style="background:#A882FF;"></div>
-            <span class="cat-label">Dois lados do processo</span>
-            <div class="cat-line"></div>
-          </div>
-
-          <!-- Modo 3 -->
-          <div class="mode-card" style="--mode-color:#A882FF;">
-            <div class="mode-stripe"></div>
-            <div class="mode-icon-zone">
-              <div class="mode-icon-bubble">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="12" y1="8" x2="12" y2="12"/>
-                  <line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-              </div>
-            </div>
-            <div class="mode-body">
-              <div class="mode-title-block">
-                <p class="mode-num">Modo 03</p>
-                <h3 class="mode-title">Mesa Dupla — Juiz</h3>
-                <span class="mode-price" style="color:#A882FF;">R$ 5,90</span>
-              </div>
-              <div class="mode-vline"></div>
-              <p class="mode-desc">Você traz a acusação e a defesa prontas. O sistema aciona o magistrado mais especializado para emitir uma sentença direta — sem advogado intermediário. O caminho mais rápido para um veredito.</p>
-            </div>
-            <div class="mode-cta-zone">
-              <button class="mode-cta-btn">
-                Consultar magistrado
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Modo 4 -->
-          <div class="mode-card" style="--mode-color:#FFB800;">
-            <div class="mode-stripe"></div>
-            <div class="mode-icon-zone">
-              <div class="mode-icon-bubble">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                </svg>
-              </div>
-            </div>
-            <div class="mode-body">
-              <div class="mode-title-block">
-                <p class="mode-num">Modo 04</p>
-                <h3 class="mode-title">Mesa Dupla — Assistida</h3>
-                <span class="mode-price" style="color:#FFB800;">R$ 9,90</span>
-              </div>
-              <div class="mode-vline"></div>
-              <p class="mode-desc">Você já sabe qual argumento quer defender. O sistema melhora ativamente sua tese antes do julgamento — você não entra no debate sozinho. Ideal para quem veio do Modo 1 e quer simular o confronto real.</p>
-            </div>
-            <div class="mode-cta-zone">
-              <button class="mode-cta-btn">
-                Iniciar simulação
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Cat 3 -->
-        <div class="mode-cat">
-          <div class="cat-header">
-            <div class="cat-dot" style="background:#00CC88;"></div>
-            <span class="cat-label">Pós-julgamento</span>
-            <div class="cat-line"></div>
-          </div>
-
-          <!-- Modo 5 -->
-          <div class="mode-card" style="--mode-color:#00CC88;">
-            <div class="mode-stripe"></div>
-            <div class="mode-icon-zone">
-              <div class="mode-icon-bubble">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
-                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                  <polyline points="17 6 23 6 23 12"/>
-                </svg>
-              </div>
-            </div>
-            <div class="mode-body">
-              <div class="mode-title-block">
-                <p class="mode-num">Modo 05</p>
-                <h3 class="mode-title">Revisão Pós-Conflito</h3>
-                <span class="mode-price" style="color:#00CC88;">R$ 5,90</span>
-              </div>
-              <div class="mode-vline"></div>
-              <p class="mode-desc">Você já tem uma sentença ou uma proposta de acordo em mãos. O sistema analisa se vale recorrer da decisão ou se o acordo oferecido é justo — e te diz qual caminho tem menos risco.</p>
-            </div>
-            <div class="mode-cta-zone">
-              <button class="mode-cta-btn">
-                Analisar agora
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </section><!-- /modes-wrap -->
-
-      <!-- Footer técnico -->
       <div class="tech-footer">
         <div class="tech-grid">
-          <div>
-            <p class="tech-item-label">Base de dados</p>
-            <p class="tech-item-val">1.9M+ Precedentes</p>
-          </div>
-          <div>
-            <p class="tech-item-label">Processamento</p>
-            <p class="tech-item-val">Análise Semântica Multimodal</p>
-          </div>
-          <div>
-            <p class="tech-item-label">Privacidade</p>
-            <p class="tech-item-val">Criptografia RSA-4096</p>
-          </div>
-          <div>
-            <p class="tech-item-label">Versão</p>
-            <p class="tech-item-val">v2.4.0 · eaijuridico.com.br</p>
-          </div>
+          <div><p class="tech-item-label">Base de dados</p><p class="tech-item-val">1.9M+ Precedentes</p></div>
+          <div><p class="tech-item-label">Processamento</p><p class="tech-item-val">Análise Semântica Multimodal</p></div>
+          <div><p class="tech-item-label">Privacidade</p><p class="tech-item-val">Criptografia RSA-4096</p></div>
+          <div><p class="tech-item-label">Versão</p><p class="tech-item-val">v2.4.0 · eaijuridico.com.br</p></div>
         </div>
         <div class="tech-links">
           <a href="#" class="tech-link">Termos de Uso</a>
@@ -1024,43 +450,198 @@
         </div>
       </div>
 
-    </div><!-- /page -->
-  </div><!-- /desktop-view -->
+    </div>
+  </div>
 
-</div><!-- /vp-wrap -->
+</div>
 
 <script>
-  const SUN = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/>`;
-  const MOON = `<path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>`;
+/* ══ FONTE ÚNICA DE DADOS — FORGE: zero duplicação entre mobile/desktop ══ */
+const CATEGORIES = [
+  { label: 'Um lado do processo',    dot: '#00FFEF', modes: [1,2] },
+  { label: 'Dois lados do processo', dot: '#A882FF', modes: [3,4] },
+  { label: 'Pós-julgamento',         dot: '#00CC88', modes: [5]   },
+];
 
-  function setView(v) {
-    document.getElementById('mobile-view').style.display  = v === 'mobile'  ? 'flex'  : 'none';
-    document.getElementById('desktop-view').style.display = v === 'desktop' ? 'block' : 'none';
-    document.getElementById('btn-mobile').className  = 'ctrl-btn' + (v === 'mobile'  ? ' on' : '');
-    document.getElementById('btn-desktop').className = 'ctrl-btn' + (v === 'desktop' ? ' on' : '');
-    document.getElementById('vp-wrap').style.background = v === 'mobile' ? '#060709' : 'var(--bg-secondary)';
-    document.getElementById('vp-wrap').style.justifyContent = v === 'mobile' ? 'center' : 'flex-start';
-  }
+const ICONS = {
+  1: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+  2: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  3: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+  4: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>',
+  5: '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+};
 
-  function setTheme(t) {
-    document.documentElement.dataset.theme = t;
-    document.getElementById('btn-dark').className  = 'ctrl-btn' + (t === 'dark'  ? ' on'       : '');
-    document.getElementById('btn-light').className = 'ctrl-btn' + (t === 'light' ? ' on-light' : '');
-    const ic = t === 'dark' ? SUN : MOON;
-    ['m-theme-ic','d-theme-ic'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = ic; });
-  }
+const MODES = {
+  1: { color:'#00FFEF', cat:'Um lado do processo', title:'Tese Estratégica',
+       tagline:'Você traz o fato. Descubra se tem razão.',
+       desc:'Descreva sua situação com suas próprias palavras. O sistema avalia a força dos seus argumentos, identifica o que o outro lado pode alegar contra você e calcula sua chance real de êxito.',
+       bring:['Fatos principais','Contexto do conflito','Documentos (opcional)'],
+       receive:['Probabilidade de êxito','Fundamentos jurídicos','Riscos identificados'],
+       price:'R$ 9,90', cta:'Validar causa' },
+  2: { color:'#FF6B6B', cat:'Um lado do processo', title:'Defesa sob Ataque',
+       tagline:'Você está sendo acusado. A IA constrói sua defesa.',
+       desc:'Descreva a acusação que você recebeu e sua versão dos fatos. O sistema constrói sua defesa técnica, avalia seus argumentos em ciclos e identifica vulnerabilidades antes que o outro lado as explore.',
+       bring:['A acusação recebida','Sua versão dos fatos','Provas de defesa (opcional)'],
+       receive:['Força da sua defesa','Argumentos jurídicos','Vulnerabilidades expostas'],
+       price:'R$ 9,90', cta:'Validar defesa' },
+  3: { color:'#A882FF', cat:'Dois lados do processo', title:'Mesa Dupla — Juiz',
+       tagline:'Você já tem os dois lados. O juiz decide.',
+       desc:'Você traz a acusação e a defesa prontas. O sistema aciona o magistrado mais especializado para emitir uma sentença direta — sem advogado intermediário. O caminho mais rápido para um veredito.',
+       bring:['Argumento da acusação','Argumento da defesa','Documentos (opcional)'],
+       receive:['Sentença fundamentada','Lado mais forte','Base jurídica utilizada'],
+       price:'R$ 5,90', cta:'Consultar magistrado' },
+  4: { color:'#FFB800', cat:'Dois lados do processo', title:'Mesa Dupla — Assistida',
+       tagline:'Você escolhe seu lado. A IA reforça sua tese.',
+       desc:'Você já sabe qual argumento quer defender. O sistema melhora ativamente sua tese antes do julgamento — você não entra no debate sozinho. Ideal para quem veio do Modo 1.',
+       bring:['Argumento da acusação','Argumento da defesa','Seu lado no conflito'],
+       receive:['Tese reforçada pela IA','Probabilidade de êxito','Pontos fracos expostos'],
+       price:'R$ 9,90', cta:'Iniciar simulação' },
+  5: { color:'#00CC88', cat:'Pós-julgamento', title:'Revisão Pós-Conflito',
+       tagline:'Já existe uma decisão. Vale a pena ir adiante?',
+       desc:'Você já tem uma sentença ou uma proposta de acordo em mãos. O sistema analisa se vale recorrer da decisão ou se o acordo oferecido é justo — e te diz qual caminho tem menos risco.',
+       bring:['A decisão recebida','Contexto do conflito','Proposta de acordo (opcional)'],
+       receive:['Vale recorrer? (0–100%)','O acordo é justo?','Riscos de cada caminho'],
+       price:'R$ 5,90', cta:'Analisar agora' },
+};
 
-  function toggleCard(n) {
-    const card = document.getElementById('mc' + n);
-    const wasOpen = card.classList.contains('open');
-    document.querySelectorAll('.m-card').forEach(c => c.classList.remove('open'));
-    if (!wasOpen) card.classList.add('open');
-  }
+const SUN  = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/>';
+const MOON = '<path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>';
 
-  // Hover — aplicar cor do modo no título via CSS (já está no CSS)
-  // Init
-  setView('mobile');
-  setTheme('dark');
+/* ══ RENDER: RAIL (desktop) ══ */
+function renderRail() {
+  const rail = document.getElementById('rail');
+  rail.innerHTML = CATEGORIES.map(cat => `
+    <div class="rail-cat">
+      <div class="rail-cat-header">
+        <div class="rail-cat-dot" style="background:${cat.dot};"></div>
+        <span class="rail-cat-label">${cat.label}</span>
+      </div>
+      ${cat.modes.map(id => {
+        const m = MODES[id];
+        return `<div class="rail-item" id="rail-item-${id}" style="--item-color:${m.color};" onclick="selectMode(${id})">
+          <span class="rail-item-num mono">0${id}</span>
+          <span class="rail-item-title">${m.title}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+/* ══ RENDER: PREVIEW PANEL (desktop) ══ */
+function renderPreview(id) {
+  const m = MODES[id];
+  document.getElementById('preview-wrap').style.setProperty('--mode-color', m.color);
+  document.getElementById('preview-ghost').textContent = '0' + id;
+
+  document.getElementById('preview-content').innerHTML = `
+    <div class="preview-icon-row">
+      <div class="preview-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[id]}</svg></div>
+      <div class="preview-meta">
+        <span class="preview-cat-tag">${m.cat}</span>
+        <span class="preview-num mono">Processo · Modo 0${id}</span>
+      </div>
+    </div>
+    <h2 class="preview-title">${m.title}</h2>
+    <p class="preview-tagline">${m.tagline}</p>
+    <p class="preview-desc">${m.desc}</p>
+    <div class="preview-br">
+      <div class="preview-br-col">
+        <p class="preview-br-label">O que você traz</p>
+        ${m.bring.map(x => `<p class="preview-br-item">${x}</p>`).join('')}
+      </div>
+      <div class="preview-br-col">
+        <p class="preview-br-label">O que você recebe</p>
+        ${m.receive.map(x => `<p class="preview-br-item">${x}</p>`).join('')}
+      </div>
+    </div>
+    <div class="preview-footer">
+      <span class="preview-price">${m.price}</span>
+      <button class="preview-cta">
+        ${m.cta}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  `;
+
+  document.querySelectorAll('.rail-item').forEach(el => {
+    el.classList.toggle('active', el.id === 'rail-item-' + id);
+  });
+}
+
+function selectMode(id) {
+  const content = document.getElementById('preview-content');
+  content.style.opacity = '0';
+  setTimeout(() => { renderPreview(id); content.style.opacity = '1'; }, 150);
+}
+
+/* ══ RENDER: MOBILE FOLDER STACK ══ */
+function renderMobile() {
+  const wrap = document.getElementById('mobile-modes');
+  wrap.innerHTML = CATEGORIES.map(cat => `
+    <div class="mobile-cat-header">
+      <div class="mobile-cat-dot" style="background:${cat.dot};"></div>
+      <span class="mobile-cat-label">${cat.label}</span>
+    </div>
+    ${cat.modes.map(id => {
+      const m = MODES[id];
+      return `
+      <div class="m-folder" id="mf-${id}" style="--mode-color:${m.color};">
+        <div class="m-folder-tab"></div>
+        <span class="m-folder-ghost">0${id}</span>
+        <button class="m-folder-header" onclick="toggleFolder(${id})">
+          <div class="m-folder-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[id]}</svg></div>
+          <div class="m-folder-title-block">
+            <p class="m-folder-cat-tag">Modo 0${id}</p>
+            <p class="m-folder-title">${m.title}</p>
+          </div>
+          <svg class="m-folder-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="m-folder-expanded">
+          <div class="m-folder-inner">
+            <p class="m-folder-desc">${m.desc}</p>
+            <p class="m-folder-tagline">${m.tagline}</p>
+            <div class="m-folder-bottom">
+              <span class="m-folder-price mono" style="color:${m.color};">${m.price}</span>
+              <button class="m-folder-cta" style="background:${m.color};">${m.cta} →</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+  `).join('');
+}
+
+function toggleFolder(id) {
+  const el = document.getElementById('mf-' + id);
+  const wasOpen = el.classList.contains('open');
+  document.querySelectorAll('.m-folder').forEach(f => f.classList.remove('open'));
+  if (!wasOpen) el.classList.add('open');
+}
+
+/* ══ VIEW / THEME CONTROLS ══ */
+function setView(v) {
+  document.getElementById('mobile-view').style.display  = v === 'mobile'  ? 'flex'  : 'none';
+  document.getElementById('desktop-view').style.display = v === 'desktop' ? 'block' : 'none';
+  document.getElementById('btn-mobile').className  = 'ctrl-btn' + (v === 'mobile'  ? ' on' : '');
+  document.getElementById('btn-desktop').className = 'ctrl-btn' + (v === 'desktop' ? ' on' : '');
+  document.getElementById('vp-wrap').style.background = v === 'mobile' ? '#050608' : 'var(--bg-rail)';
+  document.getElementById('vp-wrap').style.justifyContent = v === 'mobile' ? 'center' : 'flex-start';
+}
+
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  document.getElementById('btn-dark').className  = 'ctrl-btn' + (t === 'dark'  ? ' on'       : '');
+  document.getElementById('btn-light').className = 'ctrl-btn' + (t === 'light' ? ' on-light' : '');
+  const ic = t === 'dark' ? SUN : MOON;
+  ['m-theme-ic','d-theme-ic'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ic; });
+}
+
+/* ══ INIT ══ */
+renderRail();
+renderPreview(1);
+renderMobile();
+setView('mobile');
+setTheme('dark');
 </script>
 </body>
 </html>
