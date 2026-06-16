@@ -3,1197 +3,791 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EAI? — Proposta de Design · ARGUS Review</title>
+  <title>EAI? — Proposta de Design v2 · ARGUS Review</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    /* ══════════════════════════════════════════════
-       DESIGN TOKENS — PROPOSTA REVISADA (CANVAS + FORGE)
-       Fixes: contrast ratio, missing light tokens,
-              text-muted passando WCAG AA 4.5:1
-    ══════════════════════════════════════════════ */
-    :root,
-    [data-theme="dark"] {
-      --bg-primary:    #0A0C0F;
-      --bg-secondary:  #12151A;
-      --bg-card:       #1A1E26;
-      --bg-hover:      #20242E;
+    /* ══ TOKENS ══════════════════════════════════════════════════════ */
+    :root, [data-theme="dark"] {
+      --bg-primary:     #0A0C0F;
+      --bg-secondary:   #11141A;
+      --bg-card:        #161A22;
+      --bg-card-hover:  #1C2130;
+      --bg-glass:       rgba(22,26,34,0.8);
 
-      --text-primary:  #F0F2F5;
-      --text-secondary:#9AAABB;   /* revisado: + legível que #7A8494 */
-      --text-muted:    #8A95A5;   /* CORRIGIDO de #4A5260 → ratio ≥4.5:1 */
+      --text-primary:   #F0F2F5;
+      --text-secondary: #9AAABB;
+      --text-muted:     #8A95A5;
 
-      --accent:        #00FFEF;
-      --accent-press:  #00D4C7;
-      --accent-muted:  rgba(0,255,239,0.10);
+      --accent:         #00FFEF;
+      --accent-muted:   rgba(0,255,239,0.10);
+      --highlight:      #E8C200;
+      --highlight-dim:  rgba(232,194,0,0.12);
 
-      --highlight:     #E8C200;   /* token nomeado — era amber-400 hardcoded */
-      --highlight-dim: rgba(232,194,0,0.15);
+      --border:         rgba(255,255,255,0.06);
+      --border-strong:  rgba(255,255,255,0.12);
 
-      --success:       #00CC88;
-      --danger:        #FF4D4D;
+      --shadow-card:    none;
+      --shadow-hover:   0 0 0 1px rgba(255,255,255,0.10), 0 8px 32px rgba(0,0,0,0.5);
 
-      --border:        rgba(255,255,255,0.07);
-      --border-hover:  rgba(255,255,255,0.14);
-      --border-active: rgba(0,255,239,0.25);
-
-      /* NOVOS: cores por categoria de modo */
-      --cat-one-sided:    #00FFEF;
-      --cat-bilateral:    #A882FF;
-      --cat-post:         #00CC88;
+      --icon-on-solid:  #FFFFFF;  /* não usado no dark */
+      --icon-mode:      use-color; /* sinal para lógica de tema */
     }
 
     [data-theme="light"] {
-      --bg-primary:    #F5F3EE;
-      --bg-secondary:  #EAE8E3;   /* ADICIONADO — estava ausente */
-      --bg-card:       #FFFFFF;
-      --bg-hover:      #F0EDE8;
+      --bg-primary:     #F4F2EC;
+      --bg-secondary:   #E8E5DD;
+      --bg-card:        #FFFFFF;
+      --bg-card-hover:  #F9F7F3;
+      --bg-glass:       rgba(255,255,255,0.85);
 
-      --text-primary:  #0A1628;
-      --text-secondary:rgba(10,22,40,0.65);
-      --text-muted:    rgba(10,22,40,0.48);
+      --text-primary:   #0D1520;
+      --text-secondary: #4A5568;
+      --text-muted:     #718096;
 
-      --accent:        #0A1628;
-      --accent-press:  #1A2E4A;   /* ADICIONADO */
-      --accent-muted:  rgba(10,22,40,0.08);
+      --accent:         #0D1520;
+      --accent-muted:   rgba(13,21,32,0.07);
+      --highlight:      #1A3A6B;
+      --highlight-dim:  rgba(26,58,107,0.10);
 
-      --highlight:     #1A3A6B;
-      --highlight-dim: rgba(26,58,107,0.10);
+      --border:         rgba(0,0,0,0.07);
+      --border-strong:  rgba(0,0,0,0.14);
 
-      --success:       #00A870;   /* ADICIONADO */
-      --danger:        #D93025;   /* ADICIONADO */
+      --shadow-card:    0 1px 3px rgba(0,0,0,0.06), 0 1px 8px rgba(0,0,0,0.04);
+      --shadow-hover:   0 4px 20px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.08);
 
-      --border:        rgba(0,0,0,0.08);
-      --border-hover:  rgba(0,0,0,0.14);
-      --border-active: rgba(10,22,40,0.3);
+      --icon-on-solid:  #FFFFFF;
     }
 
-    /* ══════════════════════════════════════════════
-       RESET + BASE
-    ══════════════════════════════════════════════ */
+    /* ══ RESET ═══════════════════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { font-size: 16px; }
-
     body {
       font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
-      background: #050608;
+      background: #060709;
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
+    .font-playfair { font-family: "Playfair Display", serif; }
+    .font-mono     { font-family: "JetBrains Mono", monospace; }
 
-    .font-playfair {
-      font-family: "Playfair Display", "Cormorant Garamond", serif;
+    /* ══ BARRA DE CONTROLE ═══════════════════════════════════════════ */
+    .ctrl-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      height: 46px;
+      background: #08090D;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; gap: 10px; padding: 0 16px;
     }
-    .font-mono {
-      font-family: "JetBrains Mono", ui-monospace, monospace;
+    .ctrl-badge {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: #00FFEF;
+      border: 1px solid rgba(0,255,239,0.25); padding: 3px 8px; border-radius: 3px;
     }
-
-    /* ══════════════════════════════════════════════
-       BARRA DE CONTROLE DO PROTÓTIPO
-    ══════════════════════════════════════════════ */
-    .proto-controls {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 9999;
-      background: #0D0F14;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0 16px;
-      height: 44px;
-      flex-wrap: wrap;
-    }
-    .proto-label {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.3);
-      white-space: nowrap;
-    }
-    .proto-badge {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #00FFEF;
-      border: 1px solid rgba(0,255,239,0.3);
-      padding: 2px 8px;
-      border-radius: 3px;
-      white-space: nowrap;
-    }
-    .proto-divider {
-      width: 1px;
-      height: 20px;
-      background: rgba(255,255,255,0.08);
-    }
-    .ctrl-group {
-      display: flex;
-      align-items: center;
-      gap: 4px;
+    .ctrl-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.08); }
+    .ctrl-group { display: flex; align-items: center; gap: 3px; }
+    .ctrl-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.28); margin-right: 4px;
     }
     .ctrl-btn {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      padding: 4px 10px;
-      border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: transparent;
-      color: rgba(255,255,255,0.45);
-      cursor: pointer;
-      transition: all 0.15s;
-      white-space: nowrap;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+      padding: 4px 12px; border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: transparent; color: rgba(255,255,255,0.4);
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
     }
-    .ctrl-btn:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.8); }
-    .ctrl-btn.active {
-      background: rgba(0,255,239,0.10);
-      border-color: rgba(0,255,239,0.4);
-      color: #00FFEF;
-    }
-    .ctrl-btn.theme-btn.light-active {
-      background: rgba(255,255,255,0.12);
-      border-color: rgba(255,255,255,0.3);
-      color: #fff;
-    }
-    .annot-btn.active {
-      background: rgba(232,194,0,0.12);
-      border-color: rgba(232,194,0,0.4);
-      color: #E8C200;
+    .ctrl-btn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.75); }
+    .ctrl-btn.on { background: rgba(0,255,239,0.10); border-color: rgba(0,255,239,0.35); color: #00FFEF; }
+    .ctrl-btn.on-light { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.3); color: #fff; }
+    .ctrl-version {
+      margin-left: auto;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(255,255,255,0.18);
     }
 
-    /* ══════════════════════════════════════════════
-       VIEWPORT WRAPPER
-    ══════════════════════════════════════════════ */
-    .viewport-wrapper {
-      padding-top: 44px;
+    /* ══ VIEWPORT WRAPPER ════════════════════════════════════════════ */
+    .vp-wrap {
+      padding-top: 46px;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: background 0.25s;
+      align-items: flex-start;
+      justify-content: center;
+      transition: background 0.3s;
     }
 
-    /* Mobile frame */
-    .mobile-frame {
+    /* ══ MOBILE FRAME ════════════════════════════════════════════════ */
+    #mobile-view {
+      padding: 28px 0 48px;
+      display: flex; justify-content: center;
+    }
+    .phone-shell {
       width: 390px;
-      min-height: 844px;
-      margin: 32px auto;
+      min-height: 850px;
+      background: var(--bg-primary);
       border-radius: 44px;
       overflow: hidden;
+      position: relative;
       box-shadow:
-        0 0 0 10px #1A1C20,
-        0 0 0 12px #0A0C0F,
-        0 32px 80px rgba(0,0,0,0.8);
-      position: relative;
+        0 0 0 9px #1C1F25,
+        0 0 0 11px #0A0C0F,
+        0 40px 100px rgba(0,0,0,0.85);
     }
-    .mobile-frame .mobile-notch {
-      position: absolute;
-      top: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 120px; height: 34px;
-      background: #1A1C20;
-      border-radius: 0 0 20px 20px;
-      z-index: 100;
+    .phone-notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 32px;
+      background: #1C1F25; border-radius: 0 0 20px 20px; z-index: 100;
+    }
+    .phone-scroll {
+      overflow-y: auto; overflow-x: hidden;
+      max-height: 850px;
     }
 
-    /* Desktop — full width container */
-    .desktop-frame {
+    /* ══ DESKTOP FRAME ═══════════════════════════════════════════════ */
+    #desktop-view {
       width: 100%;
-      max-width: 1280px;
-      margin: 0 auto;
-    }
-
-    /* ══════════════════════════════════════════════
-       ANOTAÇÕES (CANVAS comentários visuais)
-    ══════════════════════════════════════════════ */
-    .annotation {
+      max-width: 1200px;
       display: none;
-      position: absolute;
-      background: rgba(232,194,0,0.92);
-      color: #0A0C0F;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      padding: 4px 8px;
-      border-radius: 4px;
-      white-space: nowrap;
-      z-index: 500;
-      pointer-events: none;
+      background: var(--bg-primary);
+      min-height: calc(100vh - 46px);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      transition: background 0.3s;
     }
-    .annotation::before {
-      content: '';
-      position: absolute;
-      left: -6px; top: 50%;
-      transform: translateY(-50%);
-      border: 6px solid transparent;
-      border-right-color: rgba(232,194,0,0.92);
-    }
-    body.show-annotations .annotation { display: block; }
 
-    .annot-box {
-      display: none;
-      position: relative;
-    }
-    body.show-annotations .annot-box { display: block; }
-
-    .annot-ring {
-      outline: 2px dashed rgba(232,194,0,0.6);
-      outline-offset: 2px;
-    }
-    body.show-annotations .annot-ring { outline: 2px dashed rgba(232,194,0,0.6); }
-
-    /* ══════════════════════════════════════════════
-       PRODUTO — NAVBAR
-    ══════════════════════════════════════════════ */
-    .eai-navbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      height: 56px;
-      display: flex;
-      align-items: center;
+    /* ══ NAVBAR ══════════════════════════════════════════════════════ */
+    .navbar {
+      position: sticky; top: 0; z-index: 50;
+      height: 56px; display: flex; align-items: center;
       justify-content: space-between;
       padding: 0 20px;
-      background: var(--bg-primary);
+      background: var(--bg-glass);
       border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      transition: background 0.3s, border-color 0.3s;
     }
     .nav-logo {
-      display: flex;
-      align-items: baseline;
-      cursor: pointer;
-      user-select: none;
-      text-decoration: none;
+      display: flex; align-items: baseline;
+      text-decoration: none; user-select: none;
     }
-    .nav-logo-text {
-      font-family: "Playfair Display", serif;
-      font-size: 21px;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1;
-    }
-    .nav-logo-accent {
-      font-family: "Playfair Display", serif;
-      font-size: 21px;
-      font-weight: 700;
-      color: var(--accent);
-      line-height: 1;
-    }
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .nav-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      min-width: 44px;
-      min-height: 44px;
-      padding: 0 10px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text-secondary);
-      border-radius: 6px;
+    .nav-logo-main  { font-family: "Playfair Display", serif; font-size: 21px; font-weight: 700; color: var(--text-primary); }
+    .nav-logo-tick  { font-family: "Playfair Display", serif; font-size: 21px; font-weight: 700; color: var(--accent); }
+    .nav-right { display: flex; align-items: center; gap: 2px; }
+    .nav-icon-btn {
+      display: flex; align-items: center; gap: 6px;
+      min-width: 44px; min-height: 44px; padding: 0 10px;
+      background: none; border: none; cursor: pointer;
+      color: var(--text-secondary); border-radius: 6px;
       transition: color 0.15s, background 0.15s;
-      text-decoration: none;
     }
-    .nav-btn:hover {
-      color: var(--text-primary);
-      background: var(--accent-muted);
+    .nav-icon-btn:hover { color: var(--text-primary); background: var(--accent-muted); }
+    .nav-icon-btn span {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; white-space: nowrap;
     }
-    .nav-btn-label {
-      font-size: 11px;           /* CORRIGIDO: era hidden, agora 11px mínimo */
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-    .nav-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-
+    .nav-icon-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
     .nav-theme-btn {
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text-secondary);
-      border-radius: 4px;
-      transition: color 0.15s;
+      width: 36px; height: 36px; display: flex; align-items: center;
+      justify-content: center; background: none; border: none; cursor: pointer;
+      color: var(--text-secondary); border-radius: 4px; transition: color 0.15s;
     }
     .nav-theme-btn:hover { color: var(--text-primary); }
-
-    .nav-entrar {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0 14px;
-      min-height: 36px;
-      border: 1px solid var(--border-hover);
-      background: none;
-      color: var(--text-primary);
-      cursor: pointer;
-      border-radius: 4px;
-      transition: border-color 0.15s, background 0.15s;
+    .nav-cta {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0 14px; height: 34px;
+      border: 1px solid var(--border-strong); background: none;
+      color: var(--text-primary); cursor: pointer; border-radius: 4px;
+      transition: all 0.15s; display: flex; align-items: center;
     }
-    .nav-entrar:hover {
-      border-color: var(--accent);
-      background: var(--accent-muted);
-      color: var(--accent);
-    }
+    .nav-cta:hover { border-color: var(--accent); background: var(--accent-muted); color: var(--accent); }
 
-    /* ══════════════════════════════════════════════
-       PRODUTO — HOME PAGE (DESKTOP)
-    ══════════════════════════════════════════════ */
-    .page-container {
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      min-height: calc(100vh - 56px);
-      transition: background 0.25s, color 0.25s;
-    }
+    /* ══ PAGE BASE ═══════════════════════════════════════════════════ */
+    .page { background: var(--bg-primary); color: var(--text-primary); transition: background 0.3s, color 0.3s; }
 
-    /* Hero */
-    .hero {
-      padding: 64px 48px 40px;
-      max-width: 1100px;
-      margin: 0 auto;
+    /* ══ HERO — DESKTOP ══════════════════════════════════════════════ */
+    .hero-desktop {
+      padding: 72px 52px 48px;
+      max-width: 1100px; margin: 0 auto;
+      position: relative; overflow: hidden;
+    }
+    /* Decorative scale glyph */
+    .hero-deco {
+      position: absolute; right: 40px; top: 40px;
+      font-size: 220px; line-height: 1;
+      color: var(--text-primary); opacity: 0.025;
+      font-family: "Playfair Display", serif;
+      pointer-events: none; user-select: none;
+      transition: opacity 0.3s;
     }
     .hero-eyebrow {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--text-muted);    /* CORRIGIDO: agora 8A95A5 passa 4.5:1 */
-      margin-bottom: 20px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--text-muted);
+      margin-bottom: 22px; display: flex; align-items: center; gap: 10px;
+    }
+    .hero-eyebrow::after {
+      content: ''; display: block; width: 40px; height: 1px;
+      background: var(--border-strong);
     }
     .hero-h1 {
-      font-family: "Playfair Display", serif;
-      font-style: italic;
-      font-weight: 700;
-      font-size: clamp(36px, 5vw, 68px);
-      line-height: 1.04;
-      letter-spacing: -0.01em;
-      color: var(--text-primary);
-      margin-bottom: 24px;
+      font-family: "Playfair Display", serif; font-style: italic;
+      font-weight: 700; font-size: clamp(38px, 4.5vw, 66px);
+      line-height: 1.06; letter-spacing: -0.01em;
+      color: var(--text-primary); margin-bottom: 20px;
+      max-width: 700px;
     }
     .hero-sub {
-      font-size: 16px;             /* CORRIGIDO: era 10px uppercase → 16px legível */
-      font-weight: 400;
-      color: var(--text-secondary);
-      max-width: 520px;
-      line-height: 1.6;
-      margin-bottom: 8px;
+      font-size: 15px; font-weight: 400; color: var(--text-secondary);
+      max-width: 480px; line-height: 1.65; margin-bottom: 0;
     }
 
-    /* Disclaimer — CORRIGIDO: visível e legível */
+    /* ══ DISCLAIMER ══════════════════════════════════════════════════ */
     .disclaimer {
-      margin: 0 48px 32px;
-      max-width: 1100px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0 48px;
+      padding: 0 52px 36px;
+      max-width: 1100px; margin: 0 auto;
     }
     .disclaimer-inner {
       border-left: 2px solid var(--highlight-dim);
-      padding: 8px 0 8px 14px;
+      padding: 7px 0 7px 14px;
     }
     .disclaimer-text {
-      font-size: 12px;             /* CORRIGIDO: era 9px → 12px */
-      font-weight: 500;
-      color: var(--text-muted);
-      line-height: 1.5;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
+      font-size: 12px; font-weight: 500;
+      color: var(--text-muted); line-height: 1.5;
     }
 
-    /* Modes section */
-    .modes-section {
-      padding: 0 48px 48px;
-      max-width: 1100px;
-      margin: 0 auto;
+    /* ══ MODO CATEGORIA ══════════════════════════════════════════════ */
+    .modes-wrap { padding: 0 52px 52px; max-width: 1100px; margin: 0 auto; }
+    .mode-cat { margin-bottom: 36px; }
+    .mode-cat:last-child { margin-bottom: 0; }
+    .cat-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
     }
+    .cat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .cat-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--text-muted); white-space: nowrap;
+    }
+    .cat-line { flex: 1; height: 1px; background: var(--border); }
 
-    /* Categoria de modo — NOVO: taxonomia visual */
-    .mode-category {
-      margin-bottom: 32px;
-    }
-    .mode-category-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .mode-category-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .mode-category-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .mode-category-line {
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* Mode card — DESKTOP */
+    /* ══ MODE CARD — DESKTOP ═════════════════════════════════════════ */
     .mode-card {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      border: 1px solid var(--border);
+      display: flex; align-items: stretch;
       background: var(--bg-card);
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      cursor: pointer; overflow: hidden;
+      margin-bottom: 6px; position: relative;
+      box-shadow: var(--shadow-card);
+      transition: box-shadow 0.2s, background 0.2s, border-color 0.2s, transform 0.15s;
     }
     .mode-card:last-child { margin-bottom: 0; }
-
-    /* CORRIGIDO: hover usa cor do modo, não amber-400 fixo */
     .mode-card:hover {
-      background: var(--bg-hover);
+      background: var(--bg-card-hover);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
     }
-    .mode-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: var(--mode-color);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .mode-card:hover::before { opacity: 1; }
 
-    .mode-card-icon-wrap {
-      width: 64px;
-      height: 72px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+    /* Left accent stripe — always visible, mode color */
+    .mode-stripe {
+      width: 4px; flex-shrink: 0;
+      background: var(--mode-color);
+      opacity: 0.5; transition: opacity 0.2s;
+    }
+    .mode-card:hover .mode-stripe { opacity: 1; }
+
+    /* Icon zone:
+       DARK  → tinted bg (rgba) + colored icon
+       LIGHT → solid mode color + white icon         */
+    .mode-icon-zone {
+      width: 68px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
       border-right: 1px solid var(--border);
       transition: border-color 0.2s;
     }
-    .mode-card:hover .mode-card-icon-wrap {
-      border-color: var(--border-hover);
-    }
-    .mode-card-icon {
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 6px;
+    .mode-card:hover .mode-icon-zone { border-color: var(--border-strong); }
+
+    .mode-icon-bubble {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      /* Dark: tinted background */
+      background: color-mix(in srgb, var(--mode-color) 12%, transparent);
       transition: background 0.2s;
     }
-    .mode-card-icon svg {
-      width: 16px;
-      height: 16px;
-      transition: color 0.2s;
+    .mode-card:hover .mode-icon-bubble {
+      background: color-mix(in srgb, var(--mode-color) 20%, transparent);
+    }
+    .mode-icon-bubble svg {
+      width: 17px; height: 17px;
+      stroke: var(--mode-color);          /* Dark: colored icon */
+      transition: stroke 0.2s;
     }
 
-    .mode-card-body {
-      flex: 1;
-      padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      min-width: 0;
+    /* LIGHT MODE override — solid fill + white icon */
+    [data-theme="light"] .mode-icon-bubble {
+      background: var(--mode-color);
     }
-    .mode-card-title-block {
-      flex-shrink: 0;
-      min-width: 180px;
+    [data-theme="light"] .mode-card:hover .mode-icon-bubble {
+      background: var(--mode-color);
+      filter: brightness(0.9);
     }
-    .mode-card-number {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      color: var(--text-muted);
-      margin-bottom: 4px;
+    [data-theme="light"] .mode-icon-bubble svg {
+      stroke: #FFFFFF;                    /* Light: white icon on solid */
     }
-    .mode-card-title {
-      font-size: 15px;             /* CORRIGIDO: era 11-12px → 15px */
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.2;
-      margin-bottom: 4px;
+
+    /* Card body */
+    .mode-body {
+      flex: 1; display: flex; align-items: center;
+      gap: 20px; padding: 20px 24px; min-width: 0;
+    }
+    .mode-title-block { flex-shrink: 0; min-width: 160px; }
+    .mode-num {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px;
+    }
+    .mode-title {
+      font-size: 15px; font-weight: 700; color: var(--text-primary);
+      line-height: 1.2; margin-bottom: 5px;
       transition: color 0.2s;
     }
-    .mode-card:hover .mode-card-title {
-      color: var(--mode-color);    /* CORRIGIDO: cor do modo, não amber global */
-    }
-    .mode-card-price {
+    .mode-card:hover .mode-title { color: var(--mode-color); }
+    .mode-price {
       font-family: "JetBrains Mono", monospace;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--mode-color);
+      font-size: 12px; font-weight: 500; color: var(--mode-color);
     }
-
-    .mode-card-divider {
-      width: 1px;
-      height: 40px;
-      background: var(--border);
-      flex-shrink: 0;
+    .mode-vline {
+      width: 1px; height: 36px;
+      background: var(--border); flex-shrink: 0;
     }
-
-    .mode-card-desc {
-      font-size: 14px;             /* CORRIGIDO: era 9-10px → 14px */
-      font-weight: 400;
-      color: var(--text-secondary);
-      line-height: 1.55;
-      flex: 1;
-      min-width: 0;
+    .mode-desc {
+      font-size: 14px; color: var(--text-secondary);
+      line-height: 1.6; flex: 1; min-width: 0;
     }
-
-    .mode-card-cta {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 20px;
+    .mode-cta-zone {
+      flex-shrink: 0; padding: 0 20px;
+      display: flex; align-items: center;
     }
-    .mode-card-cta-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;             /* CORRIGIDO: era 9px → 12px */
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      background: none;
-      border: none;
-      cursor: pointer;
-      transition: color 0.2s;
-      white-space: nowrap;
-      padding: 8px 0;
+    .mode-cta-btn {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-muted);
+      background: none; border: none; cursor: pointer;
+      transition: color 0.2s; white-space: nowrap; padding: 8px 0;
     }
-    .mode-card:hover .mode-card-cta-btn {
-      color: var(--mode-color);    /* CORRIGIDO: cor do modo */
-    }
-    .cta-arrow {
-      width: 14px;
-      height: 14px;
+    .mode-card:hover .mode-cta-btn { color: var(--mode-color); }
+    .mode-cta-btn svg {
+      width: 14px; height: 14px;
       transition: transform 0.2s;
     }
-    .mode-card:hover .cta-arrow { transform: translateX(3px); }
+    .mode-card:hover .mode-cta-btn svg { transform: translateX(4px); }
 
-    /* ══════════════════════════════════════════════
-       HOME PAGE — MOBILE
-    ══════════════════════════════════════════════ */
-    .mobile-page {
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .mobile-hero {
-      padding: 24px 20px 8px;
-    }
+    /* ══ HERO — MOBILE ═══════════════════════════════════════════════ */
+    .mobile-page { background: var(--bg-primary); min-height: 850px; transition: background 0.3s; }
+    .mobile-hero { padding: 44px 20px 16px; }
     .mobile-eyebrow {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 14px;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--text-muted);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .mobile-eyebrow::after {
+      content: ''; display: block; width: 24px; height: 1px;
+      background: var(--border-strong);
     }
     .mobile-h1 {
-      font-family: "Playfair Display", serif;
-      font-style: italic;
-      font-weight: 700;
-      font-size: 38px;
-      line-height: 1.08;
-      color: var(--text-primary);
-      margin-bottom: 12px;
+      font-family: "Playfair Display", serif; font-style: italic;
+      font-weight: 700; font-size: 38px; line-height: 1.07;
+      color: var(--text-primary); margin-bottom: 12px;
     }
     .mobile-sub {
-      font-size: 14px;            /* CORRIGIDO: era 15px no original, mantido */
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 20px;
+      font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 20px;
     }
 
-    /* Mobile disclaimer — CORRIGIDO: visível */
+    /* Mobile disclaimer */
     .mobile-disclaimer {
-      background: var(--highlight-dim);
-      border-left: 3px solid rgba(232,194,0,0.4);
-      padding: 10px 14px;
       margin: 0 20px 20px;
+      padding: 10px 14px;
+      border-left: 2px solid var(--highlight-dim);
+      background: var(--highlight-dim);
       border-radius: 0 6px 6px 0;
     }
     .mobile-disclaimer p {
-      font-size: 12px;            /* CORRIGIDO: era 9px escondido no footer */
-      font-weight: 500;
-      color: var(--text-muted);
-      line-height: 1.4;
+      font-size: 12px; font-weight: 500; color: var(--text-muted); line-height: 1.45;
     }
 
-    /* Mobile mode cards */
-    .mobile-modes {
-      padding: 0 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    /* Mobile category label */
+    /* Mobile modes */
+    .mobile-modes { padding: 0 16px 32px; }
     .mobile-cat-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 16px 4px 8px;
+      display: flex; align-items: center; gap: 8px;
+      margin: 20px 4px 10px;
     }
-    .mobile-cat-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    .mobile-cat-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
     .mobile-cat-label {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--text-muted);
+      font-size: 9px; font-weight: 700; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--text-muted);
     }
 
-    .mobile-mode-card {
+    .m-card {
       border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
+      border-radius: 10px; overflow: hidden;
       background: var(--bg-card);
+      margin-bottom: 6px;
+      box-shadow: var(--shadow-card);
+      transition: box-shadow 0.2s;
     }
-    .mobile-mode-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      width: 100%;
-      text-align: left;
+    .m-card-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 16px; height: 60px;
+      background: none; border: none; width: 100%;
+      text-align: left; cursor: pointer;
     }
-    .mobile-mode-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
+    /* Mobile icon: same logic — dark = tinted, light = solid */
+    .m-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
+      background: color-mix(in srgb, var(--mode-color) 12%, transparent);
+      transition: background 0.2s;
     }
-    .mobile-mode-icon svg { width: 18px; height: 18px; }
-    .mobile-mode-title {
-      flex: 1;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.2;
+    .m-icon svg { width: 17px; height: 17px; stroke: var(--mode-color); }
+
+    [data-theme="light"] .m-icon {
+      background: var(--mode-color);
     }
-    .mobile-mode-chevron {
-      width: 18px;
-      height: 18px;
-      color: var(--text-muted);
-      flex-shrink: 0;
-      transition: transform 0.2s;
+    [data-theme="light"] .m-icon svg { stroke: #FFFFFF; }
+
+    .m-title {
+      flex: 1; font-size: 15px; font-weight: 700;
+      color: var(--text-primary); line-height: 1.2;
     }
-    .mobile-mode-card.open .mobile-mode-chevron {
-      transform: rotate(180deg);
+    .m-chevron {
+      width: 18px; height: 18px; color: var(--text-muted); flex-shrink: 0;
+      transition: transform 0.25s, color 0.2s;
     }
-    .mobile-mode-expanded {
-      display: none;
-      padding: 0 16px 16px;
+    .m-card.open .m-chevron { transform: rotate(180deg); }
+
+    .m-expanded {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease;
     }
-    .mobile-mode-card.open .mobile-mode-expanded {
-      display: block;
+    .m-card.open .m-expanded { max-height: 400px; }
+    .m-expanded-inner { padding: 0 16px 16px; }
+    .m-desc {
+      font-size: 14px; color: var(--text-secondary);
+      line-height: 1.55; margin-bottom: 10px;
     }
-    .mobile-mode-desc {
-      font-size: 14px;            /* CORRIGIDO: era 13px, mantido 14px */
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 10px;
+    .m-tagline {
+      font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 14px;
     }
-    .mobile-mode-tagline {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-    }
-    .mobile-mode-price {
+    .m-price {
       font-family: "JetBrains Mono", monospace;
-      font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 14px;
+      font-size: 13px; font-weight: 500; margin-bottom: 14px;
     }
-    .mobile-mode-cta {
-      width: 100%;
-      height: 48px;
-      border-radius: 10px;
-      border: none;
-      font-size: 14px;            /* CORRIGIDO: era 13px, clareza melhor */
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: opacity 0.15s;
-      color: #0A1628;
+    .m-cta-btn {
+      width: 100%; height: 46px; border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: filter 0.15s;
+      background: var(--mode-color); color: #0A1220;
     }
-    .mobile-mode-cta:hover { opacity: 0.88; }
+    .m-cta-btn:hover { filter: brightness(0.9); }
 
-    /* Mobile footer */
-    .mobile-footer {
-      margin-top: auto;
-      padding: 24px 20px 32px;
-      text-align: center;
-    }
-    .mobile-footer-disclaimer {
-      font-size: 11px;            /* CORRIGIDO: era 9px → 11px, ainda compacto mas legível */
-      font-weight: 500;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 10px;
-    }
-    .mobile-footer-link {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
-    /* ══════════════════════════════════════════════
-       FOOTER TÉCNICO (DESKTOP)
-    ══════════════════════════════════════════════ */
+    /* ══ TECH FOOTER ═════════════════════════════════════════════════ */
     .tech-footer {
       border-top: 1px solid var(--border);
-      padding: 32px 48px;
-      max-width: 1100px;
-      margin: 0 auto;
+      padding: 32px 52px 40px;
+      max-width: 1100px; margin: 0 auto;
     }
-    .tech-footer-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      margin-bottom: 24px;
+    .tech-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 24px; margin-bottom: 24px;
     }
-    .tech-footer-item-label {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 6px;
+    .tech-item-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
     }
-    .tech-footer-item-value {
+    .tech-item-val {
       font-family: "JetBrains Mono", monospace;
-      font-size: 12px;            /* CORRIGIDO: era 9px → 12px */
-      color: var(--text-secondary);
-      line-height: 1.4;
+      font-size: 12px; color: var(--text-secondary); line-height: 1.4;
     }
-    .tech-footer-links {
-      display: flex;
-      align-items: center;
-      gap: 20px;
+    .tech-links {
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
     }
-    .tech-footer-link {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.15s;
+    .tech-link {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--text-muted);
+      text-decoration: none; transition: color 0.15s;
     }
-    .tech-footer-link:hover { color: var(--text-secondary); }
+    .tech-link:hover { color: var(--text-secondary); }
+    .tech-note { font-size: 11px; color: var(--text-muted); }
 
-    /* ══════════════════════════════════════════════
-       SVG ICONS INLINE
-    ══════════════════════════════════════════════ */
-    .icon { display: inline-flex; align-items: center; justify-content: center; }
-
-    /* ══════════════════════════════════════════════
-       PAINEL DE TOKENS (comparação before/after)
-    ══════════════════════════════════════════════ */
-    .token-panel {
-      display: none;
-      background: #0D0F14;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 32px 48px;
+    /* Mobile footer */
+    .mobile-footer { padding: 20px 20px 36px; text-align: center; border-top: 1px solid var(--border); margin-top: 8px; }
+    .mobile-footer-note {
+      font-size: 11px; font-weight: 500; color: var(--text-muted);
+      line-height: 1.6; margin-bottom: 8px;
     }
-    body.show-annotations .token-panel { display: block; }
-    .token-panel-title {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: #E8C200;
-      margin-bottom: 20px;
-    }
-    .token-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 12px;
-    }
-    .token-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 6px;
-    }
-    .token-swatch {
-      width: 18px;
-      height: 18px;
-      border-radius: 3px;
-      flex-shrink: 0;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .token-name {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
-      flex: 1;
-    }
-    .token-change {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .token-old {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 10px;
-      color: rgba(255,77,77,0.8);
-      text-decoration: line-through;
-    }
-    .token-arrow { font-size: 10px; color: rgba(255,255,255,0.3); }
-    .token-new {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 10px;
-      color: rgba(0,204,136,0.9);
-      font-weight: 600;
+    .mobile-footer-link {
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      text-decoration: underline; text-underline-offset: 3px;
     }
 
-    /* ══════════════════════════════════════════════
-       UTILITIES
-    ══════════════════════════════════════════════ */
-    .hidden { display: none !important; }
-    .mt-2 { margin-top: 8px; }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
+    /* ══ SCROLLBAR ═══════════════════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    [data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════
-     BARRA DE CONTROLE DO PROTÓTIPO
-══════════════════════════════════════════════ -->
-<div class="proto-controls">
-  <span class="proto-label">Protótipo</span>
-  <span class="proto-badge">ARGUS · Design Review</span>
+<!-- ══ BARRA DE CONTROLE ══════════════════════════════════════════════ -->
+<div class="ctrl-bar">
+  <span class="ctrl-badge">ARGUS · Design v2</span>
+  <div class="ctrl-sep"></div>
 
-  <div class="proto-divider"></div>
-
-  <!-- Viewport -->
   <div class="ctrl-group">
-    <span class="proto-label">Viewport</span>
-    <button class="ctrl-btn" id="btn-desktop" onclick="setViewport('desktop')">Desktop</button>
-    <button class="ctrl-btn active" id="btn-mobile" onclick="setViewport('mobile')">Mobile 390</button>
+    <span class="ctrl-label">Viewport</span>
+    <button class="ctrl-btn on"  id="btn-mobile"   onclick="setView('mobile')">Mobile</button>
+    <button class="ctrl-btn"     id="btn-desktop"  onclick="setView('desktop')">Desktop</button>
   </div>
 
-  <div class="proto-divider"></div>
+  <div class="ctrl-sep"></div>
 
-  <!-- Tema -->
   <div class="ctrl-group">
-    <span class="proto-label">Tema</span>
-    <button class="ctrl-btn active theme-btn" id="btn-dark" onclick="setTheme('dark')">Dark</button>
-    <button class="ctrl-btn theme-btn" id="btn-light" onclick="setTheme('light')">Light</button>
+    <span class="ctrl-label">Tema</span>
+    <button class="ctrl-btn on"  id="btn-dark"     onclick="setTheme('dark')">Dark</button>
+    <button class="ctrl-btn"     id="btn-light"    onclick="setTheme('light')">Light</button>
   </div>
 
-  <div class="proto-divider"></div>
-
-  <!-- Anotações -->
-  <div class="ctrl-group">
-    <button class="ctrl-btn annot-btn" id="btn-annot" onclick="toggleAnnotations()">
-      + Anotações de Design
-    </button>
-  </div>
+  <span class="ctrl-version">Canvas · Forge · Quill</span>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     VIEWPORT WRAPPER
-══════════════════════════════════════════════ -->
-<div class="viewport-wrapper" id="viewport-wrapper"
-     style="background: #08090C; padding-top: 44px;">
+<!-- ══ VIEWPORT ════════════════════════════════════════════════════════ -->
+<div class="vp-wrap" id="vp-wrap">
 
-  <!-- ── MOBILE VIEW ─────────────────────────────── -->
+  <!-- ────────────────── MOBILE ────────────────── -->
   <div id="mobile-view">
-    <div class="mobile-frame">
-      <div class="mobile-notch"></div>
+    <div class="phone-shell">
+      <div class="phone-notch"></div>
+      <div class="phone-scroll">
+        <div class="mobile-page">
 
-      <!-- Navbar mobile -->
-      <nav class="eai-navbar" style="padding: 0 16px;">
-        <a class="nav-logo" href="#">
-          <span class="nav-logo-text">EAI</span>
-          <span class="nav-logo-accent">✓?</span>
-        </a>
-        <div class="nav-right">
-          <!-- CORRIGIDO: label visível no mobile -->
-          <button class="nav-btn annot-ring" title="Meus Casos">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/>
-              <rect x="3" y="8" width="18" height="13" rx="1"/>
-              <path d="M8 12h8M8 16h5"/>
-            </svg>
-            <span class="nav-btn-label">Casos</span>
-            <div class="annotation" style="right: -120px; top: 50%; transform: translateY(-50%);">
-              P16 — label agora visível
-            </div>
-          </button>
-          <button class="nav-theme-btn" onclick="setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark')">
-            <svg id="mobile-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-              <circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
-              <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
-              <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/>
-              <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/>
-            </svg>
-          </button>
-          <button class="nav-entrar">Entrar</button>
-        </div>
-      </nav>
-
-      <!-- Conteúdo mobile -->
-      <div class="mobile-page" style="overflow-y: auto; max-height: calc(844px - 56px - 34px);">
-
-        <div class="mobile-hero">
-          <p class="mobile-eyebrow">Simulador Jurídico</p>
-          <h1 class="mobile-h1 annot-ring">
-            A incerteza jurídica tem uma saída.
-            <div class="annotation" style="right: -4px; top: -28px; transform: none;">
-              P1 — 38px fonte
-            </div>
-          </h1>
-          <p class="mobile-sub">Antes do tribunal, o teste.</p>
-        </div>
-
-        <!-- Disclaimer mobile — CORRIGIDO: visível e legível -->
-        <div class="mobile-disclaimer annot-ring">
-          <p>Não é consulta jurídica. Não garante vitória. Simulação analítica baseada em modelos de linguagem.</p>
-          <div class="annotation" style="right: -4px; top: -28px; transform: none;">
-            P4 — disclaimer 12px, visível no mobile
-          </div>
-        </div>
-
-        <!-- Modos mobile com taxonomia -->
-        <div class="mobile-modes">
-
-          <!-- Categoria 1 -->
-          <div class="mobile-cat-header">
-            <div class="mobile-cat-dot" style="background: #00FFEF;"></div>
-            <span class="mobile-cat-label">Um lado do processo</span>
-          </div>
-
-          <!-- Modo 1 -->
-          <div class="mobile-mode-card" id="m-card-1">
-            <button class="mobile-mode-header" onclick="toggleMobileCard(1)">
-              <div class="mobile-mode-icon" style="background: rgba(0,255,239,0.10);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#00FFEF" stroke-width="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          <!-- Navbar -->
+          <nav class="navbar">
+            <a class="nav-logo" href="#">
+              <span class="nav-logo-main">EAI</span>
+              <span class="nav-logo-tick">✓?</span>
+            </a>
+            <div class="nav-right">
+              <button class="nav-icon-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/>
+                  <rect x="3" y="8" width="18" height="13" rx="1"/>
+                  <path d="M8 12h8M8 16h5"/>
                 </svg>
-              </div>
-              <span class="mobile-mode-title">Tese Estratégica</span>
-              <svg class="mobile-mode-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </button>
-            <div class="mobile-mode-expanded">
-              <p class="mobile-mode-desc">Descreva sua situação com suas próprias palavras. O sistema avalia a força dos seus argumentos, identifica o que o outro lado pode alegar contra você e calcula sua chance real de êxito.</p>
-              <p class="mobile-mode-tagline">Ideal para: Você traz o fato. Descubra se tem razão.</p>
-              <p class="mobile-mode-price" style="color: #00FFEF;">R$ 9,90</p>
-              <button class="mobile-mode-cta" style="background: #00FFEF;">
-                Validar causa →
+                <span>Casos</span>
               </button>
-            </div>
-          </div>
-
-          <!-- Modo 2 -->
-          <div class="mobile-mode-card" id="m-card-2">
-            <button class="mobile-mode-header" onclick="toggleMobileCard(2)">
-              <div class="mobile-mode-icon" style="background: rgba(255,107,107,0.10);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <button class="nav-theme-btn" onclick="setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark')">
+                <svg id="m-theme-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                  <circle cx="12" cy="12" r="5"/>
+                  <line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
+                  <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
+                  <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/>
+                  <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/>
                 </svg>
-              </div>
-              <span class="mobile-mode-title">Defesa sob Ataque</span>
-              <svg class="mobile-mode-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </button>
-            <div class="mobile-mode-expanded">
-              <p class="mobile-mode-desc">Descreva a acusação que você recebeu e sua versão dos fatos. O sistema constrói sua defesa técnica, avalia a força dos seus argumentos em ciclos e identifica suas vulnerabilidades antes que o outro lado as explore.</p>
-              <p class="mobile-mode-tagline">Ideal para: Você está sendo acusado. A IA constrói sua defesa.</p>
-              <p class="mobile-mode-price" style="color: #FF6B6B;">R$ 9,90</p>
-              <button class="mobile-mode-cta" style="background: #FF6B6B;">
-                Validar defesa →
               </button>
+              <button class="nav-cta">Entrar</button>
             </div>
+          </nav>
+
+          <!-- Hero -->
+          <div class="mobile-hero">
+            <p class="mobile-eyebrow">Simulador Jurídico</p>
+            <h1 class="mobile-h1">A incerteza jurídica tem uma saída.</h1>
+            <p class="mobile-sub">Antes do tribunal, o teste.</p>
           </div>
 
-          <!-- Categoria 2 -->
-          <div class="mobile-cat-header">
-            <div class="mobile-cat-dot" style="background: #A882FF;"></div>
-            <span class="mobile-cat-label">Dois lados do processo</span>
+          <!-- Disclaimer -->
+          <div class="mobile-disclaimer">
+            <p>Não é consulta jurídica. Não garante vitória. Ferramenta de apoio analítico baseada em IA.</p>
           </div>
 
-          <!-- Modo 3 -->
-          <div class="mobile-mode-card" id="m-card-3">
-            <button class="mobile-mode-header" onclick="toggleMobileCard(3)">
-              <div class="mobile-mode-icon" style="background: rgba(168,130,255,0.10);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#A882FF" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
-                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+          <!-- Modos -->
+          <div class="mobile-modes">
+
+            <!-- Cat 1 -->
+            <div class="mobile-cat-header">
+              <div class="mobile-cat-dot" style="background:#00FFEF;"></div>
+              <span class="mobile-cat-label">Um lado do processo</span>
+            </div>
+
+            <!-- Modo 1 -->
+            <div class="m-card" id="mc1" style="--mode-color:#00FFEF;">
+              <button class="m-card-header" onclick="toggleCard(1)">
+                <div class="m-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                  </svg>
+                </div>
+                <span class="m-title">Tese Estratégica</span>
+                <svg class="m-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"/>
                 </svg>
-              </div>
-              <span class="mobile-mode-title">Mesa Dupla — Juiz</span>
-              <svg class="mobile-mode-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </button>
-            <div class="mobile-mode-expanded">
-              <p class="mobile-mode-desc">Você traz a acusação e a defesa prontas. O sistema aciona o magistrado mais especializado para emitir uma sentença direta — sem advogado intermediário. O caminho mais rápido para um veredito.</p>
-              <p class="mobile-mode-tagline">Ideal para: Você já tem os dois lados. O juiz decide.</p>
-              <p class="mobile-mode-price" style="color: #A882FF;">R$ 5,90</p>
-              <button class="mobile-mode-cta" style="background: #A882FF;">
-                Consultar magistrado →
               </button>
+              <div class="m-expanded">
+                <div class="m-expanded-inner">
+                  <p class="m-desc">Descreva sua situação com suas próprias palavras. O sistema avalia a força dos seus argumentos, identifica o que o outro lado pode alegar e calcula sua chance real de êxito.</p>
+                  <p class="m-tagline">Você traz o fato. Descubra se tem razão.</p>
+                  <p class="m-price" style="color:#00FFEF;">R$ 9,90</p>
+                  <button class="m-cta-btn">Validar causa →</button>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <!-- Modo 4 -->
-          <div class="mobile-mode-card" id="m-card-4">
-            <button class="mobile-mode-header" onclick="toggleMobileCard(4)">
-              <div class="mobile-mode-icon" style="background: rgba(255,184,0,0.10);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#FFB800" stroke-width="2">
-                  <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
-                  <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
-                  <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
-                  <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+            <!-- Modo 2 -->
+            <div class="m-card" id="mc2" style="--mode-color:#FF6B6B;">
+              <button class="m-card-header" onclick="toggleCard(2)">
+                <div class="m-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                </div>
+                <span class="m-title">Defesa sob Ataque</span>
+                <svg class="m-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"/>
                 </svg>
-              </div>
-              <span class="mobile-mode-title">Mesa Dupla — Assistida</span>
-              <svg class="mobile-mode-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </button>
-            <div class="mobile-mode-expanded">
-              <p class="mobile-mode-desc">Você já sabe qual argumento quer defender. O sistema melhora ativamente sua tese antes do julgamento — você não entra no debate sozinho. Ideal para quem veio do Modo 1 e quer simular o confronto real.</p>
-              <p class="mobile-mode-tagline">Ideal para: Você escolhe seu lado. A IA reforça sua tese.</p>
-              <p class="mobile-mode-price" style="color: #FFB800;">R$ 9,90</p>
-              <button class="mobile-mode-cta" style="background: #FFB800;">
-                Iniciar simulação →
               </button>
+              <div class="m-expanded">
+                <div class="m-expanded-inner">
+                  <p class="m-desc">Descreva a acusação que você recebeu e sua versão dos fatos. O sistema constrói sua defesa técnica, avalia seus argumentos em ciclos e identifica vulnerabilidades antes que o outro lado as explore.</p>
+                  <p class="m-tagline">Você está sendo acusado. A IA constrói sua defesa.</p>
+                  <p class="m-price" style="color:#FF6B6B;">R$ 9,90</p>
+                  <button class="m-cta-btn" style="background:#FF6B6B;">Validar defesa →</button>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <!-- Categoria 3 -->
-          <div class="mobile-cat-header">
-            <div class="mobile-cat-dot" style="background: #00CC88;"></div>
-            <span class="mobile-cat-label">Pós-julgamento</span>
-          </div>
+            <!-- Cat 2 -->
+            <div class="mobile-cat-header">
+              <div class="mobile-cat-dot" style="background:#A882FF;"></div>
+              <span class="mobile-cat-label">Dois lados do processo</span>
+            </div>
 
-          <!-- Modo 5 -->
-          <div class="mobile-mode-card" id="m-card-5">
-            <button class="mobile-mode-header" onclick="toggleMobileCard(5)">
-              <div class="mobile-mode-icon" style="background: rgba(0,204,136,0.10);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#00CC88" stroke-width="2">
-                  <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+            <!-- Modo 3 -->
+            <div class="m-card" id="mc3" style="--mode-color:#A882FF;">
+              <button class="m-card-header" onclick="toggleCard(3)">
+                <div class="m-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                </div>
+                <span class="m-title">Mesa Dupla — Juiz</span>
+                <svg class="m-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"/>
                 </svg>
-              </div>
-              <span class="mobile-mode-title">Revisão Pós-Conflito</span>
-              <svg class="mobile-mode-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </button>
-            <div class="mobile-mode-expanded">
-              <p class="mobile-mode-desc">Você já tem uma sentença ou uma proposta de acordo em mãos. O sistema analisa se vale recorrer da decisão ou se o acordo oferecido é justo — e te diz qual caminho tem menos risco.</p>
-              <p class="mobile-mode-tagline">Ideal para: Já existe uma decisão. Vale a pena ir adiante?</p>
-              <p class="mobile-mode-price" style="color: #00CC88;">R$ 5,90</p>
-              <button class="mobile-mode-cta" style="background: #00CC88;">
-                Analisar agora →
               </button>
+              <div class="m-expanded">
+                <div class="m-expanded-inner">
+                  <p class="m-desc">Você traz a acusação e a defesa prontas. O sistema aciona o magistrado mais especializado para emitir uma sentença direta. O caminho mais rápido para um veredito.</p>
+                  <p class="m-tagline">Você já tem os dois lados. O juiz decide.</p>
+                  <p class="m-price" style="color:#A882FF;">R$ 5,90</p>
+                  <button class="m-cta-btn" style="background:#A882FF;">Consultar magistrado →</button>
+                </div>
+              </div>
             </div>
+
+            <!-- Modo 4 -->
+            <div class="m-card" id="mc4" style="--mode-color:#FFB800;">
+              <button class="m-card-header" onclick="toggleCard(4)">
+                <div class="m-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                  </svg>
+                </div>
+                <span class="m-title">Mesa Dupla — Assistida</span>
+                <svg class="m-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </button>
+              <div class="m-expanded">
+                <div class="m-expanded-inner">
+                  <p class="m-desc">Você já sabe qual argumento quer defender. O sistema melhora ativamente sua tese antes do julgamento — você não entra no debate sozinho.</p>
+                  <p class="m-tagline">Você escolhe seu lado. A IA reforça sua tese.</p>
+                  <p class="m-price" style="color:#FFB800;">R$ 9,90</p>
+                  <button class="m-cta-btn" style="background:#FFB800; color:#0A1220;">Iniciar simulação →</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cat 3 -->
+            <div class="mobile-cat-header">
+              <div class="mobile-cat-dot" style="background:#00CC88;"></div>
+              <span class="mobile-cat-label">Pós-julgamento</span>
+            </div>
+
+            <!-- Modo 5 -->
+            <div class="m-card" id="mc5" style="--mode-color:#00CC88;">
+              <button class="m-card-header" onclick="toggleCard(5)">
+                <div class="m-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                    <polyline points="17 6 23 6 23 12"/>
+                  </svg>
+                </div>
+                <span class="m-title">Revisão Pós-Conflito</span>
+                <svg class="m-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </button>
+              <div class="m-expanded">
+                <div class="m-expanded-inner">
+                  <p class="m-desc">Você já tem uma sentença ou proposta de acordo. O sistema analisa se vale recorrer ou se o acordo é justo — e te diz qual caminho tem menos risco.</p>
+                  <p class="m-tagline">Já existe uma decisão. Vale a pena ir adiante?</p>
+                  <p class="m-price" style="color:#00CC88;">R$ 5,90</p>
+                  <button class="m-cta-btn" style="background:#00CC88;">Analisar agora →</button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /mobile-modes -->
+
+          <!-- Mobile footer -->
+          <div class="mobile-footer">
+            <p class="mobile-footer-note">
+              Não é consulta jurídica · Não garante vitória<br>
+              Simulação gratuita · Laudo completo R$ 9,90
+            </p>
+            <a href="#" class="mobile-footer-link">Termos de Uso</a>
           </div>
 
-        </div><!-- /mobile-modes -->
-
-        <!-- Footer mobile -->
-        <div class="mobile-footer annot-ring">
-          <p class="mobile-footer-disclaimer">
-            Não é consulta jurídica · Não garante vitória<br>
-            Simulação gratuita · Laudo completo R$9,90
-          </p>
-          <a href="#" class="mobile-footer-link">Termos de Uso</a>
-          <div class="annotation" style="right: 8px; top: -28px; transform: none;">
-            P1/P4 — 11px, legível
-          </div>
-        </div>
-
-      </div><!-- /mobile-page -->
-    </div><!-- /mobile-frame -->
+        </div><!-- /mobile-page -->
+      </div><!-- /phone-scroll -->
+    </div><!-- /phone-shell -->
   </div><!-- /mobile-view -->
 
-  <!-- ── DESKTOP VIEW ─────────────────────────────── -->
-  <div id="desktop-view" style="width: 100%; display: none;">
-    <div class="desktop-frame">
+  <!-- ────────────────── DESKTOP ────────────────── -->
+  <div id="desktop-view">
+    <div class="page">
 
-      <!-- Navbar desktop -->
-      <nav class="eai-navbar" style="padding: 0 32px; max-width: none;">
+      <!-- Navbar -->
+      <nav class="navbar" style="padding: 0 32px; max-width: none;">
         <a class="nav-logo" href="#">
-          <span class="nav-logo-text">EAI</span>
-          <span class="nav-logo-accent">✓?</span>
+          <span class="nav-logo-main">EAI</span>
+          <span class="nav-logo-tick">✓?</span>
         </a>
         <div class="nav-right">
-          <button class="nav-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button class="nav-icon-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
               <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/>
               <rect x="3" y="8" width="18" height="13" rx="1"/>
               <path d="M8 12h8M8 16h5"/>
             </svg>
-            <span class="nav-btn-label">Meus Casos</span>
+            <span>Meus Casos</span>
           </button>
-          <button class="nav-theme-btn" onclick="setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark')">
-            <svg id="desktop-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <button class="nav-theme-btn" onclick="setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark')">
+            <svg id="d-theme-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
               <circle cx="12" cy="12" r="5"/>
               <line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
               <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
@@ -1201,393 +795,271 @@
               <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/>
             </svg>
           </button>
-          <button class="nav-entrar">Entrar</button>
+          <button class="nav-cta">Entrar</button>
         </div>
       </nav>
 
-      <!-- Conteúdo desktop -->
-      <div class="page-container">
+      <!-- Hero -->
+      <section class="hero-desktop">
+        <div class="hero-deco">⚖</div>
+        <p class="hero-eyebrow">Simulador Jurídico · IA Especializada</p>
+        <h1 class="hero-h1">A incerteza jurídica agora tem<br>uma arena de testes.</h1>
+        <p class="hero-sub">Antes do tribunal, o teste. Cinco modos de simulação com IA — do argumento à sentença.</p>
+      </section>
 
-        <!-- Hero desktop -->
-        <section class="hero">
-          <p class="hero-eyebrow">Simulador Jurídico · IA Especializada</p>
-          <!-- P24: h1 semântico separado do pitch visual -->
-          <h1 class="hero-h1 annot-ring" style="position:relative;">
-            A incerteza jurídica agora tem<br>uma arena de testes.
-            <div class="annotation" style="right: -180px; top: 0;">
-              P1 — clamp(36px→68px)
-            </div>
-          </h1>
-          <!-- P1: subtítulo legível, 16px, não uppercase -->
-          <p class="hero-sub annot-ring" style="position:relative;">
-            Antes do tribunal, o teste. Cinco modos de simulação jurídica com IA especializada — do argumento à sentença.
-            <div class="annotation" style="right: -180px; top: 0;">
-              P1/P11 — 16px, sentence case
-            </div>
-          </p>
-        </section>
-
-        <!-- Disclaimer desktop — visível e legível -->
-        <div class="disclaimer annot-ring" style="position:relative;">
-          <div class="disclaimer-inner">
-            <p class="disclaimer-text annot-ring">
-              O EAI? é uma ferramenta de apoio analítico baseada em modelos de linguagem avançados. Não substitui o aconselhamento jurídico profissional.
-              <div class="annotation" style="right: -180px; top: 0;">
-                P4 — 12px + sentence case
-              </div>
-            </p>
-          </div>
-        </div>
-
-        <!-- Modos desktop com taxonomia -->
-        <section class="modes-section">
-
-          <!-- CATEGORIA 1: Um lado -->
-          <div class="mode-category annot-ring" style="position: relative;">
-            <div class="mode-category-header">
-              <div class="mode-category-dot" style="background: #00FFEF;"></div>
-              <span class="mode-category-label">Um lado do processo</span>
-              <div class="mode-category-line"></div>
-            </div>
-            <div class="annotation" style="right: 0; top: -4px;">P15 — taxonomia visual</div>
-
-            <!-- Modo 1 -->
-            <div class="mode-card annot-ring" style="--mode-color: #00FFEF; position: relative;"
-                 onmouseenter="this.querySelector('.mode-card-icon').style.background='rgba(0,255,239,0.15)'; this.querySelector('.mode-card-icon svg').style.stroke='#00FFEF'"
-                 onmouseleave="this.querySelector('.mode-card-icon').style.background='rgba(0,255,239,0.08)'; this.querySelector('.mode-card-icon svg').style.stroke='rgba(0,255,239,0.5)'">
-              <div class="mode-card-icon-wrap">
-                <div class="mode-card-icon" style="background: rgba(0,255,239,0.08);">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,255,239,0.5)" stroke-width="2" style="transition: stroke 0.2s;">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-                  </svg>
-                </div>
-              </div>
-              <div class="mode-card-body">
-                <div class="mode-card-title-block">
-                  <p class="mode-card-number">Modo 01</p>
-                  <h3 class="mode-card-title">Tese Estratégica</h3>
-                  <span class="mode-card-price">R$ 9,90</span>
-                </div>
-                <div class="mode-card-divider"></div>
-                <p class="mode-card-desc">Descreva sua situação com suas próprias palavras. O sistema avalia a força dos seus argumentos, identifica o que o outro lado pode alegar contra você e calcula sua chance real de êxito.</p>
-              </div>
-              <div class="mode-card-cta">
-                <button class="mode-card-cta-btn">
-                  Validar causa
-                  <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                  </svg>
-                </button>
-              </div>
-              <div class="annotation" style="right: -180px; top: 20px;">P9/P11 — cor do modo no hover</div>
-            </div>
-
-            <!-- Modo 2 -->
-            <div class="mode-card" style="--mode-color: #FF6B6B;"
-                 onmouseenter="this.querySelector('.mode-card-icon').style.background='rgba(255,107,107,0.15)'; this.querySelector('.mode-card-icon svg').style.stroke='#FF6B6B'"
-                 onmouseleave="this.querySelector('.mode-card-icon').style.background='rgba(255,107,107,0.08)'; this.querySelector('.mode-card-icon svg').style.stroke='rgba(255,107,107,0.5)'">
-              <div class="mode-card-icon-wrap">
-                <div class="mode-card-icon" style="background: rgba(255,107,107,0.08);">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,107,107,0.5)" stroke-width="2" style="transition: stroke 0.2s;">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  </svg>
-                </div>
-              </div>
-              <div class="mode-card-body">
-                <div class="mode-card-title-block">
-                  <p class="mode-card-number">Modo 02</p>
-                  <h3 class="mode-card-title">Defesa sob Ataque</h3>
-                  <span class="mode-card-price" style="color: #FF6B6B;">R$ 9,90</span>
-                </div>
-                <div class="mode-card-divider"></div>
-                <p class="mode-card-desc">Descreva a acusação que você recebeu e sua versão dos fatos. O sistema constrói sua defesa técnica, avalia a força dos seus argumentos em ciclos e identifica suas vulnerabilidades antes que o outro lado as explore.</p>
-              </div>
-              <div class="mode-card-cta">
-                <button class="mode-card-cta-btn">
-                  Validar defesa
-                  <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- CATEGORIA 2: Bilateral -->
-          <div class="mode-category">
-            <div class="mode-category-header">
-              <div class="mode-category-dot" style="background: #A882FF;"></div>
-              <span class="mode-category-label">Dois lados do processo</span>
-              <div class="mode-category-line"></div>
-            </div>
-
-            <!-- Modo 3 -->
-            <div class="mode-card" style="--mode-color: #A882FF;"
-                 onmouseenter="this.querySelector('.mode-card-icon').style.background='rgba(168,130,255,0.15)'; this.querySelector('.mode-card-icon svg').style.stroke='#A882FF'"
-                 onmouseleave="this.querySelector('.mode-card-icon').style.background='rgba(168,130,255,0.08)'; this.querySelector('.mode-card-icon svg').style.stroke='rgba(168,130,255,0.5)'">
-              <div class="mode-card-icon-wrap">
-                <div class="mode-card-icon" style="background: rgba(168,130,255,0.08);">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="rgba(168,130,255,0.5)" stroke-width="2" style="transition: stroke 0.2s;">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
-                    <line x1="12" y1="16" x2="12.01" y2="16"/>
-                  </svg>
-                </div>
-              </div>
-              <div class="mode-card-body">
-                <div class="mode-card-title-block">
-                  <p class="mode-card-number">Modo 03</p>
-                  <h3 class="mode-card-title">Mesa Dupla — Juiz</h3>
-                  <span class="mode-card-price" style="color: #A882FF;">R$ 5,90</span>
-                </div>
-                <div class="mode-card-divider"></div>
-                <p class="mode-card-desc">Você traz a acusação e a defesa prontas. O sistema aciona o magistrado mais especializado para emitir uma sentença direta — sem advogado intermediário. O caminho mais rápido para um veredito.</p>
-              </div>
-              <div class="mode-card-cta">
-                <button class="mode-card-cta-btn">
-                  Consultar magistrado
-                  <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <!-- Modo 4 -->
-            <div class="mode-card" style="--mode-color: #FFB800;"
-                 onmouseenter="this.querySelector('.mode-card-icon').style.background='rgba(255,184,0,0.15)'; this.querySelector('.mode-card-icon svg').style.stroke='#FFB800'"
-                 onmouseleave="this.querySelector('.mode-card-icon').style.background='rgba(255,184,0,0.08)'; this.querySelector('.mode-card-icon svg').style.stroke='rgba(255,184,0,0.5)'">
-              <div class="mode-card-icon-wrap">
-                <div class="mode-card-icon" style="background: rgba(255,184,0,0.08);">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,184,0,0.5)" stroke-width="2" style="transition: stroke 0.2s;">
-                    <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
-                    <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
-                    <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
-                    <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
-                  </svg>
-                </div>
-              </div>
-              <div class="mode-card-body">
-                <div class="mode-card-title-block">
-                  <p class="mode-card-number">Modo 04</p>
-                  <h3 class="mode-card-title">Mesa Dupla — Assistida</h3>
-                  <span class="mode-card-price" style="color: #FFB800;">R$ 9,90</span>
-                </div>
-                <div class="mode-card-divider"></div>
-                <p class="mode-card-desc">Você já sabe qual argumento quer defender. O sistema melhora ativamente sua tese antes do julgamento — você não entra no debate sozinho. Ideal para quem veio do Modo 1 e quer simular o confronto real.</p>
-              </div>
-              <div class="mode-card-cta">
-                <button class="mode-card-cta-btn">
-                  Iniciar simulação
-                  <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- CATEGORIA 3: Pós-julgamento -->
-          <div class="mode-category">
-            <div class="mode-category-header">
-              <div class="mode-category-dot" style="background: #00CC88;"></div>
-              <span class="mode-category-label">Pós-julgamento</span>
-              <div class="mode-category-line"></div>
-            </div>
-
-            <!-- Modo 5 -->
-            <div class="mode-card" style="--mode-color: #00CC88;"
-                 onmouseenter="this.querySelector('.mode-card-icon').style.background='rgba(0,204,136,0.15)'; this.querySelector('.mode-card-icon svg').style.stroke='#00CC88'"
-                 onmouseleave="this.querySelector('.mode-card-icon').style.background='rgba(0,204,136,0.08)'; this.querySelector('.mode-card-icon svg').style.stroke='rgba(0,204,136,0.5)'">
-              <div class="mode-card-icon-wrap">
-                <div class="mode-card-icon" style="background: rgba(0,204,136,0.08);">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,204,136,0.5)" stroke-width="2" style="transition: stroke 0.2s;">
-                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                    <polyline points="17 6 23 6 23 12"/>
-                  </svg>
-                </div>
-              </div>
-              <div class="mode-card-body">
-                <div class="mode-card-title-block">
-                  <p class="mode-card-number">Modo 05</p>
-                  <h3 class="mode-card-title">Revisão Pós-Conflito</h3>
-                  <span class="mode-card-price" style="color: #00CC88;">R$ 5,90</span>
-                </div>
-                <div class="mode-card-divider"></div>
-                <p class="mode-card-desc">Você já tem uma sentença ou uma proposta de acordo em mãos. O sistema analisa se vale recorrer da decisão ou se o acordo oferecido é justo — e te diz qual caminho tem menos risco.</p>
-              </div>
-              <div class="mode-card-cta">
-                <button class="mode-card-cta-btn">
-                  Analisar agora
-                  <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-        </section><!-- /modes-section -->
-
-        <!-- Footer técnico desktop -->
-        <div class="tech-footer">
-          <div class="tech-footer-grid annot-ring" style="position: relative;">
-            <div class="annotation" style="right: 0; top: -28px;">P1 — 12px, legível</div>
-            <div>
-              <p class="tech-footer-item-label">Base de dados</p>
-              <p class="tech-footer-item-value">1.9M+ Precedentes</p>
-            </div>
-            <div>
-              <p class="tech-footer-item-label">Processamento</p>
-              <p class="tech-footer-item-value">Análise Semântica Multimodal</p>
-            </div>
-            <div>
-              <p class="tech-footer-item-label">Privacidade</p>
-              <p class="tech-footer-item-value">Criptografia RSA-4096</p>
-            </div>
-            <div>
-              <p class="tech-footer-item-label">Versão</p>
-              <p class="tech-footer-item-value">v2.4.0 · eaijuridico.com.br</p>
-            </div>
-          </div>
-          <div class="tech-footer-links">
-            <a href="#" class="tech-footer-link">Termos de Uso</a>
-            <a href="#" class="tech-footer-link">Contato</a>
-            <span style="font-size:11px; color: var(--text-muted);">Não é consulta jurídica · Não garante vitória</span>
-          </div>
-        </div>
-
-      </div><!-- /page-container -->
-    </div><!-- /desktop-frame -->
-
-    <!-- Painel de tokens (anotações) -->
-    <div class="token-panel">
-      <p class="token-panel-title">Tokens Revisados — CANVAS + FORGE</p>
-      <div class="token-grid">
-        <div class="token-row">
-          <div class="token-swatch" style="background: #8A95A5;"></div>
-          <span class="token-name">--text-muted</span>
-          <div class="token-change">
-            <span class="token-old">#4A5260</span>
-            <span class="token-arrow">→</span>
-            <span class="token-new">#8A95A5</span>
-          </div>
-        </div>
-        <div class="token-row">
-          <div class="token-swatch" style="background: #EAE8E3;"></div>
-          <span class="token-name">--bg-secondary (light)</span>
-          <div class="token-change">
-            <span class="token-old">ausente</span>
-            <span class="token-arrow">→</span>
-            <span class="token-new">#EAE8E3</span>
-          </div>
-        </div>
-        <div class="token-row">
-          <div class="token-swatch" style="background: #00A870;"></div>
-          <span class="token-name">--success (light)</span>
-          <div class="token-change">
-            <span class="token-old">ausente</span>
-            <span class="token-arrow">→</span>
-            <span class="token-new">#00A870</span>
-          </div>
-        </div>
-        <div class="token-row">
-          <div class="token-swatch" style="background: #D93025;"></div>
-          <span class="token-name">--danger (light)</span>
-          <div class="token-change">
-            <span class="token-old">ausente</span>
-            <span class="token-arrow">→</span>
-            <span class="token-new">#D93025</span>
-          </div>
-        </div>
-        <div class="token-row">
-          <div class="token-swatch" style="background: #E8C200;"></div>
-          <span class="token-name">--highlight</span>
-          <div class="token-change">
-            <span class="token-old">amber-400 hardcoded</span>
-            <span class="token-arrow">→</span>
-            <span class="token-new">token nomeado</span>
-          </div>
-        </div>
-        <div class="token-row">
-          <div class="token-swatch" style="background: #9AAABB;"></div>
-          <span class="token-name">--text-secondary</span>
-          <div class="token-change">
-            <span class="token-old">#7A8494</span>
-            <span class="token-arrow">→</span>
-            <span class="token-new">#9AAABB</span>
-          </div>
+      <!-- Disclaimer -->
+      <div class="disclaimer">
+        <div class="disclaimer-inner">
+          <p class="disclaimer-text">O EAI? é uma ferramenta de apoio analítico baseada em modelos de linguagem avançados. Não substitui o aconselhamento jurídico profissional.</p>
         </div>
       </div>
-    </div>
 
+      <!-- Modos desktop -->
+      <section class="modes-wrap">
+
+        <!-- Cat 1 -->
+        <div class="mode-cat">
+          <div class="cat-header">
+            <div class="cat-dot" style="background:#00FFEF;"></div>
+            <span class="cat-label">Um lado do processo</span>
+            <div class="cat-line"></div>
+          </div>
+
+          <!-- Modo 1 -->
+          <div class="mode-card" style="--mode-color:#00FFEF;">
+            <div class="mode-stripe"></div>
+            <div class="mode-icon-zone">
+              <div class="mode-icon-bubble">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+              </div>
+            </div>
+            <div class="mode-body">
+              <div class="mode-title-block">
+                <p class="mode-num">Modo 01</p>
+                <h3 class="mode-title">Tese Estratégica</h3>
+                <span class="mode-price">R$ 9,90</span>
+              </div>
+              <div class="mode-vline"></div>
+              <p class="mode-desc">Descreva sua situação com suas próprias palavras. O sistema avalia a força dos seus argumentos, identifica o que o outro lado pode alegar contra você e calcula sua chance real de êxito.</p>
+            </div>
+            <div class="mode-cta-zone">
+              <button class="mode-cta-btn">
+                Validar causa
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modo 2 -->
+          <div class="mode-card" style="--mode-color:#FF6B6B;">
+            <div class="mode-stripe"></div>
+            <div class="mode-icon-zone">
+              <div class="mode-icon-bubble">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="mode-body">
+              <div class="mode-title-block">
+                <p class="mode-num">Modo 02</p>
+                <h3 class="mode-title">Defesa sob Ataque</h3>
+                <span class="mode-price" style="color:#FF6B6B;">R$ 9,90</span>
+              </div>
+              <div class="mode-vline"></div>
+              <p class="mode-desc">Descreva a acusação que você recebeu e sua versão dos fatos. O sistema constrói sua defesa técnica, avalia a força dos seus argumentos em ciclos e identifica vulnerabilidades antes que o outro lado as explore.</p>
+            </div>
+            <div class="mode-cta-zone">
+              <button class="mode-cta-btn">
+                Validar defesa
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cat 2 -->
+        <div class="mode-cat">
+          <div class="cat-header">
+            <div class="cat-dot" style="background:#A882FF;"></div>
+            <span class="cat-label">Dois lados do processo</span>
+            <div class="cat-line"></div>
+          </div>
+
+          <!-- Modo 3 -->
+          <div class="mode-card" style="--mode-color:#A882FF;">
+            <div class="mode-stripe"></div>
+            <div class="mode-icon-zone">
+              <div class="mode-icon-bubble">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </div>
+            </div>
+            <div class="mode-body">
+              <div class="mode-title-block">
+                <p class="mode-num">Modo 03</p>
+                <h3 class="mode-title">Mesa Dupla — Juiz</h3>
+                <span class="mode-price" style="color:#A882FF;">R$ 5,90</span>
+              </div>
+              <div class="mode-vline"></div>
+              <p class="mode-desc">Você traz a acusação e a defesa prontas. O sistema aciona o magistrado mais especializado para emitir uma sentença direta — sem advogado intermediário. O caminho mais rápido para um veredito.</p>
+            </div>
+            <div class="mode-cta-zone">
+              <button class="mode-cta-btn">
+                Consultar magistrado
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modo 4 -->
+          <div class="mode-card" style="--mode-color:#FFB800;">
+            <div class="mode-stripe"></div>
+            <div class="mode-icon-zone">
+              <div class="mode-icon-bubble">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="mode-body">
+              <div class="mode-title-block">
+                <p class="mode-num">Modo 04</p>
+                <h3 class="mode-title">Mesa Dupla — Assistida</h3>
+                <span class="mode-price" style="color:#FFB800;">R$ 9,90</span>
+              </div>
+              <div class="mode-vline"></div>
+              <p class="mode-desc">Você já sabe qual argumento quer defender. O sistema melhora ativamente sua tese antes do julgamento — você não entra no debate sozinho. Ideal para quem veio do Modo 1 e quer simular o confronto real.</p>
+            </div>
+            <div class="mode-cta-zone">
+              <button class="mode-cta-btn">
+                Iniciar simulação
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cat 3 -->
+        <div class="mode-cat">
+          <div class="cat-header">
+            <div class="cat-dot" style="background:#00CC88;"></div>
+            <span class="cat-label">Pós-julgamento</span>
+            <div class="cat-line"></div>
+          </div>
+
+          <!-- Modo 5 -->
+          <div class="mode-card" style="--mode-color:#00CC88;">
+            <div class="mode-stripe"></div>
+            <div class="mode-icon-zone">
+              <div class="mode-icon-bubble">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                  <polyline points="17 6 23 6 23 12"/>
+                </svg>
+              </div>
+            </div>
+            <div class="mode-body">
+              <div class="mode-title-block">
+                <p class="mode-num">Modo 05</p>
+                <h3 class="mode-title">Revisão Pós-Conflito</h3>
+                <span class="mode-price" style="color:#00CC88;">R$ 5,90</span>
+              </div>
+              <div class="mode-vline"></div>
+              <p class="mode-desc">Você já tem uma sentença ou uma proposta de acordo em mãos. O sistema analisa se vale recorrer da decisão ou se o acordo oferecido é justo — e te diz qual caminho tem menos risco.</p>
+            </div>
+            <div class="mode-cta-zone">
+              <button class="mode-cta-btn">
+                Analisar agora
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section><!-- /modes-wrap -->
+
+      <!-- Footer técnico -->
+      <div class="tech-footer">
+        <div class="tech-grid">
+          <div>
+            <p class="tech-item-label">Base de dados</p>
+            <p class="tech-item-val">1.9M+ Precedentes</p>
+          </div>
+          <div>
+            <p class="tech-item-label">Processamento</p>
+            <p class="tech-item-val">Análise Semântica Multimodal</p>
+          </div>
+          <div>
+            <p class="tech-item-label">Privacidade</p>
+            <p class="tech-item-val">Criptografia RSA-4096</p>
+          </div>
+          <div>
+            <p class="tech-item-label">Versão</p>
+            <p class="tech-item-val">v2.4.0 · eaijuridico.com.br</p>
+          </div>
+        </div>
+        <div class="tech-links">
+          <a href="#" class="tech-link">Termos de Uso</a>
+          <a href="#" class="tech-link">Contato</a>
+          <span class="tech-note">Não é consulta jurídica · Não garante vitória</span>
+        </div>
+      </div>
+
+    </div><!-- /page -->
   </div><!-- /desktop-view -->
 
-</div><!-- /viewport-wrapper -->
+</div><!-- /vp-wrap -->
 
 <script>
-  // ══════════════════════════════════════════════
-  // CONTROLES DO PROTÓTIPO
-  // ══════════════════════════════════════════════
+  const SUN = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/>`;
+  const MOON = `<path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>`;
 
-  let currentViewport = 'mobile';
-  let currentTheme    = 'dark';
-  let showAnnotations = false;
-
-  function setViewport(v) {
-    currentViewport = v;
-    const mobileEl  = document.getElementById('mobile-view');
-    const desktopEl = document.getElementById('desktop-view');
-
-    mobileEl.style.display  = v === 'mobile'  ? 'block' : 'none';
-    desktopEl.style.display = v === 'desktop' ? 'block' : 'none';
-
-    document.getElementById('btn-mobile').classList.toggle('active', v === 'mobile');
-    document.getElementById('btn-desktop').classList.toggle('active', v === 'desktop');
-
-    document.getElementById('viewport-wrapper').style.background =
-      v === 'mobile' ? '#08090C' : '#0D0F14';
+  function setView(v) {
+    document.getElementById('mobile-view').style.display  = v === 'mobile'  ? 'flex'  : 'none';
+    document.getElementById('desktop-view').style.display = v === 'desktop' ? 'block' : 'none';
+    document.getElementById('btn-mobile').className  = 'ctrl-btn' + (v === 'mobile'  ? ' on' : '');
+    document.getElementById('btn-desktop').className = 'ctrl-btn' + (v === 'desktop' ? ' on' : '');
+    document.getElementById('vp-wrap').style.background = v === 'mobile' ? '#060709' : 'var(--bg-secondary)';
+    document.getElementById('vp-wrap').style.justifyContent = v === 'mobile' ? 'center' : 'flex-start';
   }
 
   function setTheme(t) {
-    currentTheme = t;
     document.documentElement.dataset.theme = t;
-
-    document.getElementById('btn-dark').classList.toggle('active', t === 'dark');
-    document.getElementById('btn-light').classList.toggle('active', t === 'light');
-
-    // Update theme icons
-    const sunSvg = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/>`;
-    const moonSvg = `<path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>`;
-    const iconHtml = t === 'dark' ? sunSvg : moonSvg;
-
-    ['mobile-theme-icon', 'desktop-theme-icon'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = iconHtml;
-    });
+    document.getElementById('btn-dark').className  = 'ctrl-btn' + (t === 'dark'  ? ' on'       : '');
+    document.getElementById('btn-light').className = 'ctrl-btn' + (t === 'light' ? ' on-light' : '');
+    const ic = t === 'dark' ? SUN : MOON;
+    ['m-theme-ic','d-theme-ic'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = ic; });
   }
 
-  function toggleAnnotations() {
-    showAnnotations = !showAnnotations;
-    document.body.classList.toggle('show-annotations', showAnnotations);
-    document.getElementById('btn-annot').classList.toggle('active', showAnnotations);
-    document.getElementById('btn-annot').textContent =
-      showAnnotations ? '× Ocultar Anotações' : '+ Anotações de Design';
+  function toggleCard(n) {
+    const card = document.getElementById('mc' + n);
+    const wasOpen = card.classList.contains('open');
+    document.querySelectorAll('.m-card').forEach(c => c.classList.remove('open'));
+    if (!wasOpen) card.classList.add('open');
   }
 
-  // Mobile accordion
-  function toggleMobileCard(n) {
-    const card = document.getElementById('m-card-' + n);
-    const isOpen = card.classList.contains('open');
-    // Fecha todos
-    document.querySelectorAll('.mobile-mode-card').forEach(c => c.classList.remove('open'));
-    // Abre o clicado (se estava fechado)
-    if (!isOpen) card.classList.add('open');
-  }
-
+  // Hover — aplicar cor do modo no título via CSS (já está no CSS)
   // Init
-  setViewport('mobile');
+  setView('mobile');
   setTheme('dark');
 </script>
 </body>
