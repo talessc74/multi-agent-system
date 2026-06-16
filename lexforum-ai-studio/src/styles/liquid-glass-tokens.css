@@ -1,0 +1,55 @@
+/*
+ * Liquid Glass design tokens — versioned source.
+ * Extracted from design-proposal/index.html (v5) per
+ * .xdrs/_local/adrs/application/004-liquid-glass-rollout.md (Phase 0).
+ *
+ * Namespaced under the "glass" and "mesh" prefixes so it never collides
+ * with the existing production tokens in src/index.css (bg, accent,
+ * border, etc). No production component imports this yet — Phase 2+
+ * wires it in screen by screen, behind a feature flag.
+ */
+
+:root,
+[data-theme='dark'] {
+  --glass-fill: rgba(255, 255, 255, 0.06);
+  --glass-fill-2: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-spec: rgba(255, 255, 255, 0.55);
+  --glass-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --scrim-text: rgba(8, 10, 14, 0.3);
+  --ghost-num: rgba(255, 255, 255, 0.05);
+
+  --mesh-1: #1b6bff;
+  --mesh-2: #a23bff;
+  --mesh-3: #00e0c7;
+  --mesh-bg: #050610;
+}
+
+[data-theme='light'] {
+  --glass-fill: rgba(255, 255, 255, 0.55);
+  --glass-fill-2: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-spec: rgba(255, 255, 255, 0.9);
+  --glass-shadow: 0 16px 44px rgba(20, 30, 50, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --scrim-text: rgba(255, 255, 255, 0.45);
+  --ghost-num: rgba(20, 30, 50, 0.05);
+
+  --mesh-1: #7fb7ff;
+  --mesh-2: #e2b6ff;
+  --mesh-3: #8ff5e6;
+  --mesh-bg: #f0f2f6;
+}
+
+/*
+ * backdrop-filter budget (ADR application/004): at most one navbar, one
+ * panel, and one overlay may render blur simultaneously on a single
+ * screen. This class exists so every blurred surface opts in explicitly —
+ * grep for `.glass` usage to audit the budget on a given screen.
+ */
+.glass {
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}

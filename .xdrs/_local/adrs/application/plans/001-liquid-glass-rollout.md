@@ -58,8 +58,8 @@ Due date: 2026-06-30
 Extract the prototype's CSS custom properties into a versioned token source (Tailwind config or shared CSS module) and define a `backdrop-filter` performance budget validated on real entry-level mobile hardware.
 
 **Acceptance checklist:**
-- [ ] Tokens documented and importable by production components
-- [ ] Performance budget defined and measured on real device, not only emulator
+- [x] Tokens documented and importable by production components — `lexforum-ai-studio/src/styles/liquid-glass-tokens.css`, imported by `src/index.css`, documented in `lexforum-ai-studio/docs/liquid-glass-tokens.md`
+- [ ] Performance budget defined and measured on real device, not only emulator — budget rule defined (navbar + 1 panel + 1 overlay max blur, enforced via the `.glass` utility class); **real-device measurement still pending**, requires Probe (Galera de QA) with physical mid-tier hardware
 
 **Risks:**
 - Stacked blur panels causing jank on low-end devices — Mitigation: cap simultaneous blurred surfaces per screen, measured in Phase 0
