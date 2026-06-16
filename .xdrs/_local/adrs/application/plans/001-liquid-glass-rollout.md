@@ -101,6 +101,23 @@ Replace the prototype's `setTimeout` processing state with the real SSE stream (
 - Repeating a Mode 4 class of bug (ADR application/003) when wiring new UI to existing agent logic — Mitigation: review against that incident record before implementation, not after
 - Desktop Mode Workspace console retexture scope was discovered, not planned — Mitigation: needs a dedicated UX/Design round and its own milestone before implementation; do not fold into Milestone 3's mobile-focused acceptance criteria
 
+### Milestone 3b: Desktop Boardroom console — surface retexture
+Owner: Canvas, Forge, Compass, Empiricus, PolarBear, Quill, Scout
+Due date: 2026-08-18
+
+ARGUS convoked Galera de UX (Compass, Empiricus, PolarBear) and Galera de Design (Canvas, Forge, Quill), with Scout for feasibility, to resolve the desktop console redesign direction flagged as out-of-scope in Milestone 3. Three directions were tabled: (1) surface-only retexture keeping the dark console identity, (2) full prototype-style redesign (mesh + rail + dossier), (3) leave untouched.
+
+**Deliberation outcome:** EMPIRICUS rejected option 2 as technically null absent empirical validation, and as the option furthest from the already-internalized professional workflow. POLARBEAR tensioned that any reform must not touch the unmapped internal information architecture of the console; CANVAS resolved this by distinguishing surface retexture (no reorganization) from redesign (reorganization) — POLARBEAR ceded once the distinction held. FORGE required `.glass-static` (no `backdrop-filter`) on any surface reachable by the `print:` PDF export path, since blur is not portable to print — this was satisfied by scoping the retexture to the agent-feed/result-locked view, sidebar, and footer/export bar, which are all outside the unlocked Laudo's print-rendered branch (`no-print` or a separate `step === 'result' && !isUnlocked` render branch). COMPASS required all progress/status signifiers (step indicators, Forge Monitor overlay, "Resumo do Caso Atual") to remain functionally and visually unchanged — only fill/blur/border changed. Converged on option 1.
+
+**Acceptance checklist:**
+- [x] Root console background, sidebar, agent-feed cards (Performance Global, Agent: Judge), footer, and floating export bar retextured with `.glass-static` + `MeshBackground`, gated by `VITE_LIQUID_GLASS`, no behavior or signifier change — commit pending
+- [x] No `backdrop-filter`/`.glass` applied to the unlocked Laudo print-rendered branch (`state.step === 'result' && state.isUnlocked`) — left untouched, confirmed by reading render branches
+- [x] `npm run build` and `npm test` clean (135 passed, 0 regressions) with the flag both off and on (flag-off path unchanged: original Tailwind classes retained as the `false` branch of each conditional)
+- [ ] Empirical validation with a real user on this workflow (per EMPIRICUS's condition), in addition to product-owner confirmation, before production promotion
+
+**Risks:**
+- Console identity change perceived as reducing focus during a high-cognitive-load task — Mitigation: surface-only change, no layout/hierarchy change, signifiers preserved verbatim
+
 ### Milestone 4: Meus Casos with consent and anonymization
 Owner: Sovereign, Blast, BAU
 Due date: 2026-08-25

@@ -2097,7 +2097,8 @@ const startRecovery = (sessionId: string) => {
           user={user}
         />
       ) : (
-        <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
+        <div className={`min-h-screen ${LIQUID_GLASS_ENABLED ? '' : 'bg-[#0A0A0B]'} text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black`}>
+      {LIQUID_GLASS_ENABLED && <MeshBackground />}
       <Navbar
         user={user}
         onLogin={() => setShowLoginModal(true)}
@@ -2793,7 +2794,7 @@ const startRecovery = (sessionId: string) => {
 
                 <div className="col-span-12 xl:col-span-4 flex flex-col gap-6">
                   {/* Resumo Analítico - Global Stats */}
-                  <div className="bg-[#1C1C1F] text-white p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-white/10">
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-white/10'} text-white p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group`}>
                     <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
                     <div className="flex justify-between items-center opacity-30">
                       <span className="text-[9px] uppercase tracking-widest font-bold">Performance Global EAI?</span>
@@ -3088,7 +3089,7 @@ const startRecovery = (sessionId: string) => {
                         </div>
 
                         {/* Agent: Judge */}
-                        <div className="bg-[#1C1C1F] border border-white/10 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden backdrop-blur-sm">
+                        <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-white/10 backdrop-blur-sm'} p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden`}>
                            <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60"></div>
                            <div className="flex justify-between items-center mb-6">
                              <div className="flex flex-col">
@@ -3842,7 +3843,7 @@ const startRecovery = (sessionId: string) => {
           </AnimatePresence>
         </div>
 
-        <div className="col-span-12 lg:col-span-4 bg-[#0F1012] p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print">
+        <div className={`col-span-12 lg:col-span-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#0F1012]'} p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print`}>
           <section>
             <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-white/10 pb-3 flex items-center justify-between text-white/60">
               Boardroom <span className="text-[8px] font-mono opacity-20">{`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}</span>
@@ -3965,7 +3966,7 @@ const startRecovery = (sessionId: string) => {
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-[#1C1C1F] text-white p-6 rounded-sm space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-white/10"
+                className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-white/10'} text-white p-6 rounded-sm space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group`}
               >
                 <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
                 <div className="flex justify-between items-center opacity-30">
@@ -4120,7 +4121,7 @@ const startRecovery = (sessionId: string) => {
       </AnimatePresence>
 
       {state.step === 'result' && !state.isUnlocked && (
-        <footer className="fixed bottom-0 left-0 w-full min-h-40 border-t border-white/20 bg-[#111111] flex items-center z-[100] shadow-[0_-20px_100px_rgba(0,0,0,0.9)] no-print">
+        <footer className={`fixed bottom-0 left-0 w-full min-h-40 border-t border-white/20 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#111111]'} flex items-center z-[100] shadow-[0_-20px_100px_rgba(0,0,0,0.9)] no-print`}>
           <div className="w-1/2 p-10 border-r border-white/5 hidden md:block overflow-hidden relative">
             <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-white/20">Preview do Relatório Estratégico</h4>
             <div className="space-y-3 opacity-[0.05]">
@@ -4180,7 +4181,7 @@ const startRecovery = (sessionId: string) => {
 
       {state.step === 'result' && state.isUnlocked && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] pointer-events-none no-print">
-           <div className="pointer-events-auto bg-[#1C1C1F] text-white p-1 flex gap-px shadow-[0_0_50px_rgba(0,0,0,0.8)] scale-125 lg:scale-100 border border-white/10">
+           <div className={`pointer-events-auto ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-white/10'} text-white p-1 flex gap-px shadow-[0_0_50px_rgba(0,0,0,0.8)] scale-125 lg:scale-100`}>
              <button
               onClick={() => {
                 const btn = document.getElementById('btn-export-pdf');
