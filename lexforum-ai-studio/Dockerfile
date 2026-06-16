@@ -9,6 +9,8 @@ RUN npm install
 COPY . .
 ARG VITE_GIT_HASH=dev
 ENV VITE_GIT_HASH=$VITE_GIT_HASH
+ARG VITE_LIQUID_GLASS=false
+ENV VITE_LIQUID_GLASS=$VITE_LIQUID_GLASS
 RUN npm run build
 
 # ── Stage 2: runtime ─────────────────────────────────────────────────────────

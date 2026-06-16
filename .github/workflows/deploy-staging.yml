@@ -39,6 +39,7 @@ jobs:
         run: |
           docker build \
             --build-arg VITE_GIT_HASH=$(git rev-parse --short HEAD) \
+            --build-arg VITE_LIQUID_GLASS=true \
             -t gcr.io/gen-lang-client-0783740660/eai-staging:$(git rev-parse --short HEAD) \
             -t gcr.io/gen-lang-client-0783740660/eai-staging:latest \
             ./lexforum-ai-studio
