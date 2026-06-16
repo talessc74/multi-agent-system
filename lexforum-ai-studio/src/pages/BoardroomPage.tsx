@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import LoginModal from '../components/LoginModal';
+import { MeshBackground } from '../components/MeshBackground';
 import { MODE_CONFIG } from '../config/modeConfig';
 import { LIQUID_GLASS_ENABLED } from '../config/liquidGlass';
 
@@ -62,6 +63,28 @@ const MOBILE_MODES = [
   { mode: 5, Icon: History,     price: 'R$ 5,90' },
 ];
 
+const RAIL_CATEGORIES = [
+  { label: 'UM LADO DO PROCESSO', dot: '#1B6BFF', modes: [1, 2] },
+  { label: 'DOIS LADOS DO PROCESSO', dot: '#A23BFF', modes: [3, 4] },
+  { label: 'PÓS-JULGAMENTO', dot: '#00E0C7', modes: [5] },
+];
+
+const MODE_ICONS: Record<number, typeof FileText> = {
+  1: FileText,
+  2: ShieldCheck,
+  3: Gavel,
+  4: Scale,
+  5: History,
+};
+
+const MODE_PRICE: Record<number, string> = {
+  1: 'R$ 9,90',
+  2: 'R$ 9,90',
+  3: 'R$ 5,90',
+  4: 'R$ 9,90',
+  5: 'R$ 5,90',
+};
+
 const FLOW_STEPS = [
   'Peticionando — Advogado Especializado',
   'Protocolando — Barramento Digital',
@@ -80,9 +103,14 @@ const FOOTER_STATS = [
 export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }: Props) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [openMode, setOpenMode] = useState<number | null>(null);
+  const [previewMode, setPreviewMode] = useState(1);
 
   return (
-    <div className="min-h-screen overflow-x-hidden selection:bg-amber-400/20" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+    <div
+      className="min-h-screen overflow-x-hidden selection:bg-amber-400/20"
+      style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-primary)', color: 'var(--text-primary)' }}
+    >
+      {LIQUID_GLASS_ENABLED && <MeshBackground />}
       <Navbar
         user={user}
         onLogin={() => setShowLoginModal(true)}
@@ -204,7 +232,10 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
 
         {/* Disclaimer */}
         <div className="px-6 md:px-12 lg:px-20 mb-10 max-w-6xl mx-auto">
-          <div className="border-l-2 border-amber-400/25 pl-4 py-1">
+          <div
+            className={LIQUID_GLASS_ENABLED ? 'glass-static' : 'border-l-2 border-amber-400/25'}
+            style={LIQUID_GLASS_ENABLED ? { borderRadius: '14px', padding: '14px 18px' } : { paddingLeft: '16px', paddingTop: '4px', paddingBottom: '4px' }}
+          >
             <p className="text-[9px] uppercase tracking-[0.22em] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               O EAI? É UMA FERRAMENTA DE APOIO ANALÍTICO BASEADA EM MODELOS DE LINGUAGEM AVANÇADOS.
               NÃO SUBSTITUI O ACONSELHAMENTO JURÍDICO PROFISSIONAL.
@@ -213,58 +244,143 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
         </div>
 
         {/* Mode Cards */}
-        <section className="px-6 md:px-12 lg:px-20 pb-16 max-w-6xl mx-auto">
-          <p className="text-[9px] text-white/20 tracking-[0.05em] mb-4 hidden md:block">
-            Modos 1–2: um lado do processo · Modo 3: simulação bilateral · Modo 4: refinamento assistido · Modo 5: pós-julgamento
-          </p>
-          <div className="flex flex-col gap-3">
-            {MODES.map(({ title, price, Icon, desc }, i) => {
-              const mode = i + 1;
-              return (
-              <motion.div
-                key={title}
-                initial={{ opacity: 0, x: -16 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.45, delay: 0.08 * i + 0.1 }}
-                onClick={() => onEnter(mode)}
-                className={`${LIQUID_GLASS_ENABLED ? 'glass-static hover:border-amber-400/25' : 'border border-white/[0.07] hover:border-amber-400/25'} transition-all duration-200 group cursor-pointer`}
-                style={LIQUID_GLASS_ENABLED ? undefined : { background: 'var(--bg-card)' }}
-              >
-                <div className="p-5 md:p-7 flex flex-col sm:flex-row sm:items-center gap-5 md:gap-8">
-                  {/* Icon + Title */}
-                  <div className="flex items-center gap-4 flex-shrink-0">
-                    <div className="w-10 h-10 border border-white/[0.08] group-hover:border-amber-400/35 flex items-center justify-center transition-all duration-200 flex-shrink-0">
-                      <Icon className="w-4 h-4 text-white/30 group-hover:text-amber-400 transition-colors duration-200" />
+        {LIQUID_GLASS_ENABLED ? (
+          <section className="px-6 md:px-12 lg:px-20 pb-16 max-w-6xl mx-auto">
+            <div className="flex gap-6 items-stretch" style={{ minHeight: '460px' }}>
+              {/* Rail */}
+              <div className="glass-static flex flex-col shrink-0" style={{ width: '300px', borderRadius: '20px', padding: '20px' }}>
+                <p className="text-[11px] mb-4" style={{ color: 'var(--text-secondary)' }}>
+                  Selecione um modo para abrir o dossiê completo.
+                </p>
+                {RAIL_CATEGORIES.map((cat) => (
+                  <div key={cat.label} style={{ marginBottom: '14px' }}>
+                    <div className="flex items-center gap-2" style={{ marginBottom: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: cat.dot, display: 'inline-block' }} />
+                      <span className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>{cat.label}</span>
                     </div>
-                    <div className="min-w-[160px]">
-                      <h3 className="text-[11px] md:text-[12px] font-bold uppercase tracking-[0.22em] group-hover:text-amber-400 transition-colors duration-200 leading-none mb-1" style={{ color: 'var(--text-primary)' }}>
-                        {title}
-                      </h3>
-                      <span className="text-[10px] font-mono text-amber-400/60">{price}</span>
+                    {cat.modes.map((mode) => {
+                      const cfg = MODE_CONFIG[mode];
+                      const isSelected = previewMode === mode;
+                      return (
+                        <button
+                          key={mode}
+                          onClick={() => setPreviewMode(mode)}
+                          className="w-full text-left transition-all duration-150"
+                          style={{
+                            padding: '10px 12px',
+                            borderRadius: '12px',
+                            background: isSelected ? `rgba(${cfg.colorRgb}, 0.16)` : 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            marginBottom: '2px',
+                          }}
+                        >
+                          <span className="text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>0{mode}</span>{' '}
+                          <span className="text-[13px] font-bold" style={{ color: 'var(--text-primary)' }}>{cfg.headline}</span>
+                          <span className="text-[11px] font-mono ml-2" style={{ color: cfg.color }}>{MODE_PRICE[mode]}</span>
+                          <p className="text-[11px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>{cfg.tagline}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+
+              {/* Dossier preview */}
+              {(() => {
+                const cfg = MODE_CONFIG[previewMode];
+                const PreviewIcon = MODE_ICONS[previewMode];
+                return (
+                  <div className="glass flex-1 relative overflow-hidden" style={{ borderRadius: '20px', padding: '40px' }}>
+                    <span
+                      className="font-playfair italic absolute pointer-events-none select-none"
+                      style={{ right: '16px', top: '-10px', fontSize: '200px', lineHeight: 1, color: 'var(--ghost-num)' }}
+                    >
+                      0{previewMode}
+                    </span>
+                    <div className="relative flex items-center gap-4" style={{ marginBottom: '24px' }}>
+                      <div
+                        className="flex items-center justify-center shrink-0"
+                        style={{ width: '54px', height: '54px', borderRadius: '16px', background: `rgba(${cfg.colorRgb}, 0.3)`, border: `1px solid rgba(${cfg.colorRgb}, 0.45)` }}
+                      >
+                        <PreviewIcon style={{ width: '25px', height: '25px', color: cfg.color }} />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: cfg.color }}>Dossiê · Modo 0{previewMode}</p>
+                      </div>
+                    </div>
+                    <h3 className="relative text-[32px] font-bold" style={{ color: 'var(--text-primary)', marginBottom: '10px' }}>{cfg.headline}</h3>
+                    <p className="relative text-[14px] font-bold" style={{ color: cfg.color, marginBottom: '18px' }}>{cfg.tagline}</p>
+                    <p className="relative text-[15px] leading-relaxed max-w-xl" style={{ color: 'var(--text-secondary)', marginBottom: '28px' }}>{cfg.description}</p>
+                    <div className="relative flex items-center gap-6 pt-5" style={{ borderTop: '1px solid var(--glass-border)' }}>
+                      <span className="font-mono text-[18px] font-bold" style={{ color: cfg.color }}>{MODE_PRICE[previewMode]}</span>
+                      <button
+                        onClick={() => onEnter(previewMode)}
+                        className="flex items-center gap-2 text-[13px] font-bold"
+                        style={{ background: cfg.color, color: '#06121A', padding: '14px 26px', borderRadius: '14px', border: 'none', cursor: 'pointer' }}
+                      >
+                        {cfg.cta}
+                      </button>
                     </div>
                   </div>
+                );
+              })()}
+            </div>
+          </section>
+        ) : (
+          <section className="px-6 md:px-12 lg:px-20 pb-16 max-w-6xl mx-auto">
+            <p className="text-[9px] text-white/20 tracking-[0.05em] mb-4 hidden md:block">
+              Modos 1–2: um lado do processo · Modo 3: simulação bilateral · Modo 4: refinamento assistido · Modo 5: pós-julgamento
+            </p>
+            <div className="flex flex-col gap-3">
+              {MODES.map(({ title, price, Icon, desc }, i) => {
+                const mode = i + 1;
+                return (
+                <motion.div
+                  key={title}
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.45, delay: 0.08 * i + 0.1 }}
+                  onClick={() => onEnter(mode)}
+                  className="border border-white/[0.07] hover:border-amber-400/25 transition-all duration-200 group cursor-pointer"
+                  style={{ background: 'var(--bg-card)' }}
+                >
+                  <div className="p-5 md:p-7 flex flex-col sm:flex-row sm:items-center gap-5 md:gap-8">
+                    {/* Icon + Title */}
+                    <div className="flex items-center gap-4 flex-shrink-0">
+                      <div className="w-10 h-10 border border-white/[0.08] group-hover:border-amber-400/35 flex items-center justify-center transition-all duration-200 flex-shrink-0">
+                        <Icon className="w-4 h-4 text-white/30 group-hover:text-amber-400 transition-colors duration-200" />
+                      </div>
+                      <div className="min-w-[160px]">
+                        <h3 className="text-[11px] md:text-[12px] font-bold uppercase tracking-[0.22em] group-hover:text-amber-400 transition-colors duration-200 leading-none mb-1" style={{ color: 'var(--text-primary)' }}>
+                          {title}
+                        </h3>
+                        <span className="text-[10px] font-mono text-amber-400/60">{price}</span>
+                      </div>
+                    </div>
 
-                  {/* Divider */}
-                  <div className="hidden sm:block w-px h-10 bg-white/[0.06] flex-shrink-0" />
+                    {/* Divider */}
+                    <div className="hidden sm:block w-px h-10 bg-white/[0.06] flex-shrink-0" />
 
-                  {/* Description */}
-                  <p className="text-[9px] md:text-[10px] tracking-[0.04em] leading-relaxed flex-1" style={{ color: 'var(--text-muted)' }}>
-                    {desc}
-                  </p>
+                    {/* Description */}
+                    <p className="text-[9px] md:text-[10px] tracking-[0.04em] leading-relaxed flex-1" style={{ color: 'var(--text-muted)' }}>
+                      {desc}
+                    </p>
 
-                  {/* CTA */}
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onEnter(mode); }}
-                    className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] group-hover:text-amber-400 transition-colors duration-200 flex-shrink-0 self-end sm:self-auto whitespace-nowrap" style={{ color: 'var(--text-muted)' }}
-                  >
-                    SELECIONAR MODO <ArrowRight className="w-3 h-3" />
-                  </button>
-                </div>
-              </motion.div>
-              );
-            })}
-          </div>
-        </section>
+                    {/* CTA */}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onEnter(mode); }}
+                      className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] group-hover:text-amber-400 transition-colors duration-200 flex-shrink-0 self-end sm:self-auto whitespace-nowrap" style={{ color: 'var(--text-muted)' }}
+                    >
+                      SELECIONAR MODO <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </motion.div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Technical Footer */}
         <div className="border-t border-white/[0.05]">

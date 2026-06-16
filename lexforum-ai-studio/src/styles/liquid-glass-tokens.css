@@ -46,6 +46,39 @@
  * screen. This class exists so every blurred surface opts in explicitly —
  * grep for `.glass` usage to audit the budget on a given screen.
  */
+/*
+ * Liquid mesh background — the animated color blobs from the prototype.
+ * Fixed behind all content; only mounted when VITE_LIQUID_GLASS is on
+ * (src/components/MeshBackground.tsx). Without this, .glass/.glass-static
+ * surfaces have nothing colorful to show through and look flat.
+ */
+.mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--mesh-bg);
+  transition: background 1.2s ease;
+}
+.mesh-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  animation: glass-mesh-drift 22s ease-in-out infinite alternate;
+}
+.mesh-blob.b1 { width: 380px; height: 380px; background: var(--mesh-1); top: -80px; left: -60px; animation-delay: 0s; }
+.mesh-blob.b2 { width: 320px; height: 320px; background: var(--mesh-2); top: 40%; right: -100px; animation-delay: -7s; }
+.mesh-blob.b3 { width: 300px; height: 300px; background: var(--mesh-3); bottom: -100px; left: 20%; animation-delay: -14s; }
+@keyframes glass-mesh-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -40px) scale(1.12); }
+  100% { transform: translate(-20px, 20px) scale(0.96); }
+}
+[data-theme='light'] .mesh-blob {
+  opacity: 0.4;
+}
+
 .glass {
   background: var(--glass-fill);
   border: 1px solid var(--glass-border);
