@@ -71,7 +71,7 @@ Due date: 2026-07-07
 Map every real screen of the system (Home, Auth, Mode Workspace, Meus Casos, Payment, expanded Result), not only the ones already prototyped, so later phases have a complete picture of scope.
 
 **Acceptance checklist:**
-- [ ] Sitemap reviewed and approved by product owner
+- [ ] Sitemap reviewed and approved by product owner — draft ready: `lexforum-ai-studio/docs/sitemap.md` (21 screens mapped, no router, state-machine based); awaiting product owner sign-off
 
 ### Milestone 2: Shell and navigation
 Owner: Scout, Flux
