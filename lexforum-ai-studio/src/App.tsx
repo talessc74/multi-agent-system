@@ -1120,7 +1120,8 @@ const startRecovery = (sessionId: string) => {
     <>
       {/* ── MODO 5 — Revisão Pós-Conflito ───────────────────────── */}
       {state.step === 'input' && state.selectedMode === 5 && (
-        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-primary)' }}>
+          {LIQUID_GLASS_ENABLED && <MeshBackground />}
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[5].headline}
@@ -1164,7 +1165,7 @@ const startRecovery = (sessionId: string) => {
             </div>
             {state.mode5Input?.subCase && (
               <>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
                   <div style={{ padding: '16px 20px 4px' }}>
                     <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Relato do Caso</span>
                   </div>
@@ -1175,7 +1176,7 @@ const startRecovery = (sessionId: string) => {
                     style={{ width: '100%', minHeight: '130px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
                   <div style={{ padding: '16px 20px 4px' }}>
                     <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
                       {state.mode5Input.subCase === 'RECURSO' ? 'Sentença Recebida' : 'Proposta de Acordo'}
@@ -1188,7 +1189,7 @@ const startRecovery = (sessionId: string) => {
                     style={{ width: '100%', minHeight: '130px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
                   <div style={{ padding: '12px 20px 12px' }}>
                     <input type="file" id="m5-file-new" className="hidden" multiple accept="image/*,application/pdf"
                       onChange={async (e) => {
@@ -1245,7 +1246,8 @@ const startRecovery = (sessionId: string) => {
 
       {/* ── MODO 4 — Mesa Dupla: Assistida ──────────────────────── */}
       {state.step === 'input' && state.selectedMode === 4 && (
-        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-primary)' }}>
+          {LIQUID_GLASS_ENABLED && <MeshBackground />}
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[4].headline}
@@ -1297,7 +1299,7 @@ const startRecovery = (sessionId: string) => {
                 🛡 Defesa
               </button>
             </div>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
+            <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Petição do Autor</span>
               </div>
@@ -1343,7 +1345,7 @@ const startRecovery = (sessionId: string) => {
                 </div>
               </div>
             </div>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
+            <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Contestação do Réu</span>
               </div>
@@ -1407,7 +1409,8 @@ const startRecovery = (sessionId: string) => {
 
       {/* ── MODO 3 — Mesa Dupla: Juiz ────────────────────────────── */}
       {state.step === 'input' && state.selectedMode === 3 && (
-        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-primary)' }}>
+          {LIQUID_GLASS_ENABLED && <MeshBackground />}
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[3].headline}
@@ -1434,7 +1437,7 @@ const startRecovery = (sessionId: string) => {
               bring={MODE_CONFIG[3].bring}
               receive={MODE_CONFIG[3].receive}
             />
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[3].color}`, marginBottom: '12px' }}>
+            <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[3].color}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Argumento da Acusação</span>
               </div>
@@ -1479,7 +1482,7 @@ const startRecovery = (sessionId: string) => {
                 </div>
               </div>
             </div>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[3].color}`, marginBottom: '12px' }}>
+            <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[3].color}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Argumento da Defesa</span>
               </div>
@@ -1542,7 +1545,8 @@ const startRecovery = (sessionId: string) => {
 
       {/* ── MODO 2 — Defesa sob Ataque ───────────────────────────── */}
       {state.step === 'input' && state.selectedMode === 2 && (
-        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-primary)' }}>
+          {LIQUID_GLASS_ENABLED && <MeshBackground />}
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[2].headline}
@@ -1569,7 +1573,7 @@ const startRecovery = (sessionId: string) => {
               bring={MODE_CONFIG[2].bring}
               receive={MODE_CONFIG[2].receive}
             />
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[2].color}`, marginBottom: '12px' }}>
+            <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[2].color}`, marginBottom: '12px' }}>
               <textarea
                 value={state.caseDescription}
                 onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
@@ -1618,7 +1622,8 @@ const startRecovery = (sessionId: string) => {
 
       {/* ── MODO 1 — Tese Estratégica ────────────────────────────── */}
       {state.step === 'input' && state.selectedMode === 1 && (
-        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+        <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-primary)' }}>
+          {LIQUID_GLASS_ENABLED && <MeshBackground />}
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[1].headline}
@@ -1645,7 +1650,7 @@ const startRecovery = (sessionId: string) => {
               bring={MODE_CONFIG[1].bring}
               receive={MODE_CONFIG[1].receive}
             />
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[1].color}`, marginBottom: '12px' }}>
+            <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[1].color}`, marginBottom: '12px' }}>
               <textarea
                 value={state.caseDescription}
                 onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
@@ -1790,7 +1795,8 @@ const startRecovery = (sessionId: string) => {
         };
         const agentType = agentTypeByArea[state.detectedArea] ?? 'Especializado';
         return (
-          <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+          <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-primary)' }}>
+            {LIQUID_GLASS_ENABLED && <MeshBackground />}
             <style>{`@keyframes eai-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }`}</style>
             <ModeNavbar
               onBack={() => setState(prev => ({ ...prev, step: 'input' }))}
@@ -1821,7 +1827,7 @@ const startRecovery = (sessionId: string) => {
               )}
               {/* Card resumo */}
               {state.caseSummary && (
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '14px', padding: '16px', marginBottom: '16px' }}>
+                <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '14px', padding: '16px', marginBottom: '16px' }}>
                   <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px' }}>NÚCLEO CENTRAL · GERADO AUTOMATICAMENTE</p>
                   <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{state.caseSummary}</p>
                 </div>
@@ -1838,12 +1844,12 @@ const startRecovery = (sessionId: string) => {
               {/* Agentes */}
               <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: modeColor, marginBottom: '8px' }}>AGENTES ESCALADOS</p>
               <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
+                <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ flex: 1, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
                   <p style={{ fontSize: '20px', marginBottom: '6px' }}>⚖️</p>
                   <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor, margin: '0 0 2px' }}>ADVOGADO</p>
                   <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
                 </div>
-                <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
+                <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ flex: 1, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
                   <p style={{ fontSize: '20px', marginBottom: '6px' }}>🧑‍⚖️</p>
                   <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor, margin: '0 0 2px' }}>MAGISTRADO</p>
                   <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
