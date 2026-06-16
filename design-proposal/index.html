@@ -397,6 +397,74 @@ body{
 .mobile-footer-note{font-size:11px;font-weight:500;color:var(--text-muted);line-height:1.6;margin-bottom:8px;}
 .mobile-footer-link{font-size:11px;font-weight:600;color:var(--text-muted);text-decoration:underline;text-underline-offset:3px;}
 
+/* ══ WORKSPACE / MEUS CASOS — telas novas (Forge: reaproveitam .glass, .preview-icon etc) ══ */
+#mobile-screen-workspace .ws-screen,
+#mobile-screen-cases .cs-screen{padding:28px 18px 48px;}
+#desktop-screen-workspace .ws-screen,
+#desktop-screen-cases .cs-screen{padding:48px;max-width:640px;margin:0 auto;}
+
+.ws-back{
+  display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+  color:var(--text-muted);background:none;border:none;cursor:pointer;margin-bottom:22px;padding:0;
+  font-family:inherit;transition:color .15s;
+}
+.ws-back:hover{color:var(--text-primary);}
+
+.ws-label{font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-muted);margin:26px 0 10px;display:block;}
+.ws-textarea{
+  width:100%;min-height:140px;border-radius:16px;padding:16px;font-family:inherit;font-size:14px;
+  line-height:1.6;color:var(--text-primary);background:var(--glass-fill-2);border:1px solid var(--glass-border);
+  resize:vertical;
+}
+.ws-textarea::placeholder{color:var(--text-muted);}
+.ws-textarea:focus{outline:2px solid var(--mode-color, var(--accent));outline-offset:1px;}
+.ws-submit{
+  margin-top:16px;width:100%;height:52px;border:none;border-radius:14px;font-size:14px;font-weight:700;
+  cursor:pointer;color:#06121A;box-shadow:inset 0 1px 0 rgba(255,255,255,0.5);transition:filter .15s,transform .15s;
+}
+.ws-submit:hover{filter:brightness(0.95);transform:translateY(-1px);}
+
+.ws-processing{display:flex;flex-direction:column;align-items:center;gap:18px;padding:56px 0;}
+.ws-spinner{width:38px;height:38px;border-radius:50%;border:3px solid var(--glass-border);animation:ws-spin 0.9s linear infinite;}
+@keyframes ws-spin{to{transform:rotate(360deg);}}
+.ws-processing-text{font-size:13px;color:var(--text-muted);text-align:center;}
+
+.ws-result{border-radius:20px;padding:28px;margin-top:6px;}
+.ws-result-label{font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;position:relative;z-index:2;}
+.ws-result-score{font-size:48px;font-weight:700;line-height:1;margin-bottom:12px;position:relative;z-index:2;}
+.ws-result-disclaimer{font-size:12px;color:var(--text-secondary);line-height:1.5;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--glass-border);position:relative;z-index:2;}
+.ws-result-list{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:26px;position:relative;z-index:2;}
+.ws-result-list li{font-size:13px;color:var(--text-secondary);padding-left:16px;position:relative;}
+.ws-result-list li::before{content:'—';position:absolute;left:0;color:var(--mode-color, var(--accent));}
+.ws-save{width:100%;height:50px;border:none;border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;color:#06121A;box-shadow:inset 0 1px 0 rgba(255,255,255,0.5);position:relative;z-index:2;transition:filter .15s;}
+.ws-save:hover{filter:brightness(0.95);}
+.ws-saved-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-muted);position:relative;z-index:2;}
+
+.cases-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px;gap:12px;}
+.cases-title{font-family:"Playfair Display",serif;font-style:italic;font-weight:700;font-size:26px;color:var(--text-primary);}
+.cases-count{font-size:12px;color:var(--text-muted);white-space:nowrap;}
+.case-list{display:flex;flex-direction:column;gap:10px;}
+.case-card{
+  display:flex;align-items:center;gap:14px;border-radius:16px;padding:14px 16px 14px 20px;
+  cursor:pointer;position:relative;overflow:hidden;transition:transform .15s;width:100%;
+  font-family:inherit;text-align:left;border:none;
+}
+.case-card:hover{transform:translateY(-1px);}
+.case-card:focus-visible{outline:2px solid var(--mode-color, var(--accent));outline-offset:2px;}
+.case-card-accent{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--mode-color);}
+.case-card-icon{width:38px;height:38px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;background:color-mix(in srgb, var(--mode-color) 30%, var(--glass-fill-2));border:1px solid color-mix(in srgb, var(--mode-color) 45%, transparent);}
+.case-card-icon svg{width:18px;height:18px;stroke:var(--mode-color);}
+[data-theme="light"] .case-card-icon svg{stroke:color-mix(in srgb, var(--mode-color) 75%, black 15%);}
+.case-card-body{flex:1;min-width:0;position:relative;z-index:2;}
+.case-card-title{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.case-card-meta{font-size:11px;color:var(--text-muted);}
+.case-card-status{font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:5px 10px;border-radius:20px;flex-shrink:0;position:relative;z-index:2;background:rgba(60,230,168,0.16);color:#1FAE7C;}
+[data-theme="dark"] .case-card-status{color:#3CE6A8;}
+.cases-empty{text-align:center;padding:64px 20px;}
+.cases-empty p{font-size:14px;color:var(--text-muted);margin-bottom:20px;line-height:1.6;max-width:360px;margin-left:auto;margin-right:auto;}
+.cases-empty-cta{border:none;border-radius:14px;padding:13px 26px;font-size:13px;font-weight:700;cursor:pointer;background:var(--accent);color:#06121A;transition:filter .15s;}
+.cases-empty-cta:hover{filter:brightness(0.95);}
+
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:10px;}
@@ -441,7 +509,7 @@ body{
         <div class="mobile-page">
 
           <nav class="navbar glass">
-            <a class="nav-logo" href="#">
+            <a class="nav-logo" href="#" onclick="goHome();return false;">
               <span class="nav-logo-main">EAI</span><span class="nav-logo-tick">✓?</span>
             </a>
             <div class="nav-right">
@@ -451,7 +519,7 @@ body{
             </div>
             <div class="nav-scrim" id="mobile-scrim" onclick="toggleMobileMenu()"></div>
             <div class="nav-dropdown glass" id="mobile-nav-dropdown">
-              <button class="nav-dropdown-item" onclick="toggleMobileMenu()">
+              <button class="nav-dropdown-item" onclick="goCases()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M8 12h8M8 16h5"/></svg>
                 Meus Casos
               </button>
@@ -467,21 +535,31 @@ body{
             </div>
           </nav>
 
-          <div class="mobile-hero">
-            <p class="mobile-case-num"><span class="dot"></span>REFERÊNCIA DA SIMULAÇÃO Nº 2026.000142</p>
-            <h1 class="mobile-h1">A incerteza jurídica tem uma saída.</h1>
-            <p class="mobile-sub">Antes do tribunal, o teste.</p>
+          <div id="mobile-screen-home">
+            <div class="mobile-hero">
+              <p class="mobile-case-num"><span class="dot"></span>REFERÊNCIA DA SIMULAÇÃO Nº 2026.000142</p>
+              <h1 class="mobile-h1">A incerteza jurídica tem uma saída.</h1>
+              <p class="mobile-sub">Antes do tribunal, o teste.</p>
+            </div>
+
+            <div class="mobile-disclaimer glass">
+              <p>Não é consulta jurídica. Não garante vitória. Ferramenta de apoio analítico baseada em IA.</p>
+            </div>
+
+            <div class="mobile-modes" id="mobile-modes"></div>
+
+            <div class="mobile-footer">
+              <p class="mobile-footer-note">Não é consulta jurídica · Não garante vitória<br>Simulação gratuita · Laudo completo R$ 9,90</p>
+              <a href="#" class="mobile-footer-link">Termos de Uso</a>
+            </div>
           </div>
 
-          <div class="mobile-disclaimer glass">
-            <p>Não é consulta jurídica. Não garante vitória. Ferramenta de apoio analítico baseada em IA.</p>
+          <div id="mobile-screen-workspace" style="display:none;">
+            <div class="ws-screen" id="mobile-workspace-body"></div>
           </div>
 
-          <div class="mobile-modes" id="mobile-modes"></div>
-
-          <div class="mobile-footer">
-            <p class="mobile-footer-note">Não é consulta jurídica · Não garante vitória<br>Simulação gratuita · Laudo completo R$ 9,90</p>
-            <a href="#" class="mobile-footer-link">Termos de Uso</a>
+          <div id="mobile-screen-cases" style="display:none;">
+            <div class="cs-screen" id="mobile-cases-body"></div>
           </div>
 
         </div>
@@ -499,11 +577,11 @@ body{
     <div class="page">
 
       <nav class="navbar glass" style="margin:10px 20px;">
-        <a class="nav-logo" href="#">
+        <a class="nav-logo" href="#" onclick="goHome();return false;">
           <span class="nav-logo-main">EAI</span><span class="nav-logo-tick">✓?</span>
         </a>
         <div class="nav-right">
-          <button class="nav-icon-btn">
+          <button class="nav-icon-btn" onclick="goCases()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M8 12h8M8 16h5"/></svg>
             <span>Meus Casos</span>
           </button>
@@ -514,44 +592,54 @@ body{
         </div>
       </nav>
 
-      <section class="hero">
-        <p class="hero-case-num"><span class="dot"></span>REFERÊNCIA DA SIMULAÇÃO Nº 2026.000142 · NÃO É NÚMERO DE PROCESSO REAL</p>
-        <h1 class="hero-h1">A incerteza jurídica agora tem<br>uma arena de testes.</h1>
-        <p class="hero-sub">Antes do tribunal, o teste. Compare os cinco modos no índice à esquerda — preço e proposta já estão ali.</p>
-      </section>
+      <div id="desktop-screen-home">
+        <section class="hero">
+          <p class="hero-case-num"><span class="dot"></span>REFERÊNCIA DA SIMULAÇÃO Nº 2026.000142 · NÃO É NÚMERO DE PROCESSO REAL</p>
+          <h1 class="hero-h1">A incerteza jurídica agora tem<br>uma arena de testes.</h1>
+          <p class="hero-sub">Antes do tribunal, o teste. Compare os cinco modos no índice à esquerda — preço e proposta já estão ali.</p>
+        </section>
 
-      <div class="disclaimer">
-        <div class="disclaimer-inner glass">
-          <p class="disclaimer-text">O EAI? é uma ferramenta de apoio analítico baseada em modelos de linguagem avançados. Não substitui o aconselhamento jurídico profissional.</p>
+        <div class="disclaimer">
+          <div class="disclaimer-inner glass">
+            <p class="disclaimer-text">O EAI? é uma ferramenta de apoio analítico baseada em modelos de linguagem avançados. Não substitui o aconselhamento jurídico profissional.</p>
+          </div>
+        </div>
+
+        <div class="selector">
+          <div class="rail glass">
+            <p class="rail-hint">Selecione um modo para abrir o dossiê completo.</p>
+            <div id="rail"></div>
+          </div>
+          <div class="preview glass" id="preview-wrap">
+            <div class="preview-wash"></div>
+            <div class="preview-ghost-num" id="preview-ghost"></div>
+            <div id="preview-content"></div>
+          </div>
+        </div>
+
+        <div class="tech-footer">
+          <div class="tech-card glass">
+            <div class="tech-grid">
+              <div><p class="tech-item-label">Base de dados</p><p class="tech-item-val">1.9M+ Precedentes</p></div>
+              <div><p class="tech-item-label">Processamento</p><p class="tech-item-val">Análise Semântica Multimodal</p></div>
+              <div><p class="tech-item-label">Privacidade</p><p class="tech-item-val">Criptografia RSA-4096</p></div>
+              <div><p class="tech-item-label">Versão</p><p class="tech-item-val">v2.4.0 · eaijuridico.com.br</p></div>
+            </div>
+            <div class="tech-links">
+              <a href="#" class="tech-link">Termos de Uso</a>
+              <a href="#" class="tech-link">Contato</a>
+              <span class="tech-note">Não é consulta jurídica · Não garante vitória</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="selector">
-        <div class="rail glass">
-          <p class="rail-hint">Selecione um modo para abrir o dossiê completo.</p>
-          <div id="rail"></div>
-        </div>
-        <div class="preview glass" id="preview-wrap">
-          <div class="preview-wash"></div>
-          <div class="preview-ghost-num" id="preview-ghost"></div>
-          <div id="preview-content"></div>
-        </div>
+      <div id="desktop-screen-workspace" style="display:none;">
+        <div class="ws-screen" id="desktop-workspace-body"></div>
       </div>
 
-      <div class="tech-footer">
-        <div class="tech-card glass">
-          <div class="tech-grid">
-            <div><p class="tech-item-label">Base de dados</p><p class="tech-item-val">1.9M+ Precedentes</p></div>
-            <div><p class="tech-item-label">Processamento</p><p class="tech-item-val">Análise Semântica Multimodal</p></div>
-            <div><p class="tech-item-label">Privacidade</p><p class="tech-item-val">Criptografia RSA-4096</p></div>
-            <div><p class="tech-item-label">Versão</p><p class="tech-item-val">v2.4.0 · eaijuridico.com.br</p></div>
-          </div>
-          <div class="tech-links">
-            <a href="#" class="tech-link">Termos de Uso</a>
-            <a href="#" class="tech-link">Contato</a>
-            <span class="tech-note">Não é consulta jurídica · Não garante vitória</span>
-          </div>
-        </div>
+      <div id="desktop-screen-cases" style="display:none;">
+        <div class="cs-screen" id="desktop-cases-body"></div>
       </div>
 
     </div>
@@ -664,7 +752,7 @@ function renderPreview(id) {
     </div>
     <div class="preview-footer">
       <span class="preview-price">${m.price}</span>
-      <button class="preview-cta">
+      <button class="preview-cta" onclick="goWorkspace(${id})">
         ${m.cta}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
@@ -710,7 +798,7 @@ function renderMobile() {
             <p class="m-folder-tagline">${m.tagline}</p>
             <div class="m-folder-bottom">
               <span class="m-folder-price mono" style="color:${m.color};">${m.price}</span>
-              <button class="m-folder-cta" style="background:${m.color};">${m.cta} →</button>
+              <button class="m-folder-cta" style="background:${m.color};" onclick="goWorkspace(${id})">${m.cta} →</button>
             </div>
           </div>
         </div>
@@ -752,16 +840,172 @@ function toggleMobileMenu() {
   scrim.classList.toggle('open', open);
   btn.setAttribute('aria-expanded', String(open));
 }
+function closeMobileMenu() {
+  const dd = document.getElementById('mobile-nav-dropdown');
+  const scrim = document.getElementById('mobile-scrim');
+  const btn = document.getElementById('mobile-menu-btn');
+  if (!dd) return;
+  dd.classList.remove('open');
+  scrim.classList.remove('open');
+  btn.setAttribute('aria-expanded', 'false');
+}
 document.addEventListener('click', (e) => {
   const dd = document.getElementById('mobile-nav-dropdown');
   const scrim = document.getElementById('mobile-scrim');
   const btn = document.getElementById('mobile-menu-btn');
   if (dd && dd.classList.contains('open') && !dd.contains(e.target) && !btn.contains(e.target)) {
-    dd.classList.remove('open');
-    scrim.classList.remove('open');
-    btn.setAttribute('aria-expanded', 'false');
+    closeMobileMenu();
   }
 });
+
+/* ══ WORKSPACE DO MODO / MEUS CASOS — navegação e estado ══ */
+let appState = { screen: 'home', modeId: null, wsState: 'input', viewingCaseId: null, lastScore: null };
+let SAVED_CASES = [
+  { id: 1, modeId: 1, title: 'Tese Estratégica', date: '14/06/2026', status: 'Concluído', score: 78 },
+  { id: 2, modeId: 4, title: 'Mesa Dupla — Assistida', date: '10/06/2026', status: 'Concluído', score: 64 },
+];
+let nextCaseId = 3;
+
+function renderApp() {
+  ['home', 'workspace', 'cases'].forEach(s => {
+    const mob = document.getElementById('mobile-screen-' + s);
+    const desk = document.getElementById('desktop-screen-' + s);
+    if (mob) mob.style.display = appState.screen === s ? 'block' : 'none';
+    if (desk) desk.style.display = appState.screen === s ? 'block' : 'none';
+  });
+  if (appState.screen === 'workspace') renderWorkspace();
+  if (appState.screen === 'cases') renderCases();
+  closeMobileMenu();
+  document.getElementById('mobile-view').scrollTop = 0;
+  const sc = document.querySelector('.phone-scroll');
+  if (sc) sc.scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+function goHome() { appState.screen = 'home'; renderApp(); }
+
+function goWorkspace(modeId, caseId) {
+  appState.screen = 'workspace';
+  appState.modeId = modeId;
+  if (caseId) {
+    appState.viewingCaseId = caseId;
+    appState.wsState = 'result';
+  } else {
+    appState.viewingCaseId = null;
+    appState.wsState = 'input';
+  }
+  renderApp();
+}
+
+function goCases() { appState.screen = 'cases'; renderApp(); }
+
+function runSimulation() {
+  appState.wsState = 'processing';
+  renderApp();
+  setTimeout(() => {
+    appState.lastScore = Math.floor(55 + Math.random() * 40);
+    appState.wsState = 'result';
+    renderApp();
+  }, 1100);
+}
+
+function saveCase() {
+  const m = MODES[appState.modeId];
+  const newCase = { id: nextCaseId++, modeId: appState.modeId, title: m.title, date: '16/06/2026', status: 'Concluído', score: appState.lastScore };
+  SAVED_CASES.unshift(newCase);
+  appState.viewingCaseId = newCase.id;
+  goCases();
+}
+
+function resultBlock(m, score, caseObj) {
+  return `
+    <div class="ws-result glass" style="--mode-color:${m.color};">
+      <p class="ws-result-label">Probabilidade de êxito</p>
+      <p class="ws-result-score mono" style="color:${m.color};">${score}%</p>
+      <p class="ws-result-disclaimer">Estimativa baseada em precedentes — não é parecer jurídico nem garante o resultado do processo.</p>
+      <ul class="ws-result-list">
+        ${m.receive.map(r => `<li>${r}</li>`).join('')}
+      </ul>
+      ${caseObj
+        ? `<span class="ws-saved-badge">✓ Salvo em ${caseObj.date}</span>`
+        : `<button class="ws-save" style="background:${m.color};" onclick="saveCase()">Salvar como caso</button>`}
+    </div>
+  `;
+}
+
+function workspaceBody(m, caseObj) {
+  if (caseObj) return resultBlock(m, caseObj.score, caseObj);
+  if (appState.wsState === 'processing') {
+    return `
+      <div class="ws-processing">
+        <div class="ws-spinner" style="border-top-color:${m.color};"></div>
+        <p class="ws-processing-text">Analisando precedentes e calculando probabilidades…</p>
+      </div>
+    `;
+  }
+  if (appState.wsState === 'result') return resultBlock(m, appState.lastScore, null);
+  return `
+    <label class="ws-label">Descreva sua situação</label>
+    <textarea class="ws-textarea" id="ws-input" style="--mode-color:${m.color};" placeholder="Conte o que aconteceu, com suas palavras…"></textarea>
+    <button class="ws-submit" style="background:${m.color};" onclick="runSimulation()">Calcular simulação</button>
+  `;
+}
+
+function renderWorkspace() {
+  const m = MODES[appState.modeId];
+  const caseObj = appState.viewingCaseId ? SAVED_CASES.find(c => c.id === appState.viewingCaseId) : null;
+  const html = `
+    <button class="ws-back" onclick="goHome()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Voltar
+    </button>
+    <div class="preview-icon-row">
+      <div class="preview-icon" style="--mode-color:${m.color};"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[appState.modeId]}</svg></div>
+      <div class="preview-meta">
+        <span class="preview-cat-tag" style="color:${m.color};">${m.cat}</span>
+        <span class="preview-num mono">Modo 0${appState.modeId} · ${m.title}</span>
+      </div>
+    </div>
+    ${workspaceBody(m, caseObj)}
+  `;
+  const mb = document.getElementById('mobile-workspace-body');
+  const db = document.getElementById('desktop-workspace-body');
+  if (mb) mb.innerHTML = html;
+  if (db) db.innerHTML = html;
+}
+
+function renderCases() {
+  const html = SAVED_CASES.length === 0 ? `
+    <div class="cases-empty">
+      <p>Nenhuma simulação salva ainda — explore um modo para começar.</p>
+      <button class="cases-empty-cta" onclick="goHome()">Ver os modos</button>
+    </div>
+  ` : `
+    <div class="cases-header">
+      <h2 class="cases-title">Meus Casos</h2>
+      <span class="cases-count">${SAVED_CASES.length} simulação(ões)</span>
+    </div>
+    <div class="case-list">
+      ${SAVED_CASES.map(c => {
+        const m = MODES[c.modeId];
+        return `
+        <button class="case-card glass" style="--mode-color:${m.color};" onclick="goWorkspace(${c.modeId}, ${c.id})">
+          <span class="case-card-accent"></span>
+          <span class="case-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[c.modeId]}</svg></span>
+          <span class="case-card-body">
+            <span class="case-card-title">${c.title}</span>
+            <span class="case-card-meta">Modo 0${c.modeId} · ${c.date}</span>
+          </span>
+          <span class="case-card-status">${c.status}</span>
+        </button>`;
+      }).join('')}
+    </div>
+  `;
+  const mb = document.getElementById('mobile-cases-body');
+  const db = document.getElementById('desktop-cases-body');
+  if (mb) mb.innerHTML = html;
+  if (db) db.innerHTML = html;
+}
 
 /* ══ INIT ══ */
 renderRail();
@@ -769,6 +1013,7 @@ renderPreview(1);
 renderMobile();
 setView('mobile');
 setTheme('dark');
+goHome();
 </script>
 </body>
 </html>
