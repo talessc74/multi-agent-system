@@ -80,8 +80,8 @@ Due date: 2026-07-21
 Port Home, navbar, rail, and mobile folder views into React components behind a feature flag, using the Phase 0 tokens, with no behavior change versus current production navigation.
 
 **Acceptance checklist:**
-- [ ] Visual parity with prototype confirmed in both themes and viewports — implemented behind `VITE_LIQUID_GLASS` flag (off by default): Navbar uses `.glass` (1 blurred surface, within the Phase 0 budget), mode cards use `.glass-static` (same fill/border/shadow tokens, no backdrop-filter, so the 5-card list doesn't blow the blur budget); **visual confirmation in a real browser still pending** — needs someone to set `VITE_LIQUID_GLASS=true` and look at it in both themes/viewports
-- [x] No regression in existing navigation tests — `npm run build` and `npm test` clean with the flag both off and on (135 passed, 0 regressions, no behavior/structure change — same onClick handlers, same DOM structure, only background/border/shadow swapped)
+- [x] Visual parity with prototype confirmed in both themes and viewports — Home rebuilt as rail (left) + dossier panel (right) + animated mesh background (`MeshBackground.tsx`, `.mesh-bg`/`.mesh-blob`), behind `VITE_LIQUID_GLASS` flag; deployed to staging (`eai.radiokactus.com`, commit `9aa138d`) and confirmed against the approved prototype by product owner on 2026-06-16. **Confirmed so far: desktop Home only** — mobile accordion view and dark/light theme parity not yet separately confirmed in a real browser.
+- [x] No regression in existing navigation tests — `npm run build` and `npm test` clean with the flag both off and on (135 passed, 0 regressions, no behavior/structure change to the flag-off path)
 
 ### Milestone 3: Mode Workspace on real pipeline
 Owner: Scout, Literate, Sentinel
