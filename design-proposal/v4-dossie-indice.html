@@ -3,51 +3,55 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>EAI? — Proposta de Design v5 · Liquid Glass · ARGUS Review</title>
+<title>EAI? — Proposta de Design v4 · Dossiê com Índice · ARGUS Review</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <style>
 /* ══ TOKENS ═══════════════════════════════════════════════════════ */
 :root, [data-theme="dark"] {
-  --text-primary:   #F5F7FA;
-  --text-secondary: #C7D0DB;
-  --text-muted:     #94A2B3;
+  --bg-primary:     #0A0B0E;
+  --bg-rail:        #0D0F13;
+  --bg-panel:       #12141A;
+  --bg-card:        #14161D;
+  --bg-glass:       rgba(10,11,14,0.82);
 
-  --accent:         #4FE8FF;
-  --accent-muted:   rgba(79,232,255,0.14);
-  --highlight:      #FFD24F;
-  --highlight-dim:  rgba(255,210,79,0.14);
+  --text-primary:   #F1F3F6;
+  --text-secondary: #9CACBC;
+  --text-muted:     #828FA0;
 
-  --glass-fill:     rgba(255,255,255,0.06);
-  --glass-fill-2:   rgba(255,255,255,0.10);
-  --glass-border:   rgba(255,255,255,0.16);
-  --glass-spec:     rgba(255,255,255,0.55);
-  --glass-shadow:   0 20px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.10);
-  --scrim-text:     rgba(8,10,14,0.30);
+  --accent:         #00FFEF;
+  --accent-muted:   rgba(0,255,239,0.10);
+  --highlight:      #E8C200;
+  --highlight-dim:  rgba(232,194,0,0.12);
 
-  --ghost-num:      rgba(255,255,255,0.05);
-  --mesh-1: #1B6BFF; --mesh-2: #A23BFF; --mesh-3: #00E0C7; --mesh-bg: #050610;
+  --border:         rgba(255,255,255,0.07);
+  --border-strong:  rgba(255,255,255,0.14);
+  --ghost-num:       rgba(255,255,255,0.035);
+
+  --shadow-panel:   none;
 }
 [data-theme="light"] {
-  --text-primary:   #11151C;
-  --text-secondary: #3E4757;
-  --text-muted:     #69748A;
+  --bg-primary:     #F3F1EB;
+  --bg-rail:        #EBE8E0;
+  --bg-panel:       #FFFFFF;
+  --bg-card:        #FFFFFF;
+  --bg-glass:       rgba(243,241,235,0.85);
 
-  --accent:         #0B5FAE;
-  --accent-muted:   rgba(11,95,174,0.10);
-  --highlight:      #B5790A;
-  --highlight-dim:  rgba(181,121,10,0.12);
+  --text-primary:   #0D1520;
+  --text-secondary: #495568;
+  --text-muted:     #6B7A8D;
 
-  --glass-fill:     rgba(255,255,255,0.55);
-  --glass-fill-2:   rgba(255,255,255,0.72);
-  --glass-border:   rgba(255,255,255,0.65);
-  --glass-spec:     rgba(255,255,255,0.9);
-  --glass-shadow:   0 16px 44px rgba(20,30,50,0.14), inset 0 1px 0 rgba(255,255,255,0.7);
-  --scrim-text:     rgba(255,255,255,0.45);
+  --accent:         #0D1520;
+  --accent-muted:   rgba(13,21,32,0.07);
+  --highlight:      #1A3A6B;
+  --highlight-dim:  rgba(26,58,107,0.10);
 
-  --ghost-num:      rgba(20,30,50,0.05);
-  --mesh-1: #7FB7FF; --mesh-2: #E2B6FF; --mesh-3: #8FF5E6; --mesh-bg: #F0F2F6;
+  --border:         rgba(0,0,0,0.08);
+  --border-strong:  rgba(0,0,0,0.16);
+  --ghost-num:       rgba(13,21,32,0.04);
+
+  --shadow-panel:   0 2px 8px rgba(0,0,0,0.05), 0 12px 40px rgba(0,0,0,0.06);
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -60,41 +64,6 @@ body{
 .serif{font-family:"Playfair Display",serif;}
 .mono{font-family:"JetBrains Mono",monospace;}
 
-/* ══ LIQUID MESH BACKGROUND ═══════════════════════════════════════ */
-.mesh-bg{
-  position:absolute;inset:0;overflow:hidden;background:var(--mesh-bg);
-  transition:background 1.2s ease;
-}
-.mesh-blob{
-  position:absolute;border-radius:50%;filter:blur(70px);opacity:0.55;
-  animation:drift 22s ease-in-out infinite alternate;
-}
-.mesh-blob.b1{width:380px;height:380px;background:var(--mesh-1);top:-80px;left:-60px;animation-delay:0s;}
-.mesh-blob.b2{width:320px;height:320px;background:var(--mesh-2);top:40%;right:-100px;animation-delay:-7s;}
-.mesh-blob.b3{width:300px;height:300px;background:var(--mesh-3);bottom:-100px;left:20%;animation-delay:-14s;}
-@keyframes drift{
-  0%{transform:translate(0,0) scale(1);}
-  50%{transform:translate(30px,-40px) scale(1.12);}
-  100%{transform:translate(-20px,20px) scale(0.96);}
-}
-[data-theme="light"] .mesh-blob{opacity:0.4;}
-
-/* ══ GLASS MATERIAL — FORGE: material único, reutilizado em todo o sistema ══ */
-.glass{
-  position:relative;
-  background:var(--glass-fill);
-  backdrop-filter:blur(28px) saturate(160%);
-  -webkit-backdrop-filter:blur(28px) saturate(160%);
-  border:1px solid var(--glass-border);
-  box-shadow:var(--glass-shadow);
-}
-.glass::before{
-  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(135deg, var(--glass-spec) 0%, transparent 28%);
-  opacity:0.35;mix-blend-mode:overlay;
-}
-[data-theme="light"] .glass::before{opacity:0.55;}
-
 /* ══ CONTROL BAR ══════════════════════════════════════════════════ */
 .ctrl-bar{
   position:fixed;top:0;left:0;right:0;z-index:9999;height:46px;
@@ -103,7 +72,7 @@ body{
 }
 .ctrl-badge{
   font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;
-  color:#4FE8FF;border:1px solid rgba(79,232,255,0.3);padding:3px 8px;border-radius:3px;
+  color:#00FFEF;border:1px solid rgba(0,255,239,0.25);padding:3px 8px;border-radius:3px;
 }
 .ctrl-sep{width:1px;height:18px;background:rgba(255,255,255,0.08);}
 .ctrl-group{display:flex;align-items:center;gap:3px;}
@@ -114,123 +83,122 @@ body{
   cursor:pointer;transition:all .15s;white-space:nowrap;
 }
 .ctrl-btn:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.75);}
-.ctrl-btn.on{background:rgba(79,232,255,0.12);border-color:rgba(79,232,255,0.4);color:#4FE8FF;}
+.ctrl-btn.on{background:rgba(0,255,239,0.10);border-color:rgba(0,255,239,0.35);color:#00FFEF;}
 .ctrl-btn.on-light{background:rgba(255,255,255,0.10);border-color:rgba(255,255,255,0.3);color:#fff;}
 .ctrl-archive{
-  font-size:10px;font-weight:600;letter-spacing:0.06em;
+  margin-left:auto;font-size:10px;font-weight:600;letter-spacing:0.06em;
   color:rgba(255,255,255,0.35);text-decoration:none;border:1px solid rgba(255,255,255,0.10);
   padding:4px 10px;border-radius:4px;transition:all .15s;
 }
 .ctrl-archive:hover{color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.25);}
 
 /* ══ VIEWPORT ═════════════════════════════════════════════════════ */
-.vp-wrap{padding-top:46px;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;}
+.vp-wrap{padding-top:46px;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;transition:background .3s;}
 
 /* ── MOBILE FRAME ── */
-#mobile-view{padding:28px 0 48px;display:flex;justify-content:center;position:relative;z-index:1;}
+#mobile-view{padding:28px 0 48px;display:flex;justify-content:center;}
 .phone-shell{
-  width:390px;min-height:860px;border-radius:44px;overflow:hidden;position:relative;
+  width:390px;min-height:860px;background:var(--bg-primary);border-radius:44px;overflow:hidden;position:relative;
   box-shadow:0 0 0 9px #1C1F25,0 0 0 11px #0A0C0F,0 40px 100px rgba(0,0,0,0.85);
 }
 .phone-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:100px;height:30px;background:#1C1F25;border-radius:0 0 20px 20px;z-index:100;}
-.phone-scroll{overflow-y:auto;overflow-x:hidden;max-height:860px;position:relative;}
+.phone-scroll{overflow-y:auto;overflow-x:hidden;max-height:860px;}
 
 /* ── DESKTOP FRAME ── */
-#desktop-view{width:100%;max-width:1280px;display:none;min-height:calc(100vh - 46px);position:relative;z-index:1;}
+#desktop-view{width:100%;max-width:1280px;display:none;background:var(--bg-primary);min-height:calc(100vh - 46px);border-left:1px solid var(--border);border-right:1px solid var(--border);transition:background .3s;}
 
 /* ══ NAVBAR ═══════════════════════════════════════════════════════ */
 .navbar{
-  position:sticky;top:0;z-index:50;height:60px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px;margin:10px;border-radius:18px;
+  position:sticky;top:0;z-index:50;height:56px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;background:var(--bg-glass);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:background .3s,border-color .3s;
 }
-.navbar.glass{}
 .nav-scrim{
   position:absolute;top:100%;left:0;right:0;height:2400px;
-  background:rgba(0,0,0,0.45);backdrop-filter:blur(2px);z-index:60;display:none;
+  background:rgba(0,0,0,0.55);z-index:60;display:none;
 }
 .nav-scrim.open{display:block;}
 .nav-dropdown{
-  position:absolute;top:100%;right:10px;min-width:210px;margin-top:10px;
-  border-radius:16px;overflow:hidden;display:none;z-index:70;
+  position:absolute;top:100%;right:20px;min-width:200px;margin-top:8px;
+  background:var(--bg-card);border:1px solid var(--border-strong);border-radius:10px;
+  box-shadow:0 12px 32px rgba(0,0,0,0.5);overflow:hidden;
+  display:none;z-index:70;
 }
 .nav-dropdown.open{display:block;}
 .nav-dropdown-item{
-  display:flex;align-items:center;gap:10px;width:100%;position:relative;z-index:2;
+  display:flex;align-items:center;gap:10px;width:100%;
   padding:13px 16px;background:none;border:none;cursor:pointer;
   font-family:inherit;font-size:13px;font-weight:600;color:var(--text-secondary);text-align:left;
   transition:background .15s,color .15s;
 }
 .nav-dropdown-item svg{width:16px;height:16px;flex-shrink:0;}
-.nav-dropdown-item:hover,.nav-dropdown-item:focus-visible{background:rgba(255,255,255,0.10);color:var(--text-primary);}
-.nav-dropdown-sep{height:1px;background:var(--glass-border);margin:0;position:relative;z-index:2;}
+.nav-dropdown-item:hover,.nav-dropdown-item:focus-visible{background:var(--accent-muted);color:var(--text-primary);}
+.nav-dropdown-sep{height:1px;background:var(--border);margin:0;}
 .nav-dropdown-cta{color:var(--accent);font-weight:700;}
 .nav-logo{display:flex;align-items:baseline;text-decoration:none;user-select:none;}
 .nav-logo-main{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--text-primary);}
 .nav-logo-tick{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--accent);}
-.nav-right{display:flex;align-items:center;gap:6px;}
-.nav-icon-btn{display:flex;align-items:center;gap:6px;min-width:44px;min-height:44px;padding:0 10px;background:none;border:none;cursor:pointer;color:var(--text-secondary);border-radius:12px;transition:color .15s,background .15s;}
-.nav-icon-btn:hover{color:var(--text-primary);background:rgba(255,255,255,0.10);}
-.nav-icon-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.nav-right{display:flex;align-items:center;gap:2px;}
+.nav-icon-btn{display:flex;align-items:center;gap:6px;min-width:44px;min-height:44px;padding:0 10px;background:none;border:none;cursor:pointer;color:var(--text-secondary);border-radius:6px;transition:color .15s,background .15s;}
+.nav-icon-btn:hover{color:var(--text-primary);background:var(--accent-muted);}
 .nav-icon-btn span{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;white-space:nowrap;}
 .nav-icon-btn svg{width:16px;height:16px;flex-shrink:0;}
-.nav-theme-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--text-secondary);border-radius:11px;transition:color .15s,background .15s;}
-.nav-theme-btn:hover{color:var(--text-primary);background:rgba(255,255,255,0.10);}
-.nav-cta{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0 16px;height:36px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.08);color:var(--text-primary);cursor:pointer;border-radius:11px;transition:all .15s;display:flex;align-items:center;}
+.nav-theme-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--text-secondary);border-radius:4px;transition:color .15s;}
+.nav-theme-btn:hover{color:var(--text-primary);}
+.nav-cta{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0 14px;height:34px;border:1px solid var(--border-strong);background:none;color:var(--text-primary);cursor:pointer;border-radius:4px;transition:all .15s;display:flex;align-items:center;}
 .nav-cta:hover{border-color:var(--accent);background:var(--accent-muted);color:var(--accent);}
 
 /* ══ DESKTOP HERO ═════════════════════════════════════════════════ */
-.hero{padding:48px 48px 32px;max-width:1200px;margin:0 auto;position:relative;}
+.hero{padding:56px 48px 36px;max-width:1200px;margin:0 auto;position:relative;}
 .hero-case-num{
   font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:500;letter-spacing:0.08em;
   color:var(--text-muted);margin-bottom:18px;display:flex;align-items:center;gap:10px;
 }
-.hero-case-num .dot{width:6px;height:6px;border-radius:50%;background:#3CE6A8;flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite;box-shadow:0 0 8px #3CE6A8;}
+.hero-case-num .dot{width:6px;height:6px;border-radius:50%;background:#00CC88;flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite;}
 @keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:0.35;}}
 .hero-h1{
   font-family:"Playfair Display",serif;font-style:italic;font-weight:700;
   font-size:clamp(34px,4.2vw,58px);line-height:1.08;letter-spacing:-0.01em;color:var(--text-primary);
-  max-width:680px;margin-bottom:16px;text-shadow:0 2px 24px rgba(0,0,0,0.25);
+  max-width:680px;margin-bottom:16px;
 }
 .hero-sub{font-size:15px;color:var(--text-secondary);max-width:460px;line-height:1.6;}
 
 /* ══ DISCLAIMER ═══════════════════════════════════════════════════ */
-.disclaimer{padding:0 48px 24px;max-width:1200px;margin:0 auto;}
-.disclaimer-inner{
-  border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;
-}
-.disclaimer-text{font-size:12px;font-weight:500;color:var(--text-secondary);line-height:1.5;}
+.disclaimer{padding:0 48px 28px;max-width:1200px;margin:0 auto;}
+.disclaimer-inner{border-left:2px solid var(--highlight-dim);padding:7px 0 7px 14px;}
+.disclaimer-text{font-size:12px;font-weight:500;color:var(--text-muted);line-height:1.5;}
 
-/* ══ SPLIT SELECTOR ═══════════════════════════════════════════════ */
+/* ══ SPLIT SELECTOR — O CORAÇÃO DA V3 ════════════════════════════ */
 .selector{
-  display:flex;gap:16px;max-width:1200px;margin:0 auto;padding:0 48px 48px;
+  display:flex;max-width:1200px;margin:0 auto;
+  border-top:1px solid var(--border);
   min-height:480px;
 }
 
 /* Rail — esquerda */
 .rail{
-  width:360px;flex-shrink:0;padding:24px 0;border-radius:24px;
+  width:360px;flex-shrink:0;border-right:1px solid var(--border);
+  background:var(--bg-rail);padding:28px 0;
 }
 .rail-hint{
   font-size:11px;color:var(--text-muted);line-height:1.4;
-  padding:0 24px 16px;position:relative;z-index:2;
+  padding:0 28px 18px;
 }
-.rail-cat{margin-bottom:8px;position:relative;z-index:2;}
-.rail-cat-header{display:flex;align-items:center;gap:8px;padding:10px 24px 8px;}
+.rail-cat{margin-bottom:8px;}
+.rail-cat-header{display:flex;align-items:center;gap:8px;padding:10px 28px 8px;}
 .rail-cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .rail-cat-label{font-size:9px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--text-muted);}
 
 .rail-item{
-  display:flex;flex-direction:column;gap:5px;width:calc(100% - 16px);margin:2px 8px;
-  font-family:inherit;background:none;border:none;border-radius:14px;text-align:left;
-  padding:11px 16px;cursor:pointer;position:relative;
-  transition:background .2s,box-shadow .2s;
+  display:flex;flex-direction:column;gap:5px;width:100%;
+  font-family:inherit;background:none;border:none;border-bottom:1px solid var(--border);text-align:left;
+  padding:12px 28px;cursor:pointer;position:relative;
+  border-left:3px solid transparent;transition:border-color .2s,background .2s;
 }
-.rail-item:hover{background:rgba(255,255,255,0.08);}
-.rail-item.active{
-  background:color-mix(in srgb, var(--item-color) 22%, var(--glass-fill-2));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 16px color-mix(in srgb, var(--item-color) 30%, transparent);
-}
-.rail-item:focus-visible{outline:2px solid var(--item-color);outline-offset:1px;}
+.rail-item:hover{background:var(--accent-muted);}
+.rail-item.active{border-left-color:var(--item-color);background:color-mix(in srgb, var(--item-color) 7%, transparent);border-bottom-color:transparent;}
+.rail-cat:last-child .rail-item:last-child{border-bottom:none;}
+.rail-item:focus-visible{outline:2px solid var(--item-color);outline-offset:-2px;background:var(--accent-muted);}
 .rail-item-top{display:flex;align-items:baseline;gap:12px;}
 .rail-item-num{
   font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:500;
@@ -254,12 +222,13 @@ body{
 
 /* Preview — direita */
 .preview{
-  flex:1;position:relative;overflow:hidden;border-radius:24px;
-  padding:40px 44px;display:flex;flex-direction:column;
+  flex:1;position:relative;overflow:hidden;
+  padding:40px 48px;display:flex;flex-direction:column;
+  background:var(--bg-panel);
 }
 .preview-wash{
-  position:absolute;inset:0;border-radius:inherit;
-  background:radial-gradient(circle at 85% 0%, color-mix(in srgb, var(--mode-color) 32%, transparent), transparent 60%);
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 85% 0%, color-mix(in srgb, var(--mode-color) 10%, transparent), transparent 60%);
   transition:background .4s ease;pointer-events:none;
 }
 .preview-ghost-num{
@@ -272,15 +241,14 @@ body{
 
 .preview-icon-row{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
 .preview-icon{
-  width:54px;height:54px;border-radius:16px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;position:relative;
-  background:color-mix(in srgb, var(--mode-color) 30%, var(--glass-fill-2));
-  border:1px solid color-mix(in srgb, var(--mode-color) 45%, transparent);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.4), 0 4px 14px color-mix(in srgb, var(--mode-color) 35%, transparent);
+  width:52px;height:52px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb, var(--mode-color) 14%, transparent);
   transition:background .3s;
 }
-.preview-icon svg{width:25px;height:25px;stroke:var(--mode-color);transition:stroke .3s;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.2));}
-[data-theme="light"] .preview-icon svg{stroke:color-mix(in srgb, var(--mode-color) 75%, black 15%);}
+.preview-icon svg{width:24px;height:24px;stroke:var(--mode-color);transition:stroke .3s;}
+[data-theme="light"] .preview-icon{background:var(--mode-color);}
+[data-theme="light"] .preview-icon svg{stroke:#fff;}
 
 .preview-meta{display:flex;flex-direction:column;gap:2px;}
 .preview-cat-tag{font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--mode-color);}
@@ -293,16 +261,15 @@ body{
 .preview-tagline{font-size:14px;font-weight:600;color:var(--mode-color);margin-bottom:18px;}
 .preview-desc{font-size:15px;color:var(--text-secondary);line-height:1.7;max-width:560px;margin-bottom:28px;}
 
-.preview-footer{display:flex;align-items:center;gap:24px;margin-top:auto;padding-top:20px;border-top:1px solid var(--glass-border);}
+.preview-footer{display:flex;align-items:center;gap:24px;margin-top:auto;padding-top:20px;border-top:1px solid var(--border);}
 .preview-price{font-family:"JetBrains Mono",monospace;font-size:18px;font-weight:700;color:var(--mode-color);}
 .preview-cta{
-  display:flex;align-items:center;gap:10px;position:relative;overflow:hidden;
-  background:var(--mode-color);color:#06121A;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:10px;
+  background:var(--mode-color);color:#0A1220;border:none;cursor:pointer;
   font-size:13px;font-weight:700;letter-spacing:0.04em;
-  padding:14px 26px;border-radius:14px;transition:filter .15s,transform .15s;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 18px color-mix(in srgb, var(--mode-color) 40%, transparent);
+  padding:13px 24px;border-radius:8px;transition:filter .15s,transform .15s;
 }
-.preview-cta:hover{filter:brightness(0.95);transform:translateY(-1px);}
+.preview-cta:hover{filter:brightness(0.92);transform:translateY(-1px);}
 .preview-cta svg{width:16px;height:16px;}
 
 /* Bring/Receive micro-grid */
@@ -316,9 +283,8 @@ body{
 .preview-br-item::before{content:'—';color:var(--mode-color);flex-shrink:0;}
 
 /* ══ TECH FOOTER ══════════════════════════════════════════════════ */
-.tech-footer{padding:24px 48px 40px;max-width:1200px;margin:0 auto;}
-.tech-card{border-radius:20px;padding:24px 28px;}
-.tech-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-bottom:20px;}
+.tech-footer{border-top:1px solid var(--border);padding:28px 48px 36px;max-width:1200px;margin:0 auto;}
+.tech-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-bottom:22px;}
 .tech-item-label{font-size:9px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
 .tech-item-val{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--text-secondary);line-height:1.4;}
 .tech-links{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
@@ -326,51 +292,51 @@ body{
 .tech-link:hover{color:var(--text-secondary);}
 .tech-note{font-size:11px;color:var(--text-muted);}
 
-/* ══ MOBILE ═══════════════════════════════════════════════════════ */
-.mobile-page{min-height:860px;position:relative;}
-.mobile-hero{padding:38px 18px 14px;position:relative;}
+/* ══ MOBILE — FOLDER STACK ════════════════════════════════════════ */
+.mobile-page{background:var(--bg-primary);min-height:860px;transition:background .3s;}
+.mobile-hero{padding:40px 20px 14px;position:relative;}
 .mobile-case-num{
   font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:500;letter-spacing:0.06em;
   color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;
 }
-.mobile-case-num .dot{width:5px;height:5px;border-radius:50%;background:#3CE6A8;flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite;}
-.mobile-h1{font-family:"Playfair Display",serif;font-style:italic;font-weight:700;font-size:34px;line-height:1.1;color:var(--text-primary);margin-bottom:10px;text-shadow:0 2px 20px rgba(0,0,0,0.2);}
+.mobile-case-num .dot{width:5px;height:5px;border-radius:50%;background:#00CC88;flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite;}
+.mobile-h1{font-family:"Playfair Display",serif;font-style:italic;font-weight:700;font-size:34px;line-height:1.1;color:var(--text-primary);margin-bottom:10px;}
 .mobile-sub{font-size:14px;color:var(--text-secondary);line-height:1.55;margin-bottom:18px;}
 
-.mobile-disclaimer{margin:0 18px 22px;padding:12px 14px;border-radius:14px;}
-.mobile-disclaimer p{font-size:12px;font-weight:500;color:var(--text-secondary);line-height:1.45;position:relative;z-index:2;}
+.mobile-disclaimer{margin:0 20px 22px;padding:10px 14px;border-left:2px solid var(--highlight-dim);background:var(--highlight-dim);border-radius:0 6px 6px 0;}
+.mobile-disclaimer p{font-size:12px;font-weight:500;color:var(--text-muted);line-height:1.45;}
 
-.mobile-modes{padding:0 14px 32px;}
-.mobile-cat-header{display:flex;align-items:center;gap:8px;margin:20px 6px 10px;}
+.mobile-modes{padding:0 16px 32px;}
+.mobile-cat-header{display:flex;align-items:center;gap:8px;margin:22px 4px 10px;}
 .mobile-cat-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
 .mobile-cat-label{font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--text-muted);}
 
-/* Folder card — agora em vidro */
+/* Folder card */
 .m-folder{
-  position:relative;overflow:hidden;border-radius:18px;
-  margin-bottom:10px;
+  position:relative;overflow:hidden;border-radius:10px;
+  border:1px solid var(--border);background:var(--bg-card);margin-bottom:8px;
+  box-shadow:var(--shadow-panel);
 }
 .m-folder-ghost{
-  position:absolute;right:-6px;top:-18px;z-index:1;
+  position:absolute;right:-6px;top:-18px;
   font-family:"Playfair Display",serif;font-style:italic;font-weight:700;
   font-size:96px;color:var(--ghost-num);pointer-events:none;user-select:none;
 }
 .m-folder-tab{
-  position:absolute;left:18px;top:0;width:30px;height:4px;border-radius:0 0 4px 4px;
-  background:var(--mode-color);box-shadow:0 0 10px var(--mode-color);z-index:2;
+  position:absolute;left:16px;top:0;width:28px;height:4px;border-radius:0 0 3px 3px;
+  background:var(--mode-color);
 }
 .m-folder-header{
   display:flex;align-items:center;gap:12px;padding:18px 16px 16px;
   background:none;border:none;width:100%;text-align:left;cursor:pointer;position:relative;z-index:2;
 }
 .m-folder-icon{
-  width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  background:color-mix(in srgb, var(--mode-color) 30%, var(--glass-fill-2));
-  border:1px solid color-mix(in srgb, var(--mode-color) 45%, transparent);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.4);
+  width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  background:color-mix(in srgb, var(--mode-color) 14%, transparent);
 }
-.m-folder-icon svg{width:18px;height:18px;stroke:var(--mode-color);}
-[data-theme="light"] .m-folder-icon svg{stroke:color-mix(in srgb, var(--mode-color) 75%, black 15%);}
+.m-folder-icon svg{width:17px;height:17px;stroke:var(--mode-color);}
+[data-theme="light"] .m-folder-icon{background:var(--mode-color);}
+[data-theme="light"] .m-folder-icon svg{stroke:#fff;}
 .m-folder-title-block{flex:1;}
 .m-folder-cat-tag{font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mode-color);margin-bottom:2px;}
 .m-folder-title{font-size:15px;font-weight:700;color:var(--text-primary);line-height:1.2;}
@@ -385,15 +351,14 @@ body{
 .m-folder-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .m-folder-price{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:700;}
 .m-folder-cta{
-  flex:1;height:48px;border:none;border-radius:13px;font-size:13px;font-weight:700;
+  flex:1;height:46px;border:none;border-radius:8px;font-size:13px;font-weight:700;
   cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
-  background:var(--mode-color);color:#06121A;transition:filter .15s;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.5);
+  background:var(--mode-color);color:#0A1220;transition:filter .15s;
   max-width:200px;
 }
-.m-folder-cta:hover{filter:brightness(0.95);}
+.m-folder-cta:hover{filter:brightness(0.92);}
 
-.mobile-footer{padding:20px 18px 36px;text-align:center;margin-top:8px;}
+.mobile-footer{padding:20px 20px 36px;text-align:center;border-top:1px solid var(--border);margin-top:8px;}
 .mobile-footer-note{font-size:11px;font-weight:500;color:var(--text-muted);line-height:1.6;margin-bottom:8px;}
 .mobile-footer-link{font-size:11px;font-weight:600;color:var(--text-muted);text-decoration:underline;text-underline-offset:3px;}
 
@@ -406,7 +371,7 @@ body{
 <body>
 
 <div class="ctrl-bar">
-  <span class="ctrl-badge">ARGUS · Design v5 — Liquid Glass</span>
+  <span class="ctrl-badge">ARGUS · Design v4 — Dossiê com Índice</span>
   <div class="ctrl-sep"></div>
   <div class="ctrl-group">
     <span class="ctrl-label">Viewport</span>
@@ -420,9 +385,8 @@ body{
     <button class="ctrl-btn" id="btn-light" onclick="setTheme('light')">Light</button>
   </div>
   <div style="margin-left:auto;display:flex;gap:8px;">
-    <a class="ctrl-archive" href="v4-dossie-indice.html">← v4 arquivada</a>
-    <a class="ctrl-archive" href="v3-dossie.html">← v3 arquivada</a>
-    <a class="ctrl-archive" href="v2-aprovada.html">← v2 arquivada</a>
+    <a class="ctrl-archive" style="margin-left:0;" href="v3-dossie.html">← v3 arquivada</a>
+    <a class="ctrl-archive" style="margin-left:0;" href="v2-aprovada.html">← v2 arquivada</a>
   </div>
 </div>
 
@@ -431,16 +395,11 @@ body{
   <!-- ═══════════ MOBILE ═══════════ -->
   <div id="mobile-view">
     <div class="phone-shell">
-      <div class="mesh-bg" id="mesh-mobile">
-        <div class="mesh-blob b1"></div>
-        <div class="mesh-blob b2"></div>
-        <div class="mesh-blob b3"></div>
-      </div>
       <div class="phone-notch"></div>
       <div class="phone-scroll">
         <div class="mobile-page">
 
-          <nav class="navbar glass">
+          <nav class="navbar">
             <a class="nav-logo" href="#">
               <span class="nav-logo-main">EAI</span><span class="nav-logo-tick">✓?</span>
             </a>
@@ -450,7 +409,7 @@ body{
               </button>
             </div>
             <div class="nav-scrim" id="mobile-scrim" onclick="toggleMobileMenu()"></div>
-            <div class="nav-dropdown glass" id="mobile-nav-dropdown">
+            <div class="nav-dropdown" id="mobile-nav-dropdown">
               <button class="nav-dropdown-item" onclick="toggleMobileMenu()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M8 12h8M8 16h5"/></svg>
                 Meus Casos
@@ -473,7 +432,7 @@ body{
             <p class="mobile-sub">Antes do tribunal, o teste.</p>
           </div>
 
-          <div class="mobile-disclaimer glass">
+          <div class="mobile-disclaimer">
             <p>Não é consulta jurídica. Não garante vitória. Ferramenta de apoio analítico baseada em IA.</p>
           </div>
 
@@ -491,14 +450,9 @@ body{
 
   <!-- ═══════════ DESKTOP ═══════════ -->
   <div id="desktop-view">
-    <div class="mesh-bg" id="mesh-desktop" style="position:fixed;">
-      <div class="mesh-blob b1"></div>
-      <div class="mesh-blob b2"></div>
-      <div class="mesh-blob b3"></div>
-    </div>
     <div class="page">
 
-      <nav class="navbar glass" style="margin:10px 20px;">
+      <nav class="navbar" style="padding:0 32px;max-width:none;">
         <a class="nav-logo" href="#">
           <span class="nav-logo-main">EAI</span><span class="nav-logo-tick">✓?</span>
         </a>
@@ -521,17 +475,17 @@ body{
       </section>
 
       <div class="disclaimer">
-        <div class="disclaimer-inner glass">
+        <div class="disclaimer-inner">
           <p class="disclaimer-text">O EAI? é uma ferramenta de apoio analítico baseada em modelos de linguagem avançados. Não substitui o aconselhamento jurídico profissional.</p>
         </div>
       </div>
 
       <div class="selector">
-        <div class="rail glass">
+        <div class="rail">
           <p class="rail-hint">Selecione um modo para abrir o dossiê completo.</p>
           <div id="rail"></div>
         </div>
-        <div class="preview glass" id="preview-wrap">
+        <div class="preview" id="preview-wrap">
           <div class="preview-wash"></div>
           <div class="preview-ghost-num" id="preview-ghost"></div>
           <div id="preview-content"></div>
@@ -539,18 +493,16 @@ body{
       </div>
 
       <div class="tech-footer">
-        <div class="tech-card glass">
-          <div class="tech-grid">
-            <div><p class="tech-item-label">Base de dados</p><p class="tech-item-val">1.9M+ Precedentes</p></div>
-            <div><p class="tech-item-label">Processamento</p><p class="tech-item-val">Análise Semântica Multimodal</p></div>
-            <div><p class="tech-item-label">Privacidade</p><p class="tech-item-val">Criptografia RSA-4096</p></div>
-            <div><p class="tech-item-label">Versão</p><p class="tech-item-val">v2.4.0 · eaijuridico.com.br</p></div>
-          </div>
-          <div class="tech-links">
-            <a href="#" class="tech-link">Termos de Uso</a>
-            <a href="#" class="tech-link">Contato</a>
-            <span class="tech-note">Não é consulta jurídica · Não garante vitória</span>
-          </div>
+        <div class="tech-grid">
+          <div><p class="tech-item-label">Base de dados</p><p class="tech-item-val">1.9M+ Precedentes</p></div>
+          <div><p class="tech-item-label">Processamento</p><p class="tech-item-val">Análise Semântica Multimodal</p></div>
+          <div><p class="tech-item-label">Privacidade</p><p class="tech-item-val">Criptografia RSA-4096</p></div>
+          <div><p class="tech-item-label">Versão</p><p class="tech-item-val">v2.4.0 · eaijuridico.com.br</p></div>
+        </div>
+        <div class="tech-links">
+          <a href="#" class="tech-link">Termos de Uso</a>
+          <a href="#" class="tech-link">Contato</a>
+          <span class="tech-note">Não é consulta jurídica · Não garante vitória</span>
         </div>
       </div>
 
@@ -560,11 +512,11 @@ body{
 </div>
 
 <script>
-/* ══ FONTE ÚNICA DE DADOS ══ */
+/* ══ FONTE ÚNICA DE DADOS — FORGE: zero duplicação entre mobile/desktop ══ */
 const CATEGORIES = [
-  { label: 'Um lado do processo',    dot: '#4FE8FF', modes: [1,2] },
-  { label: 'Dois lados do processo', dot: '#C58CFF', modes: [3,4] },
-  { label: 'Pós-julgamento',         dot: '#3CE6A8', modes: [5]   },
+  { label: 'Um lado do processo',    dot: '#00FFEF', modes: [1,2] },
+  { label: 'Dois lados do processo', dot: '#A882FF', modes: [3,4] },
+  { label: 'Pós-julgamento',         dot: '#00CC88', modes: [5]   },
 ];
 
 const ICONS = {
@@ -576,31 +528,31 @@ const ICONS = {
 };
 
 const MODES = {
-  1: { color:'#4FE8FF', cat:'Um lado do processo', title:'Tese Estratégica',
+  1: { color:'#00FFEF', cat:'Um lado do processo', title:'Tese Estratégica',
        tagline:'Você traz o fato. Descubra se tem razão.',
        desc:'Descreva sua situação com suas próprias palavras. O sistema avalia a força dos seus argumentos, identifica o que o outro lado pode alegar contra você e calcula sua chance real de êxito.',
        bring:['Fatos principais','Contexto do conflito','Documentos (opcional)'],
        receive:['Probabilidade de êxito','Fundamentos jurídicos','Riscos identificados'],
        price:'R$ 9,90', cta:'Validar causa' },
-  2: { color:'#FF7A7A', cat:'Um lado do processo', title:'Defesa sob Ataque',
+  2: { color:'#FF6B6B', cat:'Um lado do processo', title:'Defesa sob Ataque',
        tagline:'Você está sendo acusado. A IA constrói sua defesa.',
        desc:'Descreva a acusação que você recebeu e sua versão dos fatos. O sistema constrói sua defesa técnica, avalia seus argumentos em ciclos e identifica vulnerabilidades antes que o outro lado as explore.',
        bring:['A acusação recebida','Sua versão dos fatos','Provas de defesa (opcional)'],
        receive:['Força da sua defesa','Argumentos jurídicos','Vulnerabilidades expostas'],
        price:'R$ 9,90', cta:'Validar defesa' },
-  3: { color:'#C58CFF', cat:'Dois lados do processo', title:'Mesa Dupla — Juiz',
+  3: { color:'#A882FF', cat:'Dois lados do processo', title:'Mesa Dupla — Juiz',
        tagline:'Você já tem os dois lados. O juiz decide.',
        desc:'Você traz a acusação e a defesa prontas. O sistema aciona o magistrado mais especializado para emitir uma sentença direta — sem advogado intermediário. O caminho mais rápido para um veredito.',
        bring:['Argumento da acusação','Argumento da defesa','Documentos (opcional)'],
        receive:['Sentença fundamentada','Lado mais forte','Base jurídica utilizada'],
        price:'R$ 5,90', cta:'Consultar magistrado' },
-  4: { color:'#FFC24F', cat:'Dois lados do processo', title:'Mesa Dupla — Assistida',
+  4: { color:'#FFB800', cat:'Dois lados do processo', title:'Mesa Dupla — Assistida',
        tagline:'Você escolhe seu lado. A IA reforça sua tese.',
        desc:'Você já sabe qual argumento quer defender. O sistema melhora ativamente sua tese antes do julgamento — você não entra no debate sozinho. Ideal para quem veio do Modo 1.',
        bring:['Argumento da acusação','Argumento da defesa','Seu lado no conflito'],
        receive:['Tese reforçada pela IA','Probabilidade de êxito','Pontos fracos expostos'],
        price:'R$ 9,90', cta:'Iniciar simulação' },
-  5: { color:'#3CE6A8', cat:'Pós-julgamento', title:'Revisão Pós-Conflito',
+  5: { color:'#00CC88', cat:'Pós-julgamento', title:'Revisão Pós-Conflito',
        tagline:'Já existe uma decisão. Vale a pena ir adiante?',
        desc:'Você já tem uma sentença ou uma proposta de acordo em mãos. O sistema analisa se vale recorrer da decisão ou se o acordo oferecido é justo — e te diz qual caminho tem menos risco.',
        bring:['A decisão recebida','Contexto do conflito','Proposta de acordo (opcional)'],
@@ -693,7 +645,7 @@ function renderMobile() {
     ${cat.modes.map(id => {
       const m = MODES[id];
       return `
-      <div class="m-folder glass" id="mf-${id}" style="--mode-color:${m.color};">
+      <div class="m-folder" id="mf-${id}" style="--mode-color:${m.color};">
         <div class="m-folder-tab"></div>
         <span class="m-folder-ghost">0${id}</span>
         <button class="m-folder-header" onclick="toggleFolder(${id})">
@@ -732,7 +684,7 @@ function setView(v) {
   document.getElementById('desktop-view').style.display = v === 'desktop' ? 'block' : 'none';
   document.getElementById('btn-mobile').className  = 'ctrl-btn' + (v === 'mobile'  ? ' on' : '');
   document.getElementById('btn-desktop').className = 'ctrl-btn' + (v === 'desktop' ? ' on' : '');
-  document.getElementById('vp-wrap').style.background = v === 'mobile' ? '#050608' : 'var(--mesh-bg)';
+  document.getElementById('vp-wrap').style.background = v === 'mobile' ? '#050608' : 'var(--bg-rail)';
   document.getElementById('vp-wrap').style.justifyContent = v === 'mobile' ? 'center' : 'flex-start';
 }
 
