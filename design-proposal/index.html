@@ -113,6 +113,23 @@ body{
   padding:0 20px;background:var(--bg-glass);border-bottom:1px solid var(--border);
   backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:background .3s,border-color .3s;
 }
+.nav-dropdown{
+  position:absolute;top:100%;right:20px;min-width:200px;margin-top:8px;
+  background:var(--bg-card);border:1px solid var(--border-strong);border-radius:10px;
+  box-shadow:0 12px 32px rgba(0,0,0,0.35);overflow:hidden;
+  display:none;z-index:70;
+}
+.nav-dropdown.open{display:block;}
+.nav-dropdown-item{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:13px 16px;background:none;border:none;cursor:pointer;
+  font-family:inherit;font-size:13px;font-weight:600;color:var(--text-secondary);text-align:left;
+  transition:background .15s,color .15s;
+}
+.nav-dropdown-item svg{width:16px;height:16px;flex-shrink:0;}
+.nav-dropdown-item:hover,.nav-dropdown-item:focus-visible{background:var(--accent-muted);color:var(--text-primary);}
+.nav-dropdown-sep{height:1px;background:var(--border);margin:0;}
+.nav-dropdown-cta{color:var(--accent);font-weight:700;}
 .nav-logo{display:flex;align-items:baseline;text-decoration:none;user-select:none;}
 .nav-logo-main{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--text-primary);}
 .nav-logo-tick{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--accent);}
@@ -382,10 +399,24 @@ body{
               <span class="nav-logo-main">EAI</span><span class="nav-logo-tick">✓?</span>
             </a>
             <div class="nav-right">
-              <button class="nav-theme-btn" onclick="setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark')">
-                <svg id="m-theme-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"></svg>
+              <button class="nav-icon-btn" id="mobile-menu-btn" aria-haspopup="true" aria-expanded="false" aria-label="Abrir menu" onclick="toggleMobileMenu()" style="min-width:44px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
               </button>
-              <button class="nav-cta">Entrar</button>
+            </div>
+            <div class="nav-dropdown" id="mobile-nav-dropdown">
+              <button class="nav-dropdown-item" onclick="toggleMobileMenu()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3V7z"/><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M8 12h8M8 16h5"/></svg>
+                Meus Casos
+              </button>
+              <button class="nav-dropdown-item" onclick="setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark')">
+                <svg id="m-theme-ic-dd" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"></svg>
+                Alternar tema
+              </button>
+              <div class="nav-dropdown-sep"></div>
+              <button class="nav-dropdown-item nav-dropdown-cta" onclick="toggleMobileMenu()">
+                Entrar
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
             </div>
           </nav>
 
@@ -656,8 +687,23 @@ function setTheme(t) {
   document.getElementById('btn-dark').className  = 'ctrl-btn' + (t === 'dark'  ? ' on'       : '');
   document.getElementById('btn-light').className = 'ctrl-btn' + (t === 'light' ? ' on-light' : '');
   const ic = t === 'dark' ? SUN : MOON;
-  ['m-theme-ic','d-theme-ic'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ic; });
+  ['m-theme-ic','d-theme-ic','m-theme-ic-dd'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ic; });
 }
+
+function toggleMobileMenu() {
+  const dd = document.getElementById('mobile-nav-dropdown');
+  const btn = document.getElementById('mobile-menu-btn');
+  const open = dd.classList.toggle('open');
+  btn.setAttribute('aria-expanded', String(open));
+}
+document.addEventListener('click', (e) => {
+  const dd = document.getElementById('mobile-nav-dropdown');
+  const btn = document.getElementById('mobile-menu-btn');
+  if (dd && dd.classList.contains('open') && !dd.contains(e.target) && !btn.contains(e.target)) {
+    dd.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+});
 
 /* ══ INIT ══ */
 renderRail();
