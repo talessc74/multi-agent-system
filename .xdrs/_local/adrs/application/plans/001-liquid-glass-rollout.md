@@ -89,9 +89,12 @@ Due date: 2026-08-11
 
 Replace the prototype's `setTimeout` processing state with the real SSE stream (ADR application/002) and render the actual `success_probability`/`userSide` result contract (EDR principles/001) instead of a random score.
 
+**Scope discovery (2026-06-16):** production's Mode Workspace was already wired to the real SSE pipeline and the real result contract before this milestone started — there was no `setTimeout`/random-score placeholder to replace (only the isolated `design-proposal/index.html` prototype had that). The Mode 4 incident (ADR application/003) was already fixed in production logic. So this milestone's remaining scope is purely visual: apply the Liquid Glass material to the existing, already-correct Mode Workspace screens, behind `VITE_LIQUID_GLASS`, without touching `effectiveSide`/`displayPct`/`userSide` threading.
+
 **Acceptance checklist:**
-- [ ] Loading state reflects real agent pipeline progress
-- [ ] Result view matches the production data contract exactly
+- [x] Loading state reflects real agent pipeline progress — confirmed pre-existing (`server.ts` SSE `WRITING`/`JUDGING`/`REVIEWING`/`ROUND_DONE`/`RESULT` events); mobile processing screen retextured with mesh + `.glass-static` step cards (commit `cf0ce23`), no logic changed
+- [x] Result view matches the production data contract exactly — confirmed pre-existing (`finalSuccessProbability`, `rounds[]`, EDR principles/001 inversion logic); mobile paywall and unlocked Laudo screens retextured with mesh + `.glass-static` cards (commit `0b905c3`), no logic changed
+- [ ] Desktop Mode Workspace (simulating sidebar widget, result/Forge Monitor panels in `App.tsx`) — not yet retextured; needs its own pass since it currently uses a fixed dark admin-console aesthetic (`bg-[#1C1C1F]`) independent of the light/dark theme tokens, which needs a design decision before blindly applying `.glass`
 
 **Risks:**
 - Repeating a Mode 4 class of bug (ADR application/003) when wiring new UI to existing agent logic — Mitigation: review against that incident record before implementation, not after
