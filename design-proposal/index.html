@@ -1174,7 +1174,7 @@
   </div><!-- /mobile-view -->
 
   <!-- ── DESKTOP VIEW ─────────────────────────────── -->
-  <div id="desktop-view" class="hidden" style="width: 100%;">
+  <div id="desktop-view" style="width: 100%; display: none;">
     <div class="desktop-frame">
 
       <!-- Navbar desktop -->
@@ -1537,16 +1537,17 @@
 
   function setViewport(v) {
     currentViewport = v;
-    document.getElementById('mobile-view').style.display  = v === 'mobile' ? '' : 'none';
-    document.getElementById('desktop-view').style.display = v === 'desktop' ? '' : 'none';
+    const mobileEl  = document.getElementById('mobile-view');
+    const desktopEl = document.getElementById('desktop-view');
+
+    mobileEl.style.display  = v === 'mobile'  ? 'block' : 'none';
+    desktopEl.style.display = v === 'desktop' ? 'block' : 'none';
 
     document.getElementById('btn-mobile').classList.toggle('active', v === 'mobile');
     document.getElementById('btn-desktop').classList.toggle('active', v === 'desktop');
 
     document.getElementById('viewport-wrapper').style.background =
-      v === 'mobile' ? '#08090C' : 'var(--bg-secondary)';
-    document.getElementById('viewport-wrapper').style.paddingTop =
-      v === 'mobile' ? '44px' : '44px';
+      v === 'mobile' ? '#08090C' : '#0D0F14';
   }
 
   function setTheme(t) {
