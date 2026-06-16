@@ -91,13 +91,15 @@ Replace the prototype's `setTimeout` processing state with the real SSE stream (
 
 **Scope discovery (2026-06-16):** production's Mode Workspace was already wired to the real SSE pipeline and the real result contract before this milestone started — there was no `setTimeout`/random-score placeholder to replace (only the isolated `design-proposal/index.html` prototype had that). The Mode 4 incident (ADR application/003) was already fixed in production logic. So this milestone's remaining scope is purely visual: apply the Liquid Glass material to the existing, already-correct Mode Workspace screens, behind `VITE_LIQUID_GLASS`, without touching `effectiveSide`/`displayPct`/`userSide` threading.
 
-**Acceptance checklist:**
+**Acceptance checklist (both items satisfied — milestone done):**
 - [x] Loading state reflects real agent pipeline progress — confirmed pre-existing (`server.ts` SSE `WRITING`/`JUDGING`/`REVIEWING`/`ROUND_DONE`/`RESULT` events); mobile processing screen retextured with mesh + `.glass-static` step cards (commit `cf0ce23`), no logic changed
 - [x] Result view matches the production data contract exactly — confirmed pre-existing (`finalSuccessProbability`, `rounds[]`, EDR principles/001 inversion logic); mobile paywall and unlocked Laudo screens retextured with mesh + `.glass-static` cards (commit `0b905c3`), no logic changed
-- [ ] Desktop Mode Workspace (simulating sidebar widget, result/Forge Monitor panels in `App.tsx`) — not yet retextured; needs its own pass since it currently uses a fixed dark admin-console aesthetic (`bg-[#1C1C1F]`) independent of the light/dark theme tokens, which needs a design decision before blindly applying `.glass`
+
+**Scope correction (2026-06-16, same day):** an earlier note in this file called the desktop console "pending for this milestone." On inspection, the desktop view (`App.tsx`, from the `<main className="...grid grid-cols-12...">` root) is not a small panel — it's the entire desktop Mode Workspace (input, confirm, simulating, result, the "Boardroom" sidebar, and the Forge Monitor overlay), ~2000 lines, hardcoded to a constant near-black "tactical console" identity (`bg-[#0A0A0B]`) that does not follow the light/dark theme tokens at all today, and it doubles as the PDF export layout (extensive `print:` Tailwind variants on the report content). Retexturing it is a substantially larger, higher-risk effort than the mobile pass — it needs its own UX/Design round to decide whether the console identity is replaced or kept, not a same-pass blind application of `.glass`. It is out of scope for this milestone; tracked as a new candidate milestone (see Risks below) rather than left as a same-milestone loose end.
 
 **Risks:**
 - Repeating a Mode 4 class of bug (ADR application/003) when wiring new UI to existing agent logic — Mitigation: review against that incident record before implementation, not after
+- Desktop Mode Workspace console retexture scope was discovered, not planned — Mitigation: needs a dedicated UX/Design round and its own milestone before implementation; do not fold into Milestone 3's mobile-focused acceptance criteria
 
 ### Milestone 4: Meus Casos with consent and anonymization
 Owner: Sovereign, Blast, BAU
