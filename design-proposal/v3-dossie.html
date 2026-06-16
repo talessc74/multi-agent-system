@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>EAI? — Proposta de Design v4 · Dossiê com Índice · ARGUS Review</title>
+<title>EAI? — Proposta de Design v3 · Dossiê · ARGUS Review</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -155,7 +155,7 @@ body{
 
 /* Rail — esquerda */
 .rail{
-  width:360px;flex-shrink:0;border-right:1px solid var(--border);
+  width:320px;flex-shrink:0;border-right:1px solid var(--border);
   background:var(--bg-rail);padding:28px 0;
 }
 .rail-cat{margin-bottom:8px;}
@@ -164,34 +164,22 @@ body{
 .rail-cat-label{font-size:9px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--text-muted);}
 
 .rail-item{
-  display:flex;flex-direction:column;gap:5px;width:100%;
-  font-family:inherit;background:none;border:none;text-align:left;
-  padding:12px 28px;cursor:pointer;position:relative;
+  display:flex;align-items:baseline;gap:14px;
+  padding:13px 28px;cursor:pointer;position:relative;
   border-left:3px solid transparent;transition:border-color .2s,background .2s;
 }
 .rail-item:hover{background:var(--accent-muted);}
 .rail-item.active{border-left-color:var(--item-color);background:color-mix(in srgb, var(--item-color) 7%, transparent);}
-.rail-item:focus-visible{outline:2px solid var(--item-color);outline-offset:-2px;background:var(--accent-muted);}
-.rail-item-top{display:flex;align-items:baseline;gap:12px;}
 .rail-item-num{
   font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:500;
   color:var(--text-muted);flex-shrink:0;transition:color .2s;
 }
 .rail-item.active .rail-item-num{color:var(--item-color);}
 .rail-item-title{
-  flex:1;font-size:14px;font-weight:600;color:var(--text-secondary);
+  font-size:14px;font-weight:600;color:var(--text-secondary);
   transition:color .2s;line-height:1.3;
 }
 .rail-item.active .rail-item-title{color:var(--text-primary);font-weight:700;}
-.rail-item-price{
-  font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;
-  color:var(--text-muted);flex-shrink:0;transition:color .2s;
-}
-.rail-item.active .rail-item-price{color:var(--item-color);}
-.rail-item-tagline{
-  font-size:11px;color:var(--text-muted);line-height:1.3;
-  padding-left:23px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
 
 /* Preview — direita */
 .preview{
@@ -344,7 +332,7 @@ body{
 <body>
 
 <div class="ctrl-bar">
-  <span class="ctrl-badge">ARGUS · Design v4 — Dossiê com Índice</span>
+  <span class="ctrl-badge">ARGUS · Design v3 — Dossiê</span>
   <div class="ctrl-sep"></div>
   <div class="ctrl-group">
     <span class="ctrl-label">Viewport</span>
@@ -357,10 +345,7 @@ body{
     <button class="ctrl-btn on" id="btn-dark" onclick="setTheme('dark')">Dark</button>
     <button class="ctrl-btn" id="btn-light" onclick="setTheme('light')">Light</button>
   </div>
-  <div style="margin-left:auto;display:flex;gap:8px;">
-    <a class="ctrl-archive" style="margin-left:0;" href="v3-dossie.html">← v3 arquivada</a>
-    <a class="ctrl-archive" style="margin-left:0;" href="v2-aprovada.html">← v2 arquivada</a>
-  </div>
+  <a class="ctrl-archive" href="v2-aprovada.html">← v2 arquivada</a>
 </div>
 
 <div class="vp-wrap" id="vp-wrap">
@@ -389,7 +374,7 @@ body{
           </nav>
 
           <div class="mobile-hero">
-            <p class="mobile-case-num"><span class="dot"></span>REFERÊNCIA DA SIMULAÇÃO Nº 2026.000142</p>
+            <p class="mobile-case-num"><span class="dot"></span>PROCESSO Nº 2026.000142 · ABERTO</p>
             <h1 class="mobile-h1">A incerteza jurídica tem uma saída.</h1>
             <p class="mobile-sub">Antes do tribunal, o teste.</p>
           </div>
@@ -431,9 +416,9 @@ body{
       </nav>
 
       <section class="hero">
-        <p class="hero-case-num"><span class="dot"></span>REFERÊNCIA DA SIMULAÇÃO Nº 2026.000142 · NÃO É NÚMERO DE PROCESSO REAL</p>
+        <p class="hero-case-num"><span class="dot"></span>PROCESSO Nº 2026.000142 · SIMULAÇÃO DISPONÍVEL</p>
         <h1 class="hero-h1">A incerteza jurídica agora tem<br>uma arena de testes.</h1>
-        <p class="hero-sub">Antes do tribunal, o teste. Compare os cinco modos no índice à esquerda — preço e proposta já estão ali.</p>
+        <p class="hero-sub">Antes do tribunal, o teste. Escolha um modo à esquerda para abrir o dossiê completo.</p>
       </section>
 
       <div class="disclaimer">
@@ -533,14 +518,10 @@ function renderRail() {
       </div>
       ${cat.modes.map(id => {
         const m = MODES[id];
-        return `<button class="rail-item" id="rail-item-${id}" style="--item-color:${m.color};" onclick="selectMode(${id})">
-          <span class="rail-item-top">
-            <span class="rail-item-num mono">0${id}</span>
-            <span class="rail-item-title">${m.title}</span>
-            <span class="rail-item-price mono">${m.price}</span>
-          </span>
-          <span class="rail-item-tagline">${m.tagline}</span>
-        </button>`;
+        return `<div class="rail-item" id="rail-item-${id}" style="--item-color:${m.color};" onclick="selectMode(${id})">
+          <span class="rail-item-num mono">0${id}</span>
+          <span class="rail-item-title">${m.title}</span>
+        </div>`;
       }).join('')}
     </div>
   `).join('');
@@ -557,7 +538,7 @@ function renderPreview(id) {
       <div class="preview-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[id]}</svg></div>
       <div class="preview-meta">
         <span class="preview-cat-tag">${m.cat}</span>
-        <span class="preview-num mono">Dossiê · Modo 0${id}</span>
+        <span class="preview-num mono">Processo · Modo 0${id}</span>
       </div>
     </div>
     <h2 class="preview-title">${m.title}</h2>
