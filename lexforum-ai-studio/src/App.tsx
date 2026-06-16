@@ -144,8 +144,9 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
     }, 300);
   };
   return (
-    <div className="flex flex-col md:hidden eai-laudo-mobile" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
-      <div style={{ display: 'flex', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', overflow: 'hidden', margin: '12px 20px 0', flexShrink: 0 }}>
+    <div className="flex flex-col md:hidden eai-laudo-mobile" style={{ position: 'fixed', inset: 0, zIndex: 200, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-primary)' }}>
+      {LIQUID_GLASS_ENABLED && <MeshBackground />}
+      <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ display: 'flex', background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '10px', overflow: 'hidden', margin: '12px 20px 0', flexShrink: 0 }}>
         <button onClick={() => setActiveVolume('I')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'I' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'I' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'I' ? '8px' : 0, margin: activeVolume === 'I' ? '4px' : 0, transition: 'all 0.2s' }}>Volume I — Orientação</button>
         <button onClick={() => setActiveVolume('II')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'II' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'II' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'II' ? '8px' : 0, margin: activeVolume === 'II' ? '4px' : 0, transition: 'all 0.2s' }}>Volume II — Técnico</button>
       </div>
@@ -161,7 +162,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
           const leftLabel = isDefenseBar ? `Réu ${displayPct}%` : `${finalPct}% Autor`;
           const rightLabel = isDefenseBar ? `Autor ${100 - displayPct}%` : `Réu ${100 - finalPct}%`;
           return (
-            <div style={{ margin: '0 20px 16px', padding: '12px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}>
+            <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ margin: '0 20px 16px', padding: '12px 16px', background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                 <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: modeColor }}>{leftLabel}</span>
                 <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{rightLabel}</span>
@@ -173,7 +174,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
           );
         })()}
         {state.selectedMode === 5 && state.mode5Result && (
-          <div style={{ margin: '0 20px 16px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', textAlign: 'center' }}>
+          <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ margin: '0 20px 16px', padding: '14px 16px', background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '12px', textAlign: 'center' }}>
             <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Recomendação</p>
             <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '22px', fontStyle: 'italic', fontWeight: 700, color: state.mode5Result.recommendation === 'RECORRER' ? '#FF6B6B' : state.mode5Result.recommendation === 'ACEITAR' ? '#00CC88' : '#FFB800' }}>{state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}</p>
           </div>
@@ -232,7 +233,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
 
         {/* Carregando hipóteses */}
         {state.showHypotheses && !state.counterHypotheses?.length && !state.expandedHypothesis && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', marginBottom: '10px' }}>
+          <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '14px', marginBottom: '10px' }}>
             <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
             <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Gerando hipóteses...</span>
           </div>
@@ -243,7 +244,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
             <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 4px' }}>Como o réu pode reagir:</p>
             {isExpanding ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}>
+              <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '12px' }}>
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
                 <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Expandindo argumento...</span>
               </div>
@@ -252,7 +253,8 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
                 <button
                   key={i}
                   onClick={async () => { setIsExpanding(true); await onSelectHypothesis?.(hyp); setIsExpanding(false); }}
-                  style={{ padding: '12px 14px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', cursor: 'pointer', textAlign: 'left' }}
+                  className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''}
+                  style={{ padding: '12px 14px', background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '12px', cursor: 'pointer', textAlign: 'left' }}
                 >
                   <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>Opção {String.fromCharCode(65 + i)}</span>
                   <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>{hyp}</p>
@@ -294,7 +296,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
                 </button>
 
                 {showMode4Preview && (
-                  <div style={{ marginTop: '8px', padding: '16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px' }}>
+                  <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ marginTop: '8px', padding: '16px', background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '14px' }}>
                     <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Mesa Dupla Assistida</p>
                     <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '14px' }}>Advogado e juiz simulam os dois lados do seu caso. Você recebe análise completa com estratégia de ação.</p>
                     <button
@@ -1881,7 +1883,8 @@ const startRecovery = (sessionId: string) => {
         const displayPct = (state.selectedMode === 4 && effectiveSide === 'DEFENSE') ? 100 - finalPct : finalPct;
 
         return (
-          <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
+          <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-primary)' }}>
+            {LIQUID_GLASS_ENABLED && <MeshBackground />}
             <div style={{ opacity: 0.4, pointerEvents: 'none' }}>
               <ModeNavbar
                 onBack={() => {}}
@@ -1922,7 +1925,7 @@ const startRecovery = (sessionId: string) => {
                 const leftLabel = isDefenseBar ? `Réu ${displayPct}%` : `${finalPct}% Autor`;
                 const rightLabel = isDefenseBar ? `Autor ${100 - displayPct}%` : `Réu ${100 - finalPct}%`;
                 return (
-                  <div style={{ margin: '0 20px 20px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px' }}>
+                  <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ margin: '0 20px 20px', background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                       <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: modeColor }}>{leftLabel}</span>
                       <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{rightLabel}</span>
@@ -1933,7 +1936,7 @@ const startRecovery = (sessionId: string) => {
                   </div>
                 );
               })() : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px', margin: '0 20px 20px' }}>
+                <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ display: 'flex', alignItems: 'center', gap: '12px', background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px', margin: '0 20px 20px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', flexShrink: 0, minWidth: '36px' }}>Autor</span>
                   <div style={{ flex: 1, height: '6px', background: 'var(--border)', borderRadius: '3px', overflow: 'hidden' }}>
                     <div style={{ width: `${finalPct}%`, height: '100%', borderRadius: '3px', background: `linear-gradient(to right, ${modeColor}, #00CC88)` }} />
@@ -1943,7 +1946,7 @@ const startRecovery = (sessionId: string) => {
               )}
               {/* SEÇÕES */}
               <div style={{ padding: '0 20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflow: 'hidden' }}>
+                <div className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '14px', overflow: 'hidden' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
                     <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
                       {state.selectedMode === 4 && (state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR')) === 'DEFENSE'
@@ -1954,12 +1957,12 @@ const startRecovery = (sessionId: string) => {
                   {rounds.length > 0 && (
                     <div style={{ padding: '0 16px 14px', fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, maxHeight: '80px', overflow: 'hidden', position: 'relative' }}>
                       {rounds[0].lawyerPetition}
-                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50px', background: 'linear-gradient(to bottom, transparent, var(--bg-card))' }} />
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50px', background: LIQUID_GLASS_ENABLED ? 'linear-gradient(to bottom, transparent, var(--glass-fill-2))' : 'linear-gradient(to bottom, transparent, var(--bg-card))' }} />
                     </div>
                   )}
                 </div>
                 {['Argumento do réu', 'Fundamentos jurídicos', 'Riscos e próximos passos'].map((titulo) => (
-                  <div key={titulo} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', overflow: 'hidden', opacity: 0.55 }}>
+                  <div key={titulo} className={LIQUID_GLASS_ENABLED ? 'glass-static' : ''} style={{ background: LIQUID_GLASS_ENABLED ? undefined : 'var(--bg-card)', border: LIQUID_GLASS_ENABLED ? undefined : '1px solid var(--border)', borderRadius: '14px', overflow: 'hidden', opacity: 0.55 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
                       <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{titulo}</span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: 'var(--text-muted)' }}>
