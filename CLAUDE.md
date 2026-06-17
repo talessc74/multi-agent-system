@@ -18,6 +18,19 @@ e sem ter operado sob o protocolo ARGUS.
 
 ---
 
+## Deploy automático em produção
+
+Autorização permanente do usuário (talessc@mac.com, 2026-06-17): sempre que
+um commit/merge para `main` já tiver sido testado e validado, dispare o
+workflow `deploy-producao.yml` (via `workflow_dispatch` na ref `main`)
+imediatamente, **sem perguntar confirmação antes**. Não repita a pergunta
+"posso disparar o deploy?" em sessões futuras — isso já foi decidido.
+
+Depois de disparar, acompanhe o run até `completed` e reporte o resultado
+(sucesso/falha) ao usuário.
+
+---
+
 ## O que é este sistema
 
 Este projeto opera sob governança distribuída de 20 seeds organizadas em
