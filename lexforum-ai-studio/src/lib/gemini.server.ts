@@ -532,6 +532,17 @@ export async function simulateMode5Server(
     judgeName = juiAgent.name;
   }
 
+  // Force correct legal area — overrides any mismatch in a cached agent's instructions
+  const areaDisplayNameMode5: Record<string, string> = {
+    LABOR: 'Trabalhista',
+    CONSUMER: 'do Consumidor',
+    CIVIL: 'Cível',
+    FAMILY: 'de Família',
+    SOCIAL_SECURITY: 'Previdenciário',
+  };
+  const areaLabelMode5 = areaDisplayNameMode5[area] ?? 'Especializado';
+  judgeInstruction = `INSTRUÇÃO VINCULANTE DE SESSÃO: Você atua como Magistrado de Direito ${areaLabelMode5} nesta simulação. Avalie o caso aplicando as normas e jurisprudência do Direito ${areaLabelMode5} brasileiro. Você DEVE emitir uma análise com successProbability numérico, independentemente de qualquer especialização anterior.\n\n${judgeInstruction}`;
+
   const isRecurso = mode5Input.subCase === 'RECURSO';
 
   const basePrompt = isRecurso
@@ -603,29 +614,35 @@ ESCALA DE REFERÊNCIA para successProbability (ACORDO):
     console.error('Mode5 Parse Error:', e, 'Text:', text);
   }
 
+  // A successProbability ausente ou não-numérica indica que o agente não emitiu
+  // uma análise válida (ex.: recusa por incompatibilidade de área/competência).
+  // Mascarar isso com um valor padrão de 50% esconde a falha como se fosse um
+  // resultado real. Falhar explicitamente para que o erro seja visível e tratável.
+  if (typeof parsed.successProbability !== 'number') {
+    console.error('[Mode5] Agente não retornou successProbability válido. Resposta:', text);
+    throw new Error(
+      `O agente jurídico não conseguiu emitir uma análise válida para esta área/caso. ` +
+      `Resposta recebida: ${(parsed.strategistAnalysis || text || '').slice(0, 300)}`
+    );
+  }
+
   // Normaliza recommendation para os tipos esperados
   const rawRec = (parsed.recommendation || '').toUpperCase();
   const recommendation: 'RECORRER' | 'ACEITAR' | 'NEGOCIAR' =
     rawRec === 'ACEITAR' ? 'ACEITAR' :
     rawRec === 'NEGOCIAR' ? 'NEGOCIAR' : 'RECORRER';
 
-  onProgress?.('DONE', {
+  const result = {
     subCase: mode5Input.subCase,
     strategistAnalysis: parsed.strategistAnalysis || '',
     recommendation,
-    successProbability: (parsed.successProbability != null && parsed.successProbability > 0) ? parsed.successProbability : 50,
-    reasoning: parsed.reasoning || '',
-    judgeAgentName: judgeName,
-    tokenCount: response.usageMetadata?.totalTokenCount
-  });
-
-  return {
-    subCase: mode5Input.subCase,
-    strategistAnalysis: parsed.strategistAnalysis || '',
-    recommendation,
-    successProbability: (parsed.successProbability != null && parsed.successProbability > 0) ? parsed.successProbability : 50,
+    successProbability: parsed.successProbability,
     reasoning: parsed.reasoning || '',
     judgeAgentName: judgeName,
     tokenCount: response.usageMetadata?.totalTokenCount
   };
+
+  onProgress?.('DONE', result);
+
+  return result;
 }
