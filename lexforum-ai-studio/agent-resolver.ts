@@ -3,11 +3,18 @@ import path from 'path';
 import admin from 'firebase-admin';
 import { createAgentFromScratch } from './agent-creator';
 
-const REGISTRY_PATH = path.join(process.cwd(), 'registry/index');
+// Em produção, o build copia registry/ para dentro de lexforum-ai-studio/ antes
+// de empacotar (ver cloudbuild.yaml), então process.cwd() resolve corretamente.
+// AGENT_REGISTRY_PATH permite apontar para outro local em dev/test sem depender
+// dessa coincidência de layout.
+function getRegistryPath(): string {
+  return process.env.AGENT_REGISTRY_PATH || path.join(process.cwd(), 'registry/index');
+}
 
 interface AgentEntry {
   agent_id: string;
   tipo: string;
+  area?: string;
   comarca: string | null;
   arquivo: string;
   seed: string;
@@ -21,21 +28,32 @@ interface ResolveParams {
   userSide?: 'AUTHOR' | 'DEFENSE';
 }
 
-function findAgentLocal(params: ResolveParams): AgentEntry | null {
-  const filePath = path.join(REGISTRY_PATH, `${params.area}.json`);
+// Toda entrada do registry local declara sua própria área (curadoria), e essa
+// declaração é validada contra a área solicitada antes de ser aceita. Isso não
+// verifica o conteúdo semântico da seed, mas pega o erro de curadoria mais comum:
+// uma entrada arquivada sob a área errada (ex: ver _local-adr-001 e o incidente
+// do juiz_everton_v1.0, originalmente listado em trabalhista.json).
+export function findAgentLocal(params: ResolveParams): AgentEntry | null {
+  const filePath = path.join(getRegistryPath(), `${params.area}.json`);
   if (!fs.existsSync(filePath)) return null;
 
   const registry = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
   const agentes: AgentEntry[] = registry.agentes;
 
+  const candidates = agentes.filter(a => a.tipo === params.tipo);
+  for (const a of candidates) {
+    if (a.area !== undefined && a.area !== params.area) {
+      console.warn(`[AgentResolver] Entrada ${a.agent_id} em ${params.area}.json declara area "${a.area}" — descartada`);
+    }
+  }
+  const valid = candidates.filter(a => a.area === undefined || a.area === params.area);
+
   if (params.comarca) {
-    const match = agentes.find(
-      a => a.tipo === params.tipo && a.comarca === params.comarca
-    );
+    const match = valid.find(a => a.comarca === params.comarca);
     if (match) return match;
   }
 
-  return agentes.find(a => a.tipo === params.tipo) ?? null;
+  return valid[0] ?? null;
 }
 
 // Agentes criados antes das correções EDR-007/BDR-003 são rejeitados e regerados

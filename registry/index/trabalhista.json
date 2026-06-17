@@ -2,16 +2,9 @@
   "area": "trabalhista",
   "agentes": [
     {
-      "agent_id": "juiz_everton_v1.0",
-      "tipo": "juiz",
-      "comarca": null,
-      "vara": null,
-      "arquivo": "agents/juiz_everton_v1.0.json",
-      "seed": "SEED_JUR_002_v1.0"
-    },
-    {
       "agent_id": "juiza_rosemarie_v1.0",
       "tipo": "desembargadora",
+      "area": "trabalhista",
       "tribunal": "TRT-9",
       "arquivo": "agents/juiza_rosemarie_v1.0.json",
       "seed": "SEED_JUR_003_v2.0"
@@ -19,6 +12,7 @@
     {
       "agent_id": "advogado_mannrich_v1.0",
       "tipo": "advogado",
+      "area": "trabalhista",
       "arquivo": "agents/advogado_mannrich_v1.0.json",
       "seed": "SEED_JUR_004_v1.0"
     }

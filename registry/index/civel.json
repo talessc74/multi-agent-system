@@ -1,4 +1,13 @@
 {
   "area": "civel",
-  "agentes": []
+  "agentes": [
+    {
+      "agent_id": "juiz_everton_v1.0",
+      "tipo": "juiz",
+      "area": "civel",
+      "comarca": null,
+      "arquivo": "agents/juiz_everton_v1.0.json",
+      "seed": "SEED_JUR_002_v1.0"
+    }
+  ]
 }
