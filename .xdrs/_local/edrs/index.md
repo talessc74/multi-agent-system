@@ -30,6 +30,7 @@ Engineering workflow and tooling decisions for this project, created through ARG
 | ID | Title | Status | valid-from |
 |----|-------|--------|------------|
 | [edr-local-003](devops/edr-local-003.md) | Gestão de Quota e Alertas Gemini — Política de Monitoramento e Resposta | active | 2026-06-10 |
+| [edr-local-005](devops/edr-local-005.md) | Expurgo Seguro do Nome "LexForum" — Gates Obrigatórios para Renomeação de Diretório de Produção | active | 2026-06-18 |
 
 ### governance
 
