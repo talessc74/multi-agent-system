@@ -2238,7 +2238,7 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
                     <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
                     <div className="px-8 pt-6 pb-2">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
@@ -2289,7 +2289,7 @@ const startRecovery = (sessionId: string) => {
                     </div>
                   </div>
 
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
                     <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
                     <div className="px-8 pt-6 pb-2">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
@@ -2423,7 +2423,7 @@ const startRecovery = (sessionId: string) => {
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-6"
                   >
-                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                    <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
                       <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
                       <div className="px-8 pt-6 pb-2">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Relato do Caso</span>
@@ -2436,7 +2436,7 @@ const startRecovery = (sessionId: string) => {
                       />
                     </div>
 
-                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                    <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
                       <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
@@ -2451,7 +2451,7 @@ const startRecovery = (sessionId: string) => {
                       />
                     </div>
 
-                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                    <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
                       <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
@@ -2579,7 +2579,7 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
                     <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
                     <div className="px-8 pt-6 pb-2">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
@@ -2629,7 +2629,7 @@ const startRecovery = (sessionId: string) => {
                     </div>
                   </div>
 
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
                     <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[3].colorRgb},0.6)` }} />
                     <div className="px-8 pt-6 pb-2">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
@@ -2738,7 +2738,7 @@ const startRecovery = (sessionId: string) => {
                     </p>
                   </div>
 
-                  <div className="bg-[#15161A] border border-white/10 relative group shadow-2xl shadow-black/50">
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative group' : 'bg-[#15161A] border border-white/10 relative group shadow-2xl shadow-black/50'}`}>
                     <textarea
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
@@ -2951,8 +2951,10 @@ const startRecovery = (sessionId: string) => {
                 </h1>
 
                 {state.caseSummary && (
-                  <div className="p-8 shadow-2xl shadow-black/50 mt-8 text-left"
-                    style={{ background: '#15161A', borderWidth: '1px 1px 1px 3px', borderStyle: 'solid', borderColor: `rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) ${dcColor}` }}>
+                  <div className={`p-8 shadow-2xl shadow-black/50 mt-8 text-left ${LIQUID_GLASS_ENABLED ? 'glass-static' : ''}`}
+                    style={LIQUID_GLASS_ENABLED
+                      ? { borderLeftWidth: '3px', borderLeftStyle: 'solid', borderLeftColor: dcColor }
+                      : { background: '#15161A', borderWidth: '1px 1px 1px 3px', borderStyle: 'solid', borderColor: `rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) ${dcColor}` }}>
                     <h4 className="text-[10px] uppercase font-bold tracking-widest text-white/30 mb-4 border-b border-white/5 pb-2">Núcleo Central · Gerado automaticamente</h4>
                     <p className="text-xl font-sans text-white/80 leading-relaxed">
                       "{state.caseSummary}"
