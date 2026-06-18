@@ -130,11 +130,17 @@ function formatSimDate(createdAt: unknown): string {
 // Same radial-wash technique as BoardroomPage's dossier preview (.preview-wash) —
 // ties a card's glass surface to a mode color, so the console's panels read as the
 // same family as the Boardroom Home dossier rather than a flat, unrelated material.
+// Fixed-radius corner accent, not a percentage-based gradient — a percentage
+// stop (e.g. "transparent 60%") sizes itself against the element's own
+// farthest corner, so it reads as a tasteful highlight on a compact card but
+// balloons into a flat full-card wash on a tall one (the console's hero
+// textarea cards are 2-3x taller than Boardroom's dossier preview card).
+// A fixed px radius keeps the same accent regardless of container height.
 function GlowWash({ colorRgb }: { colorRgb: string }) {
   return (
     <div
       className="absolute inset-0 pointer-events-none"
-      style={{ background: `radial-gradient(circle at 85% 0%, rgba(${colorRgb}, 0.22), transparent 60%)`, borderRadius: 'inherit' }}
+      style={{ background: `radial-gradient(circle 280px at 100% 0%, rgba(${colorRgb}, 0.28), transparent 70%)`, borderRadius: 'inherit' }}
     />
   );
 }
@@ -3912,7 +3918,15 @@ const startRecovery = (sessionId: string) => {
           </AnimatePresence>
         </div>
 
-        <div className={`col-span-12 lg:col-span-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#0F1012]'} p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print`}>
+        <div className={`col-span-12 lg:col-span-4 relative ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#0F1012]'} p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print`}>
+          {LIQUID_GLASS_ENABLED && (
+            // The mesh blob (b2) sits right behind this column at full saturation;
+            // .glass-static's fill alone (a thin white tint) isn't enough to keep
+            // dense status text legible against it. A dark scrim recedes the blob
+            // to an ambient tint instead of a dominant color wash, without touching
+            // the shared mesh tokens that Boardroom Home also relies on.
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5, 6, 16, 0.45)' }} />
+          )}
           <section>
             <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-white/10 pb-3 flex items-center justify-between text-white/60">
               Boardroom <span className="text-[8px] font-mono opacity-20">{`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}</span>
