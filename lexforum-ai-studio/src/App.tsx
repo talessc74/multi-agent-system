@@ -3056,7 +3056,7 @@ const startRecovery = (sessionId: string) => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Modo 4: lado estático */}
                         {state.selectedMode === 4 && (
-                          <div className="bg-[#15161A] border border-white/5 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden opacity-50">
+                          <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-white/5'} p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden opacity-50`}>
                             <div className="absolute top-0 left-0 w-1 h-full bg-white/10"></div>
                             <div className="flex justify-between items-center mb-4">
                               <span className="text-sm font-bold uppercase tracking-tight text-white/40">
@@ -3070,7 +3070,7 @@ const startRecovery = (sessionId: string) => {
                           </div>
                         )}
                         {/* Agent: Lawyer */}
-                        <div className="bg-[#15161A] border border-white/10 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden">
+                        <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-white/10'} p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden`}>
                            <div className="absolute top-0 left-0 w-1 h-full bg-white/40"></div>
                            <div className="flex justify-between items-center mb-6">
                              <div className="flex flex-col">
@@ -3188,7 +3188,7 @@ const startRecovery = (sessionId: string) => {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-12 p-10 bg-[#15161A] border border-white/20 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden"
+                    className={`mt-12 p-10 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-white/20'}`}
                   >
                     <div className="absolute top-0 right-0 p-4">
                       <Lock className="text-white/5 w-24 h-24 -rotate-12" />
@@ -3286,13 +3286,13 @@ const startRecovery = (sessionId: string) => {
                     animate={{ opacity: 1, y: 0 }}
                     className="mt-8 space-y-6"
                   >
-                    <div className="p-6 bg-white/5 border border-white/10 space-y-4">
+                    <div className={`p-6 space-y-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-white/5 border border-white/10'}`}>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
                       <p className="text-lg font-sans text-white/80 leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={true} />
                       </p>
                     </div>
-                    <div className="p-6 bg-[#15161A] border border-white/10 space-y-4">
+                    <div className={`p-6 space-y-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-white/10'}`}>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Fundamentação Jurídica</span>
                       <p className="text-sm font-mono text-white/60 leading-relaxed">
                         <CensoredText text={state.mode5Result.reasoning} enabled={true} />
