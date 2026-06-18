@@ -269,7 +269,10 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                           style={{
                             padding: '10px 12px',
                             borderRadius: '12px',
-                            background: isSelected ? `rgba(${cfg.colorRgb}, 0.16)` : 'transparent',
+                            background: isSelected ? `rgba(${cfg.colorRgb}, 0.18)` : 'transparent',
+                            boxShadow: isSelected
+                              ? `inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 16px rgba(${cfg.colorRgb}, 0.3)`
+                              : 'none',
                             border: 'none',
                             cursor: 'pointer',
                             marginBottom: '2px',
@@ -292,6 +295,10 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                 const PreviewIcon = MODE_ICONS[previewMode];
                 return (
                   <div className="glass flex-1 relative overflow-hidden" style={{ borderRadius: '20px', padding: '40px' }}>
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{ background: `radial-gradient(circle at 85% 0%, rgba(${cfg.colorRgb}, 0.32), transparent 60%)`, borderRadius: 'inherit' }}
+                    />
                     <span
                       className="font-playfair italic absolute pointer-events-none select-none"
                       style={{ right: '16px', top: '-10px', fontSize: '200px', lineHeight: 1, color: 'var(--ghost-num)' }}
@@ -301,7 +308,14 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                     <div className="relative flex items-center gap-4" style={{ marginBottom: '24px' }}>
                       <div
                         className="flex items-center justify-center shrink-0"
-                        style={{ width: '54px', height: '54px', borderRadius: '16px', background: `rgba(${cfg.colorRgb}, 0.3)`, border: `1px solid rgba(${cfg.colorRgb}, 0.45)` }}
+                        style={{
+                          width: '54px',
+                          height: '54px',
+                          borderRadius: '16px',
+                          background: `rgba(${cfg.colorRgb}, 0.3)`,
+                          border: `1px solid rgba(${cfg.colorRgb}, 0.45)`,
+                          boxShadow: `inset 0 1px 0 rgba(255,255,255,0.4), 0 4px 14px rgba(${cfg.colorRgb}, 0.35)`,
+                        }}
                       >
                         <PreviewIcon style={{ width: '25px', height: '25px', color: cfg.color }} />
                       </div>
