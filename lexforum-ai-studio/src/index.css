@@ -6,6 +6,11 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Cormorant Garamond", serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  /* `ink` is the theme-aware replacement for hardcoded `text-white`/`border-white`/
+     `bg-white` utilities in the console (Mode Workspace): it resolves to near-white
+     in dark theme and near-black in light theme, via --ink-rgb below, so existing
+     opacity modifiers (`ink/70`, `ink/[0.05]`, etc.) keep working unchanged. */
+  --color-ink: rgb(var(--ink-rgb) / <alpha-value>);
 }
 
 :root,
@@ -24,6 +29,7 @@
   --price: #E8C200;
   --success: #00CC88;
   --danger: #FF4444;
+  --ink-rgb: 240 242 245;
 }
 
 [data-theme='light'] {
@@ -35,6 +41,7 @@
   --accent-muted: rgba(10, 22, 40, 0.08);
   --border: rgba(0, 0, 0, 0.08);
   --price: #1A3A6B;
+  --ink-rgb: 10 22 40;
 }
 
 .font-playfair {

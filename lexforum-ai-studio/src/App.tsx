@@ -38,6 +38,7 @@ import ChatPanel, { SheetState } from './components/ChatPanel';
 import { getChatStatus, createChatCheckoutSession, sendChatMessage } from './services/chatService';
 import { MeshBackground } from './components/MeshBackground';
 import { LIQUID_GLASS_ENABLED } from './config/liquidGlass';
+import { useTheme } from './hooks/useTheme';
 
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
@@ -342,6 +343,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
 }
 
 export default function App() {
+  const { theme } = useTheme();
   const [user, setUser] = useState<User | null>(null);
   const [userHistory, setUserHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -2122,48 +2124,43 @@ const startRecovery = (sessionId: string) => {
         />
       ) : (
         <div
-          className={`min-h-screen ${LIQUID_GLASS_ENABLED ? '' : 'bg-[#0A0A0B]'} text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black`}
-          style={LIQUID_GLASS_ENABLED ? {
-            // Console identity stays dark on purpose (Milestone 3b deliberation):
-            // every text-white/* class in this console is calibrated against a
-            // dark fill, so ALL theme tokens (glass/mesh AND text/bg/border) are
-            // pinned to their dark values here regardless of the global
-            // light/dark theme toggle.
+          className={`min-h-screen ${LIQUID_GLASS_ENABLED ? '' : 'bg-[#0A0A0B]'} text-ink font-sans selection:bg-ink/10 flex flex-col overflow-x-hidden print:bg-white print:text-black`}
+          style={LIQUID_GLASS_ENABLED ? (
+            // Real light mode for the console (Milestone 3b follow-up): the console
+            // no longer force-pins dark tokens — its `text-white/*` content classes
+            // were converted to the theme-aware `ink` color, so the console can
+            // safely follow the global toggle like the rest of the app.
             //
-            // Bug found in this pass: the pin previously covered only
-            // --glass-*/--mesh-*, not --text-primary/--text-secondary/--border/
-            // --bg-*. Those are read straight from the global [data-theme]
-            // tokens, so when a visitor's global theme was 'light',
-            // --text-secondary resolved to a dark navy — invisible against this
-            // permanently-dark navbar (the reported "missing" toggle button).
-            // Pinning the full token set keeps bg and text consistently dark
-            // together, so the console never mismatches the global toggle.
-            //
-            // --glass-fill/-2 are tinted dark (not white) here, unlike the shared
-            // default tokens: every .glass-static panel in this console sits near
-            // a mesh blob (found twice — the Boardroom sidebar and the hero
-            // textarea card both bled raw blob color through a thin white fill).
-            // A dark-tinted fill mutes the blob to an ambient tint everywhere at
-            // once instead of patching individual panels. Border/spec stay white
-            // for the frosted-edge highlight; only the body fill changed.
-            '--glass-fill': 'rgba(8, 9, 18, 0.55)',
-            '--glass-fill-2': 'rgba(10, 12, 22, 0.65)',
-            '--glass-border': 'rgba(255, 255, 255, 0.22)',
-            '--glass-spec': 'rgba(255, 255, 255, 0.55)',
-            '--glass-shadow': '0 20px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-            '--mesh-bg': '#050610',
-            '--mesh-1': '#1b6bff',
-            '--mesh-2': '#a23bff',
-            '--mesh-3': '#00e0c7',
-            '--bg-primary': '#0A0C0F',
-            '--bg-secondary': '#12151A',
-            '--bg-card': '#1A1E26',
-            '--text-primary': '#F0F2F5',
-            '--text-secondary': '#7A8494',
-            '--text-muted': '#4A5260',
-            '--border': 'rgba(255, 255, 255, 0.07)',
-            '--border-active': 'rgba(0, 255, 239, 0.25)',
-          } as React.CSSProperties : undefined}
+            // --glass-fill/-2 and the mesh palette still need a per-theme override
+            // here (not the shared defaults): every .glass-static panel in this
+            // console sits near a mesh blob, and the shared dark default
+            // (rgba(255,255,255,0.1)) let blob color bleed through at near-full
+            // saturation (found twice — sidebar + hero textarea card). Both the
+            // dark and light variants below are tuned to mute that bleed; only
+            // the body fill/border tone changes per theme, the structural fix is
+            // the same in both.
+            theme === 'light' ? {
+              '--glass-fill': 'rgba(255, 255, 255, 0.78)',
+              '--glass-fill-2': 'rgba(255, 255, 255, 0.88)',
+              '--glass-border': 'rgba(10, 22, 40, 0.12)',
+              '--glass-spec': 'rgba(255, 255, 255, 0.9)',
+              '--glass-shadow': '0 16px 44px rgba(20, 30, 50, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7)',
+              '--mesh-bg': '#f0f2f6',
+              '--mesh-1': '#7fb7ff',
+              '--mesh-2': '#e2b6ff',
+              '--mesh-3': '#8ff5e6',
+            } as React.CSSProperties : {
+              '--glass-fill': 'rgba(8, 9, 18, 0.55)',
+              '--glass-fill-2': 'rgba(10, 12, 22, 0.65)',
+              '--glass-border': 'rgba(255, 255, 255, 0.22)',
+              '--glass-spec': 'rgba(255, 255, 255, 0.55)',
+              '--glass-shadow': '0 20px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              '--mesh-bg': '#050610',
+              '--mesh-1': '#1b6bff',
+              '--mesh-2': '#a23bff',
+              '--mesh-3': '#00e0c7',
+            } as React.CSSProperties
+          ) : undefined}
         >
       {LIQUID_GLASS_ENABLED && <MeshBackground />}
       <Navbar
@@ -2180,14 +2177,14 @@ const startRecovery = (sessionId: string) => {
           <span className="text-[9px] font-bold uppercase tracking-widest">Monitor de Agentes</span>
         </button>
         <div className="flex flex-col items-end">
-          <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold">Status da Simulação</span>
+          <span className="text-[10px] uppercase tracking-widest text-ink/30 font-bold">Status da Simulação</span>
           <span className={`text-xs font-mono font-bold ${state.step === 'simulating' ? 'text-amber-500' : 'text-emerald-500'}`}>
             {state.step === 'input' ? 'AGUARDANDO CAUSA' :
              state.step === 'confirm' ? 'ANALISANDO ÁREA' :
              state.step === 'simulating' ? 'SIMULAÇÃO EM CURSO' : 'SIMULAÇÃO CONCLUÍDA'}
           </span>
         </div>
-        <div className="w-[1px] h-8 bg-white/10" />
+        <div className="w-[1px] h-8 bg-ink/10" />
         <button
           className="px-4 py-2 border border-white text-[11px] uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
           onClick={() => window.location.reload()}
@@ -2197,7 +2194,7 @@ const startRecovery = (sessionId: string) => {
       </Navbar>
 
       <main className="flex-1 grid grid-cols-12 gap-0 overflow-hidden min-h-[calc(100vh-64px)]">
-        <div className="col-span-12 lg:col-span-8 p-8 flex flex-col gap-6 lg:border-r border-white/5 overflow-y-auto print:col-span-12 print:p-0 print:border-none">
+        <div className="col-span-12 lg:col-span-8 p-8 flex flex-col gap-6 lg:border-r border-ink/5 overflow-y-auto print:col-span-12 print:p-0 print:border-none">
           <AnimatePresence mode="wait">
             {state.error && (
               <motion.div 
@@ -2208,10 +2205,10 @@ const startRecovery = (sessionId: string) => {
                 <AlertCircle className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
                 <div className="space-y-2 flex-1">
                   <h3 className="text-[10px] font-bold uppercase tracking-widest text-red-500">Falha na Operação</h3>
-                  <p className="text-sm font-serif italic text-white/80">{state.error.message}</p>
+                  <p className="text-sm font-serif italic text-ink/80">{state.error.message}</p>
                   {state.error.isQuota && (
                     <div className="pt-4 border-t border-red-500/10 mt-4">
-                      <p className="text-[10px] text-white/40 uppercase tracking-widest leading-relaxed">
+                      <p className="text-[10px] text-ink/40 uppercase tracking-widest leading-relaxed">
                         O sistema está temporariamente indisponível. Estamos cientes e já trabalhando na solução. Tente novamente em alguns minutos.
                       </p>
                     </div>
@@ -2229,7 +2226,7 @@ const startRecovery = (sessionId: string) => {
                   )}
                   <button 
                     onClick={() => setState(prev => ({ ...prev, error: null }))}
-                    className="absolute top-4 right-4 text-white/20 hover:text-white"
+                    className="absolute top-4 right-4 text-ink/20 hover:text-ink"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -2250,7 +2247,7 @@ const startRecovery = (sessionId: string) => {
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-ink/30 hover:text-ink/70 transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
@@ -2260,56 +2257,56 @@ const startRecovery = (sessionId: string) => {
                     </span>
                   </div>
                   {fromPreviousSimulation && (
-                    <div className="p-4 bg-white/5 border border-white/20 text-[10px] font-bold uppercase tracking-widest text-white/60 flex items-center gap-3">
+                    <div className="p-4 bg-ink/5 border border-ink/20 text-[10px] font-bold uppercase tracking-widest text-ink/60 flex items-center gap-3">
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Continuando a partir da sua simulação anterior.
                       {!isEditingMode4 && (
                         <button
                           onClick={() => setIsEditingMode4(true)}
-                          className="text-[10px] font-bold uppercase tracking-widest border border-white/20 px-3 py-1.5 hover:border-white/40 hover:text-white transition-all text-white/40"
+                          className="text-[10px] font-bold uppercase tracking-widest border border-ink/20 px-3 py-1.5 hover:border-ink/40 hover:text-ink transition-all text-ink/40"
                         >
                           Editar campos
                         </button>
                       )}
                     </div>
                   )}
-                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-ink">
                     Insira os dois lados e <br /><span className="text-[#F4F4F2] font-bold">escolha o seu.</span>
                   </h1>
-                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                  <p className="text-ink/40 max-w-lg text-sm uppercase tracking-widest font-medium">
                     O advogado do seu lado recebe assistência da IA em cada rodada.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div
-                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-ink/10 relative shadow-2xl shadow-black/50'}`}
                     style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
                   >
                     {LIQUID_GLASS_ENABLED && <GlowWash colorRgb="255,255,255" />}
-                    <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                    <div className="absolute top-0 left-0 w-1 h-full bg-ink/40" />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Petição do Autor</span>
                     </div>
                     <textarea
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a petição inicial do autor..."
                       readOnly={fromPreviousSimulation && !isEditingMode4}
-                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
+                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-ink/90 resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
                     />
                     {state.attachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.attachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-ink/5">
+                            <FileIcon className="w-3 h-3 text-ink/40" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-ink/60">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-ink/30 hover:text-red-500"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-ink/5 pt-3">
                       <input type="file" id="author-file-m4" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2327,44 +2324,44 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="author-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="author-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-ink/30 hover:text-ink/60 transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
+                        <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                         {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
                   </div>
 
                   <div
-                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-ink/10 relative shadow-2xl shadow-black/50'}`}
                     style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
                   >
                     {LIQUID_GLASS_ENABLED && <GlowWash colorRgb="255,184,0" />}
                     <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Contestação do Réu</span>
                     </div>
                     <textarea
                       value={state.defenseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a contestação do réu..."
                       readOnly={fromPreviousSimulation && !isEditingMode4}
-                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
+                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-ink/90 resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
                     />
                     {state.defenseAttachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.defenseAttachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-ink/5">
+                            <FileIcon className="w-3 h-3 text-ink/40" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-ink/60">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-ink/30 hover:text-red-500"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-ink/5 pt-3">
                       <input type="file" id="defense-file-m4" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2382,11 +2379,11 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="defense-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="defense-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-ink/30 hover:text-ink/60 transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
+                        <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                         {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
@@ -2434,7 +2431,7 @@ const startRecovery = (sessionId: string) => {
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-ink/30 hover:text-ink/70 transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
@@ -2443,10 +2440,10 @@ const startRecovery = (sessionId: string) => {
                       Revisão Pós-Conflito
                     </span>
                   </div>
-                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-ink">
                     Sentença ou proposta? <br /><span className="text-[#F4F4F2] font-bold">O Juiz Estrategista avalia.</span>
                   </h1>
-                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                  <p className="text-ink/40 max-w-lg text-sm uppercase tracking-widest font-medium">
                     ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                   </p>
                 </div>
@@ -2476,30 +2473,30 @@ const startRecovery = (sessionId: string) => {
                     className="space-y-6"
                   >
                     <div
-                      className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                      className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-ink/10 relative shadow-2xl shadow-black/50'}`}
                       style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
                     >
                       {LIQUID_GLASS_ENABLED && <GlowWash colorRgb="255,255,255" />}
-                      <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                      <div className="absolute top-0 left-0 w-1 h-full bg-ink/40" />
                       <div className="px-8 pt-6 pb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Relato do Caso</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Relato do Caso</span>
                       </div>
                       <textarea
                         value={state.mode5Input?.caseDescription || ''}
                         onChange={(e) => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, caseDescription: e.target.value } }))}
                         placeholder="Descreva o contexto do conflito, o que aconteceu e qual é sua posição..."
-                        className="w-full min-h-[180px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                        className="w-full min-h-[180px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-ink/90 resize-y placeholder:opacity-10"
                       />
                     </div>
 
                     <div
-                      className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                      className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-ink/10 relative shadow-2xl shadow-black/50'}`}
                       style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
                     >
                       {LIQUID_GLASS_ENABLED && <GlowWash colorRgb={MODE_CONFIG[5].colorRgb} />}
                       <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-ink/40">
                           {state.mode5Input.subCase === 'RECURSO' ? 'Sentença Recebida' : 'Proposta de Acordo'}
                         </span>
                       </div>
@@ -2507,18 +2504,18 @@ const startRecovery = (sessionId: string) => {
                         value={state.mode5Input?.sentencaOuProposta || ''}
                         onChange={(e) => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, sentencaOuProposta: e.target.value } }))}
                         placeholder={state.mode5Input.subCase === 'RECURSO' ? 'Cole aqui o texto da sentença ou decisão recebida...' : 'Descreva os termos da proposta de acordo recebida...'}
-                        className="w-full min-h-[180px] bg-transparent px-8 pb-6 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                        className="w-full min-h-[180px] bg-transparent px-8 pb-6 outline-none text-lg font-serif italic text-ink/90 resize-y placeholder:opacity-10"
                       />
                     </div>
 
                     <div
-                      className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                      className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-ink/10 relative shadow-2xl shadow-black/50'}`}
                       style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
                     >
                       {LIQUID_GLASS_ENABLED && <GlowWash colorRgb={MODE_CONFIG[5].colorRgb} />}
                       <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-ink/40">
                           Anexar Documentos
                         </span>
                       </div>
@@ -2547,12 +2544,12 @@ const startRecovery = (sessionId: string) => {
                         {(state.mode5Input?.attachments || []).length > 0 && (
                           <div className="flex flex-wrap gap-2 mb-4">
                             {(state.mode5Input?.attachments || []).map((file, i) => (
-                              <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 border border-white/5">
-                                <FileIcon className="w-3 h-3 text-white/40" />
-                                <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
+                              <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 border border-ink/5">
+                                <FileIcon className="w-3 h-3 text-ink/40" />
+                                <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-ink/60">{file.name}</span>
                                 <button
                                   onClick={() => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, attachments: (prev.mode5Input?.attachments || []).filter((_, j) => j !== i) } }))}
-                                  className="text-white/30 hover:text-red-500"
+                                  className="text-ink/30 hover:text-red-500"
                                 >
                                   <X className="w-3 h-3" />
                                 </button>
@@ -2561,11 +2558,11 @@ const startRecovery = (sessionId: string) => {
                           </div>
                         )}
                         <div className="flex flex-col gap-1">
-                          <label htmlFor="mode5-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                          <label htmlFor="mode5-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-ink/30 hover:text-ink/60 transition-colors w-fit">
                             <Plus className="w-3 h-3" /> Anexar Sentença ou Documentos
                           </label>
-                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB · PDF, JPEG ou PNG</span>
-                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
+                          <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB · PDF, JPEG ou PNG</span>
+                          <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                           {mode5AttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{mode5AttachmentError}</span>}
                         </div>
                       </div>
@@ -2581,18 +2578,18 @@ const startRecovery = (sessionId: string) => {
                         <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.8)` }}>
                           🤝 Recursos de Apoio
                         </span>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-ink/60 leading-relaxed">
                           Se você está em situação de violência, ligue{' '}
-                          <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                          <strong className="text-ink">180</strong> — Central de Atendimento à Mulher.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-ink/60 leading-relaxed">
                           Em sofrimento emocional, ligue{' '}
-                          <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                          <strong className="text-ink">188</strong> — CVV, Centro de Valorização da Vida.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-ink/60 leading-relaxed">
                           Para apoio jurídico gratuito, procure a{' '}
-                          <strong className="text-white">Defensoria Pública</strong> ou o{' '}
-                          <strong className="text-white">CRAS</strong> da sua cidade.
+                          <strong className="text-ink">Defensoria Pública</strong> ou o{' '}
+                          <strong className="text-ink">CRAS</strong> da sua cidade.
                         </p>
                       </div>
                     )}
@@ -2625,7 +2622,7 @@ const startRecovery = (sessionId: string) => {
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-ink/30 hover:text-ink/70 transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
@@ -2634,42 +2631,42 @@ const startRecovery = (sessionId: string) => {
                       Mesa Dupla — Juiz
                     </span>
                   </div>
-                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-ink">
                     Insira os dois lados para o <br /><span className="text-[#F4F4F2] font-bold">julgamento direto.</span>
                   </h1>
-                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                  <p className="text-ink/40 max-w-lg text-sm uppercase tracking-widest font-medium">
                     O magistrado analisa a petição e a contestação sem intervenção de advogado.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div
-                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-ink/10 relative shadow-2xl shadow-black/50'}`}
                     style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
                   >
                     {LIQUID_GLASS_ENABLED && <GlowWash colorRgb="255,255,255" />}
-                    <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                    <div className="absolute top-0 left-0 w-1 h-full bg-ink/40" />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Petição do Autor</span>
                     </div>
                     <textarea
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a petição inicial do autor..."
-                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-ink/90 resize-y placeholder:opacity-10"
                     />
                     {state.attachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.attachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-ink/5">
+                            <FileIcon className="w-3 h-3 text-ink/40" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-ink/60">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-ink/30 hover:text-red-500"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-ink/5 pt-3">
                       <input type="file" id="author-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2687,43 +2684,43 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="author-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="author-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-ink/30 hover:text-ink/60 transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
+                        <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                         {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
                   </div>
 
                   <div
-                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-ink/10 relative shadow-2xl shadow-black/50'}`}
                     style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
                   >
                     {LIQUID_GLASS_ENABLED && <GlowWash colorRgb={MODE_CONFIG[3].colorRgb} />}
                     <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[3].colorRgb},0.6)` }} />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Contestação do Réu</span>
                     </div>
                     <textarea
                       value={state.defenseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a contestação do réu..."
-                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-ink/90 resize-y placeholder:opacity-10"
                     />
                     {state.defenseAttachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.defenseAttachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-ink/5">
+                            <FileIcon className="w-3 h-3 text-ink/40" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-ink/60">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-ink/30 hover:text-red-500"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-ink/5 pt-3">
                       <input type="file" id="defense-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2741,11 +2738,11 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="defense-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="defense-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-ink/30 hover:text-ink/60 transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
+                        <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                         {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
@@ -2779,7 +2776,7 @@ const startRecovery = (sessionId: string) => {
                     <div className="flex items-center gap-4">
                       <button
                         onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-ink/30 hover:text-ink/70 transition-colors"
                       >
                         <ArrowRight className="w-3 h-3 rotate-180" />
                         Voltar
@@ -2796,13 +2793,13 @@ const startRecovery = (sessionId: string) => {
                         </span>
                       )}
                     </div>
-                    <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
+                    <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-ink">
                       {state.selectedMode === 2
                         ? <>Descreva a acusação recebida e <br /><span className="text-[#F4F4F2] font-bold">sua versão dos fatos.</span></>
                         : <>Descreva sua causa para iniciar a <br /><span className="text-[#F4F4F2] font-bold">simulação de fórum.</span></>
                       }
                     </h1>
-                    <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                    <p className="text-ink/40 max-w-lg text-sm uppercase tracking-widest font-medium">
                       {state.selectedMode === 2
                         ? 'Nossa IA constrói sua defesa técnica e o juiz avalia em até 3 ciclos.'
                         : 'Para quem tem uma situação e quer entender, antes de qualquer passo, se os argumentos estão do seu lado.'
@@ -2811,7 +2808,7 @@ const startRecovery = (sessionId: string) => {
                   </div>
 
                   <div
-                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative group overflow-hidden' : 'bg-[#15161A] border border-white/10 relative group shadow-2xl shadow-black/50'}`}
+                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative group overflow-hidden' : 'bg-[#15161A] border border-ink/10 relative group shadow-2xl shadow-black/50'}`}
                     style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
                   >
                     {LIQUID_GLASS_ENABLED && <GlowWash colorRgb={MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'} />}
@@ -2819,19 +2816,19 @@ const startRecovery = (sessionId: string) => {
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Descreva aqui os detalhes da causa, fatos principais e argumentos jurídicos. Nossa IA processa textos longos sem limite de caracteres..."
-                      className="w-full min-h-[400px] h-auto bg-transparent p-8 outline-none transition-all text-2xl font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[400px] h-auto bg-transparent p-8 outline-none transition-all text-2xl font-serif italic text-ink/90 resize-y placeholder:opacity-10"
                     />
                     
                     {/* Attachments List */}
                     {state.attachments.length > 0 && (
                       <div className="px-8 pb-4 flex flex-wrap gap-3">
                         {state.attachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5 group/file">
-                            {file.type.startsWith('image/') ? <ImageIcon className="w-3 h-3 text-white/40" /> : <FileIcon className="w-3 h-3 text-white/40" />}
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[120px] truncate text-white/60">{file.name}</span>
+                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-ink/5 group/file">
+                            {file.type.startsWith('image/') ? <ImageIcon className="w-3 h-3 text-ink/40" /> : <FileIcon className="w-3 h-3 text-ink/40" />}
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[120px] truncate text-ink/60">{file.name}</span>
                             <button 
                               onClick={() => removeAttachment(i)}
-                              className="text-white/30 hover:text-red-500 transition-colors"
+                              className="text-ink/30 hover:text-red-500 transition-colors"
                             >
                               <X className="w-3 h-3" />
                             </button>
@@ -2840,7 +2837,7 @@ const startRecovery = (sessionId: string) => {
                       </div>
                     )}
 
-                    <div className="p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-white/5 bg-white/[0.02]">
+                    <div className="p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-ink/5 bg-ink/[0.02]">
                       <div className="flex items-center gap-4">
                         <input 
                           type="file" 
@@ -2853,17 +2850,17 @@ const startRecovery = (sessionId: string) => {
                         <div className="flex flex-col gap-1">
                           <button
                             onClick={() => fileInputRef.current?.click()}
-                            className="flex items-center gap-3 px-4 py-2 border border-white/10 hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
+                            className="flex items-center gap-3 px-4 py-2 border border-ink/10 hover:bg-ink/5 transition-all text-ink/40 group-hover:text-ink/60"
                           >
                             <Plus className="w-4 h-4" />
                             <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
                           </button>
-                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
+                          <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-ink/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                           {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                         </div>
-                        <div className="w-[1px] h-4 bg-white/10 mx-2"></div>
-                        <p className="text-[10px] text-white/20 uppercase tracking-[0.2em] font-bold">PDF, JPEG ou PNG</p>
+                        <div className="w-[1px] h-4 bg-ink/10 mx-2"></div>
+                        <p className="text-[10px] text-ink/20 uppercase tracking-[0.2em] font-bold">PDF, JPEG ou PNG</p>
                       </div>
 
                       <button
@@ -2877,15 +2874,15 @@ const startRecovery = (sessionId: string) => {
                     </div>
                   </div>
 
-                  <div className={`grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-white/10 shadow-xl shadow-black/30 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'border border-white/10'}`}>
+                  <div className={`grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-ink/10 shadow-xl shadow-black/30 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'border border-ink/10'}`}>
                     {[
                       { title: "PROVA ROBUSTA", desc: "Análise multimídia de documentos e evidências anexadas." },
                       { title: "TABULA RASA", desc: "Juízes sem memória garantem imparcialidade técnica a cada round." },
                       { title: "LEGAL BRIEFS", desc: "Advogados utilizam resumos estratégicos para evolução processual." }
                     ].map((feat, i) => (
                       <div key={i} className={`p-6 space-y-2 ${LIQUID_GLASS_ENABLED ? '' : 'bg-[#15161A]'}`}>
-                        <h4 className="text-[10px] uppercase font-bold tracking-[0.2em] text-white">{feat.title}</h4>
-                        <p className="text-xs text-white/30 leading-relaxed font-medium">{feat.desc}</p>
+                        <h4 className="text-[10px] uppercase font-bold tracking-[0.2em] text-ink">{feat.title}</h4>
+                        <p className="text-xs text-ink/30 leading-relaxed font-medium">{feat.desc}</p>
                       </div>
                     ))}
                   </div>
@@ -2893,8 +2890,8 @@ const startRecovery = (sessionId: string) => {
 
                 <div className="col-span-12 xl:col-span-4 flex flex-col gap-6">
                   {/* Resumo Analítico - Global Stats */}
-                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-white/10'} text-white p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group`}>
-                    <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-ink/10'} text-ink p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group`}>
+                    <div className="absolute inset-0 bg-ink/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
                     <div className="flex justify-between items-center opacity-30">
                       <span className="text-[9px] uppercase tracking-widest font-bold">Performance Global EAI?</span>
                       <TrendingUp className="w-4 h-4" />
@@ -2903,33 +2900,33 @@ const startRecovery = (sessionId: string) => {
                     <div className="grid grid-cols-1 gap-6">
                       <div className="space-y-1">
                         <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
-                        <div className="text-6xl font-serif italic text-white/90">
+                        <div className="text-6xl font-serif italic text-ink/90">
                           {globalStats.winRate}%
                         </div>
                       </div>
                       
-                      <div className="flex justify-between items-end border-t border-white/5 pt-6">
+                      <div className="flex justify-between items-end border-t border-ink/5 pt-6">
                         <div className="space-y-1">
-                          <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Simulações Concluídas</div>
-                          <div className="text-2xl font-mono text-white/80">{globalStats.simulations.toLocaleString()}</div>
+                          <div className="text-[9px] font-bold text-ink/20 uppercase tracking-widest leading-none">Simulações Concluídas</div>
+                          <div className="text-2xl font-mono text-ink/80">{globalStats.simulations.toLocaleString()}</div>
                         </div>
                         <div className="text-right space-y-1">
-                          <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Precisão Média</div>
+                          <div className="text-[9px] font-bold text-ink/20 uppercase tracking-widest leading-none">Precisão Média</div>
                           <div className="text-2xl font-mono text-emerald-500 font-bold">{globalStats.precision}%</div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="text-[10px] font-mono text-white/10 font-bold border-t border-white/5 pt-4 flex justify-between">
+                    <div className="text-[10px] font-mono text-ink/10 font-bold border-t border-ink/5 pt-4 flex justify-between">
                        <span>ALGORITMO: LEX_FRAME_V3</span>
                        <span>STATUS: OPTIMIZED</span>
                     </div>
                   </div>
 
-                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-white/10'} p-8 space-y-8 flex-1`}>
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-ink/10'} p-8 space-y-8 flex-1`}>
                     <div className="space-y-1">
-                      <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/60">Disponibilidade de Agentes de IA</h3>
-                      <p className="text-[10px] text-white/20 uppercase tracking-widest font-mono">Status Global Agents / Judicial Regions</p>
+                      <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-ink/60">Disponibilidade de Agentes de IA</h3>
+                      <p className="text-[10px] text-ink/20 uppercase tracking-widest font-mono">Status Global Agents / Judicial Regions</p>
                     </div>
 
                     <div className="space-y-5">
@@ -2938,18 +2935,18 @@ const startRecovery = (sessionId: string) => {
                         return state.regionalStats.map((stat, i) => (
                           <div key={i} className="space-y-2 group cursor-default">
                             <div className="flex justify-between items-end">
-                              <span className="text-[11px] font-bold text-white/80 group-hover:text-white transition-colors">{stat.region}</span>
+                              <span className="text-[11px] font-bold text-ink/80 group-hover:text-ink transition-colors">{stat.region}</span>
                               <span className="text-[11px] font-mono text-emerald-500">{stat.active} vitórias</span>
                             </div>
-                            <div className="h-[2px] bg-white/5 overflow-hidden rounded-full">
+                            <div className="h-[2px] bg-ink/5 overflow-hidden rounded-full">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${(stat.seeds / maxSeeds) * 100}%` }}
                                 transition={{ duration: 1.5, delay: i * 0.1 }}
-                                className="h-full bg-white/20 group-hover:bg-emerald-500/50 transition-colors"
+                                className="h-full bg-ink/20 group-hover:bg-emerald-500/50 transition-colors"
                               />
                             </div>
-                            <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-tighter text-white/20">
+                            <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-tighter text-ink/20">
                               <motion.span key={stat.seeds} initial={{ opacity: 0.5, y: -2 }} animate={{ opacity: 1, y: 0 }}>
                                 {stat.seeds} simulações
                               </motion.span>
@@ -2960,26 +2957,26 @@ const startRecovery = (sessionId: string) => {
                       })()}
                     </div>
 
-                    <div className="pt-6 border-t border-white/5 space-y-4">
-                      <div className="bg-white/5 p-4 space-y-2 border border-white/5">
+                    <div className="pt-6 border-t border-ink/5 space-y-4">
+                      <div className="bg-ink/5 p-4 space-y-2 border border-ink/5">
                         <div className="flex justify-between items-center">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Total de Vitórias</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Total de Vitórias</span>
                           <span className="text-xs font-mono text-emerald-500 font-bold">
                             {state.regionalStats.reduce((acc, s) => acc + s.active, 0)} VITÓRIAS
                           </span>
                         </div>
-                        <div className="text-[9px] text-white/20 leading-relaxed font-serif italic">
+                        <div className="text-[9px] text-ink/20 leading-relaxed font-serif italic">
                           A simulação aciona agentes especializados conforme a área do conflito identificada na etapa de validação.
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-white/10'} p-6 flex items-center gap-4`}>
+                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-ink/10'} p-6 flex items-center gap-4`}>
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">Ambiente de Simulação</span>
-                      <span className="text-[9px] font-mono text-white/30 uppercase">Agentes de IA · EAI?</span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink">Ambiente de Simulação</span>
+                      <span className="text-[9px] font-mono text-ink/30 uppercase">Agentes de IA · EAI?</span>
                     </div>
                   </div>
                 </div>
@@ -3022,7 +3019,7 @@ const startRecovery = (sessionId: string) => {
                   </div>
                 )}
 
-                <h1 className="text-4xl font-serif italic tracking-tight text-white/90">
+                <h1 className="text-4xl font-serif italic tracking-tight text-ink/90">
                   O sistema entendeu<br />sua causa.
                 </h1>
 
@@ -3031,8 +3028,8 @@ const startRecovery = (sessionId: string) => {
                     style={LIQUID_GLASS_ENABLED
                       ? { borderLeftWidth: '3px', borderLeftStyle: 'solid', borderLeftColor: dcColor }
                       : { background: '#15161A', borderWidth: '1px 1px 1px 3px', borderStyle: 'solid', borderColor: `rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) ${dcColor}` }}>
-                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-white/30 mb-4 border-b border-white/5 pb-2">Núcleo Central · Gerado automaticamente</h4>
-                    <p className="text-xl font-sans text-white/80 leading-relaxed">
+                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-ink/30 mb-4 border-b border-ink/5 pb-2">Núcleo Central · Gerado automaticamente</h4>
+                    <p className="text-xl font-sans text-ink/80 leading-relaxed">
                       "{state.caseSummary}"
                     </p>
                   </div>
@@ -3052,22 +3049,22 @@ const startRecovery = (sessionId: string) => {
                 {/* Agentes escalados */}
                 <p className="text-[9px] font-bold uppercase tracking-[0.2em] mt-4" style={{ color: dcColor }}>Agentes Escalados</p>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2"
+                  <div className="p-5 bg-ink/[0.02] border border-ink/5 space-y-2"
                     style={{ borderLeftWidth: '3px', borderLeftColor: dcColor }}>
                     <span className="text-2xl block">⚖️</span>
                     <p className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>Advogado</p>
-                    <p className="text-sm font-medium text-white/60">{agentSpec}</p>
+                    <p className="text-sm font-medium text-ink/60">{agentSpec}</p>
                   </div>
-                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2"
+                  <div className="p-5 bg-ink/[0.02] border border-ink/5 space-y-2"
                     style={{ borderLeftWidth: '3px', borderLeftColor: dcColor }}>
                     <span className="text-2xl block">🧑‍⚖️</span>
                     <p className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>Magistrado</p>
-                    <p className="text-sm font-medium text-white/60">{agentSpec}</p>
+                    <p className="text-sm font-medium text-ink/60">{agentSpec}</p>
                   </div>
                 </div>
 
-                <div className="mt-10 border-t border-white/5 pt-8 space-y-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/20 text-center">
+                <div className="mt-10 border-t border-ink/5 pt-8 space-y-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-ink/20 text-center">
                     Deseja iniciar o fórum?
                   </p>
                   <div className="flex flex-col items-center gap-4">
@@ -3081,7 +3078,7 @@ const startRecovery = (sessionId: string) => {
                     </button>
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/25 hover:text-white/50 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink/25 hover:text-ink/50 transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Corrigir causa
@@ -3099,10 +3096,10 @@ const startRecovery = (sessionId: string) => {
                 animate={{ opacity: 1 }}
                 className="space-y-8"
               >
-                <div className="flex justify-between items-end border-b border-white/10 pb-6">
+                <div className="flex justify-between items-end border-b border-ink/10 pb-6">
                   <div>
-                    <h2 className="text-3xl font-serif italic text-white">Arena de Simulação</h2>
-                    <p className="text-[10px] uppercase font-bold tracking-widest text-white/20 mt-1">
+                    <h2 className="text-3xl font-serif italic text-ink">Arena de Simulação</h2>
+                    <p className="text-[10px] uppercase font-bold tracking-widest text-ink/20 mt-1">
                       Sessão de Simulação{state.simulationId ? ` · ${state.simulationId.slice(-6).toUpperCase()}` : ''}
                     </p>
                   </div>
@@ -3110,8 +3107,8 @@ const startRecovery = (sessionId: string) => {
                     {[1, 2, 3].map(r => (
                       <div 
                         key={r}
-                        className={`w-3 h-3 rounded-full border border-white/20 ${
-                          (state.simulation?.rounds.length || 0) >= r ? 'bg-emerald-500' : 'bg-white/5'
+                        className={`w-3 h-3 rounded-full border border-ink/20 ${
+                          (state.simulation?.rounds.length || 0) >= r ? 'bg-emerald-500' : 'bg-ink/5'
                         }`}
                       />
                     ))}
@@ -3125,33 +3122,33 @@ const startRecovery = (sessionId: string) => {
                   {state.simulation?.rounds.map((round, i) => (
                     <div key={i} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                       <div className="flex items-center gap-4">
-                        <span className="text-[10px] font-mono font-bold text-white/10">RODADA {i + 1}</span>
-                        <div className="h-px bg-white/5 flex-1" />
+                        <span className="text-[10px] font-mono font-bold text-ink/10">RODADA {i + 1}</span>
+                        <div className="h-px bg-ink/5 flex-1" />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Modo 4: lado estático */}
                         {state.selectedMode === 4 && (
-                          <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-white/5'} p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden opacity-50`}>
-                            <div className="absolute top-0 left-0 w-1 h-full bg-white/10"></div>
+                          <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-ink/5'} p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden opacity-50`}>
+                            <div className="absolute top-0 left-0 w-1 h-full bg-ink/10"></div>
                             <div className="flex justify-between items-center mb-4">
-                              <span className="text-sm font-bold uppercase tracking-tight text-white/40">
+                              <span className="text-sm font-bold uppercase tracking-tight text-ink/40">
                                 {state.userSide === 'AUTHOR' ? 'Contestação do Réu' : 'Petição do Autor'}
                               </span>
-                              <span className="px-2 py-0.5 border border-white/10 text-white/30 text-[9px] uppercase tracking-widest font-bold">Estático</span>
+                              <span className="px-2 py-0.5 border border-ink/10 text-ink/30 text-[9px] uppercase tracking-widest font-bold">Estático</span>
                             </div>
-                            <p className="text-xs text-white/20 italic font-serif line-clamp-4">
+                            <p className="text-xs text-ink/20 italic font-serif line-clamp-4">
                               {state.userSide === 'AUTHOR' ? state.defenseDescription : state.caseDescription}
                             </p>
                           </div>
                         )}
                         {/* Agent: Lawyer */}
-                        <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-white/10'} p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden`}>
-                           <div className="absolute top-0 left-0 w-1 h-full bg-white/40"></div>
+                        <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-ink/10'} p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden`}>
+                           <div className="absolute top-0 left-0 w-1 h-full bg-ink/40"></div>
                            <div className="flex justify-between items-center mb-6">
                              <div className="flex flex-col">
-                               <span className="text-[9px] font-mono text-white/20">AGT_LAW_{state.detectedArea}</span>
-                               <span className="text-sm font-bold uppercase tracking-tight text-white/80">Advogado Especializado</span>
+                               <span className="text-[9px] font-mono text-ink/20">AGT_LAW_{state.detectedArea}</span>
+                               <span className="text-sm font-bold uppercase tracking-tight text-ink/80">Advogado Especializado</span>
                              </div>
                              <div className="flex flex-col items-end gap-1">
                                <span className="px-2 py-0.5 bg-white text-black text-[9px] uppercase tracking-widest font-bold">Petição</span>
@@ -3162,17 +3159,17 @@ const startRecovery = (sessionId: string) => {
                                )}
                              </div>
                            </div>
-                           <div className="text-xs text-white/50 leading-relaxed italic font-serif mb-6 line-clamp-4">
+                           <div className="text-xs text-ink/50 leading-relaxed italic font-serif mb-6 line-clamp-4">
                              "<CensoredText text={round.lawyerPetition} enabled={!state.isUnlocked} />"
                            </div>
 
                            {round.lawyerBrief && (
-                             <div className="mb-6 p-4 bg-white/[0.02] border border-white/5 rounded-sm">
+                             <div className="mb-6 p-4 bg-ink/[0.02] border border-ink/5 rounded-sm">
                                <div className="flex items-center gap-2 mb-2">
-                                 <TrendingUp className="w-3 h-3 text-white/20" />
-                                 <span className="text-[8px] font-bold uppercase tracking-widest text-white/20">Brief Estratégico (Memória)</span>
+                                 <TrendingUp className="w-3 h-3 text-ink/20" />
+                                 <span className="text-[8px] font-bold uppercase tracking-widest text-ink/20">Brief Estratégico (Memória)</span>
                                </div>
-                               <p className="text-[10px] text-white/40 leading-relaxed font-mono italic">
+                               <p className="text-[10px] text-ink/40 leading-relaxed font-mono italic">
                                  <CensoredText text={round.lawyerBrief} enabled={!state.isUnlocked} />
                                </p>
                              </div>
@@ -3180,42 +3177,42 @@ const startRecovery = (sessionId: string) => {
 
                            <div className="flex justify-between items-end">
                              <div className="flex-1 max-w-[120px]">
-                               <div className="text-[8px] uppercase font-bold text-white/20 mb-1">Impacto Técnico</div>
-                               <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                                 <div className="h-full bg-white/60" style={{ width: `${60 + i * 15}%` }}></div>
+                               <div className="text-[8px] uppercase font-bold text-ink/20 mb-1">Impacto Técnico</div>
+                               <div className="h-1 bg-ink/5 rounded-full overflow-hidden">
+                                 <div className="h-full bg-ink/60" style={{ width: `${60 + i * 15}%` }}></div>
                                </div>
                              </div>
-                             <span className="text-[9px] font-mono font-bold text-white/20">MEMÓRIA OK</span>
+                             <span className="text-[9px] font-mono font-bold text-ink/20">MEMÓRIA OK</span>
                            </div>
                         </div>
 
                         {/* Agent: Judge */}
-                        <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-white/10 backdrop-blur-sm'} p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden`}>
+                        <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-ink/10 backdrop-blur-sm'} p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden`}>
                            <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60"></div>
                            <div className="flex justify-between items-center mb-6">
                              <div className="flex flex-col">
-                               <span className="text-[9px] font-mono text-white/20">AGT_JUDGE_{state.detectedArea}</span>
-                               <span className="text-sm font-bold uppercase tracking-tight text-white/80">Magistrado Técnico</span>
+                               <span className="text-[9px] font-mono text-ink/20">AGT_JUDGE_{state.detectedArea}</span>
+                               <span className="text-sm font-bold uppercase tracking-tight text-ink/80">Magistrado Técnico</span>
                              </div>
-                             <span className="px-2 py-0.5 border border-white/40 text-white text-[9px] uppercase tracking-widest font-bold">{(state.selectedMode === 1 || state.selectedMode === 2) ? 'Avaliação Técnica' : 'Sentença'}</span>
+                             <span className="px-2 py-0.5 border border-ink/40 text-ink text-[9px] uppercase tracking-widest font-bold">{(state.selectedMode === 1 || state.selectedMode === 2) ? 'Avaliação Técnica' : 'Sentença'}</span>
                            </div>
-                           <div className="text-xs text-white/50 leading-relaxed font-sans mb-6">
+                           <div className="text-xs text-ink/50 leading-relaxed font-sans mb-6">
                              "<CensoredText text={cleanJudgmentText(round.judgeJudgment) || round.judgeJudgment || ''} enabled={!state.isUnlocked} />"
                            </div>
                            <div className="flex justify-between items-end">
-                             <div className="bg-white/5 px-3 py-1.5 flex flex-col">
+                             <div className="bg-ink/5 px-3 py-1.5 flex flex-col">
                                {(() => {
                                  const _es = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
                                  const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
                                  return (
                                    <>
-                                     <span className="text-[8px] font-bold text-white/30 uppercase">Prob. {_es === 'DEFENSE' ? 'Réu' : 'Autor'}</span>
-                                     <span className="text-lg font-serif italic font-bold text-white/90">{_rp}%</span>
+                                     <span className="text-[8px] font-bold text-ink/30 uppercase">Prob. {_es === 'DEFENSE' ? 'Réu' : 'Autor'}</span>
+                                     <span className="text-lg font-serif italic font-bold text-ink/90">{_rp}%</span>
                                    </>
                                  );
                                })()}
                              </div>
-                             <span className="text-[9px] font-mono font-bold text-white/20">ISENÇÃO 100%</span>
+                             <span className="text-[9px] font-mono font-bold text-ink/20">ISENÇÃO 100%</span>
                            </div>
                         </div>
                       </div>
@@ -3246,10 +3243,10 @@ const startRecovery = (sessionId: string) => {
                   {loading && (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                       <div className="relative">
-                        <Loader2 className="w-8 h-8 animate-spin text-white/40" />
-                        <div className="absolute inset-0 blur-md animate-pulse bg-white/5 rounded-full"></div>
+                        <Loader2 className="w-8 h-8 animate-spin text-ink/40" />
+                        <div className="absolute inset-0 blur-md animate-pulse bg-ink/5 rounded-full"></div>
                       </div>
-                      <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/20">Processando Inteligência...</div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-ink/20">Processando Inteligência...</div>
                     </div>
                   )}
                 </div>
@@ -3264,27 +3261,27 @@ const startRecovery = (sessionId: string) => {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`mt-12 p-10 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-white/20'}`}
+                    className={`mt-12 p-10 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-ink/20'}`}
                   >
                     <div className="absolute top-0 right-0 p-4">
-                      <Lock className="text-white/5 w-24 h-24 -rotate-12" />
+                      <Lock className="text-ink/5 w-24 h-24 -rotate-12" />
                     </div>
                     <div className="relative z-10 flex flex-col items-center text-center space-y-6">
                       {displayPct > 0 && (
                         <div className="flex flex-col items-center mb-4">
-                          <span className="text-7xl font-serif italic font-bold text-white">
+                          <span className="text-7xl font-serif italic font-bold text-ink">
                             {displayPct}%
                           </span>
-                          <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold mt-1">
+                          <span className="text-[10px] uppercase tracking-widest text-ink/30 font-bold mt-1">
                             Índice de força argumentativa
                           </span>
-                          <span className="text-[9px] text-white/20 uppercase tracking-widest mt-1">
+                          <span className="text-[9px] text-ink/20 uppercase tracking-widest mt-1">
                             Estimativa baseada na sua descrição. Resultados reais variam.
                           </span>
                         </div>
                       )}
-                      <h3 className="text-3xl font-serif italic text-white">Simulação de Rodadas Concluída.</h3>
-                      <p className="text-sm text-white/40 max-w-lg leading-relaxed uppercase tracking-widest font-medium">
+                      <h3 className="text-3xl font-serif italic text-ink">Simulação de Rodadas Concluída.</h3>
+                      <p className="text-sm text-ink/40 max-w-lg leading-relaxed uppercase tracking-widest font-medium">
                         O laudo estratégico completo com fundamentos técnicos, valor estimado da causa e próximos passos processuais foi gerado.
                       </p>
                       <button
@@ -3295,7 +3292,7 @@ const startRecovery = (sessionId: string) => {
                       </button>
                       <div>
                         {!showPromoInput ? (
-                          <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-white/30 underline cursor-pointer bg-transparent border-none">
+                          <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-ink/30 underline cursor-pointer bg-transparent border-none">
                             Tenho um código promocional
                           </button>
                         ) : (
@@ -3306,13 +3303,13 @@ const startRecovery = (sessionId: string) => {
                               onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); }}
                               onKeyDown={e => { if (e.key === 'Enter') validatePromoCode(promoCode); }}
                               placeholder="CÓDIGO PROMO"
-                              className="flex-1 px-3 py-2 bg-white/5 border border-white/15 text-white text-[12px] font-semibold tracking-wider uppercase outline-none"
+                              className="flex-1 px-3 py-2 bg-ink/5 border border-ink/15 text-ink text-[12px] font-semibold tracking-wider uppercase outline-none"
                             />
                             <button
                               type="button"
                               onClick={() => validatePromoCode(promoCode)}
                               disabled={promoLoading || !promoCode.trim()}
-                              className="px-4 py-2 bg-white/10 border border-white/20 text-white text-[11px] font-bold tracking-wide cursor-pointer"
+                              className="px-4 py-2 bg-ink/10 border border-ink/20 text-ink text-[11px] font-bold tracking-wide cursor-pointer"
                             >
                               {promoLoading ? 'Validando…' : 'Aplicar'}
                             </button>
@@ -3324,7 +3321,7 @@ const startRecovery = (sessionId: string) => {
                           </p>
                         )}
                       </div>
-                      <div className="flex gap-8 border-t border-white/5 pt-6 text-[9px] font-bold uppercase tracking-widest text-white/20">
+                      <div className="flex gap-8 border-t border-ink/5 pt-6 text-[9px] font-bold uppercase tracking-widest text-ink/20">
                         <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Pagamento seguro</span>
                         <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Acesso Vitalício</span>
                         <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Formato Profissional</span>
@@ -3340,18 +3337,18 @@ const startRecovery = (sessionId: string) => {
                     <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.8)` }}>
                       🤝 Recursos de Apoio
                     </span>
-                    <p className="text-sm text-white/60 leading-relaxed">
+                    <p className="text-sm text-ink/60 leading-relaxed">
                       Se você está em situação de violência, ligue{' '}
-                      <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                      <strong className="text-ink">180</strong> — Central de Atendimento à Mulher.
                     </p>
-                    <p className="text-sm text-white/60 leading-relaxed">
+                    <p className="text-sm text-ink/60 leading-relaxed">
                       Em sofrimento emocional, ligue{' '}
-                      <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                      <strong className="text-ink">188</strong> — CVV, Centro de Valorização da Vida.
                     </p>
-                    <p className="text-sm text-white/60 leading-relaxed">
+                    <p className="text-sm text-ink/60 leading-relaxed">
                       Para apoio jurídico gratuito, procure a{' '}
-                      <strong className="text-white">Defensoria Pública</strong> ou o{' '}
-                      <strong className="text-white">CRAS</strong> da sua cidade.
+                      <strong className="text-ink">Defensoria Pública</strong> ou o{' '}
+                      <strong className="text-ink">CRAS</strong> da sua cidade.
                     </p>
                   </div>
                 )}
@@ -3362,15 +3359,15 @@ const startRecovery = (sessionId: string) => {
                     animate={{ opacity: 1, y: 0 }}
                     className="mt-8 space-y-6"
                   >
-                    <div className={`p-6 space-y-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-white/5 border border-white/10'}`}>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-sans text-white/80 leading-relaxed">
+                    <div className={`p-6 space-y-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-ink/5 border border-ink/10'}`}>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-ink/30 block">Análise do Juiz Estrategista</span>
+                      <p className="text-lg font-sans text-ink/80 leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={true} />
                       </p>
                     </div>
-                    <div className={`p-6 space-y-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-white/10'}`}>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Fundamentação Jurídica</span>
-                      <p className="text-sm font-mono text-white/60 leading-relaxed">
+                    <div className={`p-6 space-y-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#15161A] border border-ink/10'}`}>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-ink/30 block">Fundamentação Jurídica</span>
+                      <p className="text-sm font-mono text-ink/60 leading-relaxed">
                         <CensoredText text={state.mode5Result.reasoning} enabled={true} />
                       </p>
                     </div>
@@ -3388,12 +3385,12 @@ const startRecovery = (sessionId: string) => {
               >
                 {state.mode5Result && (
                   <div className="space-y-8 mb-12">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-8">
-                      <h2 className="text-5xl font-serif italic tracking-tight text-white/90">
-                        Laudo <span className="text-white font-bold">Estratégico</span>
+                    <div className="flex items-center justify-between border-b border-ink/10 pb-8">
+                      <h2 className="text-5xl font-serif italic tracking-tight text-ink/90">
+                        Laudo <span className="text-ink font-bold">Estratégico</span>
                       </h2>
                       <div className="flex flex-col items-end gap-1">
-                        <span className="text-[10px] uppercase font-bold tracking-widest text-white/20">Recomendação</span>
+                        <span className="text-[10px] uppercase font-bold tracking-widest text-ink/20">Recomendação</span>
                         <span className={`text-2xl font-bold font-serif italic ${state.mode5Result.recommendation === 'RECORRER' ? 'text-red-400' : state.mode5Result.recommendation === 'ACEITAR' ? 'text-emerald-400' : 'text-amber-400'}`}>
                           {state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}
                         </span>
@@ -3420,22 +3417,22 @@ const startRecovery = (sessionId: string) => {
                           return (
                             <div className="space-y-2 w-full max-w-xs">
                               <div className="flex justify-between items-center">
-                                <span className="text-[10px] font-mono text-white/30">
+                                <span className="text-[10px] font-mono text-ink/30">
                                   {isRecurso ? 'Chance de reforma' : 'Êxito em julgamento'}
                                 </span>
-                                <span className="text-[10px] font-bold text-white/60">{pct}%</span>
+                                <span className="text-[10px] font-bold text-ink/60">{pct}%</span>
                               </div>
-                              <div className="h-2 bg-white/10 rounded-full overflow-hidden w-full">
+                              <div className="h-2 bg-ink/10 rounded-full overflow-hidden w-full">
                                 <div
                                   className={`h-full rounded-full transition-all ${color}`}
                                   style={{ width: `${pct}%` }}
                                 />
                               </div>
-                              <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">{label}</span>
-                              <p className="text-[10px] uppercase tracking-widest text-white/30 mt-2 font-bold print:text-black/40">
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-ink/40">{label}</span>
+                              <p className="text-[10px] uppercase tracking-widest text-ink/30 mt-2 font-bold print:text-black/40">
                                 Índice de força argumentativa — não probabilidade estatística.
                               </p>
-                              <p className="text-[9px] text-white/20 uppercase tracking-widest mt-1 print:text-black/30">
+                              <p className="text-[9px] text-ink/20 uppercase tracking-widest mt-1 print:text-black/30">
                                 Estimativa baseada na sua descrição. Resultados reais variam.
                               </p>
                             </div>
@@ -3444,22 +3441,22 @@ const startRecovery = (sessionId: string) => {
                       </div>
                     </div>
 
-                    <div className="p-8 bg-white/5 border border-white/10 space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-sans text-white/80 leading-relaxed">
+                    <div className="p-8 bg-ink/5 border border-ink/10 space-y-4">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-ink/30 block">Análise do Juiz Estrategista</span>
+                      <p className="text-lg font-sans text-ink/80 leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={!state.isUnlocked} />
                       </p>
                     </div>
 
-                    <div className="p-8 bg-[#15161A] border border-white/10 space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Fundamentação Jurídica</span>
-                      <p className="text-sm font-mono text-white/60 leading-relaxed">
+                    <div className="p-8 bg-[#15161A] border border-ink/10 space-y-4">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-ink/30 block">Fundamentação Jurídica</span>
+                      <p className="text-sm font-mono text-ink/60 leading-relaxed">
                         <CensoredText text={state.mode5Result.reasoning} enabled={!state.isUnlocked} />
                       </p>
                     </div>
 
                     {state.mode5Result.tokenCount && (
-                      <div className="text-[9px] font-mono text-white/20 text-right">
+                      <div className="text-[9px] font-mono text-ink/20 text-right">
                         Tokens consumidos nesta análise: {state.mode5Result.tokenCount.toLocaleString()}
                       </div>
                     )}
@@ -3474,18 +3471,18 @@ const startRecovery = (sessionId: string) => {
                         <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.8)` }}>
                           🤝 Recursos de Apoio
                         </span>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-ink/60 leading-relaxed">
                           Se você está em situação de violência, ligue{' '}
-                          <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                          <strong className="text-ink">180</strong> — Central de Atendimento à Mulher.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-ink/60 leading-relaxed">
                           Em sofrimento emocional, ligue{' '}
-                          <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                          <strong className="text-ink">188</strong> — CVV, Centro de Valorização da Vida.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-ink/60 leading-relaxed">
                           Para apoio jurídico gratuito, procure a{' '}
-                          <strong className="text-white">Defensoria Pública</strong> ou o{' '}
-                          <strong className="text-white">CRAS</strong> da sua cidade.
+                          <strong className="text-ink">Defensoria Pública</strong> ou o{' '}
+                          <strong className="text-ink">CRAS</strong> da sua cidade.
                         </p>
                       </div>
                     )}
@@ -3503,8 +3500,8 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 {state.selectedMode === 1 && (
-                  <div className="p-6 bg-white/5 border border-white/10 mb-8">
-                    <p className="text-sm text-white/60 leading-relaxed">
+                  <div className="p-6 bg-ink/5 border border-ink/10 mb-8">
+                    <p className="text-sm text-ink/60 leading-relaxed">
                       Esta análise avalia a força dos seus argumentos de forma independente.
                       Para simular o contraditório com a outra parte, continue abaixo.
                     </p>
@@ -3522,7 +3519,7 @@ const startRecovery = (sessionId: string) => {
                           const hypotheses = await generateCounterHypotheses(lastPetition, state.detectedArea, state.selectedMode);
                           setState(prev => ({ ...prev, counterHypotheses: hypotheses.length ? hypotheses : [] }));
                         }}
-                        className="w-full p-4 border border-white/20 text-[11px] font-bold uppercase tracking-widest text-white/60 hover:border-white/40 hover:text-white transition-all text-left flex items-center justify-between"
+                        className="w-full p-4 border border-ink/20 text-[11px] font-bold uppercase tracking-widest text-ink/60 hover:border-ink/40 hover:text-ink transition-all text-left flex items-center justify-between"
                       >
                         <span>
                           {state.selectedMode === 1
@@ -3534,31 +3531,31 @@ const startRecovery = (sessionId: string) => {
                     )}
 
                     {state.showHypotheses && !state.counterHypotheses?.length && (
-                      <div className="flex items-center gap-3 p-4 bg-white/5 border border-white/10">
-                        <Loader2 className="w-4 h-4 animate-spin text-white/40" />
-                        <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold">
+                      <div className="flex items-center gap-3 p-4 bg-ink/5 border border-ink/10">
+                        <Loader2 className="w-4 h-4 animate-spin text-ink/40" />
+                        <span className="text-[10px] uppercase tracking-widest text-ink/40 font-bold">
                           Gerando hipóteses do outro lado...
                         </span>
                       </div>
                     )}
 
                     {state.counterHypotheses && state.counterHypotheses.length > 0 && !state.expandedHypothesis && (
-                      <div className="space-y-4 p-6 bg-white/5 border border-white/10">
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-4">
+                      <div className="space-y-4 p-6 bg-ink/5 border border-ink/10">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-ink/40 mb-4">
                           {state.selectedMode === 1
                             ? 'Hipóteses de defesa do Réu — escolha a mais provável:'
                             : 'Hipóteses de ataque do Autor — escolha a mais provável:'}
                         </div>
-                        <p className="text-[9px] text-white/30 uppercase tracking-widest italic mb-4">
+                        <p className="text-[9px] text-ink/30 uppercase tracking-widest italic mb-4">
                           Estas são hipóteses baseadas nos fatos narrados. Escolha a que melhor representa o que você espera do outro lado.
                         </p>
                         {isExpandingHypothesis ? (
                           <div className="flex items-center gap-3 py-6 px-4">
-                            <svg className="animate-spin h-4 w-4 text-white/40 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg className="animate-spin h-4 w-4 text-ink/40 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                             </svg>
-                            <span className="text-[10px] uppercase tracking-widest text-white/40">Desenvolvendo argumento do outro lado...</span>
+                            <span className="text-[10px] uppercase tracking-widest text-ink/40">Desenvolvendo argumento do outro lado...</span>
                           </div>
                         ) : (
                           state.counterHypotheses.map((hyp, i) => (
@@ -3576,29 +3573,29 @@ const startRecovery = (sessionId: string) => {
                                 setState(prev => ({ ...prev, expandedHypothesis: expanded }));
                                 setIsExpandingHypothesis(false);
                               }}
-                              className="w-full p-4 border border-white/10 text-left hover:border-white/30 hover:bg-white/5 transition-all space-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full p-4 border border-ink/10 text-left hover:border-ink/30 hover:bg-ink/5 transition-all space-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-ink/30">
                                 Opção {String.fromCharCode(65 + i)}
                               </span>
-                              <p className="text-sm text-white/70 leading-relaxed">{hyp}</p>
+                              <p className="text-sm text-ink/70 leading-relaxed">{hyp}</p>
                             </button>
                           ))
                         )}
-                        <div className="border border-white/10">
+                        <div className="border border-ink/10">
                           <button
                             disabled={isExpandingHypothesis}
                             onClick={() => setState(prev => ({ ...prev, selectedHypothesis: 'D' }))}
-                            className="w-full p-4 text-left hover:bg-white/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full p-4 text-left hover:bg-ink/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">Opção D</span>
-                            <p className="text-sm text-white/50">Eu sei o que o outro lado vai alegar</p>
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-ink/30">Opção D</span>
+                            <p className="text-sm text-ink/50">Eu sei o que o outro lado vai alegar</p>
                           </button>
                           {state.selectedHypothesis === 'D' && (
                             <div className="px-4 pb-4 space-y-3">
                               <textarea
                                 placeholder="Descreva o argumento do outro lado..."
-                                className="w-full min-h-[120px] bg-transparent border border-white/10 p-3 text-sm font-serif italic text-white/80 outline-none resize-y placeholder:opacity-30"
+                                className="w-full min-h-[120px] bg-transparent border border-ink/10 p-3 text-sm font-serif italic text-ink/80 outline-none resize-y placeholder:opacity-30"
                                 onChange={(e) => setState(prev => ({ ...prev, expandedHypothesis: e.target.value }))}
                               />
                               <button
@@ -3625,11 +3622,11 @@ const startRecovery = (sessionId: string) => {
                     )}
 
                     {state.expandedHypothesis && (
-                      <div className="space-y-4 p-6 bg-white/5 border border-white/20">
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                      <div className="space-y-4 p-6 bg-ink/5 border border-ink/20">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-ink/40">
                           Argumento do outro lado — expandido
                         </div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                        <p className="text-sm font-sans text-ink/70 leading-relaxed">
                           {state.expandedHypothesis}
                         </p>
                         <button
@@ -3646,7 +3643,7 @@ const startRecovery = (sessionId: string) => {
                           Simular o contraditório no Modo 4
                           <ArrowRight className="w-4 h-4" />
                         </button>
-                        <p className="text-[9px] text-white/20 text-center uppercase tracking-widest">
+                        <p className="text-[9px] text-ink/20 text-center uppercase tracking-widest">
                           Você será direcionado para a Mesa Dupla Assistida com os campos pré-carregados.
                         </p>
                       </div>
@@ -3656,15 +3653,15 @@ const startRecovery = (sessionId: string) => {
                 )}
 
                 {state.selectedMode !== 5 && (
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-white/10 pb-8 gap-6 print:border-black/10">
-                  <h2 className="text-3xl md:text-5xl font-serif italic tracking-tight text-white/90 print:text-black">
-                    Laudo <span className="text-white font-bold print:text-black">Estratégico</span>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-ink/10 pb-8 gap-6 print:border-black/10">
+                  <h2 className="text-3xl md:text-5xl font-serif italic tracking-tight text-ink/90 print:text-black">
+                    Laudo <span className="text-ink font-bold print:text-black">Estratégico</span>
                   </h2>
                   <div className="flex flex-col items-end">
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-white/20 print:text-black/40">Probabilidade Final</span>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-ink/20 print:text-black/40">Probabilidade Final</span>
                     {(state.selectedMode === 3 || state.selectedMode === 4) && state.simulation ? (
                       <>
-                        <span className="text-[10px] uppercase font-bold tracking-widest text-white/40 mt-1">
+                        <span className="text-[10px] uppercase font-bold tracking-widest text-ink/40 mt-1">
                           {state.simulation.finalSuccessProbability >= 55 ? '↓ AUTOR FAVORECIDO' : state.simulation.finalSuccessProbability <= 45 ? '↓ RÉU FAVORECIDO' : '↓ RESULTADO EQUILIBRADO'}
                         </span>
                         <span className="text-4xl font-serif italic text-emerald-500 font-bold print:text-black">
@@ -3676,10 +3673,10 @@ const startRecovery = (sessionId: string) => {
                         {(state.simulation?.rounds && state.simulation.rounds.length > 0) ? `${state.simulation.finalSuccessProbability}` : "--"}%
                       </span>
                     )}
-                    <p className="text-[10px] uppercase tracking-widest text-white/30 mt-2 font-bold print:text-black/40">
+                    <p className="text-[10px] uppercase tracking-widest text-ink/30 mt-2 font-bold print:text-black/40">
                       Índice de força argumentativa — não probabilidade estatística.
                     </p>
-                    <p className="text-[9px] text-white/20 uppercase tracking-widest mt-1 print:text-black/30">
+                    <p className="text-[9px] text-ink/20 uppercase tracking-widest mt-1 print:text-black/30">
                       Estimativa baseada na sua descrição. Resultados reais variam.
                     </p>
                   </div>
@@ -3687,9 +3684,9 @@ const startRecovery = (sessionId: string) => {
                 )}
 
                 {state.selectedMode !== 5 && state.caseSummary && (
-                  <div className="p-8 bg-white/5 border border-white/10 print:bg-gray-50 print:border-black/10 print:p-6 mb-8">
-                    <h4 className="text-[10px] uppercase font-bold tracking-[0.3em] text-white/40 print:text-black/60 mb-3">Objeto da Simulação (Entendimento do Sistema)</h4>
-                    <p className="text-xl font-serif italic text-white/90 leading-relaxed print:text-black">
+                  <div className="p-8 bg-ink/5 border border-ink/10 print:bg-gray-50 print:border-black/10 print:p-6 mb-8">
+                    <h4 className="text-[10px] uppercase font-bold tracking-[0.3em] text-ink/40 print:text-black/60 mb-3">Objeto da Simulação (Entendimento do Sistema)</h4>
+                    <p className="text-xl font-serif italic text-ink/90 leading-relaxed print:text-black">
                       "{state.caseSummary}"
                     </p>
                   </div>
@@ -3698,34 +3695,34 @@ const startRecovery = (sessionId: string) => {
                 {(state.selectedMode === 3 || state.selectedMode === 4) && state.simulation?.rounds[0] && (
                   <div className="space-y-6 mb-8">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="p-6 bg-white/5 border border-white/10">
-                        <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-3">Argumento do Autor</div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                      <div className="p-6 bg-ink/5 border border-ink/10">
+                        <div className="text-[9px] font-bold uppercase tracking-widest text-ink/30 mb-3">Argumento do Autor</div>
+                        <p className="text-sm font-sans text-ink/70 leading-relaxed">
                           {(state.selectedMode === 4 && state.userSide === 'AUTHOR')
                             ? (state.simulation.rounds[0].lawyerPetition || '—')
                             : (state.caseDescription || '—')}
                         </p>
                       </div>
-                      <div className="p-6 bg-white/5" style={{ border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.2)` }}>
+                      <div className="p-6 bg-ink/5" style={{ border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.2)` }}>
                         <div className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.6)` }}>Argumento do Réu</div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                        <p className="text-sm font-sans text-ink/70 leading-relaxed">
                           {(state.selectedMode === 4 && state.userSide === 'DEFENSE')
                             ? (state.simulation.rounds[0].lawyerPetition || '—')
                             : (state.defenseDescription || '—')}
                         </p>
                       </div>
                     </div>
-                    <div className="p-6 bg-white/5 border border-white/10 space-y-4">
-                      <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Veredito Imparcial</div>
+                    <div className="p-6 bg-ink/5 border border-ink/10 space-y-4">
+                      <div className="text-[9px] font-bold uppercase tracking-widest text-ink/30 mb-2">Veredito Imparcial</div>
                       <div className="flex items-center gap-0 h-8 rounded-sm overflow-hidden">
-                        <div className="h-full bg-white/40 flex items-center justify-end pr-3 transition-all" style={{ width: `${state.simulation.finalSuccessProbability}%` }}>
+                        <div className="h-full bg-ink/40 flex items-center justify-end pr-3 transition-all" style={{ width: `${state.simulation.finalSuccessProbability}%` }}>
                           <span className="text-[10px] font-bold text-black whitespace-nowrap">{state.simulation.finalSuccessProbability}% AUTOR</span>
                         </div>
                         <div className="h-full flex items-center justify-start pl-3 transition-all" style={{ width: `${100 - state.simulation.finalSuccessProbability}%`, backgroundColor: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.6)` }}>
                           <span className="text-[10px] font-bold text-black whitespace-nowrap">RÉU {100 - state.simulation.finalSuccessProbability}%</span>
                         </div>
                       </div>
-                      <p className="text-lg font-serif italic text-white/80">
+                      <p className="text-lg font-serif italic text-ink/80">
                         {state.simulation.finalSuccessProbability >= 55
                           ? `O Autor vence com ${state.simulation.finalSuccessProbability}% de probabilidade de procedência.`
                           : state.simulation.finalSuccessProbability <= 45
@@ -3738,34 +3735,34 @@ const startRecovery = (sessionId: string) => {
 
                 {state.simulation?.rounds && state.simulation.rounds.length > 0 && (
                   <div className="space-y-4 mb-8 print:hidden">
-                    <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 border-b border-white/10 pb-3">
+                    <div className="text-[9px] font-bold uppercase tracking-widest text-ink/30 border-b border-ink/10 pb-3">
                       Histórico de Rodadas
                     </div>
                     {state.simulation.rounds.map((round, i) => (
-                      <div key={i} className="p-6 bg-white/5 border border-white/10 space-y-4">
+                      <div key={i} className="p-6 bg-ink/5 border border-ink/10 space-y-4">
                         <div className="flex items-center gap-3">
-                          <span className="text-[9px] font-mono font-bold text-white/20">RODADA {i + 1}</span>
-                          <div className="h-px bg-white/5 flex-1" />
+                          <span className="text-[9px] font-mono font-bold text-ink/20">RODADA {i + 1}</span>
+                          <div className="h-px bg-ink/5 flex-1" />
                           {(() => {
                             const _es = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
                             const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
-                            return <span className="text-[9px] font-mono font-bold text-white/30">APROVEITAMENTO ({_es === 'DEFENSE' ? 'RÉU' : 'AUTOR'}) {_rp}%</span>;
+                            return <span className="text-[9px] font-mono font-bold text-ink/30">APROVEITAMENTO ({_es === 'DEFENSE' ? 'RÉU' : 'AUTOR'}) {_rp}%</span>;
                           })()}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <div className="text-[8px] font-bold uppercase tracking-widest text-white/20 mb-2">
+                            <div className="text-[8px] font-bold uppercase tracking-widest text-ink/20 mb-2">
                               {state.selectedMode === 4
                                 ? (state.userSide === 'AUTHOR' ? 'Advogado do Autor' : 'Advogado do Réu')
                                 : 'Advogado'}
                             </div>
-                            <p className="text-xs text-white/60 leading-relaxed font-serif italic line-clamp-6">
+                            <p className="text-xs text-ink/60 leading-relaxed font-serif italic line-clamp-6">
                               "{round.lawyerPetition}"
                             </p>
                           </div>
                           <div>
-                            <div className="text-[8px] font-bold uppercase tracking-widest text-white/20 mb-2">Magistrado Técnico</div>
-                            <p className="text-xs text-white/60 leading-relaxed font-sans line-clamp-6">
+                            <div className="text-[8px] font-bold uppercase tracking-widest text-ink/20 mb-2">Magistrado Técnico</div>
+                            <p className="text-xs text-ink/60 leading-relaxed font-sans line-clamp-6">
                               "{cleanJudgmentText(round.judgeJudgment) || round.judgeJudgment || ''}"
                             </p>
                           </div>
@@ -3789,10 +3786,10 @@ const startRecovery = (sessionId: string) => {
                       <div className="flex-1" />
                       <div className="flex flex-col items-end print:hidden">
                         <div className="text-[9px] font-bold uppercase tracking-widest text-emerald-500/60">Agente Responsável</div>
-                        <div className="text-[11px] font-serif italic text-white/40">Estrategista de Acessibilidade</div>
+                        <div className="text-[11px] font-serif italic text-ink/40">Estrategista de Acessibilidade</div>
                       </div>
                     </div>
-                    <div className="laudo-prose prose prose-invert max-w-none font-sans text-lg leading-[1.6] text-white/90 font-light bg-emerald-500/[0.05] p-8 border border-emerald-500/20 shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0">
+                    <div className="laudo-prose prose prose-invert max-w-none font-sans text-lg leading-[1.6] text-ink/90 font-light bg-emerald-500/[0.05] p-8 border border-emerald-500/20 shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0">
                       <ReactMarkdown>
                         {state.report?.layman || ''}
                       </ReactMarkdown>
@@ -3803,20 +3800,20 @@ const startRecovery = (sessionId: string) => {
                   {/* Volume 2: Fundamentação Técnica Estratégica */}
                   {state.selectedMode !== 5 && (
                   <section className="space-y-6">
-                    <div className="flex items-center gap-4 border-b border-white/10 pb-4 print:border-black/10">
+                    <div className="flex items-center gap-4 border-b border-ink/10 pb-4 print:border-black/10">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-white/10 text-white px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-ink/10 text-ink px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
                           VOLUME II: LAUDO TÉCNICO ESTRATÉGICO
                         </span>
-                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest pl-1">Fundamentação Jurídica e Normativa</span>
+                        <span className="text-[8px] font-mono text-ink/20 uppercase tracking-widest pl-1">Fundamentação Jurídica e Normativa</span>
                       </div>
                       <div className="flex-1" />
                       <div className="flex flex-col items-end print:hidden">
-                        <div className="text-[9px] font-bold uppercase tracking-widest text-white/30">Agente Responsável</div>
-                        <div className="text-[11px] font-serif italic text-white/40">Analista Processual Sênior</div>
+                        <div className="text-[9px] font-bold uppercase tracking-widest text-ink/30">Agente Responsável</div>
+                        <div className="text-[11px] font-serif italic text-ink/40">Analista Processual Sênior</div>
                       </div>
                     </div>
-                    <div className="laudo-prose p-10 border border-white/5 bg-[#15161A]/50 font-sans text-[13px] leading-loose text-white/60 shadow-2xl relative overflow-hidden prose prose-invert prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0">
+                    <div className="laudo-prose p-10 border border-ink/5 bg-[#15161A]/50 font-sans text-[13px] leading-loose text-ink/60 shadow-2xl relative overflow-hidden prose prose-invert prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0">
                       <ReactMarkdown>
                         {state.report?.professional || ''}
                       </ReactMarkdown>
@@ -3826,13 +3823,13 @@ const startRecovery = (sessionId: string) => {
 
                   {/* Resumo da Causa — Modos 1 e 2 */}
                   {(state.selectedMode === 1 || state.selectedMode === 2) && state.report?.causeSummary && (
-                  <section className="space-y-6 pt-12 border-t-2 border-white/10 print:border-black/20 print:pt-8">
-                    <div className="flex items-center gap-4 border-b border-white/10 pb-4 print:border-black/10">
+                  <section className="space-y-6 pt-12 border-t-2 border-ink/10 print:border-black/20 print:pt-8">
+                    <div className="flex items-center gap-4 border-b border-ink/10 pb-4 print:border-black/10">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-white/10 text-white px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-ink/10 text-ink px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
                           RESUMO DA SUA CAUSA
                         </span>
-                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest pl-1">Para apresentar a um advogado — não é peça processual</span>
+                        <span className="text-[8px] font-mono text-ink/20 uppercase tracking-widest pl-1">Para apresentar a um advogado — não é peça processual</span>
                       </div>
                       <div className="flex-1" />
                       <button
@@ -3845,17 +3842,17 @@ const startRecovery = (sessionId: string) => {
                           a.click();
                           URL.revokeObjectURL(url);
                         }}
-                        className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest border border-white/20 text-white/60 hover:bg-white/5 transition-colors print:hidden"
+                        className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest border border-ink/20 text-ink/60 hover:bg-ink/5 transition-colors print:hidden"
                       >
                         Baixar Resumo da Causa
                       </button>
                     </div>
-                    <div className="p-8 bg-white/5 border border-white/10 font-sans text-[13px] leading-loose text-white/70 print:bg-gray-50 print:border-black/10 print:text-black prose prose-invert prose-sm max-w-none">
+                    <div className="p-8 bg-ink/5 border border-ink/10 font-sans text-[13px] leading-loose text-ink/70 print:bg-gray-50 print:border-black/10 print:text-black prose prose-invert prose-sm max-w-none">
                       <ReactMarkdown>
                         {state.report.causeSummary}
                       </ReactMarkdown>
                     </div>
-                    <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold print:text-black/40">
+                    <p className="text-[10px] text-ink/20 uppercase tracking-widest font-bold print:text-black/40">
                       ⚠️ Este resumo não é uma peça processual. Não substitui consulta com advogado.
                     </p>
                   </section>
@@ -3863,27 +3860,27 @@ const startRecovery = (sessionId: string) => {
 
                   {/* Volume 3: Anexos Processuais (Audit Trail) */}
                   {state.selectedMode !== 5 && (
-                  <section className="space-y-6 pt-12 border-t-2 border-white/10 print:border-black/20 print:pt-8 print:break-before-page">
-                    <div className="flex flex-col gap-2 border-b border-white/5 pb-6 print:border-black/10">
-                      <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-white/40 print:text-black/60">
+                  <section className="space-y-6 pt-12 border-t-2 border-ink/10 print:border-black/20 print:pt-8 print:break-before-page">
+                    <div className="flex flex-col gap-2 border-b border-ink/5 pb-6 print:border-black/10">
+                      <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-ink/40 print:text-black/60">
                         ANEXO I: HISTÓRICO DE EVOLUÇÃO DAS PEÇAS E JULGAMENTOS
                       </span>
-                      <span className="text-[9px] font-mono text-white/10 uppercase tracking-[0.2em] print:text-black/30 italic">
+                      <span className="text-[9px] font-mono text-ink/10 uppercase tracking-[0.2em] print:text-black/30 italic">
                         Memorial Descritivo do Ciclo de Debate Estratégico (Lawyer VS Judge Dynamics)
                       </span>
                     </div>
                     
                     <div className="space-y-12 print:space-y-10">
                       {state.simulation?.rounds.map((round, idx) => (
-                        <div key={idx} className="border-l-4 border-emerald-500/30 bg-white/[0.01] p-10 space-y-8 rounded-r-md print:border-black/20 print:bg-white print:p-0 print:border-l-0 print:space-y-6">
-                          <div className="flex justify-between items-center border-b border-white/5 pb-4 print:border-black/10">
+                        <div key={idx} className="border-l-4 border-emerald-500/30 bg-ink/[0.01] p-10 space-y-8 rounded-r-md print:border-black/20 print:bg-white print:p-0 print:border-l-0 print:space-y-6">
+                          <div className="flex justify-between items-center border-b border-ink/5 pb-4 print:border-black/10">
                             <div className="flex items-center gap-4">
                               <div className="w-10 h-10 rounded-full bg-emerald-500 text-black flex items-center justify-center text-sm font-bold font-mono print:bg-black print:text-white">
                                 {round.round}
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-xs font-bold uppercase tracking-widest text-white/80 print:text-black">Ciclo de Aperfeiçoamento Processual</span>
-                                <span className="text-[9px] font-mono text-white/20 print:text-black/40">ID_PROTOCOLO: {Math.random().toString(16).slice(2, 10).toUpperCase()}</span>
+                                <span className="text-xs font-bold uppercase tracking-widest text-ink/80 print:text-black">Ciclo de Aperfeiçoamento Processual</span>
+                                <span className="text-[9px] font-mono text-ink/20 print:text-black/40">ID_PROTOCOLO: {Math.random().toString(16).slice(2, 10).toUpperCase()}</span>
                               </div>
                             </div>
                             <div className="text-right">
@@ -3893,7 +3890,7 @@ const startRecovery = (sessionId: string) => {
                                 return (
                                   <>
                                     <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest print:text-black">Aproveitamento ({_es === 'DEFENSE' ? 'Réu' : 'Autor'})</div>
-                                    <div className="text-xl font-serif italic text-white print:text-black">{_rp}%</div>
+                                    <div className="text-xl font-serif italic text-ink print:text-black">{_rp}%</div>
                                   </>
                                 );
                               })()}
@@ -3904,19 +3901,19 @@ const startRecovery = (sessionId: string) => {
                             <div className="space-y-4">
                               <div className="flex items-center gap-2">
                                 <Scale className="w-4 h-4 text-emerald-500 print:text-black" />
-                                <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest print:text-black">Petição e Pedidos do Advogado</span>
+                                <span className="text-[10px] font-bold text-ink/60 uppercase tracking-widest print:text-black">Petição e Pedidos do Advogado</span>
                               </div>
-                              <div className="p-6 bg-white/[0.02] border border-white/5 text-[13px] leading-relaxed text-white/50 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
+                              <div className="p-6 bg-ink/[0.02] border border-ink/5 text-[13px] leading-relaxed text-ink/50 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
                                 "{round.lawyerPetition}"
                               </div>
                             </div>
                             
                             <div className="space-y-4">
                               <div className="flex items-center gap-2">
-                                <Gavel className="w-4 h-4 text-white/20 print:text-black" />
-                                <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest print:text-black/60">Análise e Decisão do Magistrado</span>
+                                <Gavel className="w-4 h-4 text-ink/20 print:text-black" />
+                                <span className="text-[10px] font-bold text-ink/40 uppercase tracking-widest print:text-black/60">Análise e Decisão do Magistrado</span>
                               </div>
-                              <div className="p-6 bg-white/[0.01] border border-dashed border-white/5 text-[13px] leading-relaxed text-white/40 font-mono print:text-black print:bg-gray-50 print:border-black/10 print:p-4 whitespace-pre-wrap">
+                              <div className="p-6 bg-ink/[0.01] border border-dashed border-ink/5 text-[13px] leading-relaxed text-ink/40 font-mono print:text-black print:bg-gray-50 print:border-black/10 print:p-4 whitespace-pre-wrap">
                                 {cleanJudgmentText(round.judgeJudgment)}
                               </div>
                             </div>
@@ -3928,7 +3925,7 @@ const startRecovery = (sessionId: string) => {
                                  <History className="w-4 h-4 text-emerald-500/40 print:text-black/40" />
                                  <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-500/40 print:text-black/60">Insight Estratégico Retido para o Próximo Ciclo</span>
                                </div>
-                               <p className="text-[11px] text-white/40 leading-relaxed font-mono italic print:text-black/80">
+                               <p className="text-[11px] text-ink/40 leading-relaxed font-mono italic print:text-black/80">
                                  {round.lawyerBrief}
                                </p>
                             </div>
@@ -3944,9 +3941,9 @@ const startRecovery = (sessionId: string) => {
           </AnimatePresence>
         </div>
 
-        <div className={`col-span-12 lg:col-span-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#0F1012]'} p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print`}>
+        <div className={`col-span-12 lg:col-span-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#0F1012]'} p-8 flex flex-col gap-10 overflow-y-auto border-l border-ink/5 no-print`}>
           <section>
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-white/10 pb-3 flex items-center justify-between text-white/60">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-ink/10 pb-3 flex items-center justify-between text-ink/60">
               Boardroom <span className="text-[8px] font-mono opacity-20">{`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}</span>
             </h3>
             <div className="space-y-6">
@@ -3955,15 +3952,15 @@ const startRecovery = (sessionId: string) => {
                   { n: "ÁREA IDENTIFICADA", s: areaLabels[state.detectedArea], icon: ShieldCheck },
                   { n: "ESPECIALIZAÇÃO", s: "Juiz de IA especializado em " + areaLabels[state.detectedArea], icon: Gavel },
                 ].map((m, i) => (
-                  <div key={i} className="bg-white/5 p-4 border border-white/5 space-y-1">
-                    <div className="text-[10px] font-bold text-white/50 uppercase tracking-tighter">{m.n}</div>
-                    <div className="text-[11px] text-white font-medium italic font-serif leading-tight">{m.s}</div>
+                  <div key={i} className="bg-ink/5 p-4 border border-ink/5 space-y-1">
+                    <div className="text-[10px] font-bold text-ink/50 uppercase tracking-tighter">{m.n}</div>
+                    <div className="text-[11px] text-ink font-medium italic font-serif leading-tight">{m.s}</div>
                   </div>
                 ))}
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-[9px] font-bold uppercase tracking-widest text-white/20">Agentes Ativados na Sessão</h4>
+                <h4 className="text-[9px] font-bold uppercase tracking-widest text-ink/20">Agentes Ativados na Sessão</h4>
                 <div className="grid grid-cols-1 gap-3">
                   {state.activeAgents.length > 0 ? (
                     state.activeAgents.map((agent, i) => (
@@ -3971,18 +3968,18 @@ const startRecovery = (sessionId: string) => {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         key={agent.id} 
-                        className="bg-white/5 p-3 border border-white/5 space-y-1 relative group overflow-hidden"
+                        className="bg-ink/5 p-3 border border-ink/5 space-y-1 relative group overflow-hidden"
                       >
                         <div className="absolute top-0 right-0 w-1 h-full bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <div className="flex justify-between items-start">
                           <div className="text-[9px] font-bold text-emerald-500/60 uppercase tracking-tighter">{agent.type}</div>
-                          <div className="text-[7px] font-mono text-white/20">0x{(i * 133).toString(16).toUpperCase()}</div>
+                          <div className="text-[7px] font-mono text-ink/20">0x{(i * 133).toString(16).toUpperCase()}</div>
                         </div>
-                        <div className="text-[10px] text-white font-medium italic font-serif leading-tight">{agent.name}</div>
+                        <div className="text-[10px] text-ink font-medium italic font-serif leading-tight">{agent.name}</div>
                       </motion.div>
                     ))
                   ) : (
-                    <div className="text-[9px] text-white/10 italic p-4 border border-dashed border-white/5 text-center">
+                    <div className="text-[9px] text-ink/10 italic p-4 border border-dashed border-ink/5 text-center">
                       Aguardando ativação de agentes...
                     </div>
                   )}
@@ -3992,10 +3989,10 @@ const startRecovery = (sessionId: string) => {
           </section>
 
           <section className="flex-1 flex flex-col min-h-0">
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-white/10 pb-3 text-white/20 flex justify-between items-center">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-ink/10 pb-3 text-ink/20 flex justify-between items-center">
               <span>Fluxo Estratégico</span>
               {state.simStep !== 'IDLE' && state.currentRound > 0 && (
-                <span className="text-[9px] bg-white/10 px-2 py-0.5 rounded-full text-white/40">ROUND {state.currentRound}</span>
+                <span className="text-[9px] bg-ink/10 px-2 py-0.5 rounded-full text-ink/40">ROUND {state.currentRound}</span>
               )}
             </h3>
             
@@ -4003,45 +4000,45 @@ const startRecovery = (sessionId: string) => {
               <div className="space-y-10 py-4">
                 <div className="flex flex-col items-center gap-6 relative">
                   {/* Vertical line connecting steps */}
-                  <div className="absolute top-5 bottom-5 left-[23px] w-px bg-white/10" />
+                  <div className="absolute top-5 bottom-5 left-[23px] w-px bg-ink/10" />
 
-                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'WRITING' ? 'bg-white/10 border-white/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
+                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'WRITING' ? 'bg-ink/10 border-ink/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
                     <div className={`w-12 h-12 rounded-full border border-white flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'WRITING' ? 'bg-white text-black' : 'bg-[#0F1012]'}`}>
                       <FileText className="w-6 h-6" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-white">Peticionando</span>
-                      <span className="text-[9px] text-white/40 uppercase font-mono italic">Advogado Especializado</span>
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-ink">Peticionando</span>
+                      <span className="text-[9px] text-ink/40 uppercase font-mono italic">Advogado Especializado</span>
                     </div>
                   </div>
 
-                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'DELIVERING' ? 'bg-white/10 border-white/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
+                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'DELIVERING' ? 'bg-ink/10 border-ink/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
                     <div className={`w-12 h-12 rounded-full border border-white flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'DELIVERING' ? 'bg-white text-black' : 'bg-[#0F1012]'}`}>
                       <ArrowRight className="w-6 h-6" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-white">Protocolando</span>
-                      <span className="text-[9px] text-white/40 uppercase font-mono italic">Barramento Digital</span>
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-ink">Protocolando</span>
+                      <span className="text-[9px] text-ink/40 uppercase font-mono italic">Barramento Digital</span>
                     </div>
                   </div>
 
-                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'JUDGING' ? 'bg-white/10 border-white/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
+                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'JUDGING' ? 'bg-ink/10 border-ink/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
                     <div className={`w-12 h-12 rounded-full border border-white flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'JUDGING' ? 'bg-white text-black' : 'bg-[#0F1012]'}`}>
                       <Gavel className="w-6 h-6" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-white">Julgando</span>
-                      <span className="text-[9px] text-white/40 uppercase font-mono italic">Magistrado Técnico</span>
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-ink">Julgando</span>
+                      <span className="text-[9px] text-ink/40 uppercase font-mono italic">Magistrado Técnico</span>
                     </div>
                   </div>
 
-                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'REVIEWING' ? 'bg-white/10 border-white/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
+                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'REVIEWING' ? 'bg-ink/10 border-ink/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
                     <div className={`w-12 h-12 rounded-full border border-white flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'REVIEWING' ? 'bg-white text-black' : 'bg-[#0F1012]'}`}>
                       <ShieldCheck className="w-6 h-6" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-white">Revisando</span>
-                      <span className="text-[9px] text-white/40 uppercase font-mono italic">Memória & Estratégia</span>
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-ink">Revisando</span>
+                      <span className="text-[9px] text-ink/40 uppercase font-mono italic">Memória & Estratégia</span>
                     </div>
                   </div>
                 </div>
@@ -4067,16 +4064,16 @@ const startRecovery = (sessionId: string) => {
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-white/10'} text-white p-6 rounded-sm space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group`}
+                className={`${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-ink/10'} text-ink p-6 rounded-sm space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group`}
               >
-                <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
+                <div className="absolute inset-0 bg-ink/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
                 <div className="flex justify-between items-center opacity-30">
                   <span className="text-[9px] uppercase tracking-widest font-bold">Resumo do Caso Atual</span>
                   <TrendingUp className="w-4 h-4" />
                 </div>
                 <div className="space-y-1">
                   <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Índice de Força Argumentativa</div>
-                  <div className="text-5xl font-serif italic text-white/90">
+                  <div className="text-5xl font-serif italic text-ink/90">
                     { (state.simulation?.rounds && state.simulation.rounds.length > 0)
                       ? (() => {
                           const _fp = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
@@ -4088,7 +4085,7 @@ const startRecovery = (sessionId: string) => {
                     }%
                   </div>
                 </div>
-                <div className="text-[10px] font-mono text-emerald-500/60 font-bold border-t border-white/5 pt-4 flex justify-between">
+                <div className="text-[10px] font-mono text-emerald-500/60 font-bold border-t border-ink/5 pt-4 flex justify-between">
                    <span>SESSÃO: {state.simulation?.lawyerAgentName ? 'SEED_ACTIVE' : 'INITIALIZING'}</span>
                    <span>VEREDITO: {state.step === 'result' ? 'CONCLUÍDO' : 'PENDENTE'}</span>
                 </div>
@@ -4108,13 +4105,13 @@ const startRecovery = (sessionId: string) => {
             className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-xl flex items-center justify-center p-8"
           >
             <div className="w-full max-w-6xl h-full flex flex-col gap-8">
-              <div className="flex justify-between items-end border-b border-white/10 pb-6">
+              <div className="flex justify-between items-end border-b border-ink/10 pb-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <h2 className="text-2xl font-serif italic text-white">Central de Monitoramento de Agentes de IA</h2>
+                    <h2 className="text-2xl font-serif italic text-ink">Central de Monitoramento de Agentes de IA</h2>
                   </div>
-                  <p className="text-[10px] text-white/30 uppercase tracking-[0.4em] font-bold">Central de Monitoramento · EAI?</p>
+                  <p className="text-[10px] text-ink/30 uppercase tracking-[0.4em] font-bold">Central de Monitoramento · EAI?</p>
                 </div>
                 <button 
                   onClick={() => setState(prev => ({ ...prev, showForgeMonitor: false }))}
@@ -4127,37 +4124,37 @@ const startRecovery = (sessionId: string) => {
               <div className="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
                 {/* Metrics */}
                 <div className="col-span-12 lg:col-span-3 space-y-6 overflow-y-auto pr-4 custom-scrollbar">
-                  <div className="bg-white/5 border border-white/5 p-6 space-y-4">
+                  <div className="bg-ink/5 border border-ink/5 p-6 space-y-4">
                     <div className="flex items-center gap-2 text-emerald-500">
                       <Activity className="w-4 h-4" />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Agentes em Ação</span>
                     </div>
-                    <div className="text-4xl font-serif italic text-white">{state.activeAgents.length}</div>
-                    <div className="text-[9px] text-white/20 leading-relaxed uppercase font-bold tracking-tighter">
+                    <div className="text-4xl font-serif italic text-ink">{state.activeAgents.length}</div>
+                    <div className="text-[9px] text-ink/20 leading-relaxed uppercase font-bold tracking-tighter">
                       Instâncias processando tokens judiciais em tempo real
                     </div>
                   </div>
 
-                  <div className="bg-white/5 border border-white/5 p-6 space-y-4">
-                    <div className="flex items-center gap-2 text-white/40">
+                  <div className="bg-ink/5 border border-ink/5 p-6 space-y-4">
+                    <div className="flex items-center gap-2 text-ink/40">
                       <Database className="w-4 h-4" />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Simulações por Área</span>
                     </div>
-                    <div className="text-4xl font-serif italic text-white/60">
+                    <div className="text-4xl font-serif italic text-ink/60">
                       {state.regionalStats.reduce((acc, s) => acc + s.seeds, 0)}
                     </div>
-                    <div className="text-[9px] text-white/20 leading-relaxed uppercase font-bold tracking-tighter">
+                    <div className="text-[9px] text-ink/20 leading-relaxed uppercase font-bold tracking-tighter">
                       Total de simulações indexadas por área jurídica
                     </div>
                   </div>
 
-                  <div className="bg-white/5 border border-white/5 p-6 space-y-4">
-                    <div className="flex items-center gap-2 text-white/40">
+                  <div className="bg-ink/5 border border-ink/5 p-6 space-y-4">
+                    <div className="flex items-center gap-2 text-ink/40">
                       <History className="w-4 h-4" />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Sessões Totais</span>
                     </div>
-                    <div className="text-4xl font-serif italic text-white/60">{globalStats.simulations.toLocaleString()}</div>
-                    <div className="text-[9px] text-white/20 leading-relaxed uppercase font-bold tracking-tighter">
+                    <div className="text-4xl font-serif italic text-ink/60">{globalStats.simulations.toLocaleString()}</div>
+                    <div className="text-[9px] text-ink/20 leading-relaxed uppercase font-bold tracking-tighter">
                       Cargas de treinamento processadas desde a v1.0
                     </div>
                   </div>
@@ -4168,11 +4165,11 @@ const startRecovery = (sessionId: string) => {
                   {(() => {
                     const maxSeeds = Math.max(...state.regionalStats.map(r => r.seeds), 1);
                     return state.regionalStats.map((reg, i) => (
-                    <div key={i} className="bg-white/[0.02] border border-white/5 p-5 space-y-4 relative group">
+                    <div key={i} className="bg-ink/[0.02] border border-ink/5 p-5 space-y-4 relative group">
                       <div className="absolute top-2 right-4 text-[8px] font-mono opacity-20 italic">REG_{i+1}</div>
                       <div className="space-y-1">
-                        <div className="text-[11px] font-bold text-white/80">{reg.region}</div>
-                        <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div className="text-[11px] font-bold text-ink/80">{reg.region}</div>
+                        <div className="h-1 bg-ink/5 rounded-full overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${(reg.seeds / maxSeeds) * 100}%` }}
@@ -4182,11 +4179,11 @@ const startRecovery = (sessionId: string) => {
                       </div>
                       <div className="flex justify-between items-center text-[9px] font-mono">
                         <div className="flex flex-col">
-                          <span className="text-white/20 uppercase tracking-tighter">Simulações</span>
-                          <span className="text-white/60">{reg.seeds}</span>
+                          <span className="text-ink/20 uppercase tracking-tighter">Simulações</span>
+                          <span className="text-ink/60">{reg.seeds}</span>
                         </div>
                         <div className="flex flex-col text-right">
-                          <span className="text-white/20 uppercase tracking-tighter">Vitórias</span>
+                          <span className="text-ink/20 uppercase tracking-tighter">Vitórias</span>
                           <span className="text-emerald-500">{reg.active}</span>
                         </div>
                       </div>
@@ -4196,18 +4193,18 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 {/* Execution Log */}
-                <div className="col-span-12 lg:col-span-3 border-l border-white/10 pl-8 flex flex-col overflow-hidden">
+                <div className="col-span-12 lg:col-span-3 border-l border-ink/10 pl-8 flex flex-col overflow-hidden">
                   <div className="flex items-center justify-between mb-6">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Live Logs</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Live Logs</span>
                     <span className="text-[8px] font-mono text-emerald-500 animate-pulse">RECORDING...</span>
                   </div>
-                  <div className="flex-1 overflow-y-auto space-y-4 font-mono text-[9px] text-white/30 custom-scrollbar pr-4">
+                  <div className="flex-1 overflow-y-auto space-y-4 font-mono text-[9px] text-ink/30 custom-scrollbar pr-4">
                     {state.activeAgents.map((agent, i) => (
-                      <div key={i} className="border-b border-white/5 pb-2">
+                      <div key={i} className="border-b border-ink/5 pb-2">
                         <div className="text-emerald-500/60 mb-1">[{new Date().toLocaleTimeString()}] INSTANCE_SYNC</div>
-                        <div>Target: <span className="text-white/60">{agent.name}</span></div>
-                        <div>Type: <span className="text-white/40">{agent.type}</span></div>
-                        <div>ID: <span className="text-white/20">{agent.id}</span></div>
+                        <div>Target: <span className="text-ink/60">{agent.name}</span></div>
+                        <div>Type: <span className="text-ink/40">{agent.type}</span></div>
+                        <div>ID: <span className="text-ink/20">{agent.id}</span></div>
                       </div>
                     ))}
                     {state.activeAgents.length === 0 && (
@@ -4222,24 +4219,24 @@ const startRecovery = (sessionId: string) => {
       </AnimatePresence>
 
       {state.step === 'result' && !state.isUnlocked && (
-        <footer className={`fixed bottom-0 left-0 w-full min-h-40 border-t border-white/20 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#111111]'} flex items-center z-[100] shadow-[0_-20px_100px_rgba(0,0,0,0.9)] no-print`}>
-          <div className="w-1/2 p-10 border-r border-white/5 hidden md:block overflow-hidden relative">
-            <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-white/20">Preview do Relatório Estratégico</h4>
+        <footer className={`fixed bottom-0 left-0 w-full min-h-40 border-t border-ink/20 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#111111]'} flex items-center z-[100] shadow-[0_-20px_100px_rgba(0,0,0,0.9)] no-print`}>
+          <div className="w-1/2 p-10 border-r border-ink/5 hidden md:block overflow-hidden relative">
+            <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-ink/20">Preview do Relatório Estratégico</h4>
             <div className="space-y-3 opacity-[0.05]">
-              <div className="h-3 bg-white w-full"></div>
-              <div className="h-3 bg-white w-5/6"></div>
-              <div className="h-3 bg-white w-1/2"></div>
-              <div className="h-3 bg-white w-full"></div>
+              <div className="h-3 bg-ink w-full"></div>
+              <div className="h-3 bg-ink w-5/6"></div>
+              <div className="h-3 bg-ink w-1/2"></div>
+              <div className="h-3 bg-ink w-full"></div>
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent pointer-events-none"></div>
           </div>
           <div className="flex-1 md:w-1/2 p-10 flex items-center justify-between gap-12">
             <div className="space-y-1 flex-1">
-              <h4 className="text-2xl font-serif italic leading-tight text-white">Desbloquear o Laudo Completo</h4>
-              <p className="text-xs text-white/30 font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via cartão. Estratégia técnica detalhada.</p>
+              <h4 className="text-2xl font-serif italic leading-tight text-ink">Desbloquear o Laudo Completo</h4>
+              <p className="text-xs text-ink/30 font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via cartão. Estratégia técnica detalhada.</p>
               <div className="pt-1">
                 {!showPromoInput ? (
-                  <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-white/50 underline cursor-pointer bg-transparent border-none">
+                  <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-ink/50 underline cursor-pointer bg-transparent border-none">
                     Tenho um código promocional
                   </button>
                 ) : (
@@ -4250,13 +4247,13 @@ const startRecovery = (sessionId: string) => {
                       onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); }}
                       onKeyDown={e => { if (e.key === 'Enter') validatePromoCode(promoCode); }}
                       placeholder="CÓDIGO PROMO"
-                      className="flex-1 max-w-[160px] px-3 py-1.5 bg-white/5 border border-white/15 text-white text-[11px] font-semibold tracking-wider uppercase outline-none"
+                      className="flex-1 max-w-[160px] px-3 py-1.5 bg-ink/5 border border-ink/15 text-ink text-[11px] font-semibold tracking-wider uppercase outline-none"
                     />
                     <button
                       type="button"
                       onClick={() => validatePromoCode(promoCode)}
                       disabled={promoLoading || !promoCode.trim()}
-                      className="px-3 py-1.5 bg-white/10 border border-white/20 text-white text-[10px] font-bold tracking-wide cursor-pointer"
+                      className="px-3 py-1.5 bg-ink/10 border border-ink/20 text-ink text-[10px] font-bold tracking-wide cursor-pointer"
                     >
                       {promoLoading ? 'Validando…' : 'Aplicar'}
                     </button>
@@ -4282,7 +4279,7 @@ const startRecovery = (sessionId: string) => {
 
       {state.step === 'result' && state.isUnlocked && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] pointer-events-none no-print">
-           <div className={`pointer-events-auto ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-white/10'} text-white p-1 flex gap-px shadow-[0_0_50px_rgba(0,0,0,0.8)] scale-125 lg:scale-100`}>
+           <div className={`pointer-events-auto ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#1C1C1F] border border-ink/10'} text-ink p-1 flex gap-px shadow-[0_0_50px_rgba(0,0,0,0.8)] scale-125 lg:scale-100`}>
              <button
               onClick={() => {
                 const btn = document.getElementById('btn-export-pdf');
@@ -4293,32 +4290,32 @@ const startRecovery = (sessionId: string) => {
                 }, 300);
               }}
               id="btn-export-pdf"
-              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-ink/5 transition-colors"
              >
                 Exportar PDF
              </button>
-             <div className="w-px bg-white/10"></div>
+             <div className="w-px bg-ink/10"></div>
              {user && (
                <>
                  <button
                    onClick={handleOpenChat}
-                   className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+                   className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-ink/5 transition-colors"
                  >
                    💬 Chat
                  </button>
-                 <div className="w-px bg-white/10"></div>
+                 <div className="w-px bg-ink/10"></div>
                </>
              )}
              <button
               onClick={() => window.location.reload()}
-              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-ink/5 transition-colors"
              >
                 Reiniciar
              </button>
-             <div className="w-px bg-white/10"></div>
+             <div className="w-px bg-ink/10"></div>
              <a
                href="mailto:eaijuridico@icloud.com"
-               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-ink/5 transition-colors"
              >
                Contato
              </a>
@@ -4342,26 +4339,26 @@ const startRecovery = (sessionId: string) => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-4xl bg-[#0D0D0E] border border-white/10 overflow-hidden flex flex-col max-h-[85vh]"
+              className="w-full max-w-4xl bg-[#0D0D0E] border border-ink/10 overflow-hidden flex flex-col max-h-[85vh]"
             >
-              <div className="p-8 border-b border-white/10 flex items-center justify-between">
+              <div className="p-8 border-b border-ink/10 flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-serif italic text-white tracking-tight">Meus Casos</h2>
-                  <p className="text-white/40 text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Histórico de simulações processadas</p>
+                  <h2 className="text-2xl font-serif italic text-ink tracking-tight">Meus Casos</h2>
+                  <p className="text-ink/40 text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Histórico de simulações processadas</p>
                 </div>
                 <button
                   onClick={() => setShowHistory(false)}
-                  className="p-2 border border-white/5 hover:bg-white/5 transition-colors"
+                  className="p-2 border border-ink/5 hover:bg-ink/5 transition-colors"
                 >
-                  <X className="w-6 h-6 text-white/40" />
+                  <X className="w-6 h-6 text-ink/40" />
                 </button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                 {userHistory.length === 0 ? (
                   <div className="py-20 text-center">
-                    <History className="w-12 h-12 text-white/10 mx-auto mb-4" />
-                    <p className="text-white/30 text-sm italic">Nenhum caso simulado encontrado sob esta credencial.</p>
+                    <History className="w-12 h-12 text-ink/10 mx-auto mb-4" />
+                    <p className="text-ink/30 text-sm italic">Nenhum caso simulado encontrado sob esta credencial.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-4">
@@ -4369,24 +4366,24 @@ const startRecovery = (sessionId: string) => {
                       <button
                         key={sim.id}
                         onClick={() => loadSimulation(sim)}
-                        className="w-full text-left p-6 bg-white/[0.02] border border-white/5 hover:border-white/20 hover:bg-white/[0.04] transition-all group relative overflow-hidden"
+                        className="w-full text-left p-6 bg-ink/[0.02] border border-ink/5 hover:border-ink/20 hover:bg-ink/[0.04] transition-all group relative overflow-hidden"
                       >
                         <div className="flex justify-between items-start mb-5">
                           <div className="max-w-[70%]">
                             <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-emerald-500/60 mb-2 block">
                               {formatSimDate(sim.createdAt)}
                             </span>
-                            <h3 className="text-lg font-serif italic text-white/90 leading-tight line-clamp-1">
+                            <h3 className="text-lg font-serif italic text-ink/90 leading-tight line-clamp-1">
                               {sim.caseSummary || sim.caseDescription}
                             </h3>
                           </div>
                           <div className="flex flex-col items-end">
-                            <span className="text-3xl font-mono font-bold text-white tracking-tighter tabular-nums">{sim.finalSuccessProbability}%</span>
-                            <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-white/20">Probabilidade</span>
+                            <span className="text-3xl font-mono font-bold text-ink tracking-tighter tabular-nums">{sim.finalSuccessProbability}%</span>
+                            <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-ink/20">Probabilidade</span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4 text-white/30 text-[9px] font-bold uppercase tracking-[0.2em]">
-                          <span className="px-2 py-0.5 border border-white/10 bg-white/5">
+                        <div className="flex items-center gap-4 text-ink/30 text-[9px] font-bold uppercase tracking-[0.2em]">
+                          <span className="px-2 py-0.5 border border-ink/10 bg-ink/5">
                             {formatAreaLabel(sim.area) || "Direito Geral"}
                           </span>
                           <span className="flex items-center gap-1.5">
