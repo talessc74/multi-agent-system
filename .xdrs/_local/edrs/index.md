@@ -1,6 +1,6 @@
 # _local EDRs Index
 
-Engineering workflow and implementation decisions for EAI?.
+Engineering workflow and implementation decisions for EAI? Jurídico.
 
 ## application
 
@@ -24,6 +24,7 @@ Engineering principles and non-functional quality defaults.
 Delivery pipeline and release automation decisions.
 
 - [001-deployment-strategy](devops/001-deployment-strategy.md) — Auto-deploy to Cloud Run on push to main via Cloud Build
+- [002-rollback-checkpoint-procedure](devops/002-rollback-checkpoint-procedure.md) — Chat-only rollback to checkpoint `7c08d8e` on claude/brave-hypatia-ksnu9o; Claude/ARGUS executes git reset --hard on request, never on main
 
 ## governance
 

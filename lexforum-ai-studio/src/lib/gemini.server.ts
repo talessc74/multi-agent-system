@@ -101,7 +101,7 @@ async function getOrGenerateAgent(type: "lawyer" | "judge", area: string, specif
   if (dynamicAgents[cacheKey]) return dynamicAgents[cacheKey];
 
   const isLawyer = type === "lawyer";
-  const prompt = `Você é um arquiteto de agentes jurídicos do EAI?. Sua tarefa é criar um agente jurídico especializado.
+  const prompt = `Você é um arquiteto de agentes jurídicos do EAI? Jurídico (EAI — Evidence-based AI). Sua tarefa é criar um agente jurídico especializado.
   ${isLawyer 
     ? `Advogado Especializado em ${area}. Perfil intelectual, focado em construir argumentos sólidos e desenvolver a tese jurídica a cada rodada, usando "Lawyer's Briefs" para evoluir sua estratégia.`
     : specificName
@@ -557,7 +557,7 @@ export async function simulateMode5Server(
 
   const systemPrompt = judgeInstruction
     ? `${judgeInstruction}\n\n${basePrompt}`
-    : `Você é um Juiz Estrategista sênior do EAI?.\n\n${basePrompt}`;
+    : `Você é um Juiz Estrategista sênior do EAI? Jurídico (EAI — Evidence-based AI).\n\n${basePrompt}`;
 
   const userPrompt = isRecurso
     ? `ÁREA JURÍDICA: ${area}

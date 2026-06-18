@@ -1,6 +1,6 @@
 # _local ADRs Index
 
-Architectural and technical decisions for EAI?.
+Architectural and technical decisions for EAI? Jurídico.
 
 ## application
 
