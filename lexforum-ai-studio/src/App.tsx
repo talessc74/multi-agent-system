@@ -2110,9 +2110,9 @@ const startRecovery = (sessionId: string) => {
             // every text-white/* class in this console is calibrated against a
             // dark fill, so the glass/mesh tokens are pinned to their dark values
             // here regardless of the global light/dark theme toggle.
-            '--glass-fill': 'rgba(255, 255, 255, 0.06)',
-            '--glass-fill-2': 'rgba(255, 255, 255, 0.1)',
-            '--glass-border': 'rgba(255, 255, 255, 0.16)',
+            '--glass-fill': 'rgba(255, 255, 255, 0.1)',
+            '--glass-fill-2': 'rgba(255, 255, 255, 0.16)',
+            '--glass-border': 'rgba(255, 255, 255, 0.22)',
             '--glass-spec': 'rgba(255, 255, 255, 0.55)',
             '--glass-shadow': '0 20px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
             '--mesh-bg': '#050610',
