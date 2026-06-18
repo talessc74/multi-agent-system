@@ -127,6 +127,18 @@ function formatSimDate(createdAt: unknown): string {
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
+// Same radial-wash technique as BoardroomPage's dossier preview (.preview-wash) —
+// ties a card's glass surface to a mode color, so the console's panels read as the
+// same family as the Boardroom Home dossier rather than a flat, unrelated material.
+function GlowWash({ colorRgb }: { colorRgb: string }) {
+  return (
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{ background: `radial-gradient(circle at 85% 0%, rgba(${colorRgb}, 0.22), transparent 60%)`, borderRadius: 'inherit' }}
+    />
+  );
+}
+
 function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses, onOpenChat }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; onOpenChat?: () => void; }) {
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
@@ -2238,7 +2250,11 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
+                  <div
+                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                    style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
+                  >
+                    {LIQUID_GLASS_ENABLED && <GlowWash colorRgb="255,255,255" />}
                     <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
                     <div className="px-8 pt-6 pb-2">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
@@ -2289,7 +2305,11 @@ const startRecovery = (sessionId: string) => {
                     </div>
                   </div>
 
-                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
+                  <div
+                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                    style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
+                  >
+                    {LIQUID_GLASS_ENABLED && <GlowWash colorRgb="255,184,0" />}
                     <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
                     <div className="px-8 pt-6 pb-2">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
@@ -2423,7 +2443,11 @@ const startRecovery = (sessionId: string) => {
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-6"
                   >
-                    <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
+                    <div
+                      className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                      style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
+                    >
+                      {LIQUID_GLASS_ENABLED && <GlowWash colorRgb="255,255,255" />}
                       <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
                       <div className="px-8 pt-6 pb-2">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Relato do Caso</span>
@@ -2436,7 +2460,11 @@ const startRecovery = (sessionId: string) => {
                       />
                     </div>
 
-                    <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
+                    <div
+                      className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                      style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
+                    >
+                      {LIQUID_GLASS_ENABLED && <GlowWash colorRgb={MODE_CONFIG[5].colorRgb} />}
                       <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
@@ -2451,7 +2479,11 @@ const startRecovery = (sessionId: string) => {
                       />
                     </div>
 
-                    <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
+                    <div
+                      className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                      style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
+                    >
+                      {LIQUID_GLASS_ENABLED && <GlowWash colorRgb={MODE_CONFIG[5].colorRgb} />}
                       <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
@@ -2579,7 +2611,11 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
+                  <div
+                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                    style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
+                  >
+                    {LIQUID_GLASS_ENABLED && <GlowWash colorRgb="255,255,255" />}
                     <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
                     <div className="px-8 pt-6 pb-2">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
@@ -2629,7 +2665,11 @@ const startRecovery = (sessionId: string) => {
                     </div>
                   </div>
 
-                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}>
+                  <div
+                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative overflow-hidden' : 'bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50'}`}
+                    style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
+                  >
+                    {LIQUID_GLASS_ENABLED && <GlowWash colorRgb={MODE_CONFIG[3].colorRgb} />}
                     <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[3].colorRgb},0.6)` }} />
                     <div className="px-8 pt-6 pb-2">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
@@ -2738,7 +2778,11 @@ const startRecovery = (sessionId: string) => {
                     </p>
                   </div>
 
-                  <div className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative group' : 'bg-[#15161A] border border-white/10 relative group shadow-2xl shadow-black/50'}`}>
+                  <div
+                    className={`${LIQUID_GLASS_ENABLED ? 'glass-static relative group overflow-hidden' : 'bg-[#15161A] border border-white/10 relative group shadow-2xl shadow-black/50'}`}
+                    style={LIQUID_GLASS_ENABLED ? { borderRadius: '20px' } : undefined}
+                  >
+                    {LIQUID_GLASS_ENABLED && <GlowWash colorRgb={MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'} />}
                     <textarea
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
