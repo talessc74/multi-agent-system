@@ -2126,8 +2126,18 @@ const startRecovery = (sessionId: string) => {
           style={LIQUID_GLASS_ENABLED ? {
             // Console identity stays dark on purpose (Milestone 3b deliberation):
             // every text-white/* class in this console is calibrated against a
-            // dark fill, so the glass/mesh tokens are pinned to their dark values
-            // here regardless of the global light/dark theme toggle.
+            // dark fill, so ALL theme tokens (glass/mesh AND text/bg/border) are
+            // pinned to their dark values here regardless of the global
+            // light/dark theme toggle.
+            //
+            // Bug found in this pass: the pin previously covered only
+            // --glass-*/--mesh-*, not --text-primary/--text-secondary/--border/
+            // --bg-*. Those are read straight from the global [data-theme]
+            // tokens, so when a visitor's global theme was 'light',
+            // --text-secondary resolved to a dark navy — invisible against this
+            // permanently-dark navbar (the reported "missing" toggle button).
+            // Pinning the full token set keeps bg and text consistently dark
+            // together, so the console never mismatches the global toggle.
             //
             // --glass-fill/-2 are tinted dark (not white) here, unlike the shared
             // default tokens: every .glass-static panel in this console sits near
@@ -2145,6 +2155,14 @@ const startRecovery = (sessionId: string) => {
             '--mesh-1': '#1b6bff',
             '--mesh-2': '#a23bff',
             '--mesh-3': '#00e0c7',
+            '--bg-primary': '#0A0C0F',
+            '--bg-secondary': '#12151A',
+            '--bg-card': '#1A1E26',
+            '--text-primary': '#F0F2F5',
+            '--text-secondary': '#7A8494',
+            '--text-muted': '#4A5260',
+            '--border': 'rgba(255, 255, 255, 0.07)',
+            '--border-active': 'rgba(0, 255, 239, 0.25)',
           } as React.CSSProperties : undefined}
         >
       {LIQUID_GLASS_ENABLED && <MeshBackground />}
