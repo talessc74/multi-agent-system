@@ -2801,13 +2801,13 @@ const startRecovery = (sessionId: string) => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-white/10 divide-y md:divide-y-0 md:divide-x divide-white/10 shadow-xl shadow-black/30">
+                  <div className={`grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-white/10 shadow-xl shadow-black/30 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'border border-white/10'}`}>
                     {[
                       { title: "PROVA ROBUSTA", desc: "Análise multimídia de documentos e evidências anexadas." },
                       { title: "TABULA RASA", desc: "Juízes sem memória garantem imparcialidade técnica a cada round." },
                       { title: "LEGAL BRIEFS", desc: "Advogados utilizam resumos estratégicos para evolução processual." }
                     ].map((feat, i) => (
-                      <div key={i} className="p-6 bg-[#15161A] space-y-2">
+                      <div key={i} className={`p-6 space-y-2 ${LIQUID_GLASS_ENABLED ? '' : 'bg-[#15161A]'}`}>
                         <h4 className="text-[10px] uppercase font-bold tracking-[0.2em] text-white">{feat.title}</h4>
                         <p className="text-xs text-white/30 leading-relaxed font-medium">{feat.desc}</p>
                       </div>
