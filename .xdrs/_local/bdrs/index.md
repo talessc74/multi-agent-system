@@ -1,6 +1,6 @@
 # _local BDRs Index
 
-Business process and product decisions for EAI?.
+Business process and product decisions for EAI? Jurídico.
 
 ## principles
 

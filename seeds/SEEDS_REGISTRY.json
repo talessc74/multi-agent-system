@@ -81,7 +81,7 @@
       "descriptor": "Legado de estratégia de negócio — monopólio criativo, pensamento contrário e vantagem do último movimento",
       "arquivo": "seeds/SEED_ADV_002_v1.0_ESTON.json",
       "data_criacao": "2026-05-05",
-      "semantic_anchor": "O LexForum não compete — cria uma categoria nova. Quem define a categoria, define o mercado."
+      "semantic_anchor": "O EAI? Jurídico não compete — cria uma categoria nova. Quem define a categoria, define o mercado."
     },
     {
       "seed_id": "SEED_ADV_003_v1.0",
@@ -95,7 +95,7 @@
       "descriptor": "Legado do futuro do direito — democratização do acesso à justiça e transformação da profissão jurídica por tecnologia",
       "arquivo": "seeds/SEED_ADV_004_v1.0_JUSTIN.json",
       "data_criacao": "2026-05-05",
-      "semantic_anchor": "O LexForum não é ferramenta para advogados. É infraestrutura de acesso à justiça para cidadãos."
+      "semantic_anchor": "O EAI? Jurídico não é ferramenta para advogados. É infraestrutura de acesso à justiça para cidadãos."
     },
     {
       "seed_id": "SEED_ARCH_001_v1.0",

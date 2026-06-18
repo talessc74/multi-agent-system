@@ -2,7 +2,7 @@
 
 ## Overview
 
-Project-local decisions for EAI? (Escritorio de Advocacia Inteligente — eaijuridico.com.br).
+Project-local decisions for EAI? Jurídico (EAI — Evidence-based AI — eaijuridico.com.br).
 All policies in this scope were produced by ARGUS deliberation, structured by SCRIBE,
 timestamped by HERALD, and validated by the project owner before archiving.
 
@@ -11,7 +11,7 @@ Decisions here override all other scopes.
 
 ## Project Context
 
-EAI? is a legal simulation SaaS with five simulation modes, operating under:
+EAI? Jurídico is a legal simulation SaaS with five simulation modes, operating under:
 - Stack: Vite 6 + React 19 + Express 4 + Firebase Auth + Firestore + Gemini 2.5 Flash + Stripe + Cloud Run
 - Production: eaijuridico.com.br (GCP gen-lang-client-0982741688)
 - Staging: eai.radiokactus.com (GCP gen-lang-client-0783740660)

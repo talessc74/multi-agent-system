@@ -86,7 +86,7 @@
     },
     {
       "agent_id": "recepcionista_v1.0",
-      "nome": "Recepcionista LexForum — Agente de Triagem Visual",
+      "nome": "Recepcionista EAI? Jurídico — Agente de Triagem Visual",
       "arquivo": "agents/recepcionista_v1.0.json",
       "seed_utilizada": "SEED_UX_001_v1.0",
       "data_criacao": "2026-05-05",
@@ -94,7 +94,7 @@
     },
     {
       "agent_id": "conselho_consultivo_lexforum_v1.0",
-      "nome": "Conselho Consultivo LexForum — Advisory Board Estratégico",
+      "nome": "Conselho Consultivo EAI? Jurídico — Advisory Board Estratégico",
       "arquivo": "agents/conselho_consultivo_lexforum_v1.0.json",
       "seeds_utilizadas": ["SEED_ADV_001_v1.0", "SEED_ADV_002_v1.0", "SEED_ADV_003_v1.0", "SEED_UX_001_v1.0", "SEED_ADV_004_v1.0", "SEED_ARCH_001_v1.0"],
       "data_criacao": "2026-05-05",
@@ -102,7 +102,7 @@
     },
     {
       "agent_id": "arquiteto_ia_v1.0",
-      "nome": "Arch — Arquiteto de IA LexForum (Kern: SEED_ARCH_001)",
+      "nome": "Arch — Arquiteto de IA EAI? Jurídico (Kern: SEED_ARCH_001)",
       "arquivo": "agents/arquiteto_ia_v1.0.json",
       "seed_utilizada": "SEED_ARCH_001_v1.0",
       "data_criacao": "2026-05-06",
