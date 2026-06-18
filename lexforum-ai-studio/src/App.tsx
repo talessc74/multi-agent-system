@@ -2128,8 +2128,16 @@ const startRecovery = (sessionId: string) => {
             // every text-white/* class in this console is calibrated against a
             // dark fill, so the glass/mesh tokens are pinned to their dark values
             // here regardless of the global light/dark theme toggle.
-            '--glass-fill': 'rgba(255, 255, 255, 0.1)',
-            '--glass-fill-2': 'rgba(255, 255, 255, 0.16)',
+            //
+            // --glass-fill/-2 are tinted dark (not white) here, unlike the shared
+            // default tokens: every .glass-static panel in this console sits near
+            // a mesh blob (found twice — the Boardroom sidebar and the hero
+            // textarea card both bled raw blob color through a thin white fill).
+            // A dark-tinted fill mutes the blob to an ambient tint everywhere at
+            // once instead of patching individual panels. Border/spec stay white
+            // for the frosted-edge highlight; only the body fill changed.
+            '--glass-fill': 'rgba(8, 9, 18, 0.55)',
+            '--glass-fill-2': 'rgba(10, 12, 22, 0.65)',
             '--glass-border': 'rgba(255, 255, 255, 0.22)',
             '--glass-spec': 'rgba(255, 255, 255, 0.55)',
             '--glass-shadow': '0 20px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
@@ -3918,15 +3926,7 @@ const startRecovery = (sessionId: string) => {
           </AnimatePresence>
         </div>
 
-        <div className={`col-span-12 lg:col-span-4 relative ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#0F1012]'} p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print`}>
-          {LIQUID_GLASS_ENABLED && (
-            // The mesh blob (b2) sits right behind this column at full saturation;
-            // .glass-static's fill alone (a thin white tint) isn't enough to keep
-            // dense status text legible against it. A dark scrim recedes the blob
-            // to an ambient tint instead of a dominant color wash, without touching
-            // the shared mesh tokens that Boardroom Home also relies on.
-            <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5, 6, 16, 0.45)' }} />
-          )}
+        <div className={`col-span-12 lg:col-span-4 ${LIQUID_GLASS_ENABLED ? 'glass-static' : 'bg-[#0F1012]'} p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print`}>
           <section>
             <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-white/10 pb-3 flex items-center justify-between text-white/60">
               Boardroom <span className="text-[8px] font-mono opacity-20">{`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}</span>
