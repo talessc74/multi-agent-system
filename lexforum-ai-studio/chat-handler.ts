@@ -7,7 +7,7 @@ import { buildChatContext, sanitizeMessage } from './chat-context-builder';
 import { chatWithAgentServer } from './src/lib/gemini.server';
 import { anonymizeText } from './src/lib/anonymizer';
 import { setupSSE, sendSSE } from './sse-utils';
-import { notifySpendingCap } from './alerts';
+import { notifyCriticalFailure } from './alerts';
 
 const QUESTIONS_LIMIT = 5;
 
@@ -255,7 +255,7 @@ export function registerChatRoutes(
 
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
-        await notifySpendingCap('/api/chat/message');
+        await notifyCriticalFailure({ reason: 'GEMINI_QUOTA', route: '/api/chat/message', detail: error?.message });
       }
       console.error('[Chat] Erro:', error);
       sendSSE(res, 'error', { message: error.message || 'Erro interno' });

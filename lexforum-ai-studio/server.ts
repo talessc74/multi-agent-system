@@ -8,7 +8,7 @@ import { constructWebhookEvent, stripe } from './src/lib/stripe.server.js';
 import admin from 'firebase-admin';
 import Stripe from 'stripe';
 import { setupSSE, sendSSE } from './sse-utils';
-import { notifySpendingCap } from './alerts';
+import { notifyCriticalFailure } from './alerts';
 import { registerChatRoutes } from './chat-handler';
 import { randomUUID } from 'crypto';
 
@@ -45,7 +45,7 @@ async function startServer() {
       res.json(data);
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
-        await notifySpendingCap('/api/gemini/validate');
+        await notifyCriticalFailure({ reason: 'GEMINI_QUOTA', route: '/api/gemini/validate', detail: error?.message });
       }
       console.error("Gemini Server Error:", error);
       res.status(500).json({ error: error.message || "Unknown error" });
@@ -141,7 +141,7 @@ async function startServer() {
       }).catch(() => {});
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
-        await notifySpendingCap('/api/gemini/simulate');
+        await notifyCriticalFailure({ reason: 'GEMINI_QUOTA', route: '/api/gemini/simulate', detail: error?.message });
       }
       adminDb.collection('simRecovery').doc(sessionId).update({
         status: 'error',
@@ -160,7 +160,7 @@ async function startServer() {
       res.json(data);
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
-        await notifySpendingCap('/api/gemini/report');
+        await notifyCriticalFailure({ reason: 'GEMINI_QUOTA', route: '/api/gemini/report', detail: error?.message });
       }
       console.error("Gemini Server Error:", error);
       res.status(500).json({ error: error.message || "Unknown error" });
@@ -179,6 +179,9 @@ async function startServer() {
       const hypotheses = await generateCounterHypothesesServer(petition, area, mode);
       res.json({ hypotheses });
     } catch (error: any) {
+      if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
+        await notifyCriticalFailure({ reason: 'GEMINI_QUOTA', route: '/api/counter-hypotheses', detail: error?.message });
+      }
       console.error("[counter-hypotheses] Erro:", error);
       res.status(500).json({ error: error.message || "Unknown error" });
     }
@@ -193,6 +196,9 @@ async function startServer() {
       const expanded = await expandHypothesisServer(petition, hypothesis, area);
       res.json({ expanded });
     } catch (error: any) {
+      if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
+        await notifyCriticalFailure({ reason: 'GEMINI_QUOTA', route: '/api/expand-hypothesis', detail: error?.message });
+      }
       console.error("[expand-hypothesis] Erro:", error);
       res.status(500).json({ error: error.message || "Unknown error" });
     }
@@ -246,7 +252,7 @@ async function startServer() {
       );
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
-        await notifySpendingCap('/api/gemini/mode5');
+        await notifyCriticalFailure({ reason: 'GEMINI_QUOTA', route: '/api/gemini/mode5', detail: error?.message });
       }
       console.error('[Mode5] Erro:', error);
       send('error', { message: error.message || 'Unknown error' });

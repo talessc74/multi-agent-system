@@ -14,6 +14,33 @@ const ai = new GoogleGenAI({
 
 const MODEL_NAME = "gemini-2.5-flash";
 
+const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
+const MAX_GEMINI_RETRIES = 2;
+const RETRY_BASE_DELAY_MS = 500;
+
+function isRetryableGeminiError(err: any): boolean {
+  const status = err?.status ?? err?.response?.status;
+  if (typeof status !== 'number') return true; // erro de rede/timeout sem status — vale tentar de novo
+  return RETRYABLE_STATUS.has(status);
+}
+
+// Reexecuta a chamada ao Gemini em falhas transitórias (instabilidade momentânea,
+// rate limit, 5xx) com backoff exponencial + jitter, antes de propagar o erro.
+async function generateContentWithRetry(
+  params: Parameters<typeof ai.models.generateContent>[0]
+): Promise<GenerateContentResponse> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await ai.models.generateContent(params);
+    } catch (err: any) {
+      if (attempt >= MAX_GEMINI_RETRIES || !isRetryableGeminiError(err)) throw err;
+      const delay = RETRY_BASE_DELAY_MS * 2 ** attempt + Math.random() * 300;
+      console.warn(`[Gemini] Falha na tentativa ${attempt + 1}/${MAX_GEMINI_RETRIES + 1} (${err?.message || err}). Retry em ${Math.round(delay)}ms.`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+}
+
 const dynamicAgents: Record<string, { id: string, name: string, instruction: string }> = {};
 
 export function extractProbability(text: string): number {
@@ -54,7 +81,7 @@ export async function validateCausaServer(caseDescription: string, attachments: 
     attachments
   );
 
-  const response: GenerateContentResponse = await ai.models.generateContent({
+  const response: GenerateContentResponse = await generateContentWithRetry({
     model: MODEL_NAME,
     contents: [{ role: 'user', parts: contents }],
     config: {
@@ -110,7 +137,7 @@ async function getOrGenerateAgent(type: "lawyer" | "judge", area: string, specif
   
   Retorne APENAS um JSON válido com "name" e "instruction" (prompt detalhado do agente).`;
 
-  const response: GenerateContentResponse = await ai.models.generateContent({
+  const response: GenerateContentResponse = await generateContentWithRetry({
     model: MODEL_NAME,
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
     config: {
@@ -217,7 +244,7 @@ export async function simulateForumServer(
           ? `${opposingLabel} (lado contrário — você deve rebater estes argumentos):\n${staticSide}\n\nMelhore esta ${ownLabel} tornando-a mais forte tecnicamente, rebatendo diretamente os argumentos do lado contrário:\n${userPetition}`
           : `Você é o advogado do ${userSide === 'DEFENSE' ? 'RÉU (DEFESA)' : 'AUTOR'}.\n\n${opposingLabel} (texto original do lado contrário — não muda entre rodadas):\n${staticSide}\n\nSENTENÇA DO JUIZ:\n${currentJudgment}\n\nSUA ${ownLabel.toUpperCase()} ANTERIOR:\n${currentPetition}\n\nBREVES ESTRATÉGICOS ACUMULADOS:\n${allBriefs}\n\nRebata ponto a ponto os argumentos do lado contrário. Identifique onde o juiz deu razão ao ${userSide === 'DEFENSE' ? 'autor' : 'réu'} e reforce os pontos que derrubam esses argumentos. Reescreva sua ${ownLabel} endereçando diretamente as objeções do juiz e os pontos fracos identificados.`;
 
-        const lawRes = await ai.models.generateContent({
+        const lawRes = await generateContentWithRetry({
           model: MODEL_NAME,
           contents: [{ role: 'user', parts: prepareParts(lawPrompt, userAtts) }],
           config: { systemInstruction: lawAgent.instruction + sideContext }
@@ -233,7 +260,7 @@ export async function simulateForumServer(
           ? `Você é um magistrado avaliando a solidez técnica dos argumentos da DEFESA/RÉU.\n\nPETIÇÃO DO AUTOR (contexto — argumento sendo contestado):\n${authorText}\n\nCONTESTAÇÃO DA DEFESA (avalie a eficácia deste argumento):\n${defenseText}\n\nAvalie tecnicamente a solidez dos argumentos da DEFESA diante da petição apresentada. Retorne JSON:\n{"success_probability":<0-100, probabilidade de êxito do AUTOR — valor BAIXO indica defesa eficaz>,"author_summary":"<resumo do argumento do Autor>","defense_summary":"<resumo do argumento do Réu>","judgment":"<veredito técnico completo — campo obrigatório, nunca vazio>"}`
           : `Você é um magistrado imparcial. Analise ambos os lados e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${authorText}\n\nCONTESTAÇÃO DO RÉU:\n${defenseText}\n\nRetorne JSON:\n{"success_probability":<0-100, probabilidade de êxito do AUTOR>,"author_summary":"<resumo do argumento do Autor>","defense_summary":"<resumo do argumento do Réu>","judgment":"<veredito técnico completo — campo obrigatório, nunca vazio>"}`;
 
-        const juiRes = await ai.models.generateContent({
+        const juiRes = await generateContentWithRetry({
           model: MODEL_NAME,
           contents: [{ role: 'user', parts: [{ text: juiPrompt }] }],
           config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
@@ -260,7 +287,7 @@ export async function simulateForumServer(
 
         onProgress?.('REVIEWING', i);
 
-        const briefRes4 = await ai.models.generateContent({
+        const briefRes4 = await generateContentWithRetry({
           model: MODEL_NAME,
           contents: [{ role: 'user', parts: [{ text: `Analise a petição e a sentença da rodada ${i} e gere um resumo conciso de argumentos e citações para o próximo round.\nPetição: ${currentPetition}\nSentença: ${currentJudgment}\nBreves Anteriores: ${allBriefs}` }] }],
           config: {
@@ -305,7 +332,7 @@ export async function simulateForumServer(
       const juiPrompt = `Você recebeu a petição do Autor e a contestação do Réu. Analise ambos os lados de forma imparcial e emita um veredito técnico fundamentado.\n\nPETIÇÃO DO AUTOR:\n${caseDescription}\n\nCONTESTAÇÃO DO RÉU:\n${defenseDescription}\n\nRetorne um JSON com o seguinte formato:\n{\n  "success_probability": <0-100, chance de procedência do AUTOR>,\n  "author_summary": "<resumo em 1-2 frases do argumento central do Autor>",\n  "defense_summary": "<resumo em 1-2 frases do argumento central do Réu>",\n  "judgment": "<veredito técnico completo fundamentado em lei>"\n}`;
       const authorParts = prepareParts(juiPrompt, attachments);
       const defenseParts = defenseAttachments.length > 0 ? prepareParts('', defenseAttachments).slice(1) : [];
-      const juiRes = await ai.models.generateContent({
+      const juiRes = await generateContentWithRetry({
         model: MODEL_NAME,
         contents: [{ role: 'user', parts: [...authorParts, ...defenseParts] }],
         config: { systemInstruction: judgeInstruction, responseMimeType: 'application/json' }
@@ -328,7 +355,7 @@ export async function simulateForumServer(
         ? `Peticione para o seguinte caso inicial: ${caseDescription}`
         : `Sentença anterior: ${currentJudgment}\nBreves estratégicos acumulados: ${allBriefs}\nReescreva sua petição de forma muito mais forte para o caso: ${caseDescription}`;
     
-    const lawRes: GenerateContentResponse = await ai.models.generateContent({
+    const lawRes: GenerateContentResponse = await generateContentWithRetry({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: prepareParts(lawPrompt, attachments) }],
       config: {
@@ -344,7 +371,7 @@ export async function simulateForumServer(
     const juiPromptText = mode === 2
       ? `Avalie tecnicamente a solidez dos argumentos de DEFESA apresentados. Retorne um JSON com: {"success_probability":<0-100>,"judgment":"<sua decisão completa aqui>"} onde success_probability é a probabilidade de êxito do RÉU (defesa), de 0 a 100.\n\nContestação: ${currentPetition}`
       : `Avalie tecnicamente a solidez dos argumentos apresentados. Retorne um JSON com: {"success_probability":<0-100>,"judgment":"<sua decisão completa aqui>"} onde success_probability é a probabilidade de êxito do AUTOR, de 0 a 100.\n\nPetição: ${currentPetition}`;
-    const juiRes: GenerateContentResponse = await ai.models.generateContent({
+    const juiRes: GenerateContentResponse = await generateContentWithRetry({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: juiPromptText }] }],
       config: {
@@ -359,7 +386,7 @@ export async function simulateForumServer(
     lastProb = typeof juiParsed.success_probability === 'number' ? juiParsed.success_probability : extractProbability(juiText);
 
     onProgress?.('REVIEWING', i);
-    const briefRes: GenerateContentResponse = await ai.models.generateContent({
+    const briefRes: GenerateContentResponse = await generateContentWithRetry({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Analise a petição e a sentença da rodada ${i} e gere um resumo conciso de argumentos e citações para o próximo round.\nPetição: ${currentPetition}\nSentença: ${currentJudgment}\nBreves Anteriores: ${allBriefs}` }] }],
       config: {
@@ -391,21 +418,21 @@ export async function generateReportServer(lastPetition: string, lastJudgment: s
     : 'PERSPECTIVA OBRIGATÓRIA: O CLIENTE QUE LÊ ESTE LAUDO É O AUTOR (parte que move a ação/Reclamante/Exequente). Todo o laudo deve ser redigido inteiramente da perspectiva do AUTOR. Veredito, Pontos Fortes, Riscos e orientações referem-se à posição do AUTOR. Jamais trate o cliente como Réu/Reclamada/Executado. ';
 
   const [laymanRes, profRes, summaryRes] = await Promise.all([
-    ai.models.generateContent({
+    generateContentWithRetry({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nSentença: ${lastJudgment}` }] }],
       config: {
         systemInstruction: perspective + "Você é um Consultor Jurídico sênior. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Ao citar argumentos da parte contrária, use sempre conectores explícitos como 'A parte adversa alega que...' ou 'O argumento do Exequente, que não merece acolhimento, é que...'. Gere um laudo em linguagem LEIGA seguindo: 1. Veredito. 2. Pontos Fortes. 3. Riscos. 4. Passo a passo prático."
       }
     }),
-    ai.models.generateContent({
+    generateContentWithRetry({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nSentença: ${lastJudgment}` }] }],
       config: {
         systemInstruction: perspective + "Você é um Chief Legal Officer. Antes de redigir, identifique com precisão quem move a ação (Exequente/Autor) e quem é demandado (Executado/Réu) com base nos textos recebidos. Nunca inverta os polos processuais. Ao citar argumentos da parte contrária, use sempre conectores explícitos como 'A Exequente alega que...', 'O argumento da parte adversa, que não merece acolhimento, é que...'. Proibido parafrasear argumentos adversos sem identificá-los claramente como sendo da parte contrária. Gere um LAUDO ESTRATÉGICO seguindo: 1. Resultados. 2. Fundamentação. 3. Riscos. 4. Plano Estratégico."
       }
     }),
-    ai.models.generateContent({
+    generateContentWithRetry({
       model: MODEL_NAME,
       contents: [{ role: 'user', parts: [{ text: `Petição: ${lastPetition}\nAvaliação técnica: ${lastJudgment}` }] }],
       config: {
@@ -426,7 +453,7 @@ export async function generateCounterHypothesesServer(
     ? "Com base na defesa construída pelo Réu e nos argumentos identificados, gere 3 hipóteses plausíveis de contra-ataque que o Autor poderia apresentar. Cada hipótese deve ter no máximo 2 linhas em linguagem simples. Retorne APENAS um JSON válido com array de 3 strings, sem markdown, sem explicação, sem backticks."
     : "Com base nos fatos narrados pelo Autor e nos argumentos identificados, gere 3 hipóteses plausíveis de defesa que o Réu poderia apresentar. Cada hipótese deve ter no máximo 2 linhas em linguagem simples. Retorne APENAS um JSON válido com array de 3 strings, sem markdown, sem explicação, sem backticks. Exemplo: [\"hipótese 1\",\"hipótese 2\",\"hipótese 3\"]";
 
-  const res = await ai.models.generateContent({
+  const res = await generateContentWithRetry({
     model: MODEL_NAME,
     contents: [{ role: 'user', parts: [{ text: `Área: ${area}\n\nPetição/argumentos: ${petition}` }] }],
     config: { systemInstruction }
@@ -466,7 +493,7 @@ export async function expandHypothesisServer(
     hypothesis
   );
 
-  const res = await ai.models.generateContent({
+  const res = await generateContentWithRetry({
     model: MODEL_NAME,
     contents: [{ role: 'user', parts: [{ text: `Área: ${area}\n\nFatos do caso: ${petition}\n\nHipótese escolhida: ${sanitized}` }] }],
     config: {
@@ -495,7 +522,7 @@ export async function chatWithAgentServer(
     { role: 'user' as const, parts: [{ text: newMessage }] },
   ];
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry({
     model: MODEL_NAME,
     contents,
     config: {
@@ -599,7 +626,7 @@ ESCALA DE REFERÊNCIA para successProbability (ACORDO):
 
   onProgress?.('JUDGING');
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry({
     model: MODEL_NAME,
     contents: [{ role: 'user', parts: prepareParts(userPrompt, attachments) }],
     config: {
