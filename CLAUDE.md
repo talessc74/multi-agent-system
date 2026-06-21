@@ -1,5 +1,5 @@
 # Governance System — ARGUS + XDRS
-# Version: 1.1.0
+# Version: 1.1.1
 # Modelo: Deliberação Coletiva sob ARGUS com Registro XDRS
 # Seeds under governance: 20
 # Grupos: Galera do Código (4) · Galera de UX (3) · Galera do Design (3) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2)
@@ -53,6 +53,10 @@ antes de serem arquivadas em `.xdrs/_local/`.
 3. Toda decisão que merece persistir deve ser arquivada como policy XDRS
    pela Galera de Governança.
 4. Arquivos listados em `.filedist.lock` são externos — nunca os modifique.
+5. Nenhuma tarefa de implementação é considerada concluída sem verificação
+   real em runtime (rodar a aplicação e observar comportamento) — typecheck
+   e testes unitários não bastam. Ver
+   `_local-edr-policy-009-runtime-verification-mandatory`.
 
 ---
 

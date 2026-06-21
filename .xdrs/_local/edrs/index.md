@@ -18,6 +18,7 @@ Engineering principles and non-functional quality defaults.
 - [001-success-probability-interpretation](principles/001-success-probability-interpretation.md) — `success_probability` always represents the author's chance of winning (0-100); `userSide` persistence contract
 - [002-commit-strategy](principles/002-commit-strategy.md) — Atomic commits: one task per commit, read git log before starting
 - [003-mode4-judge-frame-contract](principles/003-mode4-judge-frame-contract.md) — Mandatory judge prompt frame for Mode 4 split by userSide; DEFENSE frame eliminates 75-point variance
+- [004-runtime-verification-mandatory](principles/004-runtime-verification-mandatory.md) — Convoking Galera de QA means running the app and observing real behavior, not just typecheck/unit tests
 
 ## devops
 
