@@ -34,3 +34,10 @@ Registrar formalmente a **Galera de QA**, já ativa, com três seeds:
 - Ver EDR `_local-edr-policy-009-runtime-verification-mandatory` para a
   policy complementar que define o que significa, na prática, convocar a
   Galera de QA em uma tarefa de implementação.
+
+## Verificação de integridade
+
+Conferido em 2026-06-21 (papel Scribe + Herald): sem colisão de numeração
+global (`_local-adr-policy-006` livre) e sem conflito com as Regras
+absolutas ou com policies existentes. Ver nota equivalente em
+`_local-edr-policy-009-runtime-verification-mandatory`.

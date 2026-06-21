@@ -51,3 +51,16 @@ afetada — nunca apenas typecheck ou suíte de testes unitários.**
   composição da Galera de QA responsável por esta convocação.
 - CLAUDE.md ganha uma nova Regra absoluta referenciando esta policy —
   versão 1.1.0 → 1.1.1.
+
+## Verificação de integridade
+
+Conferido em 2026-06-21 (papel Scribe + Herald): sem colisão de numeração
+global (`_local-edr-policy-009` livre) e sem conflito semântico com as
+policies existentes que mencionam "runtime" (EDR-005, EDR-007,
+EDR-008-deployment-strategy tratam de contextos distintos — variáveis de
+ambiente e override de prompt do agente, não verificação de implementação).
+
+Achado lateral, pré-existente e fora do escopo desta policy: dois EDRs
+diferentes (`application/004-demand-driven-agent-creation` e
+`devops/001-deployment-strategy`) reivindicam o mesmo número global `008` —
+pendente de lint futuro do Scribe.
