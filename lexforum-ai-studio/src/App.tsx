@@ -38,6 +38,10 @@ import ChatPanel, { SheetState } from './components/ChatPanel';
 import { getChatStatus, createChatCheckoutSession, sendChatMessage } from './services/chatService';
 
 
+const OVERLOAD_MESSAGE = 'O sistema está temporariamente indisponível. Tente novamente em alguns minutos.';
+const isOverloadMessage = (message: string) =>
+  message.includes('RESOURCE_EXHAUSTED') || message.includes('spending cap');
+
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
   if (!enabled) return <>{text}</>;
 
@@ -438,9 +442,9 @@ const handleGeminiError = (err: any) => {
   const code = errorObj?.error?.code || errorObj?.code || errorObj?.status;
   const message = errorObj?.error?.message || errorObj?.message || (typeof err === 'string' ? err : '');
 
-  if (code === 429 || message.includes('RESOURCE_EXHAUSTED') || message.includes('spending cap')) {
+  if (code === 429 || isOverloadMessage(message)) {
     isQuota = true;
-    errorMessage = 'O sistema está temporariamente indisponível. Tente novamente em alguns minutos.';
+    errorMessage = OVERLOAD_MESSAGE;
   } else if (message) {
     const cleanMessage = message.startsWith('<!DOCTYPE') || message.startsWith('<html') 
       ? 'Erro de Gateway/Conexão. O serviço de IA está temporariamente indisponível.' 
@@ -1066,7 +1070,8 @@ const startRecovery = (sessionId: string) => {
             setChatQuestionsUsed(u => u + 1);
           }
         } else if (event.type === 'error') {
-          setChatError(event.message ?? 'Erro ao enviar mensagem. Tente novamente.');
+          const msg = event.message ?? '';
+          setChatError(isOverloadMessage(msg) ? OVERLOAD_MESSAGE : (msg || 'Erro ao enviar mensagem. Tente novamente.'));
           setChatMessages(prev => prev.slice(0, -1));
         }
       });
