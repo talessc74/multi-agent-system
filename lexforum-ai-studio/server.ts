@@ -34,11 +34,46 @@ app.use((req, res, next) => {
 });
 const PORT = process.env.PORT || 3000;
 
+// Cloud Run fica atrás de um único hop confiável (Google Front End) — sem isso,
+// req.ip sempre retornaria o IP da GFE, não o do cliente real.
+app.set('trust proxy', 1);
+
+// Guarda contra bug/abuso nos endpoints de IA que não exigem login (validate,
+// simulate, report, counter-hypotheses, expand-hypothesis, mode5). Não é um
+// cap de uso — o limite é alto o bastante para não afetar uso legítimo; serve
+// só para impedir que um retry-loop com bug ou um script automatizado gere
+// custo ilimitado de Gemini.
+const ANOMALY_LIMIT = 20;
+const ANOMALY_WINDOW_MS = 60_000;
+const anomalyAttempts = new Map<string, { count: number; resetAt: number }>();
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, bucket] of anomalyAttempts) {
+    if (now >= bucket.resetAt) anomalyAttempts.delete(key);
+  }
+}, ANOMALY_WINDOW_MS);
+
+function anomalyGuard(req, res, next) {
+  const key = req.ip ?? 'unknown';
+  const now = Date.now();
+  const bucket = anomalyAttempts.get(key);
+  if (bucket && now < bucket.resetAt) {
+    if (bucket.count >= ANOMALY_LIMIT) {
+      res.status(429).json({ error: 'Muitas solicitações. Aguarde um momento.' });
+      return;
+    }
+    bucket.count++;
+  } else {
+    anomalyAttempts.set(key, { count: 1, resetAt: now + ANOMALY_WINDOW_MS });
+  }
+  next();
+}
 
 async function startServer() {
   console.log("Starting server...");
   // API routes FIRST
-  app.post("/api/gemini/validate", async (req, res) => {
+  app.post("/api/gemini/validate", anomalyGuard, async (req, res) => {
     try {
       const { caseDescription, attachments } = req.body;
       const data = await validateCausaServer(caseDescription, attachments);
@@ -52,7 +87,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/gemini/simulate", async (req, res) => {
+  app.post("/api/gemini/simulate", anomalyGuard, async (req, res) => {
     setupSSE(res);
 
     const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide } =
@@ -153,7 +188,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/gemini/report", async (req, res) => {
+  app.post("/api/gemini/report", anomalyGuard, async (req, res) => {
     try {
       const { lastPetition, lastJudgment, clientSide } = req.body;
       const data = await generateReportServer(lastPetition, lastJudgment, clientSide);
@@ -167,7 +202,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/counter-hypotheses", async (req, res) => {
+  app.post("/api/counter-hypotheses", anomalyGuard, async (req, res) => {
     try {
       const { petition, area, mode } = req.body;
       if (!petition || !area) {
@@ -187,7 +222,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/expand-hypothesis", async (req, res) => {
+  app.post("/api/expand-hypothesis", anomalyGuard, async (req, res) => {
     try {
       const { petition, hypothesis, area } = req.body;
       if (!petition || !hypothesis || !area) {
@@ -204,7 +239,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/gemini/mode5", async (req, res) => {
+  app.post("/api/gemini/mode5", anomalyGuard, async (req, res) => {
     setupSSE(res);
 
     const { mode5Input, area, attachments, specificJudge } = req.body;
