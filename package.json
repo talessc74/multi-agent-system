@@ -9,6 +9,6 @@
     "governance:lint": "npx xdrs-core lint ."
   },
   "devDependencies": {
-    "argus-xdrs-governance": "^1.2.0"
+    "argus-xdrs-governance": "^1.3.0"
   }
 }

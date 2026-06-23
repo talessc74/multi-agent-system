@@ -21,10 +21,10 @@
 ---
 
 # Governance System — ARGUS + XDRS
-# Version: 1.2.0
+# Version: 1.3.0
 # Modelo: Deliberação Coletiva sob ARGUS com Registro XDRS
-# Seeds under governance: 20
-# Grupos: Galera do Código (4) · Galera de UX (3) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2) · Galera do Design (3)
+# Seeds under governance: 19
+# Grupos: Galera do Código (4) · Galera de UX (3) · Galera de Segurança (4) · Galera de QA (3) · Galera de Governança (2) · Galera do Design (3)
 
 ---
 
@@ -86,11 +86,11 @@ Esta regra não tem exceções. Perguntas simples ("qual comando?",
 | `"Argus, revisa este código"` | ARGUS lê o contexto e convoca a equipe certa |
 | `"Argus, chama a galera do código"` | Scout · Flux · Literate · RiverRaid |
 | `"Argus, chama a galera de UX"` | Compass · Empiricus · PolarBear |
-| `"Argus, chama a galera de segurança"` | Blast · BAU · Sentinel · Sovereign · Ghost |
+| `"Argus, chama a galera de segurança"` | Blast · BAU · Sentinel · Sovereign |
 | `"Argus, chama a galera de QA"` | Pareto · Probe · Scaffold |
 | `"Argus, chama a galera de governança"` | Scribe · Herald |
 | `"Argus, chama a galera do design"` | Aether · Nexus · Chronos |
-| `"Argus, chama todo mundo"` | todas as 20 seeds |
+| `"Argus, chama todo mundo"` | todas as 19 seeds |
 | `"Argus, quem é o [nome]?"` | ARGUS apresenta a seed e sua jurisdição |
 | `"Argus, apresenta a equipe"` | ARGUS lista todos os membros e papéis |
 | `"Argus, apresenta a [galera]"` | ARGUS lista os membros do grupo solicitado |
@@ -143,7 +143,6 @@ SCRIBE executa lint + atualiza índice canônico
 - `.seeds/BAU.json`        → Perpetual Integrity Lifecycle, compliance contínuo
 - `.seeds/SENTINEL.json`   → Zero Trust, micro-segmentação
 - `.seeds/SOVEREIGN.json`  → Identity, consentimento, minimal disclosure
-- `.seeds/GHOST.json`      → Attacker mindset, engenharia social, fator humano
 
 ### Galera de QA
 - `.seeds/PARETO.json`     → Princípios fundamentais, agrupamento de defeitos, Paradoxo do Pesticida
@@ -170,7 +169,7 @@ SCRIBE executa lint + atualiza índice canônico
     ARGUS.md             ← orquestrador — lido segundo
     SCOUT.json · FLUX.json · LITERATE.json · RIVERRAID.json
     COMPASS.json · EMPIRICUS.json · POLARBEAR.json
-    BLAST.json · BAU.json · SENTINEL.json · SOVEREIGN.json · GHOST.json
+    BLAST.json · BAU.json · SENTINEL.json · SOVEREIGN.json
     PARETO.json · PROBE.json · SCAFFOLD.json
     SCRIBE.json · HERALD.json
     AETHER.json · NEXUS.json · CHRONOS.json
