@@ -102,9 +102,8 @@ export default function TermosPage() {
         <div style={s.section}>
           <h2 style={s.heading}>10. CONTATO</h2>
           <p style={s.body}>
-            Dúvidas, solicitações de dados ou reclamações: eaijuridico@icloud.com<br />
-            Responsável: Tales Carvalho<br />
-            (E-mail provisório — será atualizado para eaijuridico.com.br após migração do domínio)
+            Dúvidas, solicitações de dados ou reclamações: suporte@eaijuridico.com.br<br />
+            Responsável: Tales Carvalho
           </p>
         </div>
 

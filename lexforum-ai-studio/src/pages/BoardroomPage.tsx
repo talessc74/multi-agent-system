@@ -73,7 +73,7 @@ const FOOTER_STATS = [
   { label: 'Processamento', value: 'Análise Semântica Multimodal' },
   { label: 'Privacidade', value: 'Criptografia RSA-4096' },
   { label: 'Versão', value: `v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}` },
-  { label: 'Contato', value: 'eaijuridico@icloud.com' },
+  { label: 'Contato', value: 'suporte@eaijuridico.com.br' },
 ];
 
 export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }: Props) {
