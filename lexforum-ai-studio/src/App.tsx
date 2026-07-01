@@ -604,6 +604,11 @@ const startRecovery = (sessionId: string) => {
     return () => { release(); document.removeEventListener('visibilitychange', acquire); };
   }, [state.step]);
 
+  // EDR-009: a cópia da UI promete "máx 10MB por arquivo · total 20MB" —
+  // esses limites precisam ser aplicados aqui, não só anunciados.
+  const MAX_ARQUIVOS = 5;
+  const MAX_BYTES_TOTAL = 20 * 1024 * 1024;
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
@@ -611,11 +616,20 @@ const startRecovery = (sessionId: string) => {
 
     const newAttachments: Attachment[] = [];
     const fileList: File[] = Array.from(files);
+    let totalBytes = state.attachments.reduce((sum, a) => sum + a.size, 0);
 
     for (const file of fileList) {
       if (file.size > 10 * 1024 * 1024) {
         setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
         continue;
+      }
+      if (state.attachments.length + newAttachments.length >= MAX_ARQUIVOS) {
+        setAttachmentError(`Máximo de ${MAX_ARQUIVOS} arquivos permitidos.`);
+        break;
+      }
+      if (totalBytes + file.size > MAX_BYTES_TOTAL) {
+        setAttachmentError(`Limite total de 20MB excedido.`);
+        break;
       }
 
       const reader = new FileReader();
@@ -630,6 +644,7 @@ const startRecovery = (sessionId: string) => {
         size: file.size,
         data: base64
       });
+      totalBytes += file.size;
     }
 
     setState(prev => ({
@@ -1602,9 +1617,9 @@ const startRecovery = (sessionId: string) => {
           </div>
           <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0 }}>
             <button
-              disabled={!state.caseDescription.trim() || loading}
+              disabled={state.caseDescription.trim().length <= 10 || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[2].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[2].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[2].cta}
             </button>
@@ -1678,9 +1693,9 @@ const startRecovery = (sessionId: string) => {
           </div>
           <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0 }}>
             <button
-              disabled={!state.caseDescription.trim() || loading}
+              disabled={state.caseDescription.trim().length <= 10 || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[1].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[1].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[1].cta}
             </button>
@@ -2713,7 +2728,7 @@ const startRecovery = (sessionId: string) => {
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Descreva aqui os detalhes da causa, fatos principais e argumentos jurídicos. Nossa IA processa textos longos sem limite de caracteres..."
-                      className="w-full min-h-[400px] h-auto bg-transparent p-8 outline-none transition-all text-2xl font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[400px] h-auto bg-transparent p-8 outline-none transition-all text-2xl font-serif italic text-white/90 resize-y placeholder:opacity-30"
                     />
                     
                     {/* Attachments List */}
@@ -2761,7 +2776,7 @@ const startRecovery = (sessionId: string) => {
                       </div>
 
                       <button
-                        disabled={!state.caseDescription.trim() || loading}
+                        disabled={state.caseDescription.trim().length <= 10 || loading}
                         onClick={handleValidate}
                         className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
                       >
