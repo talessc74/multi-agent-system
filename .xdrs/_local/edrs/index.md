@@ -11,6 +11,7 @@ Code-level implementation patterns and conventions.
 - [003-judge-impartiality-in-creation](application/003-judge-impartiality-in-creation.md) — Judge and desembargadora descriptions to Shaw must always be impartial — userSide must never influence judge creation
 - [004-demand-driven-agent-creation](application/004-demand-driven-agent-creation.md) — Agents are created exclusively on demand inside resolveAgent's Camada 3; registry curation is strictly subtractive/relocational and must never trigger compensatory agent creation
 - [005-modo1-input-guardrails](application/005-modo1-input-guardrails.md) — Every limit shown in the Modo 1/2 input step's copy (attachments, minimum causa length) must be enforced in code, reusing the pattern already validated in lexforum-app
+- [006-specificjudge-null-sentinel-filtering](application/006-specificjudge-null-sentinel-filtering.md) — Normalize Gemini's literal "null" string sentinel for specificJudge at extraction time (validateCausaServer), not with ad hoc guards at each call site
 
 ## principles
 
