@@ -84,9 +84,14 @@ export async function validateCausaServer(caseDescription: string, attachments: 
     console.error("Gemini Parse Error:", e, "Text:", text);
   }
 
+  // EDR-010: campo STRING não-anulável no responseSchema — o Gemini pode
+  // escrever a palavra "null" como texto em vez de omitir o campo.
+  const rawSpecificJudge = parsed.specificJudge?.trim();
+  const specificJudge = rawSpecificJudge && rawSpecificJudge.toLowerCase() !== 'null' ? rawSpecificJudge : null;
+
   return {
     area: (parsed.area?.toUpperCase() as LegalArea) || LegalArea.OTHER,
-    specificJudge: parsed.specificJudge || null,
+    specificJudge,
     summary: parsed.summary || null,
     detectedProfile: (parsed.detectedProfile === 'profissional' ? 'profissional' : 'leigo') as 'leigo' | 'profissional',
     userPole: (parsed.userPole === 'REU' ? 'REU' : 'AUTOR') as 'AUTOR' | 'REU',

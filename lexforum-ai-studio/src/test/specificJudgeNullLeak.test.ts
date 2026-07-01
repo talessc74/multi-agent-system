@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Investiga se a string literal "null" (não o valor null de JS) consegue atravessar
-// o pipeline real de gemini.server.ts sem ser filtrada, reproduzindo os bugs
-// "Auditor Kern 0xF1" / "comarca null" listados no BRIEFING_2026-06-05.md.
+// EDR-010: verifica que a string literal "null" (não o valor null de JS) é
+// normalizada na fronteira de extração (validateCausaServer) em vez de vazar
+// pelo pipeline, reproduzindo o bug "comarca null" do BRIEFING_2026-06-05.md.
 //
 // Não mocka lógica própria: importa e chama as funções REAIS exportadas por
 // gemini.server.ts. Só a chamada à API do Gemini (@google/genai) é substituída.
@@ -25,7 +25,7 @@ beforeEach(() => {
 });
 
 describe('validateCausaServer — extração de specificJudge', () => {
-  it('propaga a string literal "null" quando o Gemini a devolve em um campo STRING não-anulável', async () => {
+  it('normaliza a string literal "null" para JS null (EDR-010)', async () => {
     // Reproduz o comportamento real de saída estruturada: o schema declara
     // specificJudge como Type.STRING (não nullable) — ver gemini.server.ts:68.
     // Quando não há juiz/comarca no relato, o modelo não pode emitir um JSON
@@ -43,14 +43,36 @@ describe('validateCausaServer — extração de specificJudge', () => {
     const { validateCausaServer } = await import('../lib/gemini.server');
     const result = await validateCausaServer('Um caso qualquer, sem juiz mencionado.', []);
 
-    // O código faz `parsed.specificJudge || null` — isso só filtra valores
-    // falsy (undefined, '', JS null). A string não-vazia "null" passa direto.
-    expect(result.specificJudge).toBe('null');
+    expect(result.specificJudge).toBeNull();
+  });
+
+  it('preserva um juiz/comarca real quando o Gemini de fato extrai um', async () => {
+    generateContentMock.mockResolvedValueOnce({
+      text: JSON.stringify({
+        area: 'CIVIL',
+        specificJudge: 'Vara Cível de Pequenópolis',
+        summary: 'Resumo qualquer.',
+        detectedProfile: 'leigo',
+        userPole: 'AUTOR',
+      }),
+    });
+
+    const { validateCausaServer } = await import('../lib/gemini.server');
+    const result = await validateCausaServer('Caso na Vara Cível de Pequenópolis.', []);
+
+    expect(result.specificJudge).toBe('Vara Cível de Pequenópolis');
   });
 });
 
-describe('simulateForumServer — criação dinâmica de juiz (fallback sem agente do registry)', () => {
-  it('injeta a string literal "null" no prompt de criação do juiz quando specificJudge não é filtrado', async () => {
+describe('simulateForumServer — fronteira de confiança (fallback sem agente do registry)', () => {
+  it('NÃO revalida specificJudge — depende inteiramente de validateCausaServer já ter normalizado o valor (EDR-010)', async () => {
+    // simulateForumServer confia no chamador e não tem guarda própria contra
+    // o sentinel "null". Isso é seguro hoje porque validateCausaServer é o
+    // único ponto real de origem de specificJudge em produção (server.ts:44
+    // devolve o valor já normalizado ao cliente, que o reenvia sem alterar).
+    // Se um chamador futuro passar specificJudge sem passar por
+    // validateCausaServer primeiro, este teste documenta que o vazamento
+    // volta a ser possível.
     // Resposta genérica que satisfaz qualquer chamada ao longo do pipeline
     // (criação de advogado, criação de juiz, petição, sentença, brief).
     generateContentMock.mockResolvedValue({
