@@ -324,7 +324,10 @@ export default function App() {
   const [userHistory, setUserHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [globalStats, setGlobalStats] = useState({ simulations: 0, winRate: 0, precision: 98.4 });
+  // ADR-006: nenhum destes três é um valor real até fetchInitialStats() resolver —
+  // statsLoading controla o estado visual enquanto isso não acontece.
+  const [globalStats, setGlobalStats] = useState({ simulations: 0, winRate: 0, precision: 0 });
+  const [statsLoading, setStatsLoading] = useState(true);
   const [state, setState] = useState<AppState>({
     step: 'boardroom',
     selectedMode: 0,
@@ -345,14 +348,9 @@ export default function App() {
   selectedProfile: 'leigo',
   activeAgents: [],
   showForgeMonitor: false,
-  regionalStats: [
-    { region: "TRF1 (Norte / CO)", seeds: 412, active: 18 },
-    { region: "TRF2 (RJ / ES)", seeds: 284, active: 12 },
-    { region: "TRF3 (SP / MS)", seeds: 567, active: 31 },
-    { region: "TRF4 (Sul)", seeds: 319, active: 22 },
-    { region: "TRF5 (Nordeste)", seeds: 245, active: 9 },
-    { region: "Supremos (STJ / STF)", seeds: 88, active: 41 }
-  ],
+  // ADR-006: vazio até getAreaStats() resolver — nunca um fallback com
+  // números plausíveis (ver statsLoading para o estado visual).
+  regionalStats: [],
   error: null
 });
 
@@ -379,16 +377,23 @@ export default function App() {
     });
     
     const fetchInitialStats = async () => {
-      const stats = await getStats();
-      setGlobalStats({
-        simulations: stats.totalSimulations,
-        winRate: Number(stats.winRate.toFixed(1)),
-        precision: Number(((stats.totalWins / Math.max(stats.totalSimulations, 1)) * 100).toFixed(1))
-      });
+      try {
+        const stats = await getStats();
+        setGlobalStats({
+          simulations: stats.totalSimulations,
+          winRate: Number(stats.winRate.toFixed(1)),
+          precision: Number(((stats.totalWins / Math.max(stats.totalSimulations, 1)) * 100).toFixed(1))
+        });
 
-      const regional = await getAreaStats();
-      if (regional && regional.length > 0) {
-        setState(prev => ({ ...prev, regionalStats: regional }));
+        const regional = await getAreaStats();
+        if (regional && regional.length > 0) {
+          setState(prev => ({ ...prev, regionalStats: regional }));
+        }
+      } finally {
+        // ADR-006: sai do estado de carregamento mesmo se o fetch falhar —
+        // regionalStats/globalStats então ficam vazios/zerados, nunca com
+        // um fallback plausível.
+        setStatsLoading(false);
       }
     };
 
@@ -604,6 +609,11 @@ const startRecovery = (sessionId: string) => {
     return () => { release(); document.removeEventListener('visibilitychange', acquire); };
   }, [state.step]);
 
+  // EDR-009: a cópia da UI promete "máx 10MB por arquivo · total 20MB" —
+  // esses limites precisam ser aplicados aqui, não só anunciados.
+  const MAX_ARQUIVOS = 5;
+  const MAX_BYTES_TOTAL = 20 * 1024 * 1024;
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
@@ -611,11 +621,20 @@ const startRecovery = (sessionId: string) => {
 
     const newAttachments: Attachment[] = [];
     const fileList: File[] = Array.from(files);
+    let totalBytes = state.attachments.reduce((sum, a) => sum + a.size, 0);
 
     for (const file of fileList) {
       if (file.size > 10 * 1024 * 1024) {
         setAttachmentError(`${file.name} excede 10MB. Limite por arquivo: 10MB.`);
         continue;
+      }
+      if (state.attachments.length + newAttachments.length >= MAX_ARQUIVOS) {
+        setAttachmentError(`Máximo de ${MAX_ARQUIVOS} arquivos permitidos.`);
+        break;
+      }
+      if (totalBytes + file.size > MAX_BYTES_TOTAL) {
+        setAttachmentError(`Limite total de 20MB excedido.`);
+        break;
       }
 
       const reader = new FileReader();
@@ -630,6 +649,7 @@ const startRecovery = (sessionId: string) => {
         size: file.size,
         data: base64
       });
+      totalBytes += file.size;
     }
 
     setState(prev => ({
@@ -1602,9 +1622,9 @@ const startRecovery = (sessionId: string) => {
           </div>
           <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0 }}>
             <button
-              disabled={!state.caseDescription.trim() || loading}
+              disabled={state.caseDescription.trim().length <= 10 || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[2].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[2].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[2].cta}
             </button>
@@ -1678,9 +1698,9 @@ const startRecovery = (sessionId: string) => {
           </div>
           <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0 }}>
             <button
-              disabled={!state.caseDescription.trim() || loading}
+              disabled={state.caseDescription.trim().length <= 10 || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[1].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[1].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[1].cta}
             </button>
@@ -2713,7 +2733,7 @@ const startRecovery = (sessionId: string) => {
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Descreva aqui os detalhes da causa, fatos principais e argumentos jurídicos. Nossa IA processa textos longos sem limite de caracteres..."
-                      className="w-full min-h-[400px] h-auto bg-transparent p-8 outline-none transition-all text-2xl font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[400px] h-auto bg-transparent p-8 outline-none transition-all text-2xl font-serif italic text-white/90 resize-y placeholder:opacity-30"
                     />
                     
                     {/* Attachments List */}
@@ -2761,7 +2781,7 @@ const startRecovery = (sessionId: string) => {
                       </div>
 
                       <button
-                        disabled={!state.caseDescription.trim() || loading}
+                        disabled={state.caseDescription.trim().length <= 10 || loading}
                         onClick={handleValidate}
                         className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
                       >
@@ -2794,25 +2814,34 @@ const startRecovery = (sessionId: string) => {
                       <TrendingUp className="w-4 h-4" />
                     </div>
                     
-                    <div className="grid grid-cols-1 gap-6">
-                      <div className="space-y-1">
+                    {/* ADR-006: nunca renderiza globalStats antes de resolver — evita
+                        mostrar um "0%"/valor zerado como se fosse dado real. */}
+                    {statsLoading ? (
+                      <div className="space-y-1 py-4">
                         <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
-                        <div className="text-6xl font-serif italic text-white/90">
-                          {globalStats.winRate}%
-                        </div>
+                        <div className="text-lg font-mono text-white/30 animate-pulse">Carregando estatísticas...</div>
                       </div>
-                      
-                      <div className="flex justify-between items-end border-t border-white/5 pt-6">
+                    ) : (
+                      <div className="grid grid-cols-1 gap-6">
                         <div className="space-y-1">
-                          <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Simulações Concluídas</div>
-                          <div className="text-2xl font-mono text-white/80">{globalStats.simulations.toLocaleString()}</div>
+                          <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
+                          <div className="text-6xl font-serif italic text-white/90">
+                            {globalStats.winRate}%
+                          </div>
                         </div>
-                        <div className="text-right space-y-1">
-                          <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Precisão Média</div>
-                          <div className="text-2xl font-mono text-emerald-500 font-bold">{globalStats.precision}%</div>
+
+                        <div className="flex justify-between items-end border-t border-white/5 pt-6">
+                          <div className="space-y-1">
+                            <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Simulações Concluídas</div>
+                            <div className="text-2xl font-mono text-white/80">{globalStats.simulations.toLocaleString()}</div>
+                          </div>
+                          <div className="text-right space-y-1">
+                            <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Precisão Média</div>
+                            <div className="text-2xl font-mono text-emerald-500 font-bold">{globalStats.precision}%</div>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
 
                     <div className="text-[10px] font-mono text-white/10 font-bold border-t border-white/5 pt-4 flex justify-between">
                        <span>ALGORITMO: LEX_FRAME_V3</span>
@@ -2826,8 +2855,18 @@ const startRecovery = (sessionId: string) => {
                       <p className="text-[10px] text-white/20 uppercase tracking-widest font-mono">Status Global Agents / Judicial Regions</p>
                     </div>
 
+                    {/* ADR-006: loading e "sem dados" nunca reaproveitam o mesmo
+                        visual da lista real — evita parecer estatística de verdade. */}
                     <div className="space-y-5">
-                      {(() => {
+                      {statsLoading ? (
+                        <div className="text-[10px] text-white/20 uppercase tracking-widest font-mono text-center py-6 animate-pulse">
+                          Carregando disponibilidade...
+                        </div>
+                      ) : state.regionalStats.length === 0 ? (
+                        <div className="text-[10px] text-white/20 uppercase tracking-widest font-mono text-center py-6">
+                          Sem dados suficientes ainda
+                        </div>
+                      ) : (() => {
                         const maxSeeds = Math.max(...state.regionalStats.map(r => r.seeds), 1);
                         return state.regionalStats.map((stat, i) => (
                           <div key={i} className="space-y-2 group cursor-default">
@@ -2854,19 +2893,21 @@ const startRecovery = (sessionId: string) => {
                       })()}
                     </div>
 
-                    <div className="pt-6 border-t border-white/5 space-y-4">
-                      <div className="bg-white/5 p-4 space-y-2 border border-white/5">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Total de Vitórias</span>
-                          <span className="text-xs font-mono text-emerald-500 font-bold">
-                            {state.regionalStats.reduce((acc, s) => acc + s.active, 0)} VITÓRIAS
-                          </span>
-                        </div>
-                        <div className="text-[9px] text-white/20 leading-relaxed font-serif italic">
-                          A simulação aciona agentes especializados conforme a área do conflito identificada na etapa de validação.
+                    {!statsLoading && state.regionalStats.length > 0 && (
+                      <div className="pt-6 border-t border-white/5 space-y-4">
+                        <div className="bg-white/5 p-4 space-y-2 border border-white/5">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Total de Vitórias</span>
+                            <span className="text-xs font-mono text-emerald-500 font-bold">
+                              {state.regionalStats.reduce((acc, s) => acc + s.active, 0)} VITÓRIAS
+                            </span>
+                          </div>
+                          <div className="text-[9px] text-white/20 leading-relaxed font-serif italic">
+                            A simulação aciona agentes especializados conforme a área do conflito identificada na etapa de validação.
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   <div className="bg-[#1C1C1F] border border-white/10 p-6 flex items-center gap-4">
@@ -3844,8 +3885,10 @@ const startRecovery = (sessionId: string) => {
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { n: "ÁREA IDENTIFICADA", s: areaLabels[state.detectedArea], icon: ShieldCheck },
-                  { n: "ESPECIALIZAÇÃO", s: "Juiz de IA especializado em " + areaLabels[state.detectedArea], icon: Gavel },
+                  // ADR-006: antes da validação (step 'input'), detectedArea ainda é
+                  // o valor padrão 'OTHER' — não renderiza como se fosse detectado.
+                  { n: "ÁREA IDENTIFICADA", s: state.step === 'input' ? 'Aguardando causa' : areaLabels[state.detectedArea], icon: ShieldCheck },
+                  { n: "ESPECIALIZAÇÃO", s: state.step === 'input' ? 'Aguardando causa' : "Juiz de IA especializado em " + areaLabels[state.detectedArea], icon: Gavel },
                 ].map((m, i) => (
                   <div key={i} className="bg-white/5 p-4 border border-white/5 space-y-1">
                     <div className="text-[10px] font-bold text-white/50 uppercase tracking-tighter">{m.n}</div>

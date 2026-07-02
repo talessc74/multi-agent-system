@@ -1,0 +1,1152 @@
+{
+  ".claude/hooks/session-start.sh": {
+    "mtime": 1782950949.6290631,
+    "ast_hash": "24e8fd32e2a122d98deecb3f696b1a02",
+    "semantic_hash": "24e8fd32e2a122d98deecb3f696b1a02"
+  },
+  ".claude/settings.json": {
+    "mtime": 1782950973.9250627,
+    "ast_hash": "3850be437051ab4f71f6bcc13d97fbaa",
+    "semantic_hash": "3850be437051ab4f71f6bcc13d97fbaa"
+  },
+  ".seeds/BAU.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "1ec154bd141c95c4645caf24f5b9038d",
+    "semantic_hash": "1ec154bd141c95c4645caf24f5b9038d"
+  },
+  ".seeds/BLAST.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "833701974d2b02b27d35122f6d7b9762",
+    "semantic_hash": "833701974d2b02b27d35122f6d7b9762"
+  },
+  ".seeds/CANVAS.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "ae03045cd9fb6c98491795c7fdf20ebc",
+    "semantic_hash": "ae03045cd9fb6c98491795c7fdf20ebc"
+  },
+  ".seeds/COMPASS.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "b0e06dfaf3384f41ed2f17d15517ea4e",
+    "semantic_hash": "b0e06dfaf3384f41ed2f17d15517ea4e"
+  },
+  ".seeds/EMPIRICUS.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "e4149e299bb6a97a803ad7af8d53795b",
+    "semantic_hash": "e4149e299bb6a97a803ad7af8d53795b"
+  },
+  ".seeds/FLUX.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "5d5b84acfcefcc12ab2e0d3d235be573",
+    "semantic_hash": "5d5b84acfcefcc12ab2e0d3d235be573"
+  },
+  ".seeds/FORGE.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "76560689d493bb1d47f981b1cbe04429",
+    "semantic_hash": "76560689d493bb1d47f981b1cbe04429"
+  },
+  ".seeds/GHOST.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "3413f8f537efeeea6187741744656e9a",
+    "semantic_hash": "3413f8f537efeeea6187741744656e9a"
+  },
+  ".seeds/HERALD.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "e805572019102dc5c66a7e5a46bff548",
+    "semantic_hash": "e805572019102dc5c66a7e5a46bff548"
+  },
+  ".seeds/LITERATE.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "f77c0a47ed13c5dd76e35b0775d44ff0",
+    "semantic_hash": "f77c0a47ed13c5dd76e35b0775d44ff0"
+  },
+  ".seeds/PARETO.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "aa6f933b5277443ea2f3b6f43450995c",
+    "semantic_hash": "aa6f933b5277443ea2f3b6f43450995c"
+  },
+  ".seeds/POLARBEAR.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "ac256a12cb0b41f0e2b3f69865978395",
+    "semantic_hash": "ac256a12cb0b41f0e2b3f69865978395"
+  },
+  ".seeds/PROBE.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "551e886f7333430c502f1ecb508ee98d",
+    "semantic_hash": "551e886f7333430c502f1ecb508ee98d"
+  },
+  ".seeds/QUILL.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "e76bc3ddb501bfa6d310632e1036bda3",
+    "semantic_hash": "e76bc3ddb501bfa6d310632e1036bda3"
+  },
+  ".seeds/RIVERRAID.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "52699abf7512df03e0de8999f562919f",
+    "semantic_hash": "52699abf7512df03e0de8999f562919f"
+  },
+  ".seeds/SCAFFOLD.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "b72a9a8bf95b82ab2ad6ea601b7eb9be",
+    "semantic_hash": "b72a9a8bf95b82ab2ad6ea601b7eb9be"
+  },
+  ".seeds/SCOUT.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "c483a0e52b8369a49e398fabd0f7d798",
+    "semantic_hash": "c483a0e52b8369a49e398fabd0f7d798"
+  },
+  ".seeds/SCRIBE.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "c4b008b36276777dd440f146e4bbfd50",
+    "semantic_hash": "c4b008b36276777dd440f146e4bbfd50"
+  },
+  ".seeds/SENTINEL.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "7e2cfc3bb485e380ac8f774248233e91",
+    "semantic_hash": "7e2cfc3bb485e380ac8f774248233e91"
+  },
+  ".seeds/SOVEREIGN.json": {
+    "mtime": 1782902835.9365828,
+    "ast_hash": "369f9173bd3594a80b884fc6cd12962a",
+    "semantic_hash": "369f9173bd3594a80b884fc6cd12962a"
+  },
+  "agents/AGENTS_REGISTRY.json": {
+    "mtime": 1782902835.956687,
+    "ast_hash": "4ea90dae3748d028222742a71736bd3a",
+    "semantic_hash": "4ea90dae3748d028222742a71736bd3a"
+  },
+  "agents/advogado_consumerista_v1.0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "e41c9d7e4e780437f72768044c607cbf",
+    "semantic_hash": "e41c9d7e4e780437f72768044c607cbf"
+  },
+  "agents/advogado_mannrich_v1.0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "cba4073f5fa46848c0778132cb1b3213",
+    "semantic_hash": "cba4073f5fa46848c0778132cb1b3213"
+  },
+  "agents/agente_claude_code_expert_v1.0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "0e663894f74980111428ccb72cdceecb",
+    "semantic_hash": "0e663894f74980111428ccb72cdceecb"
+  },
+  "agents/agt_adv_005_primo_v1_0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "29abcc6aea144f930a73c4243cedf1c8",
+    "semantic_hash": "29abcc6aea144f930a73c4243cedf1c8"
+  },
+  "agents/agt_adv_006_pedro_v1_0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "c0def04229f84b251c055b51799d0a8d",
+    "semantic_hash": "c0def04229f84b251c055b51799d0a8d"
+  },
+  "agents/agt_dev_001_pipe_v1_0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "dcd3c822a62b833b60f921e2fad94ee9",
+    "semantic_hash": "dcd3c822a62b833b60f921e2fad94ee9"
+  },
+  "agents/agt_dev_002_fenix_v1_0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "5eefa812a782cb5f6a8f32df13d2b27a",
+    "semantic_hash": "5eefa812a782cb5f6a8f32df13d2b27a"
+  },
+  "agents/agt_dev_003_dora_v1_0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "d20ed922b925c73e1ee85b942f198868",
+    "semantic_hash": "d20ed922b925c73e1ee85b942f198868"
+  },
+  "agents/agt_pm_001_papo_v1_0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "c33789e01b229b3317dbf702b04bd0a7",
+    "semantic_hash": "c33789e01b229b3317dbf702b04bd0a7"
+  },
+  "agents/agt_pm_002_petra_v1_0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "5cc39a412eef3a1c1c572b57d3801288",
+    "semantic_hash": "5cc39a412eef3a1c1c572b57d3801288"
+  },
+  "agents/agt_ux_002_bald_v1_0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "2696abf9070d532c43c3d2342415fcda",
+    "semantic_hash": "2696abf9070d532c43c3d2342415fcda"
+  },
+  "agents/agt_ux_003_porto_v1_0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "0e54ec5ce115c456f7405c591cec31f9",
+    "semantic_hash": "0e54ec5ce115c456f7405c591cec31f9"
+  },
+  "agents/agt_ux_004_prado_v1_0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "a787acd26a9d498871ad82df9d1e6399",
+    "semantic_hash": "a787acd26a9d498871ad82df9d1e6399"
+  },
+  "agents/arquiteto_ia_v1.0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "4e2d9cd5682601b1b810ada72668786e",
+    "semantic_hash": "4e2d9cd5682601b1b810ada72668786e"
+  },
+  "agents/arquiteto_produto_v1.0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "a53cb045731bbd5613f0b93f5c328f89",
+    "semantic_hash": "a53cb045731bbd5613f0b93f5c328f89"
+  },
+  "agents/conselho_consultivo_lexforum_v1.0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "415e4777ff845f53536de00d0af1a38c",
+    "semantic_hash": "415e4777ff845f53536de00d0af1a38c"
+  },
+  "agents/consultor_ia_v1.0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "fcc1e9497da5f4d521602b7fd170a58d",
+    "semantic_hash": "fcc1e9497da5f4d521602b7fd170a58d"
+  },
+  "agents/juiz_everton_v1.0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "2b8c2eb7b784ca0eba9efe2c98e8d60a",
+    "semantic_hash": "2b8c2eb7b784ca0eba9efe2c98e8d60a"
+  },
+  "agents/juiz_jec_v1.0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "31734fc2e2642f83218146c3b9494008",
+    "semantic_hash": "31734fc2e2642f83218146c3b9494008"
+  },
+  "agents/juiza_rosemarie_v1.0.json": {
+    "mtime": 1782902835.9628866,
+    "ast_hash": "d9a1df359aa92c35cfd83be03ea49750",
+    "semantic_hash": "d9a1df359aa92c35cfd83be03ea49750"
+  },
+  "agents/recepcionista_v1.0.json": {
+    "mtime": 1782902835.9646869,
+    "ast_hash": "8db52580035a98c396f9a10821e6f2c3",
+    "semantic_hash": "8db52580035a98c396f9a10821e6f2c3"
+  },
+  "agents/revisor_sistema_v1.0.json": {
+    "mtime": 1782902835.9646869,
+    "ast_hash": "6f60f0f1650a0aaec7086e3bcb0ca9d4",
+    "semantic_hash": "6f60f0f1650a0aaec7086e3bcb0ca9d4"
+  },
+  "agents/ux_validator_v1.0.json": {
+    "mtime": 1782902835.9646869,
+    "ast_hash": "130cfb7bd53ca3ec5e9e8b6c19bcd333",
+    "semantic_hash": "130cfb7bd53ca3ec5e9e8b6c19bcd333"
+  },
+  "config/advisory_board_framework.json": {
+    "mtime": 1782902835.9646869,
+    "ast_hash": "e46b63182a605f6d4af7cd998f027a96",
+    "semantic_hash": "e46b63182a605f6d4af7cd998f027a96"
+  },
+  "config/especialista.json": {
+    "mtime": 1782902835.969705,
+    "ast_hash": "60f61a1243bacb40f7cc01c0913fb8fe",
+    "semantic_hash": "60f61a1243bacb40f7cc01c0913fb8fe"
+  },
+  "config/semente.json": {
+    "mtime": 1782902835.969705,
+    "ast_hash": "85940b7b8c4c332f8853542ec42ab308",
+    "semantic_hash": "85940b7b8c4c332f8853542ec42ab308"
+  },
+  "lexforum-ai-studio/__tests__/agent-resolver.test.ts": {
+    "mtime": 1782902835.9709175,
+    "ast_hash": "c93ae81a9388fe619a219d263f5153ba",
+    "semantic_hash": "c93ae81a9388fe619a219d263f5153ba"
+  },
+  "lexforum-ai-studio/__tests__/chat-context-builder.test.ts": {
+    "mtime": 1782902835.9720328,
+    "ast_hash": "11e33026c4cd32e3929e147333ad9015",
+    "semantic_hash": "11e33026c4cd32e3929e147333ad9015"
+  },
+  "lexforum-ai-studio/agent-creator.ts": {
+    "mtime": 1782902835.9720328,
+    "ast_hash": "6e84a13a52ea43e7e96b8a617d786ceb",
+    "semantic_hash": "6e84a13a52ea43e7e96b8a617d786ceb"
+  },
+  "lexforum-ai-studio/agent-resolver.ts": {
+    "mtime": 1782902835.9720328,
+    "ast_hash": "15aee7dfe5aef657013f99205097e496",
+    "semantic_hash": "15aee7dfe5aef657013f99205097e496"
+  },
+  "lexforum-ai-studio/alerts.ts": {
+    "mtime": 1782902835.9720328,
+    "ast_hash": "86cbf408421626fc75fac04b5aab74bd",
+    "semantic_hash": "86cbf408421626fc75fac04b5aab74bd"
+  },
+  "lexforum-ai-studio/chat-context-builder.ts": {
+    "mtime": 1782902835.9720328,
+    "ast_hash": "8100624eb5aec7586ce2fe291568644b",
+    "semantic_hash": "8100624eb5aec7586ce2fe291568644b"
+  },
+  "lexforum-ai-studio/chat-handler.ts": {
+    "mtime": 1782902835.9720328,
+    "ast_hash": "a1e7b6963ec5628458cd273a952c88f8",
+    "semantic_hash": "a1e7b6963ec5628458cd273a952c88f8"
+  },
+  "lexforum-ai-studio/firebase-applet-config.json": {
+    "mtime": 1782902835.9739096,
+    "ast_hash": "af937685a18ec229aacead7566c6bcf8",
+    "semantic_hash": "af937685a18ec229aacead7566c6bcf8"
+  },
+  "lexforum-ai-studio/firebase-blueprint.json": {
+    "mtime": 1782902835.9739096,
+    "ast_hash": "34ad57161a7d0b36e2f9788681451db6",
+    "semantic_hash": "34ad57161a7d0b36e2f9788681451db6"
+  },
+  "lexforum-ai-studio/firebase.json": {
+    "mtime": 1782902835.9739096,
+    "ast_hash": "6a7e94c3124e3d2552ee4ec011ae7b1d",
+    "semantic_hash": "6a7e94c3124e3d2552ee4ec011ae7b1d"
+  },
+  "lexforum-ai-studio/firestore.indexes.json": {
+    "mtime": 1782902835.9739096,
+    "ast_hash": "73c798e873a230d75d0814c113e8dc89",
+    "semantic_hash": "73c798e873a230d75d0814c113e8dc89"
+  },
+  "lexforum-ai-studio/metadata.json": {
+    "mtime": 1782902835.9739096,
+    "ast_hash": "7a317b7481cb258d1317d063b0eef4ea",
+    "semantic_hash": "7a317b7481cb258d1317d063b0eef4ea"
+  },
+  "lexforum-ai-studio/package.json": {
+    "mtime": 1782902835.976687,
+    "ast_hash": "1fd77a3c39b38471c20f39e3eae96c64",
+    "semantic_hash": "1fd77a3c39b38471c20f39e3eae96c64"
+  },
+  "lexforum-ai-studio/scripts/backfill-createdAt.js": {
+    "mtime": 1782902835.9846869,
+    "ast_hash": "f043e1680f4d92c527cb641412d82c24",
+    "semantic_hash": "f043e1680f4d92c527cb641412d82c24"
+  },
+  "lexforum-ai-studio/server.ts": {
+    "mtime": 1782902835.9846869,
+    "ast_hash": "adfd8169df8749c078072ac567b1597a",
+    "semantic_hash": "adfd8169df8749c078072ac567b1597a"
+  },
+  "lexforum-ai-studio/simulation-status.ts": {
+    "mtime": 1782902835.9846869,
+    "ast_hash": "6bf40a888f79c3060840252aa3791a7a",
+    "semantic_hash": "6bf40a888f79c3060840252aa3791a7a"
+  },
+  "lexforum-ai-studio/src/App.tsx": {
+    "mtime": 1782911177.8218348,
+    "ast_hash": "a9a18e0c4b0cce888264031569e8f0bf",
+    "semantic_hash": "a9a18e0c4b0cce888264031569e8f0bf"
+  },
+  "lexforum-ai-studio/src/components/ChatPanel.tsx": {
+    "mtime": 1782902835.9919946,
+    "ast_hash": "f0a3f4dea751b80a8421aff4127670ff",
+    "semantic_hash": "f0a3f4dea751b80a8421aff4127670ff"
+  },
+  "lexforum-ai-studio/src/components/ContextZone.tsx": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "24a68e44769e7053655b696956247c68",
+    "semantic_hash": "24a68e44769e7053655b696956247c68"
+  },
+  "lexforum-ai-studio/src/components/FlowStepper.tsx": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "8b9d26c9ecba5b68aab7af562896dafa",
+    "semantic_hash": "8b9d26c9ecba5b68aab7af562896dafa"
+  },
+  "lexforum-ai-studio/src/components/LoadingScreen.tsx": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "1232d0be66690272299da5ef7269abff",
+    "semantic_hash": "1232d0be66690272299da5ef7269abff"
+  },
+  "lexforum-ai-studio/src/components/LoginModal.tsx": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "a56c42586c6d395627f9d23b3d0c85df",
+    "semantic_hash": "a56c42586c6d395627f9d23b3d0c85df"
+  },
+  "lexforum-ai-studio/src/components/Logo.tsx": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "af40f0a969e0c11ddee10b7206cc0e47",
+    "semantic_hash": "af40f0a969e0c11ddee10b7206cc0e47"
+  },
+  "lexforum-ai-studio/src/components/ModeNavbar.tsx": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "7159965c8c9d2fd2b81fcd2c3aa6f115",
+    "semantic_hash": "7159965c8c9d2fd2b81fcd2c3aa6f115"
+  },
+  "lexforum-ai-studio/src/components/Navbar.tsx": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "eb324a6a699267b02607709b85b6505d",
+    "semantic_hash": "eb324a6a699267b02607709b85b6505d"
+  },
+  "lexforum-ai-studio/src/components/ProgressDots.tsx": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "e6cdf8d4006d700af5410b6e320ada3e",
+    "semantic_hash": "e6cdf8d4006d700af5410b6e320ada3e"
+  },
+  "lexforum-ai-studio/src/components/SessionStatusBar.tsx": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "800e7ab005fc28695b43e6cd3d2d54d0",
+    "semantic_hash": "800e7ab005fc28695b43e6cd3d2d54d0"
+  },
+  "lexforum-ai-studio/src/config/modeConfig.ts": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "76bbe6a681be5a2bf1eadb4fbb9289c2",
+    "semantic_hash": "76bbe6a681be5a2bf1eadb4fbb9289c2"
+  },
+  "lexforum-ai-studio/src/firebase-applet-config.json": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "af937685a18ec229aacead7566c6bcf8",
+    "semantic_hash": "af937685a18ec229aacead7566c6bcf8"
+  },
+  "lexforum-ai-studio/src/hooks/useTheme.ts": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "9c75b5cfd5d655e15685b3f5b04fdcdf",
+    "semantic_hash": "9c75b5cfd5d655e15685b3f5b04fdcdf"
+  },
+  "lexforum-ai-studio/src/lib/anonymizer.ts": {
+    "mtime": 1782902835.9926724,
+    "ast_hash": "1a2463d659ef66caf621a781f6ca155b",
+    "semantic_hash": "1a2463d659ef66caf621a781f6ca155b"
+  },
+  "lexforum-ai-studio/src/lib/firebase.ts": {
+    "mtime": 1782902835.9956987,
+    "ast_hash": "7c67bc76c336e02f20ad59054ecd1370",
+    "semantic_hash": "7c67bc76c336e02f20ad59054ecd1370"
+  },
+  "lexforum-ai-studio/src/lib/gemini.server.ts": {
+    "mtime": 1782910803.8686147,
+    "ast_hash": "36235b519d6f1f8609542dc78846a2f3",
+    "semantic_hash": "36235b519d6f1f8609542dc78846a2f3"
+  },
+  "lexforum-ai-studio/src/lib/gemini.ts": {
+    "mtime": 1782902835.9956987,
+    "ast_hash": "e7683878b7d92c377c6b09496fcc68a1",
+    "semantic_hash": "e7683878b7d92c377c6b09496fcc68a1"
+  },
+  "lexforum-ai-studio/src/lib/judgment-interpreter.ts": {
+    "mtime": 1782902835.9956987,
+    "ast_hash": "b8effa89003ffaa3106081123684e236",
+    "semantic_hash": "b8effa89003ffaa3106081123684e236"
+  },
+  "lexforum-ai-studio/src/lib/stripe.server.ts": {
+    "mtime": 1782902835.9956987,
+    "ast_hash": "522ec29957bfabd08c5fa4fd0001640f",
+    "semantic_hash": "522ec29957bfabd08c5fa4fd0001640f"
+  },
+  "lexforum-ai-studio/src/main.tsx": {
+    "mtime": 1782902835.9956987,
+    "ast_hash": "2b36426d5ad7e08ef79746aa524f4fb7",
+    "semantic_hash": "2b36426d5ad7e08ef79746aa524f4fb7"
+  },
+  "lexforum-ai-studio/src/pages/BoardroomPage.tsx": {
+    "mtime": 1782902835.9956987,
+    "ast_hash": "5da8fe59156c6d242802fb784f5e611c",
+    "semantic_hash": "5da8fe59156c6d242802fb784f5e611c"
+  },
+  "lexforum-ai-studio/src/pages/TermosPage.tsx": {
+    "mtime": 1782902835.9980075,
+    "ast_hash": "b31cbb0d3c1c9c2a8f3073befe566769",
+    "semantic_hash": "b31cbb0d3c1c9c2a8f3073befe566769"
+  },
+  "lexforum-ai-studio/src/services/chatService.ts": {
+    "mtime": 1782902835.9980075,
+    "ast_hash": "8b1c6986f3394722af4f3c478faf19b4",
+    "semantic_hash": "8b1c6986f3394722af4f3c478faf19b4"
+  },
+  "lexforum-ai-studio/src/services/checkoutService.ts": {
+    "mtime": 1782902835.9986236,
+    "ast_hash": "05c62d56a8e02e9bd3e0c43f01bc4649",
+    "semantic_hash": "05c62d56a8e02e9bd3e0c43f01bc4649"
+  },
+  "lexforum-ai-studio/src/services/dbService.ts": {
+    "mtime": 1782902835.9986236,
+    "ast_hash": "253a09e8f005f0f6e4d1af2a1230ece3",
+    "semantic_hash": "253a09e8f005f0f6e4d1af2a1230ece3"
+  },
+  "lexforum-ai-studio/src/test/LoginModal.test.tsx": {
+    "mtime": 1782902835.9986236,
+    "ast_hash": "5743af88f703c1c6164e6d354576f647",
+    "semantic_hash": "5743af88f703c1c6164e6d354576f647"
+  },
+  "lexforum-ai-studio/src/test/checkoutService.test.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "b6eb6504ed7dcbcfec73c8530e2653f7",
+    "semantic_hash": "b6eb6504ed7dcbcfec73c8530e2653f7"
+  },
+  "lexforum-ai-studio/src/test/dbService.test.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "94ecaa6188d8a2c6a84b5a586babb371",
+    "semantic_hash": "94ecaa6188d8a2c6a84b5a586babb371"
+  },
+  "lexforum-ai-studio/src/test/dualBar.test.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "8f7069c5a8be8a67d35bc47e77ec1e3a",
+    "semantic_hash": "8f7069c5a8be8a67d35bc47e77ec1e3a"
+  },
+  "lexforum-ai-studio/src/test/extractProbability.test.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "dd184aad0a6defce184db101c214c6f3",
+    "semantic_hash": "dd184aad0a6defce184db101c214c6f3"
+  },
+  "lexforum-ai-studio/src/test/judgmentInterpreter.test.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "cb641550b2aca837f1b71de766f8f50c",
+    "semantic_hash": "cb641550b2aca837f1b71de766f8f50c"
+  },
+  "lexforum-ai-studio/src/test/mode4Simulation.test.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "a4328a4eb821ffba088c83210e614d03",
+    "semantic_hash": "a4328a4eb821ffba088c83210e614d03"
+  },
+  "lexforum-ai-studio/src/test/regionalStats.test.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "1bcda10a4fe8d0ddf46d5d2315c992e8",
+    "semantic_hash": "1bcda10a4fe8d0ddf46d5d2315c992e8"
+  },
+  "lexforum-ai-studio/src/test/secondaryOpsIsolation.test.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "78254fce2f1d43b5bcbc7fa57c63689d",
+    "semantic_hash": "78254fce2f1d43b5bcbc7fa57c63689d"
+  },
+  "lexforum-ai-studio/src/test/setup.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "00e47f7b9836e8f731101981fa2bb2de",
+    "semantic_hash": "00e47f7b9836e8f731101981fa2bb2de"
+  },
+  "lexforum-ai-studio/src/test/simRecovery.test.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "d6e7fa6b9f100bce87118406b3f999d9",
+    "semantic_hash": "d6e7fa6b9f100bce87118406b3f999d9"
+  },
+  "lexforum-ai-studio/src/test/specificJudgeNullLeak.test.ts": {
+    "mtime": 1782910803.8686147,
+    "ast_hash": "c7398f7a77afc93346ded55bbcfec174",
+    "semantic_hash": "c7398f7a77afc93346ded55bbcfec174"
+  },
+  "lexforum-ai-studio/src/test/sseAbortError.test.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "e0e3219758098c919c5f4eca67d7e72f",
+    "semantic_hash": "e0e3219758098c919c5f4eca67d7e72f"
+  },
+  "lexforum-ai-studio/src/types.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "4e612923caa26e749ceb03140a8e88df",
+    "semantic_hash": "4e612923caa26e749ceb03140a8e88df"
+  },
+  "lexforum-ai-studio/sse-utils.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "f4ce490633e200ddbf19ceca00cc9c2d",
+    "semantic_hash": "f4ce490633e200ddbf19ceca00cc9c2d"
+  },
+  "lexforum-ai-studio/tsconfig.json": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "00aa239539fec5c950d7b4fa7c1d9655",
+    "semantic_hash": "00aa239539fec5c950d7b4fa7c1d9655"
+  },
+  "lexforum-ai-studio/vite.config.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "af347ab4c12d836e7856fe669dd6524b",
+    "semantic_hash": "af347ab4c12d836e7856fe669dd6524b"
+  },
+  "lexforum-ai-studio/vitest.config.ts": {
+    "mtime": 1782902835.999549,
+    "ast_hash": "e430d0f301c90856eec1de383fde6283",
+    "semantic_hash": "e430d0f301c90856eec1de383fde6283"
+  },
+  "lexforum-app/next.config.js": {
+    "mtime": 1782902836.0024915,
+    "ast_hash": "81557699ba024c900193b2205a90e6f7",
+    "semantic_hash": "81557699ba024c900193b2205a90e6f7"
+  },
+  "lexforum-app/package.json": {
+    "mtime": 1782902836.0046868,
+    "ast_hash": "54e24ffbfcc502a49d7b8b170741f87c",
+    "semantic_hash": "54e24ffbfcc502a49d7b8b170741f87c"
+  },
+  "lexforum-app/postcss.config.js": {
+    "mtime": 1782902836.0046868,
+    "ast_hash": "854b38759e7a8b4b82306ae2d9a3a833",
+    "semantic_hash": "854b38759e7a8b4b82306ae2d9a3a833"
+  },
+  "lexforum-app/src/app/api/laudo/route.ts": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "33e6eedc3d33488a7cf0d9d8dae6cbac",
+    "semantic_hash": "33e6eedc3d33488a7cf0d9d8dae6cbac"
+  },
+  "lexforum-app/src/app/api/simular/route.ts": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "a6a1ae8db47671e7654b05fb2047830e",
+    "semantic_hash": "a6a1ae8db47671e7654b05fb2047830e"
+  },
+  "lexforum-app/src/app/api/validar/route.ts": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "b2d9ea3c739c30c368f91114aa82db56",
+    "semantic_hash": "b2d9ea3c739c30c368f91114aa82db56"
+  },
+  "lexforum-app/src/app/causa/page.tsx": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "24a21f42e8a48f6b03b1e44e58af8c1c",
+    "semantic_hash": "24a21f42e8a48f6b03b1e44e58af8c1c"
+  },
+  "lexforum-app/src/app/components/HeroTitle.tsx": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "c355112a78671c63935942f848ed8f47",
+    "semantic_hash": "c355112a78671c63935942f848ed8f47"
+  },
+  "lexforum-app/src/app/confirmacao/page.tsx": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "c52701b27e4a0aec343f48d00e2b9bdf",
+    "semantic_hash": "c52701b27e4a0aec343f48d00e2b9bdf"
+  },
+  "lexforum-app/src/app/layout.tsx": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "0a0cfb89c677e89a3e56a0562cdd0527",
+    "semantic_hash": "0a0cfb89c677e89a3e56a0562cdd0527"
+  },
+  "lexforum-app/src/app/loading/page.tsx": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "8d2fdd82a8c4912f46c63c3c352707f8",
+    "semantic_hash": "8d2fdd82a8c4912f46c63c3c352707f8"
+  },
+  "lexforum-app/src/app/page.tsx": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "22077536787b37bbe31d718c782e4787",
+    "semantic_hash": "22077536787b37bbe31d718c782e4787"
+  },
+  "lexforum-app/src/app/resultado/page.tsx": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "a984be5bfaf531d189069205d6d7920e",
+    "semantic_hash": "a984be5bfaf531d189069205d6d7920e"
+  },
+  "lexforum-app/tailwind.config.ts": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "a3830a2dd2d1c8cc3f2f4d5194148271",
+    "semantic_hash": "a3830a2dd2d1c8cc3f2f4d5194148271"
+  },
+  "lexforum-app/tsconfig.json": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "d6e6b93fb360c85a309fc32ca6ebeb9b",
+    "semantic_hash": "d6e6b93fb360c85a309fc32ca6ebeb9b"
+  },
+  "package.json": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "e78a782d2f627509f34a0137f5d8e49a",
+    "semantic_hash": "e78a782d2f627509f34a0137f5d8e49a"
+  },
+  "registry/index/civel.json": {
+    "mtime": 1782902836.0153124,
+    "ast_hash": "e03d9854763f2de92a9cffd5d0dd7a9f",
+    "semantic_hash": "e03d9854763f2de92a9cffd5d0dd7a9f"
+  },
+  "registry/index/consumidor.json": {
+    "mtime": 1782902836.0154634,
+    "ast_hash": "0b6338c2bfa7b2b36be2a997ad65edc6",
+    "semantic_hash": "0b6338c2bfa7b2b36be2a997ad65edc6"
+  },
+  "registry/index/trabalhista.json": {
+    "mtime": 1782902836.0154634,
+    "ast_hash": "05a39dbba66898f011d985c6d8dbb546",
+    "semantic_hash": "05a39dbba66898f011d985c6d8dbb546"
+  },
+  "seeds/SEEDS_REGISTRY.json": {
+    "mtime": 1782902836.0154634,
+    "ast_hash": "48ef267e616e94a3fda8b1540c1e75f2",
+    "semantic_hash": "48ef267e616e94a3fda8b1540c1e75f2"
+  },
+  "seeds/SEED_ADV_001_v1.0_VIC.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "76ffbdaa70d817a92c1b5e4252065aa9",
+    "semantic_hash": "76ffbdaa70d817a92c1b5e4252065aa9"
+  },
+  "seeds/SEED_ADV_002_v1.0_ESTON.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "ec712b80ba5b32f27cf92ff1f44c9b5b",
+    "semantic_hash": "ec712b80ba5b32f27cf92ff1f44c9b5b"
+  },
+  "seeds/SEED_ADV_003_v1.0_CRESH.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "110c45df2fb17e5056935aea3770fd78",
+    "semantic_hash": "110c45df2fb17e5056935aea3770fd78"
+  },
+  "seeds/SEED_ADV_004_v1.0_JUSTIN.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "0dce2c19d0101cd965d4a596bc6d2df0",
+    "semantic_hash": "0dce2c19d0101cd965d4a596bc6d2df0"
+  },
+  "seeds/SEED_ADV_005_v1.0_PRIMO.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "915965648297b316745e984cd0f966e6",
+    "semantic_hash": "915965648297b316745e984cd0f966e6"
+  },
+  "seeds/SEED_ADV_006_v1.0_PEDRO.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "e99a4a319367756386227244676c6f7f",
+    "semantic_hash": "e99a4a319367756386227244676c6f7f"
+  },
+  "seeds/SEED_AI_001_v1.0.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "4a66a044037f7da552b34d6e5723580e",
+    "semantic_hash": "4a66a044037f7da552b34d6e5723580e"
+  },
+  "seeds/SEED_ARCH_001_v1.0_ARCH.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "e5706fa1695c4da84e5c6e988bb1a892",
+    "semantic_hash": "e5706fa1695c4da84e5c6e988bb1a892"
+  },
+  "seeds/SEED_DEV_001_v1.0_PIPE.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "e90c8a013cdc16809c11b21102a7bfe7",
+    "semantic_hash": "e90c8a013cdc16809c11b21102a7bfe7"
+  },
+  "seeds/SEED_DEV_002_v1.0_FENIX.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "2dff3eef73d02db6146f9e840f2d9885",
+    "semantic_hash": "2dff3eef73d02db6146f9e840f2d9885"
+  },
+  "seeds/SEED_DEV_003_v1.0_DORA.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "c8ed85dcd70631a5c85ea84a7803b245",
+    "semantic_hash": "c8ed85dcd70631a5c85ea84a7803b245"
+  },
+  "seeds/SEED_ENG_001_v1.0.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "f7a0be139e521b57ebb4b15dc845cb7c",
+    "semantic_hash": "f7a0be139e521b57ebb4b15dc845cb7c"
+  },
+  "seeds/SEED_JUR_001_v1.0.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "33b7e076583f05d6ef2f00a353638d00",
+    "semantic_hash": "33b7e076583f05d6ef2f00a353638d00"
+  },
+  "seeds/SEED_JUR_002_v1.0.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "3d040edc213e6cc7a0240b3c22b3dd09",
+    "semantic_hash": "3d040edc213e6cc7a0240b3c22b3dd09"
+  },
+  "seeds/SEED_JUR_003_v2.0.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "ba5c375f7e3118e5a70b3cb066151569",
+    "semantic_hash": "ba5c375f7e3118e5a70b3cb066151569"
+  },
+  "seeds/SEED_JUR_004_v1.0.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "ae01c74e80bacbd6c6b1355d058ca91f",
+    "semantic_hash": "ae01c74e80bacbd6c6b1355d058ca91f"
+  },
+  "seeds/SEED_PM_001_v1.0.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "2428b7ee5a1a85c1100ece156756dec9",
+    "semantic_hash": "2428b7ee5a1a85c1100ece156756dec9"
+  },
+  "seeds/SEED_PM_001_v1.1_PAPO.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "d71e4d559493f7ea7d45e8cf5a5c7c5e",
+    "semantic_hash": "d71e4d559493f7ea7d45e8cf5a5c7c5e"
+  },
+  "seeds/SEED_PM_002_v1.0_PETRA.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "2059f35802ae9d842cfebfe0acb08222",
+    "semantic_hash": "2059f35802ae9d842cfebfe0acb08222"
+  },
+  "seeds/SEED_SYS_001_v1.0.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "0720718b66387ea0c90d872fa9b621c6",
+    "semantic_hash": "0720718b66387ea0c90d872fa9b621c6"
+  },
+  "seeds/SEED_UX_001_v1.0_UX.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "db4a1e1649d185361e6c27557dd97615",
+    "semantic_hash": "db4a1e1649d185361e6c27557dd97615"
+  },
+  "seeds/SEED_UX_002_Bald_v1_0.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "2794275df20c23c9e4bd1b50f07b32a6",
+    "semantic_hash": "2794275df20c23c9e4bd1b50f07b32a6"
+  },
+  "seeds/SEED_UX_003_v1.0_PORTO.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "c6dd16d02f9a0c9ba1f72ca00aa4db65",
+    "semantic_hash": "c6dd16d02f9a0c9ba1f72ca00aa4db65"
+  },
+  "seeds/SEED_UX_004_v1.0_PRADO.json": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "3ddd420be8ae79fcc1d46a00df66a32d",
+    "semantic_hash": "3ddd420be8ae79fcc1d46a00df66a32d"
+  },
+  ".filedist.yml": {
+    "mtime": 1782902835.9286869,
+    "ast_hash": "ead2419f16fb9def7571d1a7d8a08365",
+    "semantic_hash": "ead2419f16fb9def7571d1a7d8a08365"
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1782902835.9346628,
+    "ast_hash": "0ebd9a69ca903690ab3b08caf870f5b3",
+    "semantic_hash": "0ebd9a69ca903690ab3b08caf870f5b3"
+  },
+  ".github/workflows/deploy-producao.yml": {
+    "mtime": 1782902835.9351616,
+    "ast_hash": "13ada1f8f5eb2a179bd025f693a4b794",
+    "semantic_hash": "13ada1f8f5eb2a179bd025f693a4b794"
+  },
+  ".github/workflows/deploy-staging.yml": {
+    "mtime": 1782902835.9351616,
+    "ast_hash": "c6b880ecda72a7f4927a03c971a511ff",
+    "semantic_hash": "c6b880ecda72a7f4927a03c971a511ff"
+  },
+  ".seeds/ARGUS.md": {
+    "mtime": 1782902835.9351616,
+    "ast_hash": "9a1771c77241e33d5d74506594a06376",
+    "semantic_hash": "9a1771c77241e33d5d74506594a06376"
+  },
+  ".xdrs/_core/adrs/index.md": {
+    "mtime": 1782902835.9404473,
+    "ast_hash": "a513a3c6f793fad657e3ff25105778a6",
+    "semantic_hash": "a513a3c6f793fad657e3ff25105778a6"
+  },
+  ".xdrs/_core/adrs/principles/001-xdrs-core.md": {
+    "mtime": 1782902835.9410546,
+    "ast_hash": "1c6c6fb87a5bfd429d9962fdbc339139",
+    "semantic_hash": "1c6c6fb87a5bfd429d9962fdbc339139"
+  },
+  ".xdrs/_core/adrs/principles/002-policy-standards.md": {
+    "mtime": 1782902835.9416585,
+    "ast_hash": "8952c8d922f1f6868da880203f4e49db",
+    "semantic_hash": "8952c8d922f1f6868da880203f4e49db"
+  },
+  ".xdrs/_core/adrs/principles/003-skill-standards.md": {
+    "mtime": 1782902835.9416585,
+    "ast_hash": "06ab20a57b84f450b793791d025a806e",
+    "semantic_hash": "06ab20a57b84f450b793791d025a806e"
+  },
+  ".xdrs/_core/adrs/principles/004-article-standards.md": {
+    "mtime": 1782902835.9416585,
+    "ast_hash": "835e68b593871ac4669bfca39529cf18",
+    "semantic_hash": "835e68b593871ac4669bfca39529cf18"
+  },
+  ".xdrs/_core/adrs/principles/005-semantic-versioning-for-xdrs-packages.md": {
+    "mtime": 1782902835.9416585,
+    "ast_hash": "88860ae7e874981231b3de9001aa552c",
+    "semantic_hash": "88860ae7e874981231b3de9001aa552c"
+  },
+  ".xdrs/_core/adrs/principles/006-research-standards.md": {
+    "mtime": 1782902835.9416585,
+    "ast_hash": "ccdce8737cf40eedb8d18e1d98197fe3",
+    "semantic_hash": "ccdce8737cf40eedb8d18e1d98197fe3"
+  },
+  ".xdrs/_core/adrs/principles/007-plan-standards.md": {
+    "mtime": 1782902835.9416585,
+    "ast_hash": "3b8582e35595e6ea1a50728c415252dc",
+    "semantic_hash": "3b8582e35595e6ea1a50728c415252dc"
+  },
+  ".xdrs/_core/adrs/principles/008-xdr-standards-structured.md": {
+    "mtime": 1782902835.9416585,
+    "ast_hash": "6dc14ec519bbe44175bece1892cd17f9",
+    "semantic_hash": "6dc14ec519bbe44175bece1892cd17f9"
+  },
+  ".xdrs/_core/adrs/principles/009-presentation-standards.md": {
+    "mtime": 1782902835.9416585,
+    "ast_hash": "6749485857f2e3f781af5652a646e33f",
+    "semantic_hash": "6749485857f2e3f781af5652a646e33f"
+  },
+  ".xdrs/_core/adrs/principles/articles/.assets/001-xdrs-overview-slides.md": {
+    "mtime": 1782902835.9440334,
+    "ast_hash": "5ec0b651f86c5e429f30ab92ab79386d",
+    "semantic_hash": "5ec0b651f86c5e429f30ab92ab79386d"
+  },
+  ".xdrs/_core/adrs/principles/articles/001-xdrs-overview.md": {
+    "mtime": 1782902835.9440334,
+    "ast_hash": "36105ec6a8fb50006838c08e04dea37f",
+    "semantic_hash": "36105ec6a8fb50006838c08e04dea37f"
+  },
+  ".xdrs/_core/adrs/principles/skills/001-review/SKILL.md": {
+    "mtime": 1782902835.944945,
+    "ast_hash": "74342187912a537b9b52d5e3818076bc",
+    "semantic_hash": "74342187912a537b9b52d5e3818076bc"
+  },
+  ".xdrs/_core/adrs/principles/skills/002-write-policy/SKILL.md": {
+    "mtime": 1782902835.944945,
+    "ast_hash": "9b5683927b5c3e5e01c0a4d8f7910721",
+    "semantic_hash": "9b5683927b5c3e5e01c0a4d8f7910721"
+  },
+  ".xdrs/_core/adrs/principles/skills/003-write-skill/SKILL.md": {
+    "mtime": 1782902835.944945,
+    "ast_hash": "4b226d8c281ad7af62da4e389e4f49d7",
+    "semantic_hash": "4b226d8c281ad7af62da4e389e4f49d7"
+  },
+  ".xdrs/_core/adrs/principles/skills/004-write-article/SKILL.md": {
+    "mtime": 1782902835.944945,
+    "ast_hash": "38471ec847189cb3d3e562dc131a8829",
+    "semantic_hash": "38471ec847189cb3d3e562dc131a8829"
+  },
+  ".xdrs/_core/adrs/principles/skills/005-write-research/SKILL.md": {
+    "mtime": 1782902835.944945,
+    "ast_hash": "8fd83a43eee9ec81be25b10501e24f82",
+    "semantic_hash": "8fd83a43eee9ec81be25b10501e24f82"
+  },
+  ".xdrs/_core/adrs/principles/skills/006-write-plan/SKILL.md": {
+    "mtime": 1782902835.944945,
+    "ast_hash": "3a3f30f1b226be40213ed4b37fc4a257",
+    "semantic_hash": "3a3f30f1b226be40213ed4b37fc4a257"
+  },
+  ".xdrs/_core/adrs/principles/skills/007-write-presentation/SKILL.md": {
+    "mtime": 1782902835.944945,
+    "ast_hash": "145febbeb6c609099fb81802b61e6576",
+    "semantic_hash": "145febbeb6c609099fb81802b61e6576"
+  },
+  ".xdrs/_core/adrs/principles/skills/008-write-xdrs-doc/SKILL.md": {
+    "mtime": 1782902835.944945,
+    "ast_hash": "6cbdeb7644af072953ae8a07b40f9382",
+    "semantic_hash": "6cbdeb7644af072953ae8a07b40f9382"
+  },
+  ".xdrs/_core/index.md": {
+    "mtime": 1782902835.944945,
+    "ast_hash": "52a37bce6ba8428c38d308c9371c5303",
+    "semantic_hash": "52a37bce6ba8428c38d308c9371c5303"
+  },
+  ".xdrs/_local/adrs/application/001-simulation-pipeline.md": {
+    "mtime": 1782902835.9500601,
+    "ast_hash": "3d2a91beaac594df96cebe15d3976beb",
+    "semantic_hash": "3d2a91beaac594df96cebe15d3976beb"
+  },
+  ".xdrs/_local/adrs/application/002-sse-streaming.md": {
+    "mtime": 1782902835.950791,
+    "ast_hash": "7f7827d16b0c6a627e86fc23d14d18d7",
+    "semantic_hash": "7f7827d16b0c6a627e86fc23d14d18d7"
+  },
+  ".xdrs/_local/adrs/application/003-mode4-production-incident-2026-06.md": {
+    "mtime": 1782902835.950791,
+    "ast_hash": "4bd8166d3f7c6fd1308a189d044486cb",
+    "semantic_hash": "4bd8166d3f7c6fd1308a189d044486cb"
+  },
+  ".xdrs/_local/adrs/application/004-modo1-boardroom-data-integrity.md": {
+    "mtime": 1782903620.0359845,
+    "ast_hash": "49bedd9e9d98cfda6af2b9fdd1e5e009",
+    "semantic_hash": "49bedd9e9d98cfda6af2b9fdd1e5e009"
+  },
+  ".xdrs/_local/adrs/governance/001-galera-do-design.md": {
+    "mtime": 1782902835.950791,
+    "ast_hash": "328f15b5ab50b87bb5537c78091119e6",
+    "semantic_hash": "328f15b5ab50b87bb5537c78091119e6"
+  },
+  ".xdrs/_local/adrs/index.md": {
+    "mtime": 1782903858.0999987,
+    "ast_hash": "7f2901603d4fa4bb69d966ab9d280961",
+    "semantic_hash": "7f2901603d4fa4bb69d966ab9d280961"
+  },
+  ".xdrs/_local/adrs/platform/001-cloud-stack.md": {
+    "mtime": 1782902835.950791,
+    "ast_hash": "3084840e30648cb1992876799703220c",
+    "semantic_hash": "3084840e30648cb1992876799703220c"
+  },
+  ".xdrs/_local/bdrs/index.md": {
+    "mtime": 1782902835.950791,
+    "ast_hash": "922b22bd7a665eb495ac61326c864cf9",
+    "semantic_hash": "922b22bd7a665eb495ac61326c864cf9"
+  },
+  ".xdrs/_local/bdrs/principles/001-agent-temperature-policy.md": {
+    "mtime": 1782902835.9528518,
+    "ast_hash": "7ffb42ae83862d8a3f5c35d667c851cb",
+    "semantic_hash": "7ffb42ae83862d8a3f5c35d667c851cb"
+  },
+  ".xdrs/_local/bdrs/product/001-pricing-model.md": {
+    "mtime": 1782902835.9528518,
+    "ast_hash": "926434f511c2af0c7b79165557772e80",
+    "semantic_hash": "926434f511c2af0c7b79165557772e80"
+  },
+  ".xdrs/_local/bdrs/product/002-beta-access-policy.md": {
+    "mtime": 1782902835.9537594,
+    "ast_hash": "74a02b43211cd348bf787987b651f73f",
+    "semantic_hash": "74a02b43211cd348bf787987b651f73f"
+  },
+  ".xdrs/_local/bdrs/product/003-judge-location-anonymization.md": {
+    "mtime": 1782902835.9537594,
+    "ast_hash": "17d51af48c20354e863fbfb1b0168ef0",
+    "semantic_hash": "17d51af48c20354e863fbfb1b0168ef0"
+  },
+  ".xdrs/_local/edrs/application/001-judge-area-binding.md": {
+    "mtime": 1782902835.9542406,
+    "ast_hash": "71fd2c8f49052ebe428b435708d0cb37",
+    "semantic_hash": "71fd2c8f49052ebe428b435708d0cb37"
+  },
+  ".xdrs/_local/edrs/application/002-dynamic-legal-areas.md": {
+    "mtime": 1782902835.9546735,
+    "ast_hash": "ddc3b6d60bc1f12d8c0c427eae526efa",
+    "semantic_hash": "ddc3b6d60bc1f12d8c0c427eae526efa"
+  },
+  ".xdrs/_local/edrs/application/003-judge-impartiality-in-creation.md": {
+    "mtime": 1782902835.9546735,
+    "ast_hash": "2b4d1b896e44592b49c5a07281ecbd86",
+    "semantic_hash": "2b4d1b896e44592b49c5a07281ecbd86"
+  },
+  ".xdrs/_local/edrs/application/004-demand-driven-agent-creation.md": {
+    "mtime": 1782902835.9546735,
+    "ast_hash": "1cc9262c4007050aa97bd2188377bf01",
+    "semantic_hash": "1cc9262c4007050aa97bd2188377bf01"
+  },
+  ".xdrs/_local/edrs/application/005-modo1-input-guardrails.md": {
+    "mtime": 1782903635.2559853,
+    "ast_hash": "4a9caccaf43e6545c78d0bf7e185c336",
+    "semantic_hash": "4a9caccaf43e6545c78d0bf7e185c336"
+  },
+  ".xdrs/_local/edrs/application/006-specificjudge-null-sentinel-filtering.md": {
+    "mtime": 1782907221.2850568,
+    "ast_hash": "a75075aa6c893f13d425490a972b3c38",
+    "semantic_hash": "a75075aa6c893f13d425490a972b3c38"
+  },
+  ".xdrs/_local/edrs/devops/001-deployment-strategy.md": {
+    "mtime": 1782902835.9546735,
+    "ast_hash": "134b7a1c0adf4eb5dcb88ca03c2674ba",
+    "semantic_hash": "134b7a1c0adf4eb5dcb88ca03c2674ba"
+  },
+  ".xdrs/_local/edrs/governance/001-lgpd-anonymization.md": {
+    "mtime": 1782902835.9546735,
+    "ast_hash": "5fd8db474f1c3fe0f211f4ab518e4010",
+    "semantic_hash": "5fd8db474f1c3fe0f211f4ab518e4010"
+  },
+  ".xdrs/_local/edrs/index.md": {
+    "mtime": 1782908422.4740143,
+    "ast_hash": "8cee6197c44fa49723483d8ab23a784a",
+    "semantic_hash": "8cee6197c44fa49723483d8ab23a784a"
+  },
+  ".xdrs/_local/edrs/principles/001-success-probability-interpretation.md": {
+    "mtime": 1782902835.9546735,
+    "ast_hash": "bd41500350a0d0f3adcee409eb9779d6",
+    "semantic_hash": "bd41500350a0d0f3adcee409eb9779d6"
+  },
+  ".xdrs/_local/edrs/principles/002-commit-strategy.md": {
+    "mtime": 1782902835.9566581,
+    "ast_hash": "8985e4cd0ba34098d19f7da518c00d90",
+    "semantic_hash": "8985e4cd0ba34098d19f7da518c00d90"
+  },
+  ".xdrs/_local/edrs/principles/003-mode4-judge-frame-contract.md": {
+    "mtime": 1782902835.9566581,
+    "ast_hash": "0e8f8eec62c53032acfec6666a74a408",
+    "semantic_hash": "0e8f8eec62c53032acfec6666a74a408"
+  },
+  ".xdrs/_local/index.md": {
+    "mtime": 1782902835.9566581,
+    "ast_hash": "60327d61cf30b2078adda3878bee0ab5",
+    "semantic_hash": "60327d61cf30b2078adda3878bee0ab5"
+  },
+  ".xdrs/index.md": {
+    "mtime": 1782902835.9566581,
+    "ast_hash": "4077ed926627c0c1c29c48fedac776d6",
+    "semantic_hash": "4077ed926627c0c1c29c48fedac776d6"
+  },
+  "AGENTS.md": {
+    "mtime": 1782902835.9566581,
+    "ast_hash": "a6da6b5c1238d464ef20ea0b0e6100ef",
+    "semantic_hash": "a6da6b5c1238d464ef20ea0b0e6100ef"
+  },
+  "BRIEFING_2026-06-05.md": {
+    "mtime": 1782902835.9566581,
+    "ast_hash": "cc6a39f854757b14d0171030010a696d",
+    "semantic_hash": "cc6a39f854757b14d0171030010a696d"
+  },
+  "CLAUDE.md": {
+    "mtime": 1782902835.9566581,
+    "ast_hash": "4f4ddf6ddca379700591913fa47c8ef7",
+    "semantic_hash": "4f4ddf6ddca379700591913fa47c8ef7"
+  },
+  "PREVIEW_CONFIRM_PAGE.html": {
+    "mtime": 1782902835.9566581,
+    "ast_hash": "529310075c4373682593bf7eaa491ad1",
+    "semantic_hash": "529310075c4373682593bf7eaa491ad1"
+  },
+  "PREVIEW_FONT_OPTIONS.html": {
+    "mtime": 1782902835.9566581,
+    "ast_hash": "3ba6c6c7db7397c132d5e6880d3333ce",
+    "semantic_hash": "3ba6c6c7db7397c132d5e6880d3333ce"
+  },
+  "PREVIEW_PROMO_CODES.html": {
+    "mtime": 1782902835.956687,
+    "ast_hash": "a19dd23c367e0cb036f5564c34a5257c",
+    "semantic_hash": "a19dd23c367e0cb036f5564c34a5257c"
+  },
+  "PREVIEW_REDESIGN.html": {
+    "mtime": 1782902835.956687,
+    "ast_hash": "5d950e2a3cd5d29a6a8aeac4e7edafc6",
+    "semantic_hash": "5d950e2a3cd5d29a6a8aeac4e7edafc6"
+  },
+  "PREVIEW_REDESIGN_V2.html": {
+    "mtime": 1782902835.956687,
+    "ast_hash": "6b225d412c6ec513f0c5d7976a71557c",
+    "semantic_hash": "6b225d412c6ec513f0c5d7976a71557c"
+  },
+  "README.md": {
+    "mtime": 1782902835.956687,
+    "ast_hash": "4c7783181f41f2886a5204cda6d1c75f",
+    "semantic_hash": "4c7783181f41f2886a5204cda6d1c75f"
+  },
+  "cloudbuild-staging.yaml": {
+    "mtime": 1782902835.9646869,
+    "ast_hash": "196e2b68da84c235ac3dab3c8b91e6b7",
+    "semantic_hash": "196e2b68da84c235ac3dab3c8b91e6b7"
+  },
+  "cloudbuild.staging.yaml": {
+    "mtime": 1782902835.9646869,
+    "ast_hash": "4fd6a9336a39a8c4c33acdb86213b91f",
+    "semantic_hash": "4fd6a9336a39a8c4c33acdb86213b91f"
+  },
+  "cloudbuild.yaml": {
+    "mtime": 1782902835.9646869,
+    "ast_hash": "8e4837f6305613bdd57be3ca136beff6",
+    "semantic_hash": "8e4837f6305613bdd57be3ca136beff6"
+  },
+  "docs/README.md": {
+    "mtime": 1782902835.969705,
+    "ast_hash": "0a03fbe1826774085e2bddfabf6ffce3",
+    "semantic_hash": "0a03fbe1826774085e2bddfabf6ffce3"
+  },
+  "lexforum-ai-studio/README.md": {
+    "mtime": 1782902835.9709175,
+    "ast_hash": "354cfa64571f6ae5d23081fd41879243",
+    "semantic_hash": "354cfa64571f6ae5d23081fd41879243"
+  },
+  "lexforum-ai-studio/docs/agent-temperature-rationale.md": {
+    "mtime": 1782902835.9720328,
+    "ast_hash": "cedeff5e045712a4ea47b9a6c8d23730",
+    "semantic_hash": "cedeff5e045712a4ea47b9a6c8d23730"
+  },
+  "lexforum-ai-studio/docs/security-setup.md": {
+    "mtime": 1782902835.9739096,
+    "ast_hash": "a04c72ac86beb86dd06230b43f62f0ba",
+    "semantic_hash": "a04c72ac86beb86dd06230b43f62f0ba"
+  },
+  "lexforum-ai-studio/index.html": {
+    "mtime": 1782902835.9739096,
+    "ast_hash": "cf91b44afc4c78daa189fcc8f58de7b3",
+    "semantic_hash": "cf91b44afc4c78daa189fcc8f58de7b3"
+  },
+  "lexforum-app/README.md": {
+    "mtime": 1782902836.0024915,
+    "ast_hash": "1299239d3b663d5fa295522690ef660a",
+    "semantic_hash": "1299239d3b663d5fa295522690ef660a"
+  },
+  "prompts/ativar_especialista.md": {
+    "mtime": 1782902836.0102553,
+    "ast_hash": "630f58dcc6d1628a020d642591fca743",
+    "semantic_hash": "630f58dcc6d1628a020d642591fca743"
+  },
+  "prompts/ativar_semente.md": {
+    "mtime": 1782902836.0151348,
+    "ast_hash": "1049ca16b4e60721adbd649fc7d8885a",
+    "semantic_hash": "1049ca16b4e60721adbd649fc7d8885a"
+  },
+  "versions/CHANGELOG.md": {
+    "mtime": 1782902836.0167754,
+    "ast_hash": "bb2fb42785a00a19e2aafda5610af0ad",
+    "semantic_hash": "bb2fb42785a00a19e2aafda5610af0ad"
+  },
+  "versions/GOVERNANCE.md": {
+    "mtime": 1782902836.0228128,
+    "ast_hash": "64c8e1ad67ace256f407f06e44113800",
+    "semantic_hash": "64c8e1ad67ace256f407f06e44113800"
+  },
+  "versions/HEALTH_REPORT_v3.1.0.md": {
+    "mtime": 1782902836.0228128,
+    "ast_hash": "271312428a36956b133373f5b43f1b39",
+    "semantic_hash": "271312428a36956b133373f5b43f1b39"
+  },
+  "versions/HEALTH_REPORT_v3.3.0.md": {
+    "mtime": 1782902836.0228128,
+    "ast_hash": "8357b20812f5dae9922ad400e0ec9bf4",
+    "semantic_hash": "8357b20812f5dae9922ad400e0ec9bf4"
+  },
+  "lexforum-ai-studio/public/radiokactus-logo.PNG": {
+    "mtime": 1782902835.980687,
+    "ast_hash": "149d2ad30980b4c8d107c48f99f9f39c",
+    "semantic_hash": "149d2ad30980b4c8d107c48f99f9f39c"
+  }
+}
