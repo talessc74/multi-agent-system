@@ -66,10 +66,12 @@ against `App.tsx` source and prior notes in `PREVIEW_REDESIGN.html` and
 
 ## References
 
-- `lexforum-ai-studio/src/App.tsx:327` (`globalStats` initial state)
-- `lexforum-ai-studio/src/App.tsx:336` (`detectedArea` initial state)
-- `lexforum-ai-studio/src/App.tsx:348-355` (`regionalStats` hardcoded fallback)
-- `lexforum-ai-studio/src/App.tsx:381-397` (`fetchInitialStats`)
-- `lexforum-ai-studio/src/App.tsx:3839-3884` (Boardroom panel rendering)
+_Line numbers below reflect the implementation as of 2026-07-02; the Context section above cites the pre-fix locations._
+
+- `lexforum-ai-studio/src/App.tsx:329` (`globalStats` initial state — `precision` now defaults to `0`)
+- `lexforum-ai-studio/src/App.tsx:339` (`detectedArea` initial state)
+- `lexforum-ai-studio/src/App.tsx:353` (`regionalStats` now starts empty, per this decision)
+- `lexforum-ai-studio/src/App.tsx:379-398` (`fetchInitialStats`, now wraps in `try`/`finally` to clear `statsLoading`)
+- `lexforum-ai-studio/src/App.tsx:3880-3891` (Boardroom panel — Área Identificada / Especialização cards)
 - `PREVIEW_REDESIGN.html:1007` — "PAINEL BOARDROOM com dados hardcoded que nunca mudam"
 - `BRIEFING_2026-06-05.md` — pendência #7, "Stats com dados reais do Firestore"
