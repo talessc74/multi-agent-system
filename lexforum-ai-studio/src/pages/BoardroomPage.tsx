@@ -20,38 +20,16 @@ interface Props {
   user: import('firebase/auth').User | null;
 }
 
-const MODES = [
-  {
-    title: 'Tese Estratégica',
-    price: 'R$ 9,90',
-    Icon: FileText,
-    desc: 'DESCREVA SUA SITUAÇÃO. DESCUBRA SE VOCÊ TEM RAZÃO E QUAL SUA CHANCE REAL DE GANHAR.',
-  },
-  {
-    title: 'Defesa sob Ataque',
-    price: 'R$ 9,90',
-    Icon: ShieldCheck,
-    desc: 'VOCÊ TRAZ UMA ACUSAÇÃO SOFRIDA. CRIAMOS O ADVOGADO DE DEFESA TÉCNICA PARA RESPONDER E O JUIZ AVALIA EM 3 CICLOS.',
-  },
-  {
-    title: 'Mesa Dupla — Juiz',
-    price: 'R$ 5,90',
-    Icon: Gavel,
-    desc: 'VOCÊ TRAZ ACUSAÇÃO E DEFESA PRONTAS. ACIONAMOS O MAGISTRADO MAIS ESPECIALIZADO PARA EMITIR SENTENÇA DIRETA.',
-  },
-  {
-    title: 'Mesa Dupla — Assistida',
-    price: 'R$ 9,90',
-    Icon: Scale,
-    desc: 'ACUSAÇÃO E DEFESA PRONTAS. ESCOLHA SEU LADO E TENHA UM ADVOGADO IA MELHORANDO SUA TESE CONTRA O OUTRO LADO.',
-  },
-  {
-    title: 'Revisão Pós-Conflito',
-    price: 'R$ 5,90',
-    Icon: History,
-    desc: 'JÁ HOUVE UMA DECISÃO OU PROPOSTA? DESCUBRA SE VALE RECORRER DA SENTENÇA OU SE A OFERTA DE ACORDO É JUSTA.',
-  },
-];
+// ADR-007: o painel desktop lê tagline/description/bring/receive/cta do
+// MODE_CONFIG (mesma fonte que o mobile já usava) — não duplica mais o
+// conteúdo dos modos em um array separado.
+const MODE_ICONS: Record<number, typeof FileText> = {
+  1: FileText, 2: ShieldCheck, 3: Gavel, 4: Scale, 5: History,
+};
+const MODE_PRICES: Record<number, string> = {
+  1: 'R$ 9,90', 2: 'R$ 9,90', 3: 'R$ 5,90', 4: 'R$ 9,90', 5: 'R$ 5,90',
+};
+const MODE_IDS = [1, 2, 3, 4, 5];
 
 const MOBILE_MODES = [
   { mode: 1, Icon: FileText,    price: 'R$ 9,90' },
@@ -79,6 +57,7 @@ const FOOTER_STATS = [
 export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }: Props) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [openMode, setOpenMode] = useState<number | null>(null);
+  const [desktopMode, setDesktopMode] = useState<number>(1);
 
   return (
     <div className="min-h-screen overflow-x-hidden selection:bg-amber-400/20" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
@@ -205,56 +184,114 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
           </div>
         </div>
 
-        {/* Mode Cards */}
+        {/* Mode Selector — lista + painel de detalhe (ADR-007) */}
         <section className="px-6 md:px-12 lg:px-20 pb-16 max-w-6xl mx-auto">
-          <p className="text-[9px] text-white/20 tracking-[0.05em] mb-4 hidden md:block">
+          <p className="text-[9px] text-white/20 tracking-[0.05em] mb-6 hidden md:block">
             Modos 1–2: um lado do processo · Modo 3: simulação bilateral · Modo 4: refinamento assistido · Modo 5: pós-julgamento
           </p>
-          <div className="flex flex-col gap-3">
-            {MODES.map(({ title, price, Icon, desc }, i) => {
-              const mode = i + 1;
-              return (
-              <motion.div
-                key={title}
-                initial={{ opacity: 0, x: -16 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.45, delay: 0.08 * i + 0.1 }}
-                onClick={() => onEnter(mode)}
-                className="border border-white/[0.07] hover:border-amber-400/25 transition-all duration-200 group cursor-pointer" style={{ background: 'var(--bg-card)' }}
-              >
-                <div className="p-5 md:p-7 flex flex-col sm:flex-row sm:items-center gap-5 md:gap-8">
-                  {/* Icon + Title */}
-                  <div className="flex items-center gap-4 flex-shrink-0">
-                    <div className="w-10 h-10 border border-white/[0.08] group-hover:border-amber-400/35 flex items-center justify-center transition-all duration-200 flex-shrink-0">
-                      <Icon className="w-4 h-4 text-white/30 group-hover:text-amber-400 transition-colors duration-200" />
-                    </div>
-                    <div className="min-w-[160px]">
-                      <h3 className="text-[11px] md:text-[12px] font-bold uppercase tracking-[0.22em] group-hover:text-amber-400 transition-colors duration-200 leading-none mb-1" style={{ color: 'var(--text-primary)' }}>
-                        {title}
-                      </h3>
-                      <span className="text-[10px] font-mono text-amber-400/60">{price}</span>
-                    </div>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="hidden sm:block w-px h-10 bg-white/[0.06] flex-shrink-0" />
-
-                  {/* Description */}
-                  <p className="text-[9px] md:text-[10px] tracking-[0.04em] leading-relaxed flex-1" style={{ color: 'var(--text-muted)' }}>
-                    {desc}
-                  </p>
-
-                  {/* CTA */}
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onEnter(mode); }}
-                    className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] group-hover:text-amber-400 transition-colors duration-200 flex-shrink-0 self-end sm:self-auto whitespace-nowrap" style={{ color: 'var(--text-muted)' }}
+          <div className="grid grid-cols-12 gap-4 lg:gap-8">
+            {/* Lista de modos */}
+            <div className="col-span-12 lg:col-span-4 flex flex-col gap-2">
+              {MODE_IDS.map((mode, i) => {
+                const cfg = MODE_CONFIG[mode];
+                const Icon = MODE_ICONS[mode];
+                const isSelected = desktopMode === mode;
+                return (
+                  <motion.button
+                    key={mode}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.06 * i }}
+                    onClick={() => setDesktopMode(mode)}
+                    className="flex items-center gap-4 p-4 text-left border transition-all duration-200"
+                    style={{
+                      borderColor: isSelected ? cfg.color : 'rgba(255,255,255,0.07)',
+                      background: isSelected ? `rgba(${cfg.colorRgb},0.06)` : 'var(--bg-card)',
+                      cursor: 'pointer',
+                    }}
                   >
-                    SELECIONAR MODO <ArrowRight className="w-3 h-3" />
-                  </button>
-                </div>
-              </motion.div>
-              );
-            })}
+                    <div
+                      className="w-9 h-9 flex items-center justify-center flex-shrink-0 border transition-colors duration-200"
+                      style={{ borderColor: isSelected ? cfg.color : 'rgba(255,255,255,0.08)' }}
+                    >
+                      <Icon className="w-4 h-4" style={{ color: isSelected ? cfg.color : 'rgba(255,255,255,0.3)' }} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3
+                        className="text-[11px] font-bold uppercase tracking-[0.18em] leading-none mb-1 transition-colors duration-200"
+                        style={{ color: isSelected ? cfg.color : 'var(--text-primary)' }}
+                      >
+                        {cfg.headline}
+                      </h3>
+                      <span className="text-[10px] font-mono" style={{ color: 'var(--text-muted)' }}>{MODE_PRICES[mode]}</span>
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            {/* Painel de detalhe do modo selecionado */}
+            <div className="col-span-12 lg:col-span-8">
+              {(() => {
+                const cfg = MODE_CONFIG[desktopMode];
+                return (
+                  <motion.div
+                    key={desktopMode}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25 }}
+                    aria-live="polite"
+                    className="border p-6 md:p-8 h-full flex flex-col"
+                    style={{ borderColor: 'rgba(255,255,255,0.07)', background: 'var(--bg-card)' }}
+                  >
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: cfg.color }}>
+                      {cfg.tagline}
+                    </p>
+                    <p className="text-sm leading-relaxed mb-8" style={{ color: 'var(--text-secondary)' }}>
+                      {cfg.description}
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+                      <div>
+                        <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: 'var(--text-muted)' }}>
+                          O que trazer
+                        </p>
+                        <ul className="space-y-2">
+                          {cfg.bring.map((item) => (
+                            <li key={item} className="text-[11px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: 'var(--text-muted)' }}>
+                          O que você recebe
+                        </p>
+                        <ul className="space-y-2">
+                          {cfg.receive.map((item) => (
+                            <li key={item} className="text-[11px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="mt-auto flex items-center justify-between gap-4">
+                      <span className="text-sm font-mono" style={{ color: cfg.color }}>{MODE_PRICES[desktopMode]}</span>
+                      <button
+                        onClick={() => onEnter(desktopMode)}
+                        className="flex items-center gap-2 px-6 py-3 font-bold text-[11px] uppercase tracking-[0.2em]"
+                        style={{ background: cfg.color, color: '#0A1628', border: 'none', cursor: 'pointer' }}
+                      >
+                        {cfg.cta}
+                      </button>
+                    </div>
+                  </motion.div>
+                );
+              })()}
+            </div>
           </div>
         </section>
 
