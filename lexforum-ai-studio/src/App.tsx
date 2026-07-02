@@ -379,11 +379,13 @@ export default function App() {
     const fetchInitialStats = async () => {
       try {
         const stats = await getStats();
-        setGlobalStats({
-          simulations: stats.totalSimulations,
-          winRate: Number(stats.winRate.toFixed(1)),
-          precision: Number(((stats.totalWins / Math.max(stats.totalSimulations, 1)) * 100).toFixed(1))
-        });
+        if (stats) {
+          setGlobalStats({
+            simulations: stats.totalSimulations,
+            winRate: Number(stats.winRate.toFixed(1)),
+            precision: Number(((stats.totalWins / Math.max(stats.totalSimulations, 1)) * 100).toFixed(1))
+          });
+        }
 
         const regional = await getAreaStats();
         if (regional && regional.length > 0) {
@@ -925,11 +927,13 @@ const startRecovery = (sessionId: string) => {
 
       try {
         const newStatsResult = await getStats();
-        setGlobalStats({
-          simulations: newStatsResult.totalSimulations,
-          winRate: Number(newStatsResult.winRate.toFixed(1)),
-          precision: 98.4
-        });
+        if (newStatsResult) {
+          setGlobalStats({
+            simulations: newStatsResult.totalSimulations,
+            winRate: Number(newStatsResult.winRate.toFixed(1)),
+            precision: Number(((newStatsResult.totalWins / Math.max(newStatsResult.totalSimulations, 1)) * 100).toFixed(1))
+          });
+        }
       } catch (e) {
         console.error('[handleSimulate] getStats falhou:', e);
       }
