@@ -59,8 +59,10 @@ or JS `null` — no consumer needs its own sentinel guard.
 
 ## References
 
-- `lexforum-ai-studio/src/lib/gemini.server.ts:48,68,89` (`validateCausaServer`)
-- `lexforum-ai-studio/src/lib/gemini.server.ts:97-109` (`getOrGenerateAgent`, unguarded `specificName`)
-- `lexforum-ai-studio/server.ts:86,102,222` (existing but incomplete guard)
+_Line numbers below reflect the implementation as of 2026-07-02; the Context section above cites the pre-fix locations._
+
+- `lexforum-ai-studio/src/lib/gemini.server.ts:48,68,89-90` (`validateCausaServer`, now normalizes the `"null"` sentinel)
+- `lexforum-ai-studio/src/lib/gemini.server.ts:102-114` (`getOrGenerateAgent`, still trusts its caller — see the test below)
+- `lexforum-ai-studio/server.ts:86,102,222` (existing but now-redundant guard)
 - `versions/CHANGELOG.md` — Bug 4, commit `3f71a07`
-- `lexforum-ai-studio/src/test/specificJudgeNullLeak.test.ts` — regression test proving the gap
+- `lexforum-ai-studio/src/test/specificJudgeNullLeak.test.ts` — regression test proving the gap and the fix

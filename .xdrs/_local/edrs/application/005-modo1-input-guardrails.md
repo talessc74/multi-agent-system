@@ -54,8 +54,10 @@ Question: What must the input step guarantee about limits it displays to the use
 
 ## References
 
-- `lexforum-ai-studio/src/App.tsx:607-639` (`handleFileChange`, no count/total cap)
-- `lexforum-ai-studio/src/App.tsx:2711-2772` (input step textarea, attachments, submit button)
+_Line numbers below reflect the implementation as of 2026-07-02; the Context section above cites the pre-fix locations._
+
+- `lexforum-ai-studio/src/App.tsx:611-659` (`handleFileChange`, now enforces `MAX_ARQUIVOS`/20MB total)
+- `lexforum-ai-studio/src/App.tsx:2731-2793` (input step textarea, attachments, submit button)
 - `lexforum-app/src/app/causa/page.tsx:19-21` (`MAX_ARQUIVOS`, `MAX_BYTES` constants)
 - `lexforum-app/src/app/causa/page.tsx:48-71` (`handleFileChange` with count/size enforcement)
 - `lexforum-app/src/app/causa/page.tsx:94` (`canSubmit = text.trim().length > 10`)
