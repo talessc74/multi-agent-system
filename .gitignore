@@ -1,5 +1,13 @@
-# Graphify output — regenerable, run /graphify . to rebuild
-/graphify-out/
+# Graphify output — cache/manifest/graph.json are the expensive part (paid LLM
+# extraction) and are kept so future sessions don't re-pay for them; run
+# `graphify update .` to refresh incrementally. graph.html/report/cost/session
+# files are cheap or machine-local to regenerate, so those stay ignored.
+/graphify-out/graph.html
+/graphify-out/GRAPH_REPORT.md
+/graphify-out/cost.json
+/graphify-out/.graphify_python
+/graphify-out/.graphify_root
+/graphify-out/.graphify_labels.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
