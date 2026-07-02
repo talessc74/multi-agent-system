@@ -186,9 +186,6 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
 
         {/* Mode Selector — lista + painel de detalhe (ADR-007) */}
         <section className="px-6 md:px-12 lg:px-20 pb-16 max-w-6xl mx-auto">
-          <p className="text-[9px] text-white/20 tracking-[0.05em] mb-6 hidden md:block">
-            Modos 1–2: um lado do processo · Modo 3: simulação bilateral · Modo 4: refinamento assistido · Modo 5: pós-julgamento
-          </p>
           <div className="grid grid-cols-12 gap-4 lg:gap-8">
             {/* Lista de modos */}
             <div className="col-span-12 lg:col-span-4 flex flex-col gap-2">
