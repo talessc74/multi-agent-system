@@ -2129,7 +2129,7 @@ const startRecovery = (sessionId: string) => {
           user={user}
         />
       ) : (
-        <div className="min-h-screen bg-[#0A0A0B] text-[#E5E5E5] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
+        <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
       <Navbar
         user={user}
         onLogin={() => setShowLoginModal(true)}
@@ -2139,23 +2139,23 @@ const startRecovery = (sessionId: string) => {
         {state.step !== 'input' && (
           <button
             onClick={() => setState(prev => ({ ...prev, showForgeMonitor: !prev.showForgeMonitor }))}
-            className={`flex items-center gap-2 px-3 py-1.5 border transition-all ${state.showForgeMonitor ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-white/10 text-white/40 hover:text-white hover:border-white/20'}`}
+            className={`flex items-center gap-2 px-3 py-1.5 border transition-all ${state.showForgeMonitor ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-active)]'}`}
           >
             <Cpu className="w-3 h-3" />
             <span className="text-[9px] font-bold uppercase tracking-widest">Monitor de Agentes</span>
           </button>
         )}
         <div className="flex flex-col items-end">
-          <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold">Status da Simulação</span>
+          <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-bold">Status da Simulação</span>
           <span className={`text-xs font-mono font-bold ${state.step === 'simulating' ? 'text-amber-500' : 'text-emerald-500'}`}>
             {state.step === 'input' ? 'AGUARDANDO CAUSA' :
              state.step === 'confirm' ? 'ANALISANDO ÁREA' :
              state.step === 'simulating' ? 'SIMULAÇÃO EM CURSO' : 'SIMULAÇÃO CONCLUÍDA'}
           </span>
         </div>
-        <div className="w-[1px] h-8 bg-white/10" />
+        <div className="w-[1px] h-8 bg-[var(--border)]" />
         <button
-          className="px-4 py-2 border border-white text-[11px] uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+          className="px-4 py-2 border border-[var(--text-primary)] text-[11px] uppercase tracking-widest hover:bg-[var(--text-primary)] hover:text-[var(--bg-primary)] transition-colors"
           onClick={() => window.location.reload()}
         >
           Nova Consulta
@@ -2163,7 +2163,7 @@ const startRecovery = (sessionId: string) => {
       </Navbar>
 
       <main className="flex-1 grid grid-cols-12 gap-0 overflow-hidden min-h-[calc(100vh-64px)]">
-        <div className="col-span-12 lg:col-span-9 p-8 flex flex-col gap-6 lg:border-r border-white/5 overflow-y-auto print:col-span-12 print:p-0 print:border-none">
+        <div className="col-span-12 lg:col-span-9 p-8 flex flex-col gap-6 lg:border-r border-[var(--border)] overflow-y-auto print:col-span-12 print:p-0 print:border-none">
           <AnimatePresence mode="wait">
             {state.error && (
               <motion.div 
@@ -2717,7 +2717,7 @@ const startRecovery = (sessionId: string) => {
                     <div className="flex items-center gap-4">
                       <button
                         onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
                       >
                         <ArrowRight className="w-3 h-3 rotate-180" />
                         Voltar
@@ -2734,13 +2734,13 @@ const startRecovery = (sessionId: string) => {
                         </span>
                       )}
                     </div>
-                    <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
+                    <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-[var(--text-primary)]">
                       {state.selectedMode === 2
-                        ? <>Descreva a acusação recebida e <br /><span className="text-[#F4F4F2] font-bold">sua versão dos fatos.</span></>
-                        : <>Descreva sua causa para iniciar a <br /><span className="text-[#F4F4F2] font-bold">simulação de fórum.</span></>
+                        ? <>Descreva a acusação recebida e <br /><span className="text-[var(--text-primary)] font-bold">sua versão dos fatos.</span></>
+                        : <>Descreva sua causa para iniciar a <br /><span className="text-[var(--text-primary)] font-bold">simulação de fórum.</span></>
                       }
                     </h1>
-                    <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                    <p className="text-[var(--text-muted)] max-w-lg text-sm uppercase tracking-widest font-medium">
                       {state.selectedMode === 2
                         ? 'Nossa IA constrói sua defesa técnica e o juiz avalia em até 3 ciclos.'
                         : 'Para quem tem uma situação e quer entender, antes de qualquer passo, se os argumentos estão do seu lado.'
@@ -2748,24 +2748,24 @@ const startRecovery = (sessionId: string) => {
                     </p>
                   </div>
 
-                  <div className="bg-[#15161A] border border-white/10 relative group shadow-2xl shadow-black/50">
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] relative group shadow-2xl shadow-black/50">
                     <textarea
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Descreva aqui os detalhes da causa, fatos principais e argumentos jurídicos. Nossa IA processa textos longos sem limite de caracteres..."
-                      className="w-full min-h-[400px] h-auto bg-transparent p-8 outline-none transition-all text-2xl font-serif italic text-white/90 resize-y placeholder:opacity-30"
+                      className="w-full min-h-[400px] h-auto bg-transparent p-8 outline-none transition-all text-2xl font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-30"
                     />
-                    
+
                     {/* Attachments List */}
                     {state.attachments.length > 0 && (
                       <div className="px-8 pb-4 flex flex-wrap gap-3">
                         {state.attachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5 group/file">
-                            {file.type.startsWith('image/') ? <ImageIcon className="w-3 h-3 text-white/40" /> : <FileIcon className="w-3 h-3 text-white/40" />}
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[120px] truncate text-white/60">{file.name}</span>
-                            <button 
+                          <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-sm border border-[var(--border)] group/file">
+                            {file.type.startsWith('image/') ? <ImageIcon className="w-3 h-3 text-[var(--text-muted)]" /> : <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />}
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[120px] truncate text-[var(--text-tertiary)]">{file.name}</span>
+                            <button
                               onClick={() => removeAttachment(i)}
-                              className="text-white/30 hover:text-red-500 transition-colors"
+                              className="text-[var(--text-muted)] hover:text-red-500 transition-colors"
                             >
                               <X className="w-3 h-3" />
                             </button>
@@ -2774,10 +2774,10 @@ const startRecovery = (sessionId: string) => {
                       </div>
                     )}
 
-                    <div className="p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-white/5 bg-white/[0.02]">
+                    <div className="p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-[var(--border)] bg-[var(--bg-secondary)]">
                       <div className="flex items-center gap-4">
-                        <input 
-                          type="file" 
+                        <input
+                          type="file"
                           ref={fileInputRef}
                           onChange={handleFileChange}
                           className="hidden"
@@ -2787,23 +2787,23 @@ const startRecovery = (sessionId: string) => {
                         <div className="flex flex-col gap-1">
                           <button
                             onClick={() => fileInputRef.current?.click()}
-                            className="flex items-center gap-3 px-4 py-2 border border-white/10 hover:bg-white/5 transition-all text-white/40 group-hover:text-white/60"
+                            className="flex items-center gap-3 px-4 py-2 border border-[var(--border)] hover:bg-[var(--accent-muted)] transition-all text-[var(--text-muted)] group-hover:text-[var(--text-tertiary)]"
                           >
                             <Plus className="w-4 h-4" />
                             <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
                           </button>
-                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
+                          <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
                           {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                         </div>
-                        <div className="w-[1px] h-4 bg-white/10 mx-2"></div>
-                        <p className="text-[10px] text-white/20 uppercase tracking-[0.2em] font-bold">PDF, JPEG ou PNG</p>
+                        <div className="w-[1px] h-4 bg-[var(--border)] mx-2"></div>
+                        <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.2em] font-bold">PDF, JPEG ou PNG</p>
                       </div>
 
                       <button
                         disabled={state.caseDescription.trim().length <= 10 || loading}
                         onClick={handleValidate}
-                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                        className="px-8 py-4 bg-[var(--text-primary)] text-[var(--bg-primary)] disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-xl"
                       >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                         <ArrowRight className="w-4 h-4" />
@@ -2811,15 +2811,15 @@ const startRecovery = (sessionId: string) => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-white/10 divide-y md:divide-y-0 md:divide-x divide-white/10 shadow-xl shadow-black/30">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-[var(--border)] divide-y md:divide-y-0 md:divide-x divide-[var(--border)] shadow-xl shadow-black/30">
                     {[
                       { title: "PROVA ROBUSTA", desc: "Análise multimídia de documentos e evidências anexadas." },
                       { title: "TABULA RASA", desc: "Juízes sem memória garantem imparcialidade técnica a cada round." },
                       { title: "LEGAL BRIEFS", desc: "Advogados utilizam resumos estratégicos para evolução processual." }
                     ].map((feat, i) => (
-                      <div key={i} className="p-6 bg-[#15161A] space-y-2">
-                        <h4 className="text-[10px] uppercase font-bold tracking-[0.2em] text-white">{feat.title}</h4>
-                        <p className="text-xs text-white/30 leading-relaxed font-medium">{feat.desc}</p>
+                      <div key={i} className="p-6 bg-[var(--bg-card)] space-y-2">
+                        <h4 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[var(--text-primary)]">{feat.title}</h4>
+                        <p className="text-xs text-[var(--text-muted)] leading-relaxed font-medium">{feat.desc}</p>
                       </div>
                     ))}
                   </div>
@@ -2827,67 +2827,67 @@ const startRecovery = (sessionId: string) => {
 
                 <div className="col-span-12 xl:col-span-3 flex flex-col gap-6">
                   {/* Resumo Analítico - Global Stats */}
-                  <div className="bg-[#1C1C1F] text-white p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-white/10">
+                  <div className="bg-[var(--bg-card)] text-[var(--text-primary)] p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-[var(--border)]">
                     <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
                     <div className="flex justify-between items-center opacity-30">
                       <span className="text-[9px] uppercase tracking-widest font-bold">Performance Global EAI?</span>
                       <TrendingUp className="w-4 h-4" />
                     </div>
-                    
+
                     {/* ADR-006: nunca renderiza globalStats antes de resolver — evita
                         mostrar um "0%"/valor zerado como se fosse dado real. */}
                     {statsLoading ? (
                       <div className="space-y-1 py-4">
                         <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
-                        <div className="text-lg font-mono text-white/30 animate-pulse">Carregando estatísticas...</div>
+                        <div className="text-lg font-mono text-[var(--text-muted)] animate-pulse">Carregando estatísticas...</div>
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 gap-6">
                         <div className="space-y-1">
                           <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
-                          <div className="text-6xl font-serif italic text-white/90">
+                          <div className="text-6xl font-serif italic text-[var(--text-primary)]">
                             {globalStats.winRate}%
                           </div>
                         </div>
 
-                        <div className="flex justify-between items-end border-t border-white/5 pt-6">
+                        <div className="flex justify-between items-end border-t border-[var(--border)] pt-6">
                           <div className="space-y-1">
-                            <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Simulações Concluídas</div>
-                            <div className="text-2xl font-mono text-white/80">{globalStats.simulations.toLocaleString()}</div>
+                            <div className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-widest leading-none">Simulações Concluídas</div>
+                            <div className="text-2xl font-mono text-[var(--text-tertiary)]">{globalStats.simulations.toLocaleString()}</div>
                           </div>
                           <div className="text-right space-y-1">
-                            <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest leading-none">Precisão Média</div>
+                            <div className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-widest leading-none">Precisão Média</div>
                             <div className="text-2xl font-mono text-emerald-500 font-bold">{globalStats.precision}%</div>
                           </div>
                         </div>
                       </div>
                     )}
 
-                    <div className="text-[10px] font-mono text-white/10 font-bold border-t border-white/5 pt-4 flex justify-between">
+                    <div className="text-[10px] font-mono text-[var(--text-muted)] font-bold border-t border-[var(--border)] pt-4 flex justify-between opacity-60">
                        <span>ALGORITMO: LEX_FRAME_V3</span>
                        <span>STATUS: OPTIMIZED</span>
                     </div>
                   </div>
 
-                  <div className="bg-[#15161A] border border-white/10 p-8 space-y-8 flex-1">
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] p-8 space-y-8 flex-1">
                     <div className="space-y-1">
-                      <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/60">Disponibilidade de Agentes de IA</h3>
-                      <p className="text-[10px] text-white/20 uppercase tracking-widest font-mono">Status Global Agents / Judicial Regions</p>
+                      <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-[var(--text-tertiary)]">Disponibilidade de Agentes de IA</h3>
+                      <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-mono">Status Global Agents / Judicial Regions</p>
                     </div>
 
                     {/* ADR-006: loading e "sem dados" nunca reaproveitam o mesmo
                         visual da lista real — evita parecer estatística de verdade. */}
                     <div className="space-y-5">
                       {statsLoading ? (
-                        <div className="text-[10px] text-white/20 uppercase tracking-widest font-mono text-center py-6 animate-pulse">
+                        <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-mono text-center py-6 animate-pulse">
                           Carregando disponibilidade...
                         </div>
                       ) : state.regionalStats.length === 0 ? (
                         <div className="text-center py-6 space-y-2">
-                          <p className="text-[10px] text-white/30 uppercase tracking-widest font-mono">
+                          <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-mono">
                             Sem simulações reais nesta área ainda
                           </p>
-                          <p className="text-[9px] text-white/15 normal-case tracking-normal font-serif italic">
+                          <p className="text-[9px] text-[var(--text-muted)] opacity-70 normal-case tracking-normal font-serif italic">
                             Preferimos mostrar isso a inventar uma estatística.
                           </p>
                         </div>
@@ -2896,18 +2896,18 @@ const startRecovery = (sessionId: string) => {
                         return state.regionalStats.map((stat, i) => (
                           <div key={i} className="space-y-2 group cursor-default">
                             <div className="flex justify-between items-end">
-                              <span className="text-[11px] font-bold text-white/80 group-hover:text-white transition-colors">{stat.region}</span>
+                              <span className="text-[11px] font-bold text-[var(--text-tertiary)] group-hover:text-[var(--text-primary)] transition-colors">{stat.region}</span>
                               <span className="text-[11px] font-mono text-emerald-500">{stat.active} vitórias</span>
                             </div>
-                            <div className="h-[2px] bg-white/5 overflow-hidden rounded-full">
+                            <div className="h-[2px] bg-[var(--border)] overflow-hidden rounded-full">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${(stat.seeds / maxSeeds) * 100}%` }}
                                 transition={{ duration: 1.5, delay: i * 0.1 }}
-                                className="h-full bg-white/20 group-hover:bg-emerald-500/50 transition-colors"
+                                className="h-full bg-[var(--text-muted)] group-hover:bg-emerald-500/50 transition-colors"
                               />
                             </div>
-                            <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-tighter text-white/20">
+                            <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-tighter text-[var(--text-muted)]">
                               <motion.span key={stat.seeds} initial={{ opacity: 0.5, y: -2 }} animate={{ opacity: 1, y: 0 }}>
                                 {stat.seeds} simulações
                               </motion.span>
@@ -2919,15 +2919,15 @@ const startRecovery = (sessionId: string) => {
                     </div>
 
                     {!statsLoading && state.regionalStats.length > 0 && (
-                      <div className="pt-6 border-t border-white/5 space-y-4">
-                        <div className="bg-white/5 p-4 space-y-2 border border-white/5">
+                      <div className="pt-6 border-t border-[var(--border)] space-y-4">
+                        <div className="bg-[var(--bg-secondary)] p-4 space-y-2 border border-[var(--border)]">
                           <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Total de Vitórias</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Total de Vitórias</span>
                             <span className="text-xs font-mono text-emerald-500 font-bold">
                               {state.regionalStats.reduce((acc, s) => acc + s.active, 0)} VITÓRIAS
                             </span>
                           </div>
-                          <div className="text-[9px] text-white/20 leading-relaxed font-serif italic">
+                          <div className="text-[9px] text-[var(--text-muted)] leading-relaxed font-serif italic">
                             A simulação aciona agentes especializados conforme a área do conflito identificada na etapa de validação.
                           </div>
                         </div>
@@ -2935,11 +2935,11 @@ const startRecovery = (sessionId: string) => {
                     )}
                   </div>
 
-                  <div className="bg-[#1C1C1F] border border-white/10 p-6 flex items-center gap-4">
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] p-6 flex items-center gap-4">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">Ambiente de Simulação</span>
-                      <span className="text-[9px] font-mono text-white/30 uppercase">Agentes de IA · EAI?</span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-primary)]">Ambiente de Simulação</span>
+                      <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">Agentes de IA · EAI?</span>
                     </div>
                   </div>
                 </div>
@@ -3902,9 +3902,9 @@ const startRecovery = (sessionId: string) => {
           </AnimatePresence>
         </div>
 
-        <div className="col-span-12 lg:col-span-3 bg-[#0F1012] p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print">
+        <div className="col-span-12 lg:col-span-3 bg-[var(--bg-secondary)] p-8 flex flex-col gap-10 overflow-y-auto border-l border-[var(--border)] no-print">
           <section>
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-white/10 pb-3 flex items-center justify-between text-white/60">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-[var(--border)] pb-3 flex items-center justify-between text-[var(--text-tertiary)]">
               Boardroom <span className="text-[8px] font-mono opacity-20">{`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}</span>
             </h3>
             <div className="space-y-6">
@@ -3915,34 +3915,34 @@ const startRecovery = (sessionId: string) => {
                   { n: "ÁREA IDENTIFICADA", s: state.step === 'input' ? 'Aguardando causa' : areaLabels[state.detectedArea], icon: ShieldCheck },
                   { n: "ESPECIALIZAÇÃO", s: state.step === 'input' ? 'Aguardando causa' : "Juiz de IA especializado em " + areaLabels[state.detectedArea], icon: Gavel },
                 ].map((m, i) => (
-                  <div key={i} className="bg-white/5 p-4 border border-white/5 space-y-1">
-                    <div className="text-[10px] font-bold text-white/50 uppercase tracking-tighter">{m.n}</div>
-                    <div className="text-[11px] text-white font-medium italic font-serif leading-tight">{m.s}</div>
+                  <div key={i} className="bg-[var(--bg-card)] p-4 border border-[var(--border)] space-y-1">
+                    <div className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-tighter">{m.n}</div>
+                    <div className="text-[11px] text-[var(--text-primary)] font-medium italic font-serif leading-tight">{m.s}</div>
                   </div>
                 ))}
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-[9px] font-bold uppercase tracking-widest text-white/20">Agentes Ativados na Sessão</h4>
+                <h4 className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Agentes Ativados na Sessão</h4>
                 <div className="grid grid-cols-1 gap-3">
                   {state.activeAgents.length > 0 ? (
                     state.activeAgents.map((agent, i) => (
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        key={agent.id} 
-                        className="bg-white/5 p-3 border border-white/5 space-y-1 relative group overflow-hidden"
+                        key={agent.id}
+                        className="bg-[var(--bg-card)] p-3 border border-[var(--border)] space-y-1 relative group overflow-hidden"
                       >
                         <div className="absolute top-0 right-0 w-1 h-full bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <div className="flex justify-between items-start">
                           <div className="text-[9px] font-bold text-emerald-500/60 uppercase tracking-tighter">{agent.type}</div>
-                          <div className="text-[7px] font-mono text-white/20">0x{(i * 133).toString(16).toUpperCase()}</div>
+                          <div className="text-[7px] font-mono text-[var(--text-muted)]">0x{(i * 133).toString(16).toUpperCase()}</div>
                         </div>
-                        <div className="text-[10px] text-white font-medium italic font-serif leading-tight">{agent.name}</div>
+                        <div className="text-[10px] text-[var(--text-primary)] font-medium italic font-serif leading-tight">{agent.name}</div>
                       </motion.div>
                     ))
                   ) : (
-                    <div className="text-[9px] text-white/10 italic p-4 border border-dashed border-white/5 text-center">
+                    <div className="text-[9px] text-[var(--text-muted)] italic p-4 border border-dashed border-[var(--border)] text-center opacity-70">
                       Aguardando ativação de agentes...
                     </div>
                   )}
@@ -3952,60 +3952,60 @@ const startRecovery = (sessionId: string) => {
           </section>
 
           <section className="flex-1 flex flex-col min-h-0">
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-white/10 pb-3 text-white/20 flex justify-between items-center">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-[var(--border)] pb-3 text-[var(--text-muted)] flex justify-between items-center">
               <span>Fluxo Estratégico</span>
               {state.simStep !== 'IDLE' && state.currentRound > 0 && (
-                <span className="text-[9px] bg-white/10 px-2 py-0.5 rounded-full text-white/40">ROUND {state.currentRound}</span>
+                <span className="text-[9px] bg-[var(--accent-muted)] px-2 py-0.5 rounded-full text-[var(--text-tertiary)]">ROUND {state.currentRound}</span>
               )}
             </h3>
-            
+
             <div className="flex-1 flex flex-col justify-center">
               <div className="space-y-10 py-4">
                 <div className="flex flex-col items-center gap-6 relative">
                   {/* Vertical line connecting steps */}
-                  <div className="absolute top-5 bottom-5 left-[23px] w-px bg-white/10" />
+                  <div className="absolute top-5 bottom-5 left-[23px] w-px bg-[var(--border)]" />
 
-                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'WRITING' ? 'bg-white/10 border-white/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
-                    <div className={`w-12 h-12 rounded-full border border-white flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'WRITING' ? 'bg-white text-black' : 'bg-[#0F1012]'}`}>
+                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'WRITING' ? 'bg-[var(--accent-muted)] border-[var(--border-active)] scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
+                    <div className={`w-12 h-12 rounded-full border border-[var(--text-primary)] flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'WRITING' ? 'bg-[var(--text-primary)] text-[var(--bg-primary)]' : 'bg-[var(--bg-secondary)]'}`}>
                       <FileText className="w-6 h-6" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-white">Peticionando</span>
-                      <span className="text-[9px] text-white/40 uppercase font-mono italic">Advogado Especializado</span>
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--text-primary)]">Peticionando</span>
+                      <span className="text-[9px] text-[var(--text-muted)] uppercase font-mono italic">Advogado Especializado</span>
                     </div>
                   </div>
 
-                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'DELIVERING' ? 'bg-white/10 border-white/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
-                    <div className={`w-12 h-12 rounded-full border border-white flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'DELIVERING' ? 'bg-white text-black' : 'bg-[#0F1012]'}`}>
+                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'DELIVERING' ? 'bg-[var(--accent-muted)] border-[var(--border-active)] scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
+                    <div className={`w-12 h-12 rounded-full border border-[var(--text-primary)] flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'DELIVERING' ? 'bg-[var(--text-primary)] text-[var(--bg-primary)]' : 'bg-[var(--bg-secondary)]'}`}>
                       <ArrowRight className="w-6 h-6" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-white">Protocolando</span>
-                      <span className="text-[9px] text-white/40 uppercase font-mono italic">Barramento Digital</span>
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--text-primary)]">Protocolando</span>
+                      <span className="text-[9px] text-[var(--text-muted)] uppercase font-mono italic">Barramento Digital</span>
                     </div>
                   </div>
 
-                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'JUDGING' ? 'bg-white/10 border-white/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
-                    <div className={`w-12 h-12 rounded-full border border-white flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'JUDGING' ? 'bg-white text-black' : 'bg-[#0F1012]'}`}>
+                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'JUDGING' ? 'bg-[var(--accent-muted)] border-[var(--border-active)] scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
+                    <div className={`w-12 h-12 rounded-full border border-[var(--text-primary)] flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'JUDGING' ? 'bg-[var(--text-primary)] text-[var(--bg-primary)]' : 'bg-[var(--bg-secondary)]'}`}>
                       <Gavel className="w-6 h-6" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-white">Julgando</span>
-                      <span className="text-[9px] text-white/40 uppercase font-mono italic">Magistrado Técnico</span>
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--text-primary)]">Julgando</span>
+                      <span className="text-[9px] text-[var(--text-muted)] uppercase font-mono italic">Magistrado Técnico</span>
                     </div>
                   </div>
 
-                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'REVIEWING' ? 'bg-white/10 border-white/20 scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
-                    <div className={`w-12 h-12 rounded-full border border-white flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'REVIEWING' ? 'bg-white text-black' : 'bg-[#0F1012]'}`}>
+                  <div className={`flex items-center gap-5 transition-all duration-500 w-full p-4 rounded-sm border ${state.simStep === 'REVIEWING' ? 'bg-[var(--accent-muted)] border-[var(--border-active)] scale-105 shadow-xl' : 'opacity-40 border-transparent'}`}>
+                    <div className={`w-12 h-12 rounded-full border border-[var(--text-primary)] flex items-center justify-center shrink-0 z-10 transition-colors ${state.simStep === 'REVIEWING' ? 'bg-[var(--text-primary)] text-[var(--bg-primary)]' : 'bg-[var(--bg-secondary)]'}`}>
                       <ShieldCheck className="w-6 h-6" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-white">Revisando</span>
-                      <span className="text-[9px] text-white/40 uppercase font-mono italic">Memória & Estratégia</span>
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--text-primary)]">Revisando</span>
+                      <span className="text-[9px] text-[var(--text-muted)] uppercase font-mono italic">Memória & Estratégia</span>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className={`transition-all duration-500 ${state.simStep !== 'IDLE' ? 'opacity-100' : 'opacity-0'}`}>
                   <div className="bg-emerald-500/5 border border-emerald-500/20 p-4 rounded-sm">
                     <p className="text-[10px] font-mono text-emerald-500 uppercase tracking-[0.2em] leading-relaxed text-center animate-pulse">
