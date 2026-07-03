@@ -2163,7 +2163,7 @@ const startRecovery = (sessionId: string) => {
       </Navbar>
 
       <main className="flex-1 grid grid-cols-12 gap-0 overflow-hidden min-h-[calc(100vh-64px)]">
-        <div className="col-span-12 lg:col-span-8 p-8 flex flex-col gap-6 lg:border-r border-white/5 overflow-y-auto print:col-span-12 print:p-0 print:border-none">
+        <div className="col-span-12 lg:col-span-9 p-8 flex flex-col gap-6 lg:border-r border-white/5 overflow-y-auto print:col-span-12 print:p-0 print:border-none">
           <AnimatePresence mode="wait">
             {state.error && (
               <motion.div 
@@ -2711,7 +2711,7 @@ const startRecovery = (sessionId: string) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-12 gap-8 lg:gap-12"
               >
-                <div className="col-span-12 xl:col-span-8 space-y-12">
+                <div className="col-span-12 xl:col-span-9 space-y-12">
                   <FlowStepper currentStep="input" modeColor={MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF'} variant="inline" />
                   <div className="space-y-4">
                     <div className="flex items-center gap-4">
@@ -2825,7 +2825,7 @@ const startRecovery = (sessionId: string) => {
                   </div>
                 </div>
 
-                <div className="col-span-12 xl:col-span-4 flex flex-col gap-6">
+                <div className="col-span-12 xl:col-span-3 flex flex-col gap-6">
                   {/* Resumo Analítico - Global Stats */}
                   <div className="bg-[#1C1C1F] text-white p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-white/10">
                     <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
@@ -3902,7 +3902,7 @@ const startRecovery = (sessionId: string) => {
           </AnimatePresence>
         </div>
 
-        <div className="col-span-12 lg:col-span-4 bg-[#0F1012] p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print">
+        <div className="col-span-12 lg:col-span-3 bg-[#0F1012] p-8 flex flex-col gap-10 overflow-y-auto border-l border-white/5 no-print">
           <section>
             <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-6 border-b border-white/10 pb-3 flex items-center justify-between text-white/60">
               Boardroom <span className="text-[8px] font-mono opacity-20">{`v2.4.0 · ${import.meta.env.VITE_GIT_HASH || 'dev'}`}</span>
