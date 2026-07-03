@@ -14,6 +14,7 @@
   --bg-card: #1A1E26;
   --text-primary: #F0F2F5;
   --text-secondary: #7A8494;
+  --text-tertiary: rgba(255, 255, 255, 0.68);
   --text-muted: #4A5260;
   --accent: #00FFEF;
   --accent-press: #00D4C7;
@@ -27,13 +28,20 @@
 
 [data-theme='light'] {
   --bg-primary: #F5F3EE;
+  --bg-secondary: #FAF8F3;
   --bg-card: #FFFFFF;
   --text-primary: #0A1628;
   --text-secondary: rgba(10, 22, 40, 0.55);
+  --text-tertiary: rgba(10, 22, 40, 0.68);
+  --text-muted: rgba(10, 22, 40, 0.35);
   --accent: #0A1628;
+  --accent-press: #14284A;
   --accent-muted: rgba(10, 22, 40, 0.08);
   --border: rgba(0, 0, 0, 0.08);
+  --border-active: rgba(10, 22, 40, 0.30);
   --price: #1A3A6B;
+  --success: #0A8754;
+  --danger: #C42B3A;
 }
 
 .font-playfair {
