@@ -207,7 +207,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4, delay: 0.06 * i }}
                     onClick={() => setDesktopMode(mode)}
-                    className="flex items-center gap-4 p-4 text-left border transition-all duration-200"
+                    className="flex items-center gap-4 p-4 text-left border transition-all duration-200 rounded-xl"
                     style={{
                       borderColor: isSelected ? modeColor(cfg) : 'var(--border)',
                       background: isSelected ? `rgba(${modeColorRgb(cfg)},0.06)` : 'var(--bg-card)',
@@ -215,7 +215,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                     }}
                   >
                     <div
-                      className="w-9 h-9 flex items-center justify-center flex-shrink-0 border transition-colors duration-200"
+                      className="w-9 h-9 flex items-center justify-center flex-shrink-0 border transition-colors duration-200 rounded-lg"
                       style={{ borderColor: isSelected ? modeColor(cfg) : 'var(--border)' }}
                     >
                       <Icon className="w-4 h-4" style={{ color: isSelected ? modeColor(cfg) : 'var(--text-muted)' }} />
@@ -245,7 +245,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.25 }}
                     aria-live="polite"
-                    className="border p-6 md:p-8 h-full flex flex-col"
+                    className="border p-6 md:p-8 h-full flex flex-col rounded-xl"
                     style={{ borderColor: 'var(--border)', background: 'var(--bg-card)' }}
                   >
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: modeColor(cfg) }}>
@@ -286,7 +286,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                       <span className="text-sm font-mono" style={{ color: modeColor(cfg) }}>{MODE_PRICES[desktopMode]}</span>
                       <button
                         onClick={() => onEnter(desktopMode)}
-                        className="flex items-center gap-2 px-6 py-3 font-bold text-[11px] uppercase tracking-[0.2em]"
+                        className="flex items-center gap-2 px-6 py-3 font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl"
                         style={{ background: cfg.color, color: '#0A1628', border: 'none', cursor: 'pointer' }}
                       >
                         {cfg.cta}
