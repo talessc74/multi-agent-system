@@ -3450,15 +3450,18 @@ const startRecovery = (sessionId: string) => {
                   </div>
                 )}
 
-                <div className="hidden print:block mb-12 border-b-2 border-black pb-6">
+                <div className="hidden print:block print:fixed print:top-0 print:left-0 print:right-0 print:bg-white print:pb-3 print:mb-0 print:z-50 border-b-2 border-black">
                   <div className="flex justify-between items-center">
-                    <Logo variant="light" size="lg" />
+                    <Logo variant="light" size="sm" showTitle={false} />
                     <div className="text-right">
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-black/40">Relatório Estratégico de Performance</div>
-                      <div className="text-[10px] font-mono text-black/20">EMITIDO EM: {new Date().toLocaleDateString('pt-BR')}</div>
+                      <div className="text-[9px] font-bold uppercase tracking-widest text-black/40">Relatório Estratégico de Performance</div>
+                      <div className="text-[9px] font-mono text-black/20">EMITIDO EM: {new Date().toLocaleDateString('pt-BR')}</div>
                     </div>
                   </div>
                 </div>
+                {/* Reserva o espaço ocupado pelo cabeçalho fixo acima — sem isso, o
+                    conteúdo da primeira página impressa ficaria por baixo dele. */}
+                <div className="hidden print:block" style={{ height: '56px' }} />
 
                 {state.selectedMode === 1 && (
                   <div className="p-6 bg-white/5 border border-white/10 mb-8 no-print">
