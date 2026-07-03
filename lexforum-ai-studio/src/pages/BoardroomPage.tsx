@@ -11,7 +11,8 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import LoginModal from '../components/LoginModal';
-import { MODE_CONFIG } from '../config/modeConfig';
+import { MODE_CONFIG, type ModeConfig } from '../config/modeConfig';
+import { useTheme } from '../hooks/useTheme';
 
 interface Props {
   onEnter: (mode: number) => void;
@@ -58,6 +59,12 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [openMode, setOpenMode] = useState<number | null>(null);
   const [desktopMode, setDesktopMode] = useState<number>(1);
+  const { theme } = useTheme();
+  // A cor de marca de cada modo (cfg.color) foi calibrada só para fundo escuro
+  // (ex.: o ciano do Modo 1 cai para ~1.14:1 de contraste no claro). No claro,
+  // usamos a variante escurecida (colorLight/colorRgbLight, ~4.5:1).
+  const modeColor = (cfg: ModeConfig) => (theme === 'light' ? cfg.colorLight : cfg.color);
+  const modeColorRgb = (cfg: ModeConfig) => (theme === 'light' ? cfg.colorRgbLight : cfg.colorRgb);
 
   return (
     <div className="min-h-screen overflow-x-hidden selection:bg-amber-400/20" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
@@ -96,9 +103,9 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                 >
                   <div
                     className="flex items-center justify-center shrink-0"
-                    style={{ width: '32px', height: '32px', background: `rgba(${cfg.colorRgb}, 0.12)`, borderRadius: '8px' }}
+                    style={{ width: '32px', height: '32px', background: `rgba(${modeColorRgb(cfg)}, 0.12)`, borderRadius: '8px' }}
                   >
-                    <Icon style={{ width: '16px', height: '16px', color: cfg.color }} />
+                    <Icon style={{ width: '16px', height: '16px', color: modeColor(cfg) }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[16px] font-bold leading-none" style={{ color: 'var(--text-primary)' }}>{cfg.headline}</p>
@@ -113,10 +120,10 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                     <p className="text-[13px] leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
                       {cfg.description}
                     </p>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.15em] mb-4" style={{ color: cfg.color }}>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.15em] mb-4" style={{ color: modeColor(cfg) }}>
                       Ideal para: <span className="normal-case font-normal tracking-normal">{cfg.tagline}</span>
                     </p>
-                    <p className="text-[13px] font-mono mb-3" style={{ color: cfg.color }}>{price}</p>
+                    <p className="text-[13px] font-mono mb-3" style={{ color: modeColor(cfg) }}>{price}</p>
                     <button
                       onClick={() => onEnter(mode)}
                       className="w-full font-bold text-[13px] flex items-center justify-center"
@@ -202,21 +209,21 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                     onClick={() => setDesktopMode(mode)}
                     className="flex items-center gap-4 p-4 text-left border transition-all duration-200"
                     style={{
-                      borderColor: isSelected ? cfg.color : 'rgba(255,255,255,0.07)',
-                      background: isSelected ? `rgba(${cfg.colorRgb},0.06)` : 'var(--bg-card)',
+                      borderColor: isSelected ? modeColor(cfg) : 'var(--border)',
+                      background: isSelected ? `rgba(${modeColorRgb(cfg)},0.06)` : 'var(--bg-card)',
                       cursor: 'pointer',
                     }}
                   >
                     <div
                       className="w-9 h-9 flex items-center justify-center flex-shrink-0 border transition-colors duration-200"
-                      style={{ borderColor: isSelected ? cfg.color : 'rgba(255,255,255,0.08)' }}
+                      style={{ borderColor: isSelected ? modeColor(cfg) : 'var(--border)' }}
                     >
-                      <Icon className="w-4 h-4" style={{ color: isSelected ? cfg.color : 'rgba(255,255,255,0.3)' }} />
+                      <Icon className="w-4 h-4" style={{ color: isSelected ? modeColor(cfg) : 'var(--text-muted)' }} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <h3
                         className="text-[11px] font-bold uppercase tracking-[0.18em] leading-none mb-1 transition-colors duration-200"
-                        style={{ color: isSelected ? cfg.color : 'var(--text-primary)' }}
+                        style={{ color: isSelected ? modeColor(cfg) : 'var(--text-primary)' }}
                       >
                         {cfg.headline}
                       </h3>
@@ -239,9 +246,9 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                     transition={{ duration: 0.25 }}
                     aria-live="polite"
                     className="border p-6 md:p-8 h-full flex flex-col"
-                    style={{ borderColor: 'rgba(255,255,255,0.07)', background: 'var(--bg-card)' }}
+                    style={{ borderColor: 'var(--border)', background: 'var(--bg-card)' }}
                   >
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: cfg.color }}>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: modeColor(cfg) }}>
                       {cfg.tagline}
                     </p>
                     <p className="text-sm leading-relaxed mb-8" style={{ color: 'var(--text-secondary)' }}>
@@ -276,7 +283,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                     </div>
 
                     <div className="mt-auto flex items-center justify-between gap-4">
-                      <span className="text-sm font-mono" style={{ color: cfg.color }}>{MODE_PRICES[desktopMode]}</span>
+                      <span className="text-sm font-mono" style={{ color: modeColor(cfg) }}>{MODE_PRICES[desktopMode]}</span>
                       <button
                         onClick={() => onEnter(desktopMode)}
                         className="flex items-center gap-2 px-6 py-3 font-bold text-[11px] uppercase tracking-[0.2em]"

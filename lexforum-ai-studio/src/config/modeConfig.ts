@@ -2,6 +2,11 @@ export interface ModeConfig {
   id: number;
   color: string;
   colorRgb: string;
+  // Variante escurecida da mesma cor, calibrada para contraste real (~4.5:1)
+  // contra fundos claros — a cor original só foi pensada para fundo escuro
+  // (ex.: o ciano do Modo 1 cai para 1.14:1 de contraste no claro).
+  colorLight: string;
+  colorRgbLight: string;
   headline: string;
   tagline: string;
   description: string;
@@ -19,6 +24,8 @@ export const MODE_CONFIG: Record<number, ModeConfig> = {
     id: 1,
     color: '#00FFEF',
     colorRgb: '0,255,239',
+    colorLight: '#00857C',
+    colorRgbLight: '0,133,124',
     headline: 'Tese Estratégica',
     tagline: 'Você traz o fato. Descubra se tem razão.',
     description:
@@ -34,6 +41,8 @@ export const MODE_CONFIG: Record<number, ModeConfig> = {
     id: 2,
     color: '#FF6B6B',
     colorRgb: '255,107,107',
+    colorLight: '#ED0000',
+    colorRgbLight: '237,0,0',
     headline: 'Defesa sob Ataque',
     tagline: 'Você está sendo acusado. A IA constrói sua defesa.',
     description:
@@ -49,6 +58,8 @@ export const MODE_CONFIG: Record<number, ModeConfig> = {
     id: 3,
     color: '#A882FF',
     colorRgb: '168,130,255',
+    colorLight: '#8652FF',
+    colorRgbLight: '134,82,255',
     headline: 'Mesa Dupla — Juiz',
     tagline: 'Você já tem os dois lados. O juiz decide.',
     description:
@@ -64,6 +75,8 @@ export const MODE_CONFIG: Record<number, ModeConfig> = {
     id: 4,
     color: '#FFB800',
     colorRgb: '255,184,0',
+    colorLight: '#996E00',
+    colorRgbLight: '153,110,0',
     headline: 'Mesa Dupla — Assistida',
     tagline: 'Você escolhe seu lado. A IA reforça sua tese.',
     description:
@@ -80,6 +93,8 @@ export const MODE_CONFIG: Record<number, ModeConfig> = {
     id: 5,
     color: '#00CC88',
     colorRgb: '0,204,136',
+    colorLight: '#00875A',
+    colorRgbLight: '0,135,90',
     headline: 'Revisão Pós-Conflito',
     tagline: 'Já existe uma decisão. Vale a pena ir adiante?',
     description:
