@@ -35,7 +35,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, getAreaStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo, subscribeSimRecovery, getSimRecovery } from './services/dbService';
 import TermosPage from './pages/TermosPage';
 import ChatPanel, { SheetState } from './components/ChatPanel';
-import { getChatStatus, createChatCheckoutSession, sendChatMessage } from './services/chatService';
+import { getChatStatus, createChatCheckoutSession, sendChatMessage, getChatHistory } from './services/chatService';
 
 
 const CensoredText = ({ text, enabled }: { text: string; enabled: boolean }) => {
@@ -715,8 +715,16 @@ const startRecovery = (sessionId: string) => {
       },
       report: sim.report,
       mode5Result: sim.mode5Result ?? prev.mode5Result,
-      isUnlocked: true
+      isUnlocked: true,
+      simulationId: sim.id ?? null
     }));
+    // O chat é por simulação — trocar de caso não pode herdar mensagens,
+    // contador de perguntas ou erro da conversa do caso anterior.
+    setChatSheetState('closed');
+    setChatMessages([]);
+    setChatQuestionsUsed(0);
+    setChatQuestionsLimit(5);
+    setChatError(null);
     setShowHistory(false);
   };
 
@@ -1061,6 +1069,12 @@ const startRecovery = (sessionId: string) => {
         window.location.href = url;
         return;
       }
+      // Recarrega o histórico real a cada abertura — se o usuário já
+      // conversou antes (nesta sessão ou em outra), as perguntas e
+      // respostas anteriores aparecem; se não, o painel abre vazio com
+      // as perguntas restantes.
+      const history = await getChatHistory(state.simulationId);
+      setChatMessages(history);
       setChatQuestionsUsed(status.questionsUsed);
       setChatQuestionsLimit(status.questionsLimit);
       setChatSheetState('half');
