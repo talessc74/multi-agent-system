@@ -31,7 +31,7 @@ jobs:
       - name: Build da imagem Docker
         run: |
           docker build \
-            --build-arg VITE_GIT_HASH=${{ github.sha }} \
+            --build-arg VITE_GIT_HASH=$(git rev-parse --short=6 HEAD) \
             -t gcr.io/gen-lang-client-0982741688/eai-producao:${{ github.sha }} \
             -t gcr.io/gen-lang-client-0982741688/eai-producao:latest \
             ./lexforum-ai-studio
