@@ -3461,7 +3461,7 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 {state.selectedMode === 1 && (
-                  <div className="p-6 bg-white/5 border border-white/10 mb-8">
+                  <div className="p-6 bg-white/5 border border-white/10 mb-8 no-print">
                     <p className="text-sm text-white/60 leading-relaxed">
                       Esta análise avalia a força dos seus argumentos de forma independente.
                       Para simular o contraditório com a outra parte, continue abaixo.
@@ -3470,7 +3470,7 @@ const startRecovery = (sessionId: string) => {
                 )}
 
                 {state.selectedMode === 1 && state.isUnlocked && (
-                  <div className="space-y-6 mb-8">
+                  <div className="space-y-6 mb-8 no-print">
 
                     {!state.showHypotheses && !state.counterHypotheses?.length && (
                       <button
@@ -3864,18 +3864,18 @@ const startRecovery = (sessionId: string) => {
                                 <Scale className="w-4 h-4 text-emerald-500 print:text-black" />
                                 <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest print:text-black">Petição e Pedidos do Advogado</span>
                               </div>
-                              <div className="p-6 bg-white/[0.02] border border-white/5 text-[13px] leading-relaxed text-white/50 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
-                                "{round.lawyerPetition}"
+                              <div className="laudo-prose prose prose-invert prose-sm max-w-none p-6 bg-white/[0.02] border border-white/5 text-[13px] leading-relaxed text-white/50 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
+                                <ReactMarkdown>{round.lawyerPetition}</ReactMarkdown>
                               </div>
                             </div>
-                            
+
                             <div className="space-y-4">
                               <div className="flex items-center gap-2">
                                 <Gavel className="w-4 h-4 text-white/20 print:text-black" />
                                 <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest print:text-black/60">Análise e Decisão do Magistrado</span>
                               </div>
-                              <div className="p-6 bg-white/[0.01] border border-dashed border-white/5 text-[13px] leading-relaxed text-white/40 font-mono print:text-black print:bg-gray-50 print:border-black/10 print:p-4 whitespace-pre-wrap">
-                                {cleanJudgmentText(round.judgeJudgment)}
+                              <div className="laudo-prose prose prose-invert prose-sm max-w-none p-6 bg-white/[0.01] border border-dashed border-white/5 text-[13px] leading-relaxed text-white/40 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
+                                <ReactMarkdown>{cleanJudgmentText(round.judgeJudgment)}</ReactMarkdown>
                               </div>
                             </div>
                           </div>
