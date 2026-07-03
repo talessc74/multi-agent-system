@@ -34,6 +34,7 @@ import {
   registrarAceiteTermos,
   createOrUpdateUser,
   getSimulationById,
+  getStats,
 } from '../services/dbService';
 
 const mockRef = { id: 'mock-ref' } as any;
@@ -215,5 +216,53 @@ describe('getSimulationById', () => {
     const result = await getSimulationById('sim-abc');
 
     expect(result).toBeNull();
+  });
+});
+
+// ─── getStats ─────────────────────────────────────────────────────────────────
+// Regressão: getStats() inventava { totalSimulations: 14282, totalWins: 10682,
+// winRate: 74.8 } sempre que o doc 'stats/global' não existia — um valor
+// plausível fabricado, indistinguível de dado real para quem lê a tela, e não
+// coberto pela guarda de loading do ADR-006 (a Promise resolvia "com sucesso").
+
+describe('getStats', () => {
+  it('retorna os números reais do documento quando ele existe', async () => {
+    vi.mocked(doc).mockReturnValue(mockRef);
+    vi.mocked(getDoc).mockResolvedValue({
+      exists: () => true,
+      data: () => ({ totalSimulations: 42, totalWins: 30 }),
+    } as any);
+
+    const result = await getStats();
+
+    expect(result).toEqual({ totalSimulations: 42, totalWins: 30, winRate: (30 / 42) * 100 });
+  });
+
+  it('NÃO inventa 14282/10682/74.8 quando o documento não existe', async () => {
+    vi.mocked(doc).mockReturnValue(mockRef);
+    vi.mocked(getDoc).mockResolvedValue({ exists: () => false } as any);
+
+    const result = await getStats();
+
+    expect(result).toBeNull();
+  });
+
+  it('propaga o erro em vez de retornar o fallback fabricado (comportamento existente de handleFirestoreError)', async () => {
+    vi.mocked(doc).mockReturnValue(mockRef);
+    vi.mocked(getDoc).mockRejectedValue(new Error('Firestore indisponível'));
+
+    await expect(getStats()).rejects.toThrow();
+  });
+
+  it('winRate é 0 (não 74.8) quando o doc existe mas totalSimulations é 0', async () => {
+    vi.mocked(doc).mockReturnValue(mockRef);
+    vi.mocked(getDoc).mockResolvedValue({
+      exists: () => true,
+      data: () => ({ totalSimulations: 0, totalWins: 0 }),
+    } as any);
+
+    const result = await getStats();
+
+    expect(result).toEqual({ totalSimulations: 0, totalWins: 0, winRate: 0 });
   });
 });

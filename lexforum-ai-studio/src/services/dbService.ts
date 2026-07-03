@@ -199,22 +199,25 @@ export const getUserSimulations = async (userId: string) => {
   }
 };
 
-export const getStats = async (): Promise<GlobalStats> => {
+export const getStats = async (): Promise<GlobalStats | null> => {
   const path = 'stats/global';
   try {
     const statsSnap = await getDoc(doc(db, path));
     if (statsSnap.exists()) {
       const data = statsSnap.data();
+      const totalSimulations = data.totalSimulations || 0;
+      const totalWins = data.totalWins || 0;
       return {
-        totalSimulations: data.totalSimulations || 0,
-        totalWins: data.totalWins || 0,
-        winRate: data.totalSimulations > 0 ? (data.totalWins / data.totalSimulations) * 100 : 74.8
+        totalSimulations,
+        totalWins,
+        winRate: totalSimulations > 0 ? (totalWins / totalSimulations) * 100 : 0
       };
     }
   } catch (error) {
     handleFirestoreError(error, OperationType.GET, path);
   }
-  return { totalSimulations: 14282, totalWins: 10682, winRate: 74.8 };
+  // ADR-006: nenhum valor plausível inventado aqui — sem doc real, sem dado.
+  return null;
 };
 
 export const getRegionalStats = async () => {
