@@ -51,7 +51,7 @@ export interface AppState {
   simStep: 'IDLE' | 'WRITING' | 'DELIVERING' | 'JUDGING' | 'REVIEWING' | 'SEED_CREATED' | 'RECOVERING';
   selectedProfile: 'leigo' | 'profissional';
   regionalStats: { region: string; seeds: number; active: number }[];
-  activeAgents: { name: string; type: string; id: string }[];
+  activeAgents: { name: string; type: string; id: string; activatedAt: number }[];
   showForgeMonitor: boolean;
   currentRound: number;
   error?: { code: number | string; message: string; isQuota: boolean; isRetryable?: boolean } | null;

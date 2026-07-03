@@ -740,7 +740,7 @@ const startRecovery = (sessionId: string) => {
       setState(prev => ({
         ...prev,
         activeAgents: [
-          { name: 'Juiz Estrategista', type: 'Magistrado', id: `MODE5_JUDGE_${Date.now()}` }
+          { name: 'Juiz Estrategista', type: 'Magistrado', id: `MODE5_JUDGE_${Date.now()}`, activatedAt: Date.now() }
         ]
       }));
       try {
@@ -833,12 +833,12 @@ const startRecovery = (sessionId: string) => {
 
             // Update agents list when they transition to visible roles
             if (progressData?.lawyerName && !newActiveAgents.find(a => a.type === 'Advogado')) {
-              newActiveAgents.push({ name: progressData.lawyerName, type: 'Advogado', id: `LAW_${Date.now()}` });
+              newActiveAgents.push({ name: progressData.lawyerName, type: 'Advogado', id: `LAW_${Date.now()}`, activatedAt: Date.now() });
             } else if (progressData?.lawyerName) {
               newActiveAgents = newActiveAgents.map(a => a.type === 'Advogado' ? { ...a, name: progressData.lawyerName! } : a);
             }
             if (progressData?.judgeName && !newActiveAgents.find(a => a.type === 'Magistrado')) {
-              newActiveAgents.push({ name: progressData.judgeName, type: 'Magistrado', id: `JUI_${Date.now()}` });
+              newActiveAgents.push({ name: progressData.judgeName, type: 'Magistrado', id: `JUI_${Date.now()}`, activatedAt: Date.now() });
             } else if (progressData?.judgeName) {
               newActiveAgents = newActiveAgents.map(a => a.type === 'Magistrado' ? { ...a, name: progressData.judgeName! } : a);
             }
@@ -2136,13 +2136,15 @@ const startRecovery = (sessionId: string) => {
         onLogout={logoutUser}
         onShowHistory={handleShowHistory}
       >
-        <button
-          onClick={() => setState(prev => ({ ...prev, showForgeMonitor: !prev.showForgeMonitor }))}
-          className={`flex items-center gap-2 px-3 py-1.5 border transition-all ${state.showForgeMonitor ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-white/10 text-white/40 hover:text-white hover:border-white/20'}`}
-        >
-          <Cpu className="w-3 h-3" />
-          <span className="text-[9px] font-bold uppercase tracking-widest">Monitor de Agentes</span>
-        </button>
+        {state.step !== 'input' && (
+          <button
+            onClick={() => setState(prev => ({ ...prev, showForgeMonitor: !prev.showForgeMonitor }))}
+            className={`flex items-center gap-2 px-3 py-1.5 border transition-all ${state.showForgeMonitor ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-white/10 text-white/40 hover:text-white hover:border-white/20'}`}
+          >
+            <Cpu className="w-3 h-3" />
+            <span className="text-[9px] font-bold uppercase tracking-widest">Monitor de Agentes</span>
+          </button>
+        )}
         <div className="flex flex-col items-end">
           <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold">Status da Simulação</span>
           <span className={`text-xs font-mono font-bold ${state.step === 'simulating' ? 'text-amber-500' : 'text-emerald-500'}`}>
@@ -2881,8 +2883,13 @@ const startRecovery = (sessionId: string) => {
                           Carregando disponibilidade...
                         </div>
                       ) : state.regionalStats.length === 0 ? (
-                        <div className="text-[10px] text-white/20 uppercase tracking-widest font-mono text-center py-6">
-                          Sem dados suficientes ainda
+                        <div className="text-center py-6 space-y-2">
+                          <p className="text-[10px] text-white/30 uppercase tracking-widest font-mono">
+                            Sem simulações reais nesta área ainda
+                          </p>
+                          <p className="text-[9px] text-white/15 normal-case tracking-normal font-serif italic">
+                            Preferimos mostrar isso a inventar uma estatística.
+                          </p>
                         </div>
                       ) : (() => {
                         const maxSeeds = Math.max(...state.regionalStats.map(r => r.seeds), 1);
@@ -4157,7 +4164,7 @@ const startRecovery = (sessionId: string) => {
                   <div className="flex-1 overflow-y-auto space-y-4 font-mono text-[9px] text-white/30 custom-scrollbar pr-4">
                     {state.activeAgents.map((agent, i) => (
                       <div key={i} className="border-b border-white/5 pb-2">
-                        <div className="text-emerald-500/60 mb-1">[{new Date().toLocaleTimeString()}] INSTANCE_SYNC</div>
+                        <div className="text-emerald-500/60 mb-1">[{new Date(agent.activatedAt).toLocaleTimeString()}] INSTANCE_SYNC</div>
                         <div>Target: <span className="text-white/60">{agent.name}</span></div>
                         <div>Type: <span className="text-white/40">{agent.type}</span></div>
                         <div>ID: <span className="text-white/20">{agent.id}</span></div>
