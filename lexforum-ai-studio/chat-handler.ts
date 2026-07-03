@@ -69,6 +69,51 @@ export function registerChatRoutes(
     }
   });
 
+  // Returns the persisted message history for a chat session (LGPD: anonymized content only)
+  app.get('/api/chat/history/:simulationId', async (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    try {
+      const token = authHeader.split('Bearer ')[1];
+      const decoded = await admin.auth().verifyIdToken(token);
+      const uid = decoded.uid;
+
+      const { simulationId } = req.params;
+
+      const simSnap = await adminDb.collection('simulations').doc(simulationId).get();
+      if (!simSnap.exists || simSnap.data()?.userId !== uid) {
+        res.status(403).json({ error: 'Forbidden' });
+        return;
+      }
+
+      const messagesSnap = await adminDb
+        .collection('chats').doc(simulationId)
+        .collection('messages')
+        .orderBy('timestamp', 'asc')
+        .get();
+
+      const messages = messagesSnap.docs.map(d => {
+        const data = d.data();
+        return {
+          role: data.role,
+          content: data.content,
+          agentType: data.agentType,
+          agentName: data.agentName,
+          timestamp: data.timestamp?.toMillis?.() ?? null,
+        };
+      });
+
+      res.json({ messages });
+    } catch (err: any) {
+      console.error('[Chat] history error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // Sends a message to the lawyer or judge — SSE stream
   app.post('/api/chat/message', async (req: Request, res: Response) => {
     setupSSE(res);

@@ -13,6 +13,7 @@ Code-level implementation patterns and conventions.
 - [005-modo1-input-guardrails](application/005-modo1-input-guardrails.md) — Every limit shown in the Modo 1/2 input step's copy (attachments, minimum causa length) must be enforced in code, reusing the pattern already validated in lexforum-app
 - [006-specificjudge-null-sentinel-filtering](application/006-specificjudge-null-sentinel-filtering.md) — Normalize Gemini's literal "null" string sentinel for specificJudge at extraction time (validateCausaServer), not with ad hoc guards at each call site
 - [007-global-stats-fabricated-fallback](application/007-global-stats-fabricated-fallback.md) — getStats() must return null (not an invented plausible number) when the stats/global document doesn't exist yet, closing the gap ADR-006's loading guard didn't cover
+- [008-chat-simulationid-and-history-on-case-load](application/008-chat-simulationid-and-history-on-case-load.md) — loadSimulation must set simulationId and reset per-case chat state; handleOpenChat must always refetch real chat history from Firestore on open, never reuse in-memory chatMessages
 
 ## principles
 

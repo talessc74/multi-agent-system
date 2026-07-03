@@ -1,4 +1,5 @@
 import { auth } from '../lib/firebase';
+import type { ChatMessage } from '../types';
 
 async function getToken(): Promise<string> {
   const user = auth.currentUser;
@@ -17,6 +18,16 @@ export async function getChatStatus(simulationId: string): Promise<{
   });
   if (!res.ok) throw new Error('Erro ao verificar status do chat');
   return res.json();
+}
+
+export async function getChatHistory(simulationId: string): Promise<ChatMessage[]> {
+  const token = await getToken();
+  const res = await fetch(`/api/chat/history/${simulationId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Erro ao buscar histórico do chat');
+  const data = await res.json();
+  return data.messages;
 }
 
 export async function createChatCheckoutSession(simulationId: string): Promise<string> {
