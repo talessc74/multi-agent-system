@@ -2,7 +2,7 @@
 
 ## Overview
 
-Project-local decisions for EAI? (Escritorio de Advocacia Inteligente — eaijuridico.com.br).
+Project-local decisions for EAI? (Evidence-Based Artificial Intelligence — eaijuridico.com.br).
 All policies in this scope were produced by ARGUS deliberation, structured by SCRIBE,
 timestamped by HERALD, and validated by the project owner before archiving.
 
