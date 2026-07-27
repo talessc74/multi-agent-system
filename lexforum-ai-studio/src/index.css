@@ -24,6 +24,8 @@
   --price: #E8C200;
   --success: #00CC88;
   --danger: #FF4444;
+  --warning-border: rgba(251, 191, 36, 0.25);
+  --warning-icon: rgba(251, 191, 36, 0.5);
 }
 
 [data-theme='light'] {
@@ -42,6 +44,8 @@
   --price: #1A3A6B;
   --success: #0A8754;
   --danger: #C42B3A;
+  --warning-border: rgba(180, 83, 9, 0.25);
+  --warning-icon: rgba(180, 83, 9, 0.5);
 }
 
 .font-playfair {

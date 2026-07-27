@@ -41,10 +41,10 @@ const MOBILE_MODES = [
 ];
 
 const FLOW_STEPS = [
-  'Peticionando — Advogado Especializado',
-  'Protocolando — Barramento Digital',
-  'Julgando — Magistrado Técnico',
-  'Revisando — Memória & Estratégia',
+  'Peticionando: Advogado Especializado',
+  'Protocolando: Barramento Digital',
+  'Julgando: Magistrado Técnico',
+  'Revisando: Memória & Estratégia',
 ];
 
 const FOOTER_STATS = [
@@ -65,6 +65,9 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
   // usamos a variante escurecida (colorLight/colorRgbLight, ~4.5:1).
   const modeColor = (cfg: ModeConfig) => (theme === 'light' ? cfg.colorLight : cfg.color);
   const modeColorRgb = (cfg: ModeConfig) => (theme === 'light' ? cfg.colorRgbLight : cfg.colorRgb);
+  // colorLight is dark enough that dark text fails contrast on it (~4:1);
+  // white text is what actually passes AA (~4.5:1+) against every mode's colorLight.
+  const ctaTextColor = theme === 'light' ? '#FFFFFF' : '#0A1628';
 
   return (
     <div className="min-h-screen overflow-x-hidden selection:bg-amber-400/20" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
@@ -127,7 +130,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                     <button
                       onClick={() => onEnter(mode)}
                       className="w-full font-bold text-[13px] flex items-center justify-center"
-                      style={{ height: '48px', background: cfg.color, color: '#0A1628', borderRadius: '12px', border: 'none', cursor: 'pointer' }}
+                      style={{ height: '48px', background: modeColor(cfg), color: ctaTextColor, borderRadius: '12px', border: 'none', cursor: 'pointer' }}
                     >
                       Começar →
                     </button>
@@ -183,7 +186,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
 
         {/* Disclaimer */}
         <div className="px-6 md:px-12 lg:px-20 mb-10 max-w-6xl mx-auto">
-          <div className="border-l-2 border-amber-400/25 pl-4 py-1">
+          <div className="border-l-2 pl-4 py-1" style={{ borderColor: 'var(--warning-border)' }}>
             <p className="text-[9px] uppercase tracking-[0.22em] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               O EAI? É UMA FERRAMENTA DE APOIO ANALÍTICO BASEADA EM MODELOS DE LINGUAGEM AVANÇADOS.
               NÃO SUBSTITUI O ACONSELHAMENTO JURÍDICO PROFISSIONAL.
@@ -287,7 +290,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                       <button
                         onClick={() => onEnter(desktopMode)}
                         className="flex items-center gap-2 px-6 py-3 font-bold text-[11px] uppercase tracking-[0.2em] rounded-xl"
-                        style={{ background: cfg.color, color: '#0A1628', border: 'none', cursor: 'pointer' }}
+                        style={{ background: modeColor(cfg), color: ctaTextColor, border: 'none', cursor: 'pointer' }}
                       >
                         {cfg.cta}
                       </button>
@@ -300,7 +303,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
         </section>
 
         {/* Technical Footer */}
-        <div className="border-t border-white/[0.05]">
+        <div className="border-t" style={{ borderColor: 'var(--border)' }}>
           <div className="px-6 md:px-12 lg:px-20 py-8 max-w-6xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
               {FOOTER_STATS.map(({ label, value }) => (
@@ -319,7 +322,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
         </div>
 
         {/* Boardroom Panel */}
-        <div className="border-t border-white/[0.05]" style={{ background: 'var(--bg-secondary)' }}>
+        <div className="border-t" style={{ borderColor: 'var(--border)', background: 'var(--bg-secondary)' }}>
           <div className="px-6 md:px-12 lg:px-20 py-12 max-w-6xl mx-auto">
             <p className="text-[8px] uppercase tracking-[0.4em] font-bold mb-10" style={{ color: 'var(--text-muted)' }}>
               PAINEL BOARDROOM
@@ -335,7 +338,8 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                 ].map(({ label, value }) => (
                   <div
                     key={label}
-                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-white/[0.05] gap-1"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b gap-1"
+                    style={{ borderColor: 'var(--border)' }}
                   >
                     <span className="text-[9px] uppercase tracking-[0.22em] font-bold" style={{ color: 'var(--text-muted)' }}>
                       {label}
@@ -364,7 +368,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                         ease: 'easeInOut',
                       }}
                     >
-                      <ArrowRight className="w-3 h-3 text-amber-400/50 flex-shrink-0" />
+                      <ArrowRight className="w-3 h-3 flex-shrink-0" style={{ color: 'var(--warning-icon)' }} />
                       <span className="text-[9px] uppercase tracking-[0.18em] font-medium" style={{ color: 'var(--text-muted)' }}>
                         {step}
                       </span>
