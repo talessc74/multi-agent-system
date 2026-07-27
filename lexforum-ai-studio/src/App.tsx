@@ -1188,7 +1188,7 @@ const startRecovery = (sessionId: string) => {
           <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[5])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
-              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'color-mix(in srgb, var(--danger) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
@@ -1313,7 +1313,7 @@ const startRecovery = (sessionId: string) => {
           <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[4])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
-              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'color-mix(in srgb, var(--danger) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
@@ -1475,7 +1475,7 @@ const startRecovery = (sessionId: string) => {
           <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[3])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
-              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'color-mix(in srgb, var(--danger) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
@@ -1610,7 +1610,7 @@ const startRecovery = (sessionId: string) => {
           <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[2])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
             {state.error && (
-              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'color-mix(in srgb, var(--danger) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
@@ -1686,7 +1686,7 @@ const startRecovery = (sessionId: string) => {
           <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[1])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
             {state.error && (
-              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'color-mix(in srgb, var(--danger) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
@@ -1936,7 +1936,8 @@ const startRecovery = (sessionId: string) => {
       {/* ── ARENA MOBILE — Rodadas (resultado bloqueado) ─────────── */}
       {/* ── RESULTADO MOBILE — Índice + Paywall (Tarefa 5) ──────── */}
       {state.step === 'result' && !state.isUnlocked && (() => {
-        const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
+        const lockedCfg = MODE_CONFIG[state.selectedMode];
+        const modeColor = lockedCfg ? themeColor(lockedCfg) : (theme === 'light' ? '#996E00' : '#00FFEF');
         const rounds = state.simulation?.rounds ?? [];
         const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
         const effectiveSide = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
@@ -1953,7 +1954,7 @@ const startRecovery = (sessionId: string) => {
             </div>
             <SessionStatusBar
               area={formatAreaLabel(state.detectedArea)}
-              statusText="✓ Simulação concluída"
+              statusText="Simulação concluída"
               statusColor={modeColor}
               isComplete
             />
@@ -1998,7 +1999,7 @@ const startRecovery = (sessionId: string) => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px', margin: '0 20px 20px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', flexShrink: 0, minWidth: '36px' }}>Autor</span>
                   <div style={{ flex: 1, height: '6px', background: 'var(--border)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ width: `${finalPct}%`, height: '100%', borderRadius: '3px', background: `linear-gradient(to right, ${modeColor}, #00CC88)` }} />
+                    <div style={{ width: `${finalPct}%`, height: '100%', borderRadius: '3px', background: `linear-gradient(to right, ${modeColor}, var(--success))` }} />
                   </div>
                   <span style={{ fontSize: '12px', fontWeight: 700, flexShrink: 0, color: modeColor }}>{finalPct}%</span>
                 </div>
@@ -2025,7 +2026,7 @@ const startRecovery = (sessionId: string) => {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
                       <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{titulo}</span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: 'var(--text-muted)' }}>
-                        <span>🔒</span><span>Laudo</span>
+                        <Lock style={{ width: '11px', height: '11px' }} /><span>Laudo</span>
                       </div>
                     </div>
                   </div>
@@ -2034,10 +2035,10 @@ const startRecovery = (sessionId: string) => {
                   O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                 </p>
                 {(state.detectedArea === 'FAMILY' || state.detectedArea === 'SOCIAL_SECURITY') && (
-                  <div style={{ padding: '16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', borderRadius: '12px', marginTop: '4px' }}>
-                    <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,184,0,0.8)', display: 'block', marginBottom: '8px' }}>🤝 Recursos de Apoio</span>
-                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong> — Central de Atendimento à Mulher.</p>
-                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong> — CVV.</p>
+                  <div style={{ padding: '16px', background: 'rgba(var(--warning-rgb),0.05)', border: '1px solid rgba(var(--warning-rgb),0.2)', borderRadius: '12px', marginTop: '4px' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(var(--warning-rgb),0.8)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}><HeartHandshake style={{ width: '13px', height: '13px' }} /> Recursos de Apoio</span>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong>: Central de Atendimento à Mulher.</p>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong>: CVV.</p>
                     <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>Apoio jurídico gratuito: <strong style={{ color: 'var(--text-primary)' }}>Defensoria Pública</strong> ou <strong style={{ color: 'var(--text-primary)' }}>CRAS</strong>.</p>
                   </div>
                 )}
@@ -2047,9 +2048,9 @@ const startRecovery = (sessionId: string) => {
             <div style={{ position: 'sticky', bottom: 0, padding: '12px 20px', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))', background: 'linear-gradient(to bottom, transparent 0%, var(--bg-primary) 35%)', flexShrink: 0 }}>
               <button
                 onClick={handleCheckout}
-                style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '0.3px', borderRadius: '14px', cursor: 'pointer' }}
+                style={{ width: '100%', padding: '16px', background: modeColor, color: ctaTextColor, border: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '0.3px', borderRadius: '14px', cursor: 'pointer' }}
               >
-                Desbloquear Laudo Completo — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
+                Desbloquear Laudo Completo: {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
               </button>
               <div style={{ marginTop: '8px' }}>
                 {!showPromoInput ? (
@@ -2064,21 +2065,23 @@ const startRecovery = (sessionId: string) => {
                       onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); }}
                       onKeyDown={e => { if (e.key === 'Enter') validatePromoCode(promoCode); }}
                       placeholder="CÓDIGO PROMO"
-                      style={{ flex: 1, padding: '8px 12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em', outline: 'none' }}
+                      style={{ flex: 1, padding: '8px 12px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em', outline: 'none' }}
                     />
                     <button
                       type="button"
                       onClick={() => validatePromoCode(promoCode)}
                       disabled={promoLoading || !promoCode.trim()}
-                      style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '11px', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.05em' }}
+                      style={{ padding: '8px 16px', background: 'var(--bg-secondary)', border: '1px solid var(--border-active)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '11px', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.05em' }}
                     >
                       {promoLoading ? 'Validando…' : 'Aplicar'}
                     </button>
                   </div>
                 )}
                 {promoStatus && (
-                  <p style={{ fontSize: '11px', textAlign: 'center', margin: '4px 0 0', color: promoStatus.valid ? '#00E87F' : '#FF5555', fontWeight: 600 }}>
-                    {promoStatus.valid ? `✓ ${promoStatus.discountLabel} aplicado — ${promoStatus.finalAmountFormatted}` : '✗ Código inválido ou expirado'}
+                  <p style={{ fontSize: '11px', textAlign: 'center', margin: '4px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', color: promoStatus.valid ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>
+                    {promoStatus.valid
+                      ? <><CheckCircle2 style={{ width: '12px', height: '12px' }} /> {promoStatus.discountLabel} aplicado: {promoStatus.finalAmountFormatted}</>
+                      : <><X style={{ width: '12px', height: '12px' }} /> Código inválido ou expirado</>}
                   </p>
                 )}
               </div>
@@ -2166,7 +2169,8 @@ const startRecovery = (sessionId: string) => {
         {state.step !== 'input' && (
           <button
             onClick={() => setState(prev => ({ ...prev, showForgeMonitor: !prev.showForgeMonitor }))}
-            className={`flex items-center gap-2 px-3 py-1.5 border transition-all ${state.showForgeMonitor ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-active)]'}`}
+            className={`flex items-center gap-2 px-3 py-1.5 border transition-all ${state.showForgeMonitor ? '' : 'border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-active)]'}`}
+            style={state.showForgeMonitor ? { background: 'var(--success)', borderColor: 'var(--success)', color: ctaTextColor } : undefined}
           >
             <Cpu className="w-3 h-3" />
             <span className="text-[9px] font-bold uppercase tracking-widest">Monitor de Agentes</span>
@@ -2174,7 +2178,7 @@ const startRecovery = (sessionId: string) => {
         )}
         <div className="flex flex-col items-end">
           <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-bold">Status da Simulação</span>
-          <span className={`text-xs font-mono font-bold ${state.step === 'simulating' ? 'text-amber-500' : 'text-emerald-500'}`}>
+          <span className="text-xs font-mono font-bold" style={{ color: state.step === 'simulating' ? 'rgb(var(--warning-rgb))' : 'var(--success)' }}>
             {state.step === 'input' ? 'AGUARDANDO CAUSA' :
              state.step === 'confirm' ? 'ANALISANDO ÁREA' :
              state.step === 'simulating' ? 'SIMULAÇÃO EM CURSO' : 'SIMULAÇÃO CONCLUÍDA'}
@@ -2193,18 +2197,19 @@ const startRecovery = (sessionId: string) => {
         <div className="col-span-12 lg:col-span-9 p-8 flex flex-col gap-6 lg:border-r border-[var(--border)] overflow-y-auto print:col-span-12 print:p-0 print:border-none">
           <AnimatePresence mode="wait">
             {state.error && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-8 p-6 bg-red-500/10 border border-red-500/20 rounded-sm flex items-start gap-4 shadow-2xl shadow-red-500/5"
+                className="mb-8 p-6 border rounded-sm flex items-start gap-4 shadow-2xl relative"
+                style={{ background: 'color-mix(in srgb, var(--danger) 10%, transparent)', borderColor: 'color-mix(in srgb, var(--danger) 20%, transparent)' }}
               >
-                <AlertCircle className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
+                <AlertCircle className="w-6 h-6 shrink-0 mt-0.5" style={{ color: 'var(--danger)' }} />
                 <div className="space-y-2 flex-1">
-                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-red-500">Falha na Operação</h3>
-                  <p className="text-sm font-serif italic text-white/80">{state.error.message}</p>
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--danger)' }}>Falha na Operação</h3>
+                  <p className="text-sm font-serif italic text-[var(--text-secondary)]">{state.error.message}</p>
                   {state.error.isQuota && (
-                    <div className="pt-4 border-t border-red-500/10 mt-4">
-                      <p className="text-[10px] text-white/40 uppercase tracking-widest leading-relaxed">
+                    <div className="pt-4 border-t mt-4" style={{ borderColor: 'color-mix(in srgb, var(--danger) 10%, transparent)' }}>
+                      <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest leading-relaxed">
                         O sistema está temporariamente indisponível. Estamos cientes e já trabalhando na solução. Tente novamente em alguns minutos.
                       </p>
                     </div>
@@ -2215,14 +2220,15 @@ const startRecovery = (sessionId: string) => {
                         setState(prev => ({ ...prev, error: null }));
                         handleSimulate();
                       }}
-                      className="mt-4 px-6 py-3 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-[#F4F4F2] transition-all"
+                      className="mt-4 px-6 py-3 text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-all"
+                      style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)' }}
                     >
                       Tentar Novamente
                     </button>
                   )}
-                  <button 
+                  <button
                     onClick={() => setState(prev => ({ ...prev, error: null }))}
-                    className="absolute top-4 right-4 text-white/20 hover:text-white"
+                    className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -2858,7 +2864,7 @@ const startRecovery = (sessionId: string) => {
                 <div className="col-span-12 xl:col-span-3 flex flex-col gap-6">
                   {/* Resumo Analítico - Global Stats */}
                   <div className="bg-[var(--bg-card)] text-[var(--text-primary)] p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-[var(--border)]">
-                    <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
+                    <div className="absolute inset-0 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000" style={{ background: 'var(--border)' }}></div>
                     <div className="flex justify-between items-center opacity-30">
                       <span className="text-[9px] uppercase tracking-widest font-bold">Performance Global EAI?</span>
                       <TrendingUp className="w-4 h-4" />
