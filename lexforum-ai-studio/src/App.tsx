@@ -35,6 +35,8 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, getAreaStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo, subscribeSimRecovery, getSimRecovery } from './services/dbService';
 import TermosPage from './pages/TermosPage';
 import ChatPanel, { SheetState } from './components/ChatPanel';
+import { useTheme } from './hooks/useTheme';
+import type { ModeConfig } from './config/modeConfig';
 import { getChatStatus, createChatCheckoutSession, sendChatMessage, getChatHistory } from './services/chatService';
 
 
@@ -320,6 +322,13 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
 }
 
 export default function App() {
+  const { theme } = useTheme();
+  // MODE_CONFIG[...].color is calibrated for dark backgrounds only; colorLight
+  // is the ~4.5:1-contrast variant for the light theme (same pattern as
+  // BoardroomPage's modeColor/modeColorRgb).
+  const themeColor = (cfg: ModeConfig) => (theme === 'light' ? cfg.colorLight : cfg.color);
+  const themeColorRgb = (cfg: ModeConfig) => (theme === 'light' ? cfg.colorRgbLight : cfg.colorRgb);
+  const ctaTextColor = theme === 'light' ? '#FFFFFF' : '#000000';
   const [user, setUser] = useState<User | null>(null);
   const [userHistory, setUserHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -1656,30 +1665,30 @@ const startRecovery = (sessionId: string) => {
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[1].headline}
-            color={MODE_CONFIG[1].color}
+            color={themeColor(MODE_CONFIG[1])}
           />
-          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[1].color} />
+          <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[1])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+                <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
                   <X style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
             )}
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[1].color, marginBottom: '12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: themeColor(MODE_CONFIG[1]), marginBottom: '12px' }}>
               {MODE_CONFIG[1].tagline}
             </p>
             <ContextZone
-              color={MODE_CONFIG[1].color}
-              colorRgb={MODE_CONFIG[1].colorRgb}
+              color={themeColor(MODE_CONFIG[1])}
+              colorRgb={themeColorRgb(MODE_CONFIG[1])}
               description={MODE_CONFIG[1].description}
               bring={MODE_CONFIG[1].bring}
               receive={MODE_CONFIG[1].receive}
             />
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[1].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[1])}`, marginBottom: '12px' }}>
               <textarea
                 value={state.caseDescription}
                 onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
@@ -1718,7 +1727,7 @@ const startRecovery = (sessionId: string) => {
             <button
               disabled={state.caseDescription.trim().length <= 10 || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[1].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: themeColor(MODE_CONFIG[1]), color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[1].cta}
             </button>
@@ -2709,10 +2718,10 @@ const startRecovery = (sessionId: string) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-12 gap-8 lg:gap-12"
+                className="hidden md:grid grid-cols-12 gap-8 lg:gap-12"
               >
                 <div className="col-span-12 xl:col-span-9 space-y-12">
-                  <FlowStepper currentStep="input" modeColor={MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF'} variant="inline" />
+                  <FlowStepper currentStep="input" modeColor={MODE_CONFIG[state.selectedMode] ? themeColor(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '#996E00' : '#00FFEF')} variant="inline" />
                   <div className="space-y-4">
                     <div className="flex items-center gap-4">
                       <button
@@ -2726,8 +2735,8 @@ const startRecovery = (sessionId: string) => {
                         <span
                           className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5"
                           style={{
-                            color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.7)`,
-                            border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.25)`
+                            color: `rgba(${MODE_CONFIG[state.selectedMode] ? themeColorRgb(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '153,110,0' : '255,184,0')},0.7)`,
+                            border: `1px solid rgba(${MODE_CONFIG[state.selectedMode] ? themeColorRgb(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '153,110,0' : '255,184,0')},0.25)`
                           }}
                         >
                           {MODE_NAMES[state.selectedMode]}
@@ -2838,13 +2847,13 @@ const startRecovery = (sessionId: string) => {
                         mostrar um "0%"/valor zerado como se fosse dado real. */}
                     {statsLoading ? (
                       <div className="space-y-1 py-4">
-                        <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
+                        <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-[var(--success)]">Ganhos de Causa via EAI?</div>
                         <div className="text-lg font-mono text-[var(--text-muted)] animate-pulse">Carregando estatísticas...</div>
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 gap-6">
                         <div className="space-y-1">
-                          <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
+                          <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-[var(--success)]">Ganhos de Causa via EAI?</div>
                           <div className="text-6xl font-serif italic text-[var(--text-primary)]">
                             {globalStats.winRate}%
                           </div>
@@ -2857,7 +2866,7 @@ const startRecovery = (sessionId: string) => {
                           </div>
                           <div className="text-right space-y-1">
                             <div className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-widest leading-none">Precisão Média</div>
-                            <div className="text-2xl font-mono text-emerald-500 font-bold">{globalStats.precision}%</div>
+                            <div className="text-2xl font-mono text-[var(--success)] font-bold">{globalStats.precision}%</div>
                           </div>
                         </div>
                       </div>
@@ -2897,14 +2906,14 @@ const startRecovery = (sessionId: string) => {
                           <div key={i} className="space-y-2 group cursor-default">
                             <div className="flex justify-between items-end">
                               <span className="text-[11px] font-bold text-[var(--text-tertiary)] group-hover:text-[var(--text-primary)] transition-colors">{stat.region}</span>
-                              <span className="text-[11px] font-mono text-emerald-500">{stat.active} vitórias</span>
+                              <span className="text-[11px] font-mono text-[var(--success)]">{stat.active} vitórias</span>
                             </div>
                             <div className="h-[2px] bg-[var(--border)] overflow-hidden rounded-full">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${(stat.seeds / maxSeeds) * 100}%` }}
                                 transition={{ duration: 1.5, delay: i * 0.1 }}
-                                className="h-full bg-[var(--text-muted)] group-hover:bg-emerald-500/50 transition-colors"
+                                className="h-full bg-[var(--text-muted)] group-hover:bg-[var(--success)]/50 transition-colors"
                               />
                             </div>
                             <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-tighter text-[var(--text-muted)]">
@@ -2923,7 +2932,7 @@ const startRecovery = (sessionId: string) => {
                         <div className="bg-[var(--bg-secondary)] p-4 space-y-2 border border-[var(--border)]">
                           <div className="flex justify-between items-center">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Total de Vitórias</span>
-                            <span className="text-xs font-mono text-emerald-500 font-bold">
+                            <span className="text-xs font-mono text-[var(--success)] font-bold">
                               {state.regionalStats.reduce((acc, s) => acc + s.active, 0)} VITÓRIAS
                             </span>
                           </div>
@@ -2936,7 +2945,7 @@ const startRecovery = (sessionId: string) => {
                   </div>
 
                   <div className="bg-[var(--bg-card)] border border-[var(--border)] p-6 flex items-center gap-4">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <div className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse"></div>
                     <div className="flex flex-col">
                       <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-primary)]">Ambiente de Simulação</span>
                       <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">Agentes de IA · EAI?</span>
