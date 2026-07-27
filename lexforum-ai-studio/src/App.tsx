@@ -14,6 +14,7 @@ import {
   AlertCircle,
   AlertTriangle,
   Search,
+  HeartHandshake,
   ArrowRight,
   Loader2,
   ChevronRight,
@@ -1739,7 +1740,8 @@ const startRecovery = (sessionId: string) => {
 
       {/* ── LOADING MOBILE — Simulação em curso ─────────────────── */}
       {state.step === 'simulating' && (() => {
-        const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
+        const simCfg = MODE_CONFIG[state.selectedMode];
+        const modeColor = simCfg ? themeColor(simCfg) : (theme === 'light' ? '#996E00' : '#00FFEF');
         const simStepMap: Record<string, number> = {
           WRITING: 0,
           DELIVERING: 1,
@@ -1754,10 +1756,10 @@ const startRecovery = (sessionId: string) => {
           state.simStep === 'REVIEWING' ? 'Revisando' :
           'Iniciando simulação';
         const steps = [
-          { icon: '📋', name: 'Peticionando', desc: 'Advogado elaborando argumentos' },
-          { icon: '→',  name: 'Protocolando', desc: 'Transmissão ao sistema' },
-          { icon: '⚖️', name: 'Julgando',      desc: 'Magistrado analisando' },
-          { icon: '🔍', name: 'Revisando',     desc: 'Consolidando análise' },
+          { Icon: FileText,   name: 'Peticionando', desc: 'Advogado elaborando argumentos' },
+          { Icon: ArrowRight, name: 'Protocolando', desc: 'Transmissão ao sistema' },
+          { Icon: Gavel,      name: 'Julgando',      desc: 'Magistrado analisando' },
+          { Icon: Search,     name: 'Revisando',     desc: 'Consolidando análise' },
         ];
         return (
           <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
@@ -1797,7 +1799,7 @@ const startRecovery = (sessionId: string) => {
                       opacity: isDone ? 0.5 : 1,
                       transition: 'border-color 0.2s ease, opacity 0.2s ease',
                     }}>
-                      <span style={{ fontSize: '20px', flexShrink: 0 }}>{s.icon}</span>
+                      <s.Icon style={{ width: '20px', height: '20px', flexShrink: 0, color: isActive ? modeColor : 'var(--text-muted)' }} />
                       <div style={{ flex: 1 }}>
                         <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{s.name}</p>
                         <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>{s.desc}</p>
@@ -1806,7 +1808,7 @@ const startRecovery = (sessionId: string) => {
                         <span style={{ fontSize: '10px', fontWeight: 700, color: modeColor }}>Em curso</span>
                       )}
                       {isDone && (
-                        <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--success)' }}>✓</span>
+                        <CheckCircle2 style={{ width: '14px', height: '14px', color: 'var(--success)' }} />
                       )}
                       {!isActive && !isDone && (
                         <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Aguarda</span>
@@ -2174,7 +2176,7 @@ const startRecovery = (sessionId: string) => {
         </button>
       </Navbar>
 
-      <main className="flex-1 grid grid-cols-12 gap-0 overflow-hidden min-h-[calc(100vh-64px)]">
+      <main className="hidden md:flex-1 md:grid grid-cols-12 gap-0 overflow-hidden min-h-[calc(100vh-64px)]">
         <div className="col-span-12 lg:col-span-9 p-8 flex flex-col gap-6 lg:border-r border-[var(--border)] overflow-y-auto print:col-span-12 print:p-0 print:border-none">
           <AnimatePresence mode="wait">
             {state.error && (
@@ -3063,87 +3065,90 @@ const startRecovery = (sessionId: string) => {
               );
             })()}
 
-            {(state.step === 'simulating' || (state.step === 'result' && !state.isUnlocked)) && (
-              <motion.div 
+            {(state.step === 'simulating' || (state.step === 'result' && !state.isUnlocked)) && (() => {
+              const simDesktopCfg = MODE_CONFIG[state.selectedMode];
+              const modeColor = simDesktopCfg ? themeColor(simDesktopCfg) : (theme === 'light' ? '#996E00' : '#00FFEF');
+              return (
+              <motion.div
                 key="simulating"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="space-y-8"
+                className="hidden md:block space-y-8"
               >
-                <div className="flex justify-between items-end border-b border-white/10 pb-6">
+                <div className="flex justify-between items-end border-b border-[var(--border)] pb-6">
                   <div>
-                    <h2 className="text-3xl font-serif italic text-white">Arena de Simulação</h2>
-                    <p className="text-[10px] uppercase font-bold tracking-widest text-white/20 mt-1">
+                    <h2 className="text-3xl font-serif italic text-[var(--text-primary)]">Arena de Simulação</h2>
+                    <p className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-muted)] mt-1">
                       Sessão de Simulação{state.simulationId ? ` · ${state.simulationId.slice(-6).toUpperCase()}` : ''}
                     </p>
                   </div>
                   <div className="flex gap-2">
                     {[1, 2, 3].map(r => (
-                      <div 
+                      <div
                         key={r}
-                        className={`w-3 h-3 rounded-full border border-white/20 ${
-                          (state.simulation?.rounds.length || 0) >= r ? 'bg-emerald-500' : 'bg-white/5'
+                        className={`w-3 h-3 rounded-full border border-[var(--border)] ${
+                          (state.simulation?.rounds.length || 0) >= r ? 'bg-[var(--success)]' : 'bg-[var(--bg-secondary)]'
                         }`}
                       />
                     ))}
                   </div>
                 </div>
 
-                <div 
+                <div
                   ref={scrollRef}
                   className="space-y-12 max-h-[700px] overflow-y-auto pr-4 scrollbar-thin overflow-x-hidden"
                 >
                   {state.simulation?.rounds.map((round, i) => (
                     <div key={i} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                       <div className="flex items-center gap-4">
-                        <span className="text-[10px] font-mono font-bold text-white/10">RODADA {i + 1}</span>
-                        <div className="h-px bg-white/5 flex-1" />
+                        <span className="text-[10px] font-mono font-bold text-[var(--text-muted)]">RODADA {i + 1}</span>
+                        <div className="h-px bg-[var(--border)] flex-1" />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Modo 4: lado estático */}
                         {state.selectedMode === 4 && (
-                          <div className="bg-[#15161A] border border-white/5 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden opacity-50">
-                            <div className="absolute top-0 left-0 w-1 h-full bg-white/10"></div>
+                          <div className="border p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden opacity-50" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                            <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'var(--text-muted)' }}></div>
                             <div className="flex justify-between items-center mb-4">
-                              <span className="text-sm font-bold uppercase tracking-tight text-white/40">
+                              <span className="text-sm font-bold uppercase tracking-tight text-[var(--text-muted)]">
                                 {state.userSide === 'AUTHOR' ? 'Contestação do Réu' : 'Petição do Autor'}
                               </span>
-                              <span className="px-2 py-0.5 border border-white/10 text-white/30 text-[9px] uppercase tracking-widest font-bold">Estático</span>
+                              <span className="px-2 py-0.5 border border-[var(--border)] text-[var(--text-muted)] text-[9px] uppercase tracking-widest font-bold">Estático</span>
                             </div>
-                            <p className="text-xs text-white/20 italic font-serif line-clamp-4">
+                            <p className="text-xs text-[var(--text-muted)] italic font-serif line-clamp-4">
                               {state.userSide === 'AUTHOR' ? state.defenseDescription : state.caseDescription}
                             </p>
                           </div>
                         )}
                         {/* Agent: Lawyer */}
-                        <div className="bg-[#15161A] border border-white/10 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden">
-                           <div className="absolute top-0 left-0 w-1 h-full bg-white/40"></div>
+                        <div className="border p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                           <div className="absolute top-0 left-0 w-1 h-full" style={{ background: modeColor }}></div>
                            <div className="flex justify-between items-center mb-6">
                              <div className="flex flex-col">
-                               <span className="text-[9px] font-mono text-white/20">AGT_LAW_{state.detectedArea}</span>
-                               <span className="text-sm font-bold uppercase tracking-tight text-white/80">Advogado Especializado</span>
+                               <span className="text-[9px] font-mono text-[var(--text-muted)]">AGT_LAW_{state.detectedArea}</span>
+                               <span className="text-sm font-bold uppercase tracking-tight text-[var(--text-secondary)]">Advogado Especializado</span>
                              </div>
                              <div className="flex flex-col items-end gap-1">
-                               <span className="px-2 py-0.5 bg-white text-black text-[9px] uppercase tracking-widest font-bold">Petição</span>
+                               <span className="px-2 py-0.5 text-[9px] uppercase tracking-widest font-bold" style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)' }}>Petição</span>
                                {state.selectedMode === 4 && (
-                                 <span className="px-2 py-0.5 bg-amber-500 text-black text-[9px] uppercase tracking-widest font-bold">
+                                 <span className="px-2 py-0.5 text-[9px] uppercase tracking-widest font-bold" style={{ background: 'rgb(var(--warning-rgb))', color: ctaTextColor }}>
                                    {state.userSide === 'AUTHOR' ? 'IA Assistindo Autor' : 'IA Assistindo Réu'}
                                  </span>
                                )}
                              </div>
                            </div>
-                           <div className="text-xs text-white/50 leading-relaxed italic font-serif mb-6 line-clamp-4">
+                           <div className="text-xs text-[var(--text-secondary)] leading-relaxed italic font-serif mb-6 line-clamp-4">
                              "<CensoredText text={round.lawyerPetition} enabled={!state.isUnlocked} />"
                            </div>
 
                            {round.lawyerBrief && (
-                             <div className="mb-6 p-4 bg-white/[0.02] border border-white/5 rounded-sm">
+                             <div className="mb-6 p-4 border rounded-sm" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
                                <div className="flex items-center gap-2 mb-2">
-                                 <TrendingUp className="w-3 h-3 text-white/20" />
-                                 <span className="text-[8px] font-bold uppercase tracking-widest text-white/20">Brief Estratégico (Memória)</span>
+                                 <TrendingUp className="w-3 h-3 text-[var(--text-muted)]" />
+                                 <span className="text-[8px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Brief Estratégico (Memória)</span>
                                </div>
-                               <p className="text-[10px] text-white/40 leading-relaxed font-mono italic">
+                               <p className="text-[10px] text-[var(--text-muted)] leading-relaxed font-mono italic">
                                  <CensoredText text={round.lawyerBrief} enabled={!state.isUnlocked} />
                                </p>
                              </div>
@@ -3151,42 +3156,42 @@ const startRecovery = (sessionId: string) => {
 
                            <div className="flex justify-between items-end">
                              <div className="flex-1 max-w-[120px]">
-                               <div className="text-[8px] uppercase font-bold text-white/20 mb-1">Impacto Técnico</div>
-                               <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                                 <div className="h-full bg-white/60" style={{ width: `${60 + i * 15}%` }}></div>
+                               <div className="text-[8px] uppercase font-bold text-[var(--text-muted)] mb-1">Impacto Técnico</div>
+                               <div className="h-1 rounded-full overflow-hidden" style={{ background: 'var(--border)' }}>
+                                 <div className="h-full" style={{ width: `${60 + i * 15}%`, background: 'var(--text-secondary)' }}></div>
                                </div>
                              </div>
-                             <span className="text-[9px] font-mono font-bold text-white/20">MEMÓRIA OK</span>
+                             <span className="text-[9px] font-mono font-bold text-[var(--text-muted)]">MEMÓRIA OK</span>
                            </div>
                         </div>
 
                         {/* Agent: Judge */}
-                        <div className="bg-[#1C1C1F] border border-white/10 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden backdrop-blur-sm">
-                           <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60"></div>
+                        <div className="border p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden backdrop-blur-sm" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                           <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'rgba(var(--warning-rgb),0.6)' }}></div>
                            <div className="flex justify-between items-center mb-6">
                              <div className="flex flex-col">
-                               <span className="text-[9px] font-mono text-white/20">AGT_JUDGE_{state.detectedArea}</span>
-                               <span className="text-sm font-bold uppercase tracking-tight text-white/80">Magistrado Técnico</span>
+                               <span className="text-[9px] font-mono text-[var(--text-muted)]">AGT_JUDGE_{state.detectedArea}</span>
+                               <span className="text-sm font-bold uppercase tracking-tight text-[var(--text-secondary)]">Magistrado Técnico</span>
                              </div>
-                             <span className="px-2 py-0.5 border border-white/40 text-white text-[9px] uppercase tracking-widest font-bold">{(state.selectedMode === 1 || state.selectedMode === 2) ? 'Avaliação Técnica' : 'Sentença'}</span>
+                             <span className="px-2 py-0.5 border text-[9px] uppercase tracking-widest font-bold text-[var(--text-primary)]" style={{ borderColor: 'var(--border-active)' }}>{(state.selectedMode === 1 || state.selectedMode === 2) ? 'Avaliação Técnica' : 'Sentença'}</span>
                            </div>
-                           <div className="text-xs text-white/50 leading-relaxed font-sans mb-6">
+                           <div className="text-xs text-[var(--text-secondary)] leading-relaxed font-sans mb-6">
                              "<CensoredText text={cleanJudgmentText(round.judgeJudgment) || round.judgeJudgment || ''} enabled={!state.isUnlocked} />"
                            </div>
                            <div className="flex justify-between items-end">
-                             <div className="bg-white/5 px-3 py-1.5 flex flex-col">
+                             <div className="px-3 py-1.5 flex flex-col" style={{ background: 'var(--bg-secondary)' }}>
                                {(() => {
                                  const _es = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
                                  const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
                                  return (
                                    <>
-                                     <span className="text-[8px] font-bold text-white/30 uppercase">Prob. {_es === 'DEFENSE' ? 'Réu' : 'Autor'}</span>
-                                     <span className="text-lg font-serif italic font-bold text-white/90">{_rp}%</span>
+                                     <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase">Prob. {_es === 'DEFENSE' ? 'Réu' : 'Autor'}</span>
+                                     <span className="text-lg font-serif italic font-bold text-[var(--text-primary)]">{_rp}%</span>
                                    </>
                                  );
                                })()}
                              </div>
-                             <span className="text-[9px] font-mono font-bold text-white/20">ISENÇÃO 100%</span>
+                             <span className="text-[9px] font-mono font-bold text-[var(--text-muted)]">ISENÇÃO 100%</span>
                            </div>
                         </div>
                       </div>
@@ -3197,7 +3202,8 @@ const startRecovery = (sessionId: string) => {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="flex items-center gap-3 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest"
+                      className="flex items-center gap-3 px-4 py-2 border text-[10px] font-bold uppercase tracking-widest"
+                      style={{ background: 'color-mix(in srgb, var(--success) 10%, transparent)', borderColor: 'color-mix(in srgb, var(--success) 20%, transparent)', color: 'var(--success)' }}
                     >
                       <Loader2 className="w-3 h-3 animate-spin" />
                       Verificando sua simulação...
@@ -3207,20 +3213,21 @@ const startRecovery = (sessionId: string) => {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="flex items-center gap-3 px-4 py-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-widest"
+                      className="flex items-center gap-3 px-4 py-2 border text-[10px] font-bold uppercase tracking-widest"
+                      style={{ background: 'rgba(var(--warning-rgb),0.1)', borderColor: 'rgba(var(--warning-rgb),0.2)', color: 'rgb(var(--warning-rgb))' }}
                     >
                       <Loader2 className="w-3 h-3 animate-spin" />
-                      Reconectando... tentativa {retryCount} de 3
+                      Reconectando, tentativa {retryCount} de 3
                     </motion.div>
                   )}
 
                   {loading && (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                       <div className="relative">
-                        <Loader2 className="w-8 h-8 animate-spin text-white/40" />
-                        <div className="absolute inset-0 blur-md animate-pulse bg-white/5 rounded-full"></div>
+                        <Loader2 className="w-8 h-8 animate-spin text-[var(--text-muted)]" />
+                        <div className="absolute inset-0 blur-md animate-pulse rounded-full" style={{ background: 'var(--border)' }}></div>
                       </div>
-                      <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/20">Processando Inteligência...</div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--text-muted)]">Processando Inteligência...</div>
                     </div>
                   )}
                 </div>
@@ -3235,38 +3242,40 @@ const startRecovery = (sessionId: string) => {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-12 p-10 bg-[#15161A] border border-white/20 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden"
+                    className="mt-12 p-10 border shadow-[0_0_100px_rgba(0,0,0,0.25)] relative overflow-hidden"
+                    style={{ background: 'var(--bg-card)', borderColor: 'var(--border-active)' }}
                   >
                     <div className="absolute top-0 right-0 p-4">
-                      <Lock className="text-white/5 w-24 h-24 -rotate-12" />
+                      <Lock className="w-24 h-24 -rotate-12" style={{ color: 'var(--border)' }} />
                     </div>
                     <div className="relative z-10 flex flex-col items-center text-center space-y-6">
                       {displayPct > 0 && (
                         <div className="flex flex-col items-center mb-4">
-                          <span className="text-7xl font-serif italic font-bold text-white">
+                          <span className="text-7xl font-serif italic font-bold text-[var(--text-primary)]">
                             {displayPct}%
                           </span>
-                          <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold mt-1">
+                          <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-bold mt-1">
                             Índice de força argumentativa
                           </span>
-                          <span className="text-[9px] text-white/20 uppercase tracking-widest mt-1">
+                          <span className="text-[9px] text-[var(--text-muted)] uppercase tracking-widest mt-1">
                             Estimativa baseada na sua descrição. Resultados reais variam.
                           </span>
                         </div>
                       )}
-                      <h3 className="text-3xl font-serif italic text-white">Simulação de Rodadas Concluída.</h3>
-                      <p className="text-sm text-white/40 max-w-lg leading-relaxed uppercase tracking-widest font-medium">
+                      <h3 className="text-3xl font-serif italic text-[var(--text-primary)]">Simulação de Rodadas Concluída.</h3>
+                      <p className="text-sm text-[var(--text-muted)] max-w-lg leading-relaxed uppercase tracking-widest font-medium">
                         O laudo estratégico completo com fundamentos técnicos, valor estimado da causa e próximos passos processuais foi gerado.
                       </p>
                       <button
                         onClick={handleCheckout}
-                        className="bg-white text-black px-12 py-5 text-sm font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-2xl shadow-black"
+                        className="px-12 py-5 text-sm font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-2xl shadow-black/30"
+                        style={{ background: modeColor, color: ctaTextColor }}
                       >
-                        Desbloquear Laudo Completo — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
+                        Desbloquear Laudo Completo: {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
                       </button>
                       <div>
                         {!showPromoInput ? (
-                          <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-white/30 underline cursor-pointer bg-transparent border-none">
+                          <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] underline cursor-pointer bg-transparent border-none" style={{ color: 'var(--text-muted)' }}>
                             Tenho um código promocional
                           </button>
                         ) : (
@@ -3277,28 +3286,34 @@ const startRecovery = (sessionId: string) => {
                               onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); }}
                               onKeyDown={e => { if (e.key === 'Enter') validatePromoCode(promoCode); }}
                               placeholder="CÓDIGO PROMO"
-                              className="flex-1 px-3 py-2 bg-white/5 border border-white/15 text-white text-[12px] font-semibold tracking-wider uppercase outline-none"
+                              className="flex-1 px-3 py-2 border text-[12px] font-semibold tracking-wider uppercase outline-none"
+                              style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
                             />
                             <button
                               type="button"
                               onClick={() => validatePromoCode(promoCode)}
                               disabled={promoLoading || !promoCode.trim()}
-                              className="px-4 py-2 bg-white/10 border border-white/20 text-white text-[11px] font-bold tracking-wide cursor-pointer"
+                              className="px-4 py-2 border text-[11px] font-bold tracking-wide cursor-pointer"
+                              style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
                             >
                               {promoLoading ? 'Validando…' : 'Aplicar'}
                             </button>
                           </div>
                         )}
                         {promoStatus && (
-                          <p className={`text-[11px] text-center mt-1 font-semibold ${promoStatus.valid ? 'text-emerald-400' : 'text-red-400'}`}>
-                            {promoStatus.valid ? `✓ ${promoStatus.discountLabel} aplicado — ${promoStatus.finalAmountFormatted}` : '✗ Código inválido ou expirado'}
+                          <p className="text-[11px] text-center mt-1 font-semibold" style={{ color: promoStatus.valid ? 'var(--success)' : 'var(--danger)' }}>
+                            {promoStatus.valid ? (
+                              <><CheckCircle2 className="w-3 h-3 inline mr-1" />{promoStatus.discountLabel} aplicado: {promoStatus.finalAmountFormatted}</>
+                            ) : (
+                              <><X className="w-3 h-3 inline mr-1" />Código inválido ou expirado</>
+                            )}
                           </p>
                         )}
                       </div>
-                      <div className="flex gap-8 border-t border-white/5 pt-6 text-[9px] font-bold uppercase tracking-widest text-white/20">
-                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Pagamento seguro</span>
-                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Acesso Vitalício</span>
-                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Formato Profissional</span>
+                      <div className="flex gap-8 border-t pt-6 text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]" style={{ borderColor: 'var(--border)' }}>
+                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3" style={{ color: 'var(--success)' }} /> Pagamento seguro</span>
+                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3" style={{ color: 'var(--success)' }} /> Acesso Vitalício</span>
+                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3" style={{ color: 'var(--success)' }} /> Formato Profissional</span>
                       </div>
                     </div>
                   </motion.div>
@@ -3307,22 +3322,22 @@ const startRecovery = (sessionId: string) => {
 
                 {(state.detectedArea === 'FAMILY' ||
                   state.detectedArea === 'SOCIAL_SECURITY') && (
-                  <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.05)`, border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.2)` }}>
-                    <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.8)` }}>
-                      🤝 Recursos de Apoio
+                  <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${(MODE_CONFIG[state.selectedMode] ? themeColorRgb(MODE_CONFIG[state.selectedMode]) : '255,184,0')},0.05)`, border: `1px solid rgba(${(MODE_CONFIG[state.selectedMode] ? themeColorRgb(MODE_CONFIG[state.selectedMode]) : '255,184,0')},0.2)` }}>
+                    <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: `rgba(${(MODE_CONFIG[state.selectedMode] ? themeColorRgb(MODE_CONFIG[state.selectedMode]) : '255,184,0')},0.8)` }}>
+                      <HeartHandshake className="w-3.5 h-3.5" /> Recursos de Apoio
                     </span>
-                    <p className="text-sm text-white/60 leading-relaxed">
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                       Se você está em situação de violência, ligue{' '}
-                      <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                      <strong className="text-[var(--text-primary)]">180</strong>: Central de Atendimento à Mulher.
                     </p>
-                    <p className="text-sm text-white/60 leading-relaxed">
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                       Em sofrimento emocional, ligue{' '}
-                      <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                      <strong className="text-[var(--text-primary)]">188</strong>: CVV, Centro de Valorização da Vida.
                     </p>
-                    <p className="text-sm text-white/60 leading-relaxed">
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                       Para apoio jurídico gratuito, procure a{' '}
-                      <strong className="text-white">Defensoria Pública</strong> ou o{' '}
-                      <strong className="text-white">CRAS</strong> da sua cidade.
+                      <strong className="text-[var(--text-primary)]">Defensoria Pública</strong> ou o{' '}
+                      <strong className="text-[var(--text-primary)]">CRAS</strong> da sua cidade.
                     </p>
                   </div>
                 )}
@@ -3333,22 +3348,23 @@ const startRecovery = (sessionId: string) => {
                     animate={{ opacity: 1, y: 0 }}
                     className="mt-8 space-y-6"
                   >
-                    <div className="p-6 bg-white/5 border border-white/10 space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-sans text-white/80 leading-relaxed">
+                    <div className="p-6 border space-y-4" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] block">Análise do Juiz Estrategista</span>
+                      <p className="text-lg font-sans text-[var(--text-secondary)] leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={true} />
                       </p>
                     </div>
-                    <div className="p-6 bg-[#15161A] border border-white/10 space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Fundamentação Jurídica</span>
-                      <p className="text-sm font-mono text-white/60 leading-relaxed">
+                    <div className="p-6 border space-y-4" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] block">Fundamentação Jurídica</span>
+                      <p className="text-sm font-mono text-[var(--text-secondary)] leading-relaxed">
                         <CensoredText text={state.mode5Result.reasoning} enabled={true} />
                       </p>
                     </div>
                   </motion.div>
                 )}
               </motion.div>
-            )}
+              );
+            })()}
 
             {state.step === 'result' && state.isUnlocked && (
               <motion.div
@@ -4040,19 +4056,20 @@ const startRecovery = (sessionId: string) => {
           <div className="mt-auto pt-8">
             {/* Contextual Summary for active process */}
             {(state.step === 'simulating' || state.step === 'result') && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-[#1C1C1F] text-white p-6 rounded-sm space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-white/10"
+                className="text-[var(--text-primary)] p-6 rounded-sm space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.15)] relative overflow-hidden group border"
+                style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}
               >
-                <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
+                <div className="absolute inset-0 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000" style={{ background: 'var(--border)' }}></div>
                 <div className="flex justify-between items-center opacity-30">
                   <span className="text-[9px] uppercase tracking-widest font-bold">Resumo do Caso Atual</span>
                   <TrendingUp className="w-4 h-4" />
                 </div>
                 <div className="space-y-1">
-                  <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Índice de Força Argumentativa</div>
-                  <div className="text-5xl font-serif italic text-white/90">
+                  <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest" style={{ color: 'var(--success)' }}>Índice de Força Argumentativa</div>
+                  <div className="text-5xl font-serif italic text-[var(--text-primary)]">
                     { (state.simulation?.rounds && state.simulation.rounds.length > 0)
                       ? (() => {
                           const _fp = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
@@ -4064,7 +4081,7 @@ const startRecovery = (sessionId: string) => {
                     }%
                   </div>
                 </div>
-                <div className="text-[10px] font-mono text-emerald-500/60 font-bold border-t border-white/5 pt-4 flex justify-between">
+                <div className="text-[10px] font-mono font-bold border-t pt-4 flex justify-between" style={{ color: 'color-mix(in srgb, var(--success) 60%, transparent)', borderColor: 'var(--border)' }}>
                    <span>SESSÃO: {state.simulation?.lawyerAgentName ? 'SEED_ACTIVE' : 'INITIALIZING'}</span>
                    <span>VEREDITO: {state.step === 'result' ? 'CONCLUÍDO' : 'PENDENTE'}</span>
                 </div>
