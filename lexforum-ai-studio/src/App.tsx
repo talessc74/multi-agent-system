@@ -4252,24 +4252,24 @@ const startRecovery = (sessionId: string) => {
       </AnimatePresence>
 
       {state.step === 'result' && !state.isUnlocked && (
-        <footer className="fixed bottom-0 left-0 w-full min-h-40 border-t border-white/20 bg-[#111111] flex items-center z-[100] shadow-[0_-20px_100px_rgba(0,0,0,0.9)] no-print">
-          <div className="w-1/2 p-10 border-r border-white/5 hidden md:block overflow-hidden relative">
-            <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-white/20">Preview do Relatório Estratégico</h4>
+        <footer className="fixed bottom-0 left-0 w-full min-h-40 border-t border-[var(--border-active)] bg-[var(--bg-primary)] flex items-center z-[100] shadow-[0_-20px_100px_rgba(0,0,0,0.9)] no-print">
+          <div className="w-1/2 p-10 border-r border-[var(--border)] hidden md:block overflow-hidden relative">
+            <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-[var(--text-muted)]">Preview do Relatório Estratégico</h4>
             <div className="space-y-3 opacity-[0.05]">
-              <div className="h-3 bg-white w-full"></div>
-              <div className="h-3 bg-white w-5/6"></div>
-              <div className="h-3 bg-white w-1/2"></div>
-              <div className="h-3 bg-white w-full"></div>
+              <div className="h-3 bg-[var(--text-primary)] w-full"></div>
+              <div className="h-3 bg-[var(--text-primary)] w-5/6"></div>
+              <div className="h-3 bg-[var(--text-primary)] w-1/2"></div>
+              <div className="h-3 bg-[var(--text-primary)] w-full"></div>
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-transparent to-transparent pointer-events-none"></div>
           </div>
           <div className="flex-1 md:w-1/2 p-10 flex items-center justify-between gap-12">
             <div className="space-y-1 flex-1">
-              <h4 className="text-2xl font-serif italic leading-tight text-white">Desbloquear o Laudo Completo</h4>
-              <p className="text-xs text-white/30 font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via cartão. Estratégia técnica detalhada.</p>
+              <h4 className="text-2xl font-serif italic leading-tight text-[var(--text-primary)]">Desbloquear o Laudo Completo</h4>
+              <p className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-widest leading-relaxed">Liberação imediata via cartão. Estratégia técnica detalhada.</p>
               <div className="pt-1">
                 {!showPromoInput ? (
-                  <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-white/50 underline cursor-pointer bg-transparent border-none">
+                  <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-[var(--text-secondary)] underline cursor-pointer bg-transparent border-none">
                     Tenho um código promocional
                   </button>
                 ) : (
@@ -4280,30 +4280,32 @@ const startRecovery = (sessionId: string) => {
                       onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); }}
                       onKeyDown={e => { if (e.key === 'Enter') validatePromoCode(promoCode); }}
                       placeholder="CÓDIGO PROMO"
-                      className="flex-1 max-w-[160px] px-3 py-1.5 bg-white/5 border border-white/15 text-white text-[11px] font-semibold tracking-wider uppercase outline-none"
+                      className="flex-1 max-w-[160px] px-3 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-active)] text-[var(--text-primary)] text-[11px] font-semibold tracking-wider uppercase outline-none"
                     />
                     <button
                       type="button"
                       onClick={() => validatePromoCode(promoCode)}
                       disabled={promoLoading || !promoCode.trim()}
-                      className="px-3 py-1.5 bg-white/10 border border-white/20 text-white text-[10px] font-bold tracking-wide cursor-pointer"
+                      className="px-3 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-active)] text-[var(--text-primary)] text-[10px] font-bold tracking-wide cursor-pointer"
                     >
                       {promoLoading ? 'Validando…' : 'Aplicar'}
                     </button>
                   </div>
                 )}
                 {promoStatus && (
-                  <p className={`text-[10px] mt-1 font-semibold ${promoStatus.valid ? 'text-emerald-400' : 'text-red-400'}`}>
-                    {promoStatus.valid ? `✓ ${promoStatus.discountLabel} — ${promoStatus.finalAmountFormatted}` : '✗ Código inválido ou expirado'}
+                  <p className="text-[10px] mt-1 font-semibold flex items-center gap-1" style={{ color: promoStatus.valid ? 'var(--success)' : 'var(--danger)' }}>
+                    {promoStatus.valid ? <CheckCircle2 className="w-3 h-3" /> : <X className="w-3 h-3" />}
+                    {promoStatus.valid ? `${promoStatus.discountLabel}: ${promoStatus.finalAmountFormatted}` : 'Código inválido ou expirado'}
                   </p>
                 )}
               </div>
             </div>
             <button
                onClick={handleCheckout}
-               className="px-10 py-5 bg-white text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:scale-[1.02] transition-transform shrink-0 shadow-2xl shadow-black flex flex-col items-center leading-none"
+               className="px-10 py-5 text-[11px] font-bold uppercase tracking-[0.3em] hover:scale-[1.02] transition-transform shrink-0 shadow-2xl shadow-black flex flex-col items-center leading-none"
+               style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)' }}
             >
-              <span>DESBLOQUEAR — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}</span>
+              <span>DESBLOQUEAR: {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}</span>
               <span className="text-[8px] opacity-40 mt-1">Sessão única</span>
             </button>
           </div>
