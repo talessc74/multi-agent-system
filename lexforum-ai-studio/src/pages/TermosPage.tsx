@@ -1,7 +1,7 @@
 import React from 'react';
 
 const s = {
-  page: { minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-secondary)', fontFamily: 'Arial, sans-serif', padding: '48px 24px 80px' } as React.CSSProperties,
+  page: { minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)', padding: '48px 24px 80px' } as React.CSSProperties,
   inner: { maxWidth: '720px', margin: '0 auto' } as React.CSSProperties,
   title: { fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' } as React.CSSProperties,
   subtitle: { fontSize: '13px', color: 'var(--text-muted)', marginBottom: '4px' } as React.CSSProperties,
@@ -16,11 +16,11 @@ export default function TermosPage() {
   return (
     <div style={s.page}>
       <div style={s.inner}>
-        <h1 style={s.title}>TERMOS DE USO — EAI?</h1>
+        <h1 style={s.title}>TERMOS DE USO: EAI?</h1>
         <p style={s.subtitle}>Evidence-Based Artificial Intelligence</p>
         <p style={s.meta}>
-          Versão 1.2 — Maio de 2026<br />
-          Responsável: Tales Carvalho — E-mail: eaijuridico@icloud.com<br />
+          Versão 1.2: Maio de 2026<br />
+          Responsável: Tales Carvalho. E-mail: eaijuridico@icloud.com<br />
           (E-mail provisório — será atualizado para eaijuridico.com.br após migração do domínio)
         </p>
 
@@ -108,7 +108,7 @@ export default function TermosPage() {
         </div>
 
         <div style={s.footer}>
-          Versão 1.2 — Maio de 2026 — EAI? — Evidence-Based Artificial Intelligence
+          Versão 1.2, Maio de 2026 · EAI? · Evidence-Based Artificial Intelligence
         </div>
       </div>
     </div>
