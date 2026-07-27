@@ -24,6 +24,7 @@
   --price: #E8C200;
   --success: #00CC88;
   --danger: #FF4444;
+  --warning-rgb: 251, 191, 36;
 }
 
 [data-theme='light'] {
@@ -42,6 +43,7 @@
   --price: #1A3A6B;
   --success: #0A8754;
   --danger: #C42B3A;
+  --warning-rgb: 180, 83, 9;
 }
 
 .font-playfair {

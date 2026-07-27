@@ -12,6 +12,12 @@ import {
   FileText,
   ShieldCheck,
   AlertCircle,
+  AlertTriangle,
+  Search,
+  HeartHandshake,
+  MessageCircle,
+  Swords,
+  Shield,
   ArrowRight,
   Loader2,
   ChevronRight,
@@ -35,6 +41,8 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, getAreaStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo, subscribeSimRecovery, getSimRecovery } from './services/dbService';
 import TermosPage from './pages/TermosPage';
 import ChatPanel, { SheetState } from './components/ChatPanel';
+import { useTheme } from './hooks/useTheme';
+import type { ModeConfig } from './config/modeConfig';
 import { getChatStatus, createChatCheckoutSession, sendChatMessage, getChatHistory } from './services/chatService';
 
 
@@ -126,6 +134,8 @@ function formatSimDate(createdAt: unknown): string {
 }
 
 function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses, onOpenChat }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; onOpenChat?: () => void; }) {
+  const { theme } = useTheme();
+  const ctaTextColor = theme === 'light' ? '#FFFFFF' : '#000000';
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
   const effectiveSide = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
@@ -144,8 +154,8 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
   return (
     <div className="flex flex-col md:hidden eai-laudo-mobile" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
       <div style={{ display: 'flex', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', overflow: 'hidden', margin: '12px 20px 0', flexShrink: 0 }}>
-        <button onClick={() => setActiveVolume('I')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'I' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'I' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'I' ? '8px' : 0, margin: activeVolume === 'I' ? '4px' : 0, transition: 'all 0.2s' }}>Volume I — Orientação</button>
-        <button onClick={() => setActiveVolume('II')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'II' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'II' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'II' ? '8px' : 0, margin: activeVolume === 'II' ? '4px' : 0, transition: 'all 0.2s' }}>Volume II — Técnico</button>
+        <button onClick={() => setActiveVolume('I')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'I' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'I' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'I' ? '8px' : 0, margin: activeVolume === 'I' ? '4px' : 0, transition: 'all 0.2s' }}>Volume I: Orientação</button>
+        <button onClick={() => setActiveVolume('II')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'II' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'II' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'II' ? '8px' : 0, margin: activeVolume === 'II' ? '4px' : 0, transition: 'all 0.2s' }}>Volume II: Técnico</button>
       </div>
       <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingBottom: 'calc(96px + env(safe-area-inset-bottom))', scrollbarWidth: 'none' }}>
         <div style={{ textAlign: 'center', padding: '24px 20px 16px' }}>
@@ -165,17 +175,25 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
                 <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{rightLabel}</span>
               </div>
               <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${barFill}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, #00CC88)`, transition: 'width 0.6s ease' }} />
+                <div style={{ width: `${barFill}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, var(--success))`, transition: 'width 0.6s ease' }} />
               </div>
             </div>
           );
         })()}
-        {state.selectedMode === 5 && state.mode5Result && (
-          <div style={{ margin: '0 20px 16px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', textAlign: 'center' }}>
-            <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Recomendação</p>
-            <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '22px', fontStyle: 'italic', fontWeight: 700, color: state.mode5Result.recommendation === 'RECORRER' ? '#FF6B6B' : state.mode5Result.recommendation === 'ACEITAR' ? '#00CC88' : '#FFB800' }}>{state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}</p>
-          </div>
-        )}
+        {state.selectedMode === 5 && state.mode5Result && (() => {
+          const rec = state.mode5Result.recommendation;
+          const recColor = rec === 'RECORRER' ? 'var(--danger)' : rec === 'ACEITAR' ? 'var(--success)' : 'rgb(var(--warning-rgb))';
+          const RecIcon = rec === 'RECORRER' ? Scale : rec === 'ACEITAR' ? CheckCircle2 : HeartHandshake;
+          const recLabel = rec === 'RECORRER' ? 'Recorrer' : rec === 'ACEITAR' ? 'Aceitar' : 'Negociar';
+          return (
+            <div style={{ margin: '0 20px 16px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', textAlign: 'center' }}>
+              <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Recomendação</p>
+              <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '22px', fontStyle: 'italic', fontWeight: 700, color: recColor, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <RecIcon style={{ width: '20px', height: '20px' }} /> {recLabel}
+              </p>
+            </div>
+          );
+        })()}
         {activeVolume === 'I' && (
           <div style={{ padding: '0 20px 16px' }}>
             {state.selectedMode === 5 && state.mode5Result && (
@@ -186,7 +204,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
             )}
             {state.selectedMode !== 5 && state.report && (state.report.layman || state.report.professional) && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
-                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#00CC88', marginBottom: '12px' }}>Orientação ao Cliente</p>
+                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--success)', marginBottom: '12px' }}>Orientação ao Cliente</p>
                 <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}><ReactMarkdown>{state.report.layman || state.report.professional || ''}</ReactMarkdown></div>
               </div>
             )}
@@ -197,10 +215,10 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
               </div>
             )}
             {(state.detectedArea === 'FAMILY' || state.detectedArea === 'SOCIAL_SECURITY') && (
-              <div style={{ padding: '16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', borderRadius: '12px', marginTop: '16px' }}>
-                <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,184,0,0.8)', display: 'block', marginBottom: '8px' }}>🤝 Recursos de Apoio</span>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong> — Central de Atendimento à Mulher.</p>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong> — CVV.</p>
+              <div style={{ padding: '16px', background: 'rgba(var(--warning-rgb),0.05)', border: '1px solid rgba(var(--warning-rgb),0.2)', borderRadius: '12px', marginTop: '16px' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(var(--warning-rgb),0.8)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}><HeartHandshake style={{ width: '14px', height: '14px' }} /> Recursos de Apoio</span>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong>: Central de Atendimento à Mulher.</p>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong>: CVV.</p>
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>Apoio jurídico gratuito: <strong style={{ color: 'var(--text-primary)' }}>Defensoria Pública</strong> ou <strong style={{ color: 'var(--text-primary)' }}>CRAS</strong>.</p>
               </div>
             )}
@@ -231,7 +249,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
         {/* Carregando hipóteses */}
         {state.showHypotheses && !state.counterHypotheses?.length && !state.expandedHypothesis && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', marginBottom: '10px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
+            <Loader2 className="animate-spin" style={{ width: '14px', height: '14px', color: 'var(--text-muted)' }} />
             <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Gerando hipóteses...</span>
           </div>
         )}
@@ -242,7 +260,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
             <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 4px' }}>Como o réu pode reagir:</p>
             {isExpanding ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
+                <Loader2 className="animate-spin" style={{ width: '14px', height: '14px', color: 'var(--text-muted)' }} />
                 <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Expandindo argumento...</span>
               </div>
             ) : (
@@ -264,7 +282,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
         {state.expandedHypothesis && state.selectedMode !== 5 && state.selectedMode !== 4 && (
           <button
             onClick={onGoToMode4}
-            style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '13px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginBottom: '10px', letterSpacing: '0.1em', textTransform: 'uppercase' }}
+            style={{ width: '100%', padding: '16px', background: modeColor, color: ctaTextColor, border: 'none', fontSize: '13px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginBottom: '10px', letterSpacing: '0.1em', textTransform: 'uppercase' }}
           >
             Simular contraditório no Modo 4 →
           </button>
@@ -273,8 +291,8 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
         {/* Barra normal */}
         {!state.showHypotheses && !state.expandedHypothesis && (
           <>
-            <button onClick={handlePrint} disabled={isPrinting} style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: isPrinting ? 'not-allowed' : 'pointer', opacity: isPrinting ? 0.8 : 1, transition: 'opacity 0.2s' }}>
-              {isPrinting ? '⏳ Gerando PDF...' : '↓ Exportar PDF'}
+            <button onClick={handlePrint} disabled={isPrinting} style={{ width: '100%', padding: '16px', background: modeColor, color: ctaTextColor, border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: isPrinting ? 'not-allowed' : 'pointer', opacity: isPrinting ? 0.8 : 1, transition: 'opacity 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              {isPrinting ? <><Loader2 className="animate-spin" style={{ width: '16px', height: '16px' }} /> Gerando PDF...</> : 'Exportar PDF'}
             </button>
             {isPrinting && (
               <button onClick={() => setIsPrinting(false)} style={{ width: '100%', padding: '10px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-muted)', fontSize: '12px', borderRadius: '10px', cursor: 'pointer', marginTop: '8px' }}>
@@ -287,7 +305,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
                   onClick={() => setShowMode4Preview(prev => !prev)}
                   style={{ width: '100%', padding: '14px 16px', marginTop: '10px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                 >
-                  <span>⚖ Ver como a outra parte vai reagir</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Scale style={{ width: '14px', height: '14px' }} /> Ver como a outra parte vai reagir</span>
                   <span>{showMode4Preview ? '↑' : '→'}</span>
                 </button>
 
@@ -309,8 +327,8 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
         )}
 
         {onOpenChat && (
-          <button onClick={onOpenChat} style={{ width: '100%', padding: '14px', background: '#00FFEF', color: '#000', border: 'none', fontSize: '14px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>
-            💬 Falar com os agentes
+          <button onClick={onOpenChat} style={{ width: '100%', padding: '14px', background: modeColor, color: ctaTextColor, border: 'none', fontSize: '14px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <MessageCircle style={{ width: '16px', height: '16px' }} /> Falar com os agentes
           </button>
         )}
         <button onClick={onRestart} style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>Nova simulação</button>
@@ -320,6 +338,13 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
 }
 
 export default function App() {
+  const { theme } = useTheme();
+  // MODE_CONFIG[...].color is calibrated for dark backgrounds only; colorLight
+  // is the ~4.5:1-contrast variant for the light theme (same pattern as
+  // BoardroomPage's modeColor/modeColorRgb).
+  const themeColor = (cfg: ModeConfig) => (theme === 'light' ? cfg.colorLight : cfg.color);
+  const themeColorRgb = (cfg: ModeConfig) => (theme === 'light' ? cfg.colorRgbLight : cfg.colorRgb);
+  const ctaTextColor = theme === 'light' ? '#FFFFFF' : '#000000';
   const [user, setUser] = useState<User | null>(null);
   const [userHistory, setUserHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -997,8 +1022,8 @@ const startRecovery = (sessionId: string) => {
     0: 'Modo Livre',
     1: 'Tese Estratégica',
     2: 'Defesa sob Ataque',
-    3: 'Mesa Dupla — Juiz',
-    4: 'Mesa Dupla — Assistida',
+    3: 'Mesa Dupla: Juiz',
+    4: 'Mesa Dupla: Assistida',
     5: 'Revisão Pós-Conflito',
   };
 
@@ -1158,25 +1183,25 @@ const startRecovery = (sessionId: string) => {
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[5].headline}
-            color={MODE_CONFIG[5].color}
+            color={themeColor(MODE_CONFIG[5])}
           />
-          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[5].color} />
+          <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[5])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
-              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'color-mix(in srgb, var(--danger) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
                   <X style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
             )}
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[5].color, marginBottom: '12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: themeColor(MODE_CONFIG[5]), marginBottom: '12px' }}>
               {MODE_CONFIG[5].tagline}
             </p>
             <ContextZone
-              color={MODE_CONFIG[5].color}
-              colorRgb={MODE_CONFIG[5].colorRgb}
+              color={themeColor(MODE_CONFIG[5])}
+              colorRgb={themeColorRgb(MODE_CONFIG[5])}
               description={MODE_CONFIG[5].description}
               bring={MODE_CONFIG[5].bring}
               receive={MODE_CONFIG[5].receive}
@@ -1185,20 +1210,20 @@ const startRecovery = (sessionId: string) => {
             <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
               <button
                 onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'RECURSO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: prev.mode5Input?.attachments || [] } }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.mode5Input?.subCase === 'RECURSO' ? `2px solid ${MODE_CONFIG[5].color}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'RECURSO' ? 'rgba(0,204,136,0.1)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'RECURSO' ? MODE_CONFIG[5].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.mode5Input?.subCase === 'RECURSO' ? `2px solid ${themeColor(MODE_CONFIG[5])}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'RECURSO' ? 'color-mix(in srgb, var(--success) 10%, transparent)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'RECURSO' ? themeColor(MODE_CONFIG[5]) : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                ⚖️ Recorrer
+                <Scale style={{ width: '14px', height: '14px' }} /> Recorrer
               </button>
               <button
                 onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'ACORDO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: prev.mode5Input?.attachments || [] } }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.mode5Input?.subCase === 'ACORDO' ? `2px solid ${MODE_CONFIG[5].color}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'ACORDO' ? 'rgba(0,204,136,0.1)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'ACORDO' ? MODE_CONFIG[5].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.mode5Input?.subCase === 'ACORDO' ? `2px solid ${themeColor(MODE_CONFIG[5])}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'ACORDO' ? 'color-mix(in srgb, var(--success) 10%, transparent)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'ACORDO' ? themeColor(MODE_CONFIG[5]) : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                🤝 Acordo
+                <HeartHandshake style={{ width: '14px', height: '14px' }} /> Acordo
               </button>
             </div>
             {state.mode5Input?.subCase && (
               <>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[5])}`, marginBottom: '12px' }}>
                   <div style={{ padding: '16px 20px 4px' }}>
                     <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Relato do Caso</span>
                   </div>
@@ -1209,7 +1234,7 @@ const startRecovery = (sessionId: string) => {
                     style={{ width: '100%', minHeight: '130px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[5])}`, marginBottom: '12px' }}>
                   <div style={{ padding: '16px 20px 4px' }}>
                     <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
                       {state.mode5Input.subCase === 'RECURSO' ? 'Sentença Recebida' : 'Proposta de Acordo'}
@@ -1222,7 +1247,7 @@ const startRecovery = (sessionId: string) => {
                     style={{ width: '100%', minHeight: '130px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[5])}`, marginBottom: '12px' }}>
                   <div style={{ padding: '12px 20px 12px' }}>
                     <input type="file" id="m5-file-new" className="hidden" multiple accept="image/*,application/pdf"
                       onChange={async (e) => {
@@ -1254,8 +1279,8 @@ const startRecovery = (sessionId: string) => {
                         {state.mode5Input.subCase === 'RECURSO' ? 'Anexar sentença ou documentos' : 'Anexar proposta ou documentos'}
                       </label>
                       <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                      {mode5AttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{mode5AttachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                      {mode5AttachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{mode5AttachmentError}</span>}
                     </div>
                   </div>
                 </div>
@@ -1269,7 +1294,7 @@ const startRecovery = (sessionId: string) => {
             <button
               disabled={!state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[5].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: themeColor(MODE_CONFIG[5]), color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[5].cta}
             </button>
@@ -1283,34 +1308,34 @@ const startRecovery = (sessionId: string) => {
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[4].headline}
-            color={MODE_CONFIG[4].color}
+            color={themeColor(MODE_CONFIG[4])}
           />
-          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[4].color} />
+          <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[4])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
-              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'color-mix(in srgb, var(--danger) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
                   <X style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
             )}
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[4].color, marginBottom: '12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: themeColor(MODE_CONFIG[4]), marginBottom: '12px' }}>
               {MODE_CONFIG[4].tagline}
             </p>
             <ContextZone
-              color={MODE_CONFIG[4].color}
-              colorRgb={MODE_CONFIG[4].colorRgb}
+              color={themeColor(MODE_CONFIG[4])}
+              colorRgb={themeColorRgb(MODE_CONFIG[4])}
               description={MODE_CONFIG[4].description}
               bring={MODE_CONFIG[4].bring}
               receive={MODE_CONFIG[4].receive}
             />
             {fromPreviousSimulation && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', marginBottom: '16px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,184,0,0.7)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'rgba(var(--warning-rgb),0.05)', border: '1px solid rgba(var(--warning-rgb),0.2)', marginBottom: '16px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(var(--warning-rgb),0.7)' }}>
                 <span style={{ flex: 1 }}>Continuando a partir da sua simulação anterior.</span>
                 {!isEditingMode4 && (
-                  <button onClick={() => setIsEditingMode4(true)} style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', border: '1px solid rgba(255,184,0,0.3)', padding: '6px 12px', color: 'rgba(255,184,0,0.7)', background: 'none', cursor: 'pointer', borderRadius: '10px' }}>
+                  <button onClick={() => setIsEditingMode4(true)} style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', border: '1px solid rgba(var(--warning-rgb),0.3)', padding: '6px 12px', color: 'rgba(var(--warning-rgb),0.7)', background: 'none', cursor: 'pointer', borderRadius: '10px' }}>
                     Editar campos
                   </button>
                 )}
@@ -1320,18 +1345,18 @@ const startRecovery = (sessionId: string) => {
             <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
               <button
                 onClick={() => setState(prev => ({ ...prev, userSide: 'AUTHOR' }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.userSide === 'AUTHOR' ? `2px solid ${MODE_CONFIG[4].color}` : '2px solid var(--border)', background: state.userSide === 'AUTHOR' ? `rgba(255,184,0,0.1)` : 'var(--bg-card)', color: state.userSide === 'AUTHOR' ? MODE_CONFIG[4].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.userSide === 'AUTHOR' ? `2px solid ${themeColor(MODE_CONFIG[4])}` : '2px solid var(--border)', background: state.userSide === 'AUTHOR' ? `rgba(var(--warning-rgb),0.1)` : 'var(--bg-card)', color: state.userSide === 'AUTHOR' ? themeColor(MODE_CONFIG[4]) : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                ⚔️ Acusação
+                <Swords style={{ width: '14px', height: '14px' }} /> Acusação
               </button>
               <button
                 onClick={() => setState(prev => ({ ...prev, userSide: 'DEFENSE' }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.userSide === 'DEFENSE' ? `2px solid ${MODE_CONFIG[4].color}` : '2px solid var(--border)', background: state.userSide === 'DEFENSE' ? `rgba(255,184,0,0.1)` : 'var(--bg-card)', color: state.userSide === 'DEFENSE' ? MODE_CONFIG[4].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.userSide === 'DEFENSE' ? `2px solid ${themeColor(MODE_CONFIG[4])}` : '2px solid var(--border)', background: state.userSide === 'DEFENSE' ? `rgba(var(--warning-rgb),0.1)` : 'var(--bg-card)', color: state.userSide === 'DEFENSE' ? themeColor(MODE_CONFIG[4]) : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                🛡 Defesa
+                <Shield style={{ width: '14px', height: '14px' }} /> Defesa
               </button>
             </div>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[4])}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Petição do Autor</span>
               </div>
@@ -1372,12 +1397,12 @@ const startRecovery = (sessionId: string) => {
                     Anexar provas do autor
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[4])}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Contestação do Réu</span>
               </div>
@@ -1418,8 +1443,8 @@ const startRecovery = (sessionId: string) => {
                     Anexar provas do réu
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1431,7 +1456,7 @@ const startRecovery = (sessionId: string) => {
             <button
               disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[4].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: themeColor(MODE_CONFIG[4]), color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[4].cta}
             </button>
@@ -1445,30 +1470,30 @@ const startRecovery = (sessionId: string) => {
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[3].headline}
-            color={MODE_CONFIG[3].color}
+            color={themeColor(MODE_CONFIG[3])}
           />
-          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[3].color} />
+          <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[3])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
-              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'color-mix(in srgb, var(--danger) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
                   <X style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
             )}
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[3].color, marginBottom: '12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: themeColor(MODE_CONFIG[3]), marginBottom: '12px' }}>
               {MODE_CONFIG[3].tagline}
             </p>
             <ContextZone
-              color={MODE_CONFIG[3].color}
-              colorRgb={MODE_CONFIG[3].colorRgb}
+              color={themeColor(MODE_CONFIG[3])}
+              colorRgb={themeColorRgb(MODE_CONFIG[3])}
               description={MODE_CONFIG[3].description}
               bring={MODE_CONFIG[3].bring}
               receive={MODE_CONFIG[3].receive}
             />
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[3].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[3])}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Argumento da Acusação</span>
               </div>
@@ -1508,12 +1533,12 @@ const startRecovery = (sessionId: string) => {
                     Anexar provas do autor
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[3].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[3])}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Argumento da Defesa</span>
               </div>
@@ -1553,8 +1578,8 @@ const startRecovery = (sessionId: string) => {
                     Anexar provas do réu
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1566,7 +1591,7 @@ const startRecovery = (sessionId: string) => {
             <button
               disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[3].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: themeColor(MODE_CONFIG[3]), color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[3].cta}
             </button>
@@ -1580,30 +1605,30 @@ const startRecovery = (sessionId: string) => {
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[2].headline}
-            color={MODE_CONFIG[2].color}
+            color={themeColor(MODE_CONFIG[2])}
           />
-          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[2].color} />
+          <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[2])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
             {state.error && (
-              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'color-mix(in srgb, var(--danger) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
                   <X style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
             )}
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[2].color, marginBottom: '12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: themeColor(MODE_CONFIG[2]), marginBottom: '12px' }}>
               {MODE_CONFIG[2].tagline}
             </p>
             <ContextZone
-              color={MODE_CONFIG[2].color}
-              colorRgb={MODE_CONFIG[2].colorRgb}
+              color={themeColor(MODE_CONFIG[2])}
+              colorRgb={themeColorRgb(MODE_CONFIG[2])}
               description={MODE_CONFIG[2].description}
               bring={MODE_CONFIG[2].bring}
               receive={MODE_CONFIG[2].receive}
             />
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[2].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[2])}`, marginBottom: '12px' }}>
               <textarea
                 value={state.caseDescription}
                 onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
@@ -1629,8 +1654,8 @@ const startRecovery = (sessionId: string) => {
                     Anexar provas de defesa
                   </button>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1642,7 +1667,7 @@ const startRecovery = (sessionId: string) => {
             <button
               disabled={state.caseDescription.trim().length <= 10 || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[2].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: themeColor(MODE_CONFIG[2]), color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[2].cta}
             </button>
@@ -1656,30 +1681,30 @@ const startRecovery = (sessionId: string) => {
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[1].headline}
-            color={MODE_CONFIG[1].color}
+            color={themeColor(MODE_CONFIG[1])}
           />
-          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[1].color} />
+          <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[1])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
             {state.error && (
-              <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+              <div style={{ marginBottom: '16px', padding: '16px', background: 'color-mix(in srgb, var(--danger) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
                   <X style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
             )}
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[1].color, marginBottom: '12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: themeColor(MODE_CONFIG[1]), marginBottom: '12px' }}>
               {MODE_CONFIG[1].tagline}
             </p>
             <ContextZone
-              color={MODE_CONFIG[1].color}
-              colorRgb={MODE_CONFIG[1].colorRgb}
+              color={themeColor(MODE_CONFIG[1])}
+              colorRgb={themeColorRgb(MODE_CONFIG[1])}
               description={MODE_CONFIG[1].description}
               bring={MODE_CONFIG[1].bring}
               receive={MODE_CONFIG[1].receive}
             />
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[1].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[1])}`, marginBottom: '12px' }}>
               <textarea
                 value={state.caseDescription}
                 onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
@@ -1705,8 +1730,8 @@ const startRecovery = (sessionId: string) => {
                     Anexar documentos
                   </button>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1718,7 +1743,7 @@ const startRecovery = (sessionId: string) => {
             <button
               disabled={state.caseDescription.trim().length <= 10 || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[1].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: themeColor(MODE_CONFIG[1]), color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[1].cta}
             </button>
@@ -1728,7 +1753,8 @@ const startRecovery = (sessionId: string) => {
 
       {/* ── LOADING MOBILE — Simulação em curso ─────────────────── */}
       {state.step === 'simulating' && (() => {
-        const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
+        const simCfg = MODE_CONFIG[state.selectedMode];
+        const modeColor = simCfg ? themeColor(simCfg) : (theme === 'light' ? '#996E00' : '#00FFEF');
         const simStepMap: Record<string, number> = {
           WRITING: 0,
           DELIVERING: 1,
@@ -1743,10 +1769,10 @@ const startRecovery = (sessionId: string) => {
           state.simStep === 'REVIEWING' ? 'Revisando' :
           'Iniciando simulação';
         const steps = [
-          { icon: '📋', name: 'Peticionando', desc: 'Advogado elaborando argumentos' },
-          { icon: '→',  name: 'Protocolando', desc: 'Transmissão ao sistema' },
-          { icon: '⚖️', name: 'Julgando',      desc: 'Magistrado analisando' },
-          { icon: '🔍', name: 'Revisando',     desc: 'Consolidando análise' },
+          { Icon: FileText,   name: 'Peticionando', desc: 'Advogado elaborando argumentos' },
+          { Icon: ArrowRight, name: 'Protocolando', desc: 'Transmissão ao sistema' },
+          { Icon: Gavel,      name: 'Julgando',      desc: 'Magistrado analisando' },
+          { Icon: Search,     name: 'Revisando',     desc: 'Consolidando análise' },
         ];
         return (
           <div className="flex flex-col md:hidden" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
@@ -1786,7 +1812,7 @@ const startRecovery = (sessionId: string) => {
                       opacity: isDone ? 0.5 : 1,
                       transition: 'border-color 0.2s ease, opacity 0.2s ease',
                     }}>
-                      <span style={{ fontSize: '20px', flexShrink: 0 }}>{s.icon}</span>
+                      <s.Icon style={{ width: '20px', height: '20px', flexShrink: 0, color: isActive ? modeColor : 'var(--text-muted)' }} />
                       <div style={{ flex: 1 }}>
                         <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{s.name}</p>
                         <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>{s.desc}</p>
@@ -1795,7 +1821,7 @@ const startRecovery = (sessionId: string) => {
                         <span style={{ fontSize: '10px', fontWeight: 700, color: modeColor }}>Em curso</span>
                       )}
                       {isDone && (
-                        <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--success)' }}>✓</span>
+                        <CheckCircle2 style={{ width: '14px', height: '14px', color: 'var(--success)' }} />
                       )}
                       {!isActive && !isDone && (
                         <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Aguarda</span>
@@ -1811,8 +1837,9 @@ const startRecovery = (sessionId: string) => {
 
       {/* ── CONFIRMAÇÃO MOBILE — Área identificada ───────────────── */}
       {state.step === 'confirm' && (() => {
-        const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
-        const modeColorRgb = MODE_CONFIG[state.selectedMode]?.colorRgb ?? '0,255,239';
+        const confirmCfg = MODE_CONFIG[state.selectedMode];
+        const modeColor = confirmCfg ? themeColor(confirmCfg) : (theme === 'light' ? '#996E00' : '#00FFEF');
+        const modeColorRgb = confirmCfg ? themeColorRgb(confirmCfg) : (theme === 'light' ? '153,110,0' : '255,184,0');
         const agentTypeByArea: Record<string, string> = {
           LABOR: 'Trabalhista',
           CONSUMER: 'Consumerista',
@@ -1845,9 +1872,9 @@ const startRecovery = (sessionId: string) => {
               </p>
               {/* Aviso área não identificada — PR-02 */}
               {state.detectedArea === 'OTHER' && (
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '16px', flexShrink: 0 }}>🔍</span>
-                  <p style={{ fontSize: '12px', color: '#FBBF24', lineHeight: 1.5, margin: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(var(--warning-rgb),0.08)', border: '1px solid rgba(var(--warning-rgb),0.3)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px' }}>
+                  <Search style={{ width: '16px', height: '16px', flexShrink: 0, color: 'rgb(var(--warning-rgb))' }} />
+                  <p style={{ fontSize: '12px', color: 'rgb(var(--warning-rgb))', lineHeight: 1.5, margin: 0 }}>
                     Área jurídica não identificada com precisão. Você pode continuar ou descrever o caso com mais detalhes.
                   </p>
                 </div>
@@ -1861,10 +1888,10 @@ const startRecovery = (sessionId: string) => {
               )}
               {/* Aviso documento ilegível — PR-04 */}
               {state.attachmentsUnreadable && (
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '16px', flexShrink: 0 }}>⚠️</span>
-                  <p style={{ fontSize: '12px', color: '#FBBF24', lineHeight: 1.5, margin: 0 }}>
-                    Um ou mais documentos não puderam ser lidos. A análise pode estar incompleta — verifique se o PDF possui texto selecionável.
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(var(--warning-rgb),0.08)', border: '1px solid rgba(var(--warning-rgb),0.3)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px' }}>
+                  <AlertTriangle style={{ width: '16px', height: '16px', flexShrink: 0, color: 'rgb(var(--warning-rgb))' }} />
+                  <p style={{ fontSize: '12px', color: 'rgb(var(--warning-rgb))', lineHeight: 1.5, margin: 0 }}>
+                    Um ou mais documentos não puderam ser lidos. A análise pode estar incompleta, verifique se o PDF possui texto selecionável.
                   </p>
                 </div>
               )}
@@ -1872,12 +1899,12 @@ const startRecovery = (sessionId: string) => {
               <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: modeColor, marginBottom: '8px' }}>AGENTES ESCALADOS</p>
               <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
                 <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
-                  <p style={{ fontSize: '20px', marginBottom: '6px' }}>⚖️</p>
+                  <Scale style={{ width: '20px', height: '20px', margin: '0 auto 6px', color: modeColor }} />
                   <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor, margin: '0 0 2px' }}>ADVOGADO</p>
                   <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
                 </div>
                 <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
-                  <p style={{ fontSize: '20px', marginBottom: '6px' }}>🧑‍⚖️</p>
+                  <Gavel style={{ width: '20px', height: '20px', margin: '0 auto 6px', color: modeColor }} />
                   <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor, margin: '0 0 2px' }}>MAGISTRADO</p>
                   <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
                 </div>
@@ -1891,7 +1918,7 @@ const startRecovery = (sessionId: string) => {
             <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 onClick={handleSimulate}
-                style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: 'pointer' }}
+                style={{ width: '100%', padding: '16px', background: modeColor, color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: 'pointer' }}
               >
                 Iniciar Fórum →
               </button>
@@ -1909,7 +1936,8 @@ const startRecovery = (sessionId: string) => {
       {/* ── ARENA MOBILE — Rodadas (resultado bloqueado) ─────────── */}
       {/* ── RESULTADO MOBILE — Índice + Paywall (Tarefa 5) ──────── */}
       {state.step === 'result' && !state.isUnlocked && (() => {
-        const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
+        const lockedCfg = MODE_CONFIG[state.selectedMode];
+        const modeColor = lockedCfg ? themeColor(lockedCfg) : (theme === 'light' ? '#996E00' : '#00FFEF');
         const rounds = state.simulation?.rounds ?? [];
         const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
         const effectiveSide = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
@@ -1926,7 +1954,7 @@ const startRecovery = (sessionId: string) => {
             </div>
             <SessionStatusBar
               area={formatAreaLabel(state.detectedArea)}
-              statusText="✓ Simulação concluída"
+              statusText="Simulação concluída"
               statusColor={modeColor}
               isComplete
             />
@@ -1963,7 +1991,7 @@ const startRecovery = (sessionId: string) => {
                       <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{rightLabel}</span>
                     </div>
                     <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${barFill}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, #00CC88)`, transition: 'width 0.6s ease' }} />
+                      <div style={{ width: `${barFill}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, var(--success))`, transition: 'width 0.6s ease' }} />
                     </div>
                   </div>
                 );
@@ -1971,7 +1999,7 @@ const startRecovery = (sessionId: string) => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px', margin: '0 20px 20px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', flexShrink: 0, minWidth: '36px' }}>Autor</span>
                   <div style={{ flex: 1, height: '6px', background: 'var(--border)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ width: `${finalPct}%`, height: '100%', borderRadius: '3px', background: `linear-gradient(to right, ${modeColor}, #00CC88)` }} />
+                    <div style={{ width: `${finalPct}%`, height: '100%', borderRadius: '3px', background: `linear-gradient(to right, ${modeColor}, var(--success))` }} />
                   </div>
                   <span style={{ fontSize: '12px', fontWeight: 700, flexShrink: 0, color: modeColor }}>{finalPct}%</span>
                 </div>
@@ -1998,7 +2026,7 @@ const startRecovery = (sessionId: string) => {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
                       <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{titulo}</span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: 'var(--text-muted)' }}>
-                        <span>🔒</span><span>Laudo</span>
+                        <Lock style={{ width: '11px', height: '11px' }} /><span>Laudo</span>
                       </div>
                     </div>
                   </div>
@@ -2007,10 +2035,10 @@ const startRecovery = (sessionId: string) => {
                   O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                 </p>
                 {(state.detectedArea === 'FAMILY' || state.detectedArea === 'SOCIAL_SECURITY') && (
-                  <div style={{ padding: '16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', borderRadius: '12px', marginTop: '4px' }}>
-                    <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,184,0,0.8)', display: 'block', marginBottom: '8px' }}>🤝 Recursos de Apoio</span>
-                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong> — Central de Atendimento à Mulher.</p>
-                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong> — CVV.</p>
+                  <div style={{ padding: '16px', background: 'rgba(var(--warning-rgb),0.05)', border: '1px solid rgba(var(--warning-rgb),0.2)', borderRadius: '12px', marginTop: '4px' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(var(--warning-rgb),0.8)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}><HeartHandshake style={{ width: '13px', height: '13px' }} /> Recursos de Apoio</span>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong>: Central de Atendimento à Mulher.</p>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong>: CVV.</p>
                     <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>Apoio jurídico gratuito: <strong style={{ color: 'var(--text-primary)' }}>Defensoria Pública</strong> ou <strong style={{ color: 'var(--text-primary)' }}>CRAS</strong>.</p>
                   </div>
                 )}
@@ -2020,9 +2048,9 @@ const startRecovery = (sessionId: string) => {
             <div style={{ position: 'sticky', bottom: 0, padding: '12px 20px', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))', background: 'linear-gradient(to bottom, transparent 0%, var(--bg-primary) 35%)', flexShrink: 0 }}>
               <button
                 onClick={handleCheckout}
-                style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '0.3px', borderRadius: '14px', cursor: 'pointer' }}
+                style={{ width: '100%', padding: '16px', background: modeColor, color: ctaTextColor, border: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '0.3px', borderRadius: '14px', cursor: 'pointer' }}
               >
-                Desbloquear Laudo Completo — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
+                Desbloquear Laudo Completo: {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
               </button>
               <div style={{ marginTop: '8px' }}>
                 {!showPromoInput ? (
@@ -2037,21 +2065,23 @@ const startRecovery = (sessionId: string) => {
                       onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); }}
                       onKeyDown={e => { if (e.key === 'Enter') validatePromoCode(promoCode); }}
                       placeholder="CÓDIGO PROMO"
-                      style={{ flex: 1, padding: '8px 12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em', outline: 'none' }}
+                      style={{ flex: 1, padding: '8px 12px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em', outline: 'none' }}
                     />
                     <button
                       type="button"
                       onClick={() => validatePromoCode(promoCode)}
                       disabled={promoLoading || !promoCode.trim()}
-                      style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '11px', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.05em' }}
+                      style={{ padding: '8px 16px', background: 'var(--bg-secondary)', border: '1px solid var(--border-active)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '11px', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.05em' }}
                     >
                       {promoLoading ? 'Validando…' : 'Aplicar'}
                     </button>
                   </div>
                 )}
                 {promoStatus && (
-                  <p style={{ fontSize: '11px', textAlign: 'center', margin: '4px 0 0', color: promoStatus.valid ? '#00E87F' : '#FF5555', fontWeight: 600 }}>
-                    {promoStatus.valid ? `✓ ${promoStatus.discountLabel} aplicado — ${promoStatus.finalAmountFormatted}` : '✗ Código inválido ou expirado'}
+                  <p style={{ fontSize: '11px', textAlign: 'center', margin: '4px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', color: promoStatus.valid ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>
+                    {promoStatus.valid
+                      ? <><CheckCircle2 style={{ width: '12px', height: '12px' }} /> {promoStatus.discountLabel} aplicado: {promoStatus.finalAmountFormatted}</>
+                      : <><X style={{ width: '12px', height: '12px' }} /> Código inválido ou expirado</>}
                   </p>
                 )}
               </div>
@@ -2070,7 +2100,7 @@ const startRecovery = (sessionId: string) => {
       {state.step === 'result' && state.isUnlocked && (
         <LaudoMobile
           state={state}
-          modeColor={MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF'}
+          modeColor={MODE_CONFIG[state.selectedMode] ? themeColor(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '#996E00' : '#00FFEF')}
           onRestart={() => window.location.reload()}
           onSelectHypothesis={async (hyp: string) => {
             setState((prev: any) => ({ ...prev, selectedHypothesis: hyp }));
@@ -2139,7 +2169,8 @@ const startRecovery = (sessionId: string) => {
         {state.step !== 'input' && (
           <button
             onClick={() => setState(prev => ({ ...prev, showForgeMonitor: !prev.showForgeMonitor }))}
-            className={`flex items-center gap-2 px-3 py-1.5 border transition-all ${state.showForgeMonitor ? 'bg-emerald-500 border-emerald-400 text-black' : 'border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-active)]'}`}
+            className={`flex items-center gap-2 px-3 py-1.5 border transition-all ${state.showForgeMonitor ? '' : 'border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-active)]'}`}
+            style={state.showForgeMonitor ? { background: 'var(--success)', borderColor: 'var(--success)', color: ctaTextColor } : undefined}
           >
             <Cpu className="w-3 h-3" />
             <span className="text-[9px] font-bold uppercase tracking-widest">Monitor de Agentes</span>
@@ -2147,7 +2178,7 @@ const startRecovery = (sessionId: string) => {
         )}
         <div className="flex flex-col items-end">
           <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-bold">Status da Simulação</span>
-          <span className={`text-xs font-mono font-bold ${state.step === 'simulating' ? 'text-amber-500' : 'text-emerald-500'}`}>
+          <span className="text-xs font-mono font-bold" style={{ color: state.step === 'simulating' ? 'rgb(var(--warning-rgb))' : 'var(--success)' }}>
             {state.step === 'input' ? 'AGUARDANDO CAUSA' :
              state.step === 'confirm' ? 'ANALISANDO ÁREA' :
              state.step === 'simulating' ? 'SIMULAÇÃO EM CURSO' : 'SIMULAÇÃO CONCLUÍDA'}
@@ -2162,22 +2193,23 @@ const startRecovery = (sessionId: string) => {
         </button>
       </Navbar>
 
-      <main className="flex-1 grid grid-cols-12 gap-0 overflow-hidden min-h-[calc(100vh-64px)]">
+      <main className="hidden md:flex-1 md:grid grid-cols-12 gap-0 overflow-hidden min-h-[calc(100vh-64px)]">
         <div className="col-span-12 lg:col-span-9 p-8 flex flex-col gap-6 lg:border-r border-[var(--border)] overflow-y-auto print:col-span-12 print:p-0 print:border-none">
           <AnimatePresence mode="wait">
             {state.error && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-8 p-6 bg-red-500/10 border border-red-500/20 rounded-sm flex items-start gap-4 shadow-2xl shadow-red-500/5"
+                className="mb-8 p-6 border rounded-sm flex items-start gap-4 shadow-2xl relative"
+                style={{ background: 'color-mix(in srgb, var(--danger) 10%, transparent)', borderColor: 'color-mix(in srgb, var(--danger) 20%, transparent)' }}
               >
-                <AlertCircle className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
+                <AlertCircle className="w-6 h-6 shrink-0 mt-0.5" style={{ color: 'var(--danger)' }} />
                 <div className="space-y-2 flex-1">
-                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-red-500">Falha na Operação</h3>
-                  <p className="text-sm font-serif italic text-white/80">{state.error.message}</p>
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--danger)' }}>Falha na Operação</h3>
+                  <p className="text-sm font-serif italic text-[var(--text-secondary)]">{state.error.message}</p>
                   {state.error.isQuota && (
-                    <div className="pt-4 border-t border-red-500/10 mt-4">
-                      <p className="text-[10px] text-white/40 uppercase tracking-widest leading-relaxed">
+                    <div className="pt-4 border-t mt-4" style={{ borderColor: 'color-mix(in srgb, var(--danger) 10%, transparent)' }}>
+                      <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest leading-relaxed">
                         O sistema está temporariamente indisponível. Estamos cientes e já trabalhando na solução. Tente novamente em alguns minutos.
                       </p>
                     </div>
@@ -2188,14 +2220,15 @@ const startRecovery = (sessionId: string) => {
                         setState(prev => ({ ...prev, error: null }));
                         handleSimulate();
                       }}
-                      className="mt-4 px-6 py-3 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-[#F4F4F2] transition-all"
+                      className="mt-4 px-6 py-3 text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-all"
+                      style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)' }}
                     >
                       Tentar Novamente
                     </button>
                   )}
-                  <button 
+                  <button
                     onClick={() => setState(prev => ({ ...prev, error: null }))}
-                    className="absolute top-4 right-4 text-white/20 hover:text-white"
+                    className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -2211,67 +2244,67 @@ const startRecovery = (sessionId: string) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-8"
               >
-                <FlowStepper currentStep="input" modeColor={MODE_CONFIG[4].color} variant="inline" />
+                <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[4])} variant="inline" />
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
                     </button>
-                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-amber-400/60 border border-amber-400/20 px-2 py-0.5">
-                      Mesa Dupla — Assistida
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-[color-mix(in_srgb,rgb(var(--warning-rgb))_60%,transparent)] border border-[color-mix(in_srgb,rgb(var(--warning-rgb))_20%,transparent)] px-2 py-0.5">
+                      Mesa Dupla: Assistida
                     </span>
                   </div>
                   {fromPreviousSimulation && (
-                    <div className="p-4 bg-white/5 border border-white/20 text-[10px] font-bold uppercase tracking-widest text-white/60 flex items-center gap-3">
+                    <div className="p-4 bg-[var(--bg-secondary)] border border-[var(--border-active)] text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] flex items-center gap-3">
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Continuando a partir da sua simulação anterior.
                       {!isEditingMode4 && (
                         <button
                           onClick={() => setIsEditingMode4(true)}
-                          className="text-[10px] font-bold uppercase tracking-widest border border-white/20 px-3 py-1.5 hover:border-white/40 hover:text-white transition-all text-white/40"
+                          className="text-[10px] font-bold uppercase tracking-widest border border-[var(--border-active)] px-3 py-1.5 hover:border-[var(--border-active)] hover:text-[var(--text-primary)] transition-all text-[var(--text-muted)]"
                         >
                           Editar campos
                         </button>
                       )}
                     </div>
                   )}
-                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
-                    Insira os dois lados e <br /><span className="text-[#F4F4F2] font-bold">escolha o seu.</span>
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-[var(--text-primary)]">
+                    Insira os dois lados e <br /><span className="text-[var(--text-primary)] font-bold">escolha o seu.</span>
                   </h1>
-                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                  <p className="text-[var(--text-muted)] max-w-lg text-sm uppercase tracking-widest font-medium">
                     O advogado do seu lado recebe assistência da IA em cada rodada.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'var(--text-muted)' }} />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Petição do Autor</span>
                     </div>
                     <textarea
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a petição inicial do autor..."
                       readOnly={fromPreviousSimulation && !isEditingMode4}
-                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
+                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
                     />
                     {state.attachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.attachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-sm border border-[var(--border)]">
+                            <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-[var(--text-secondary)]">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-[var(--text-muted)] hover:text-[var(--danger)]"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-[var(--border)] pt-3">
                       <input type="file" id="author-file-m4" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2289,40 +2322,40 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="author-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="author-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
-                        {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
+                        {attachmentError && <span className="text-[10px] text-[var(--danger)] mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-[color-mix(in_srgb,rgb(var(--warning-rgb))_60%,transparent)]" />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Contestação do Réu</span>
                     </div>
                     <textarea
                       value={state.defenseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a contestação do réu..."
                       readOnly={fromPreviousSimulation && !isEditingMode4}
-                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
+                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
                     />
                     {state.defenseAttachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.defenseAttachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-sm border border-[var(--border)]">
+                            <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-[var(--text-secondary)]">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-[var(--text-muted)] hover:text-[var(--danger)]"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-[var(--border)] pt-3">
                       <input type="file" id="defense-file-m4" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2340,12 +2373,12 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="defense-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="defense-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
-                        {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
+                        {defenseAttachmentError && <span className="text-[10px] text-[var(--danger)] mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -2354,13 +2387,15 @@ const startRecovery = (sessionId: string) => {
                 <div className="flex gap-4 justify-center">
                   <button
                     onClick={() => setState(prev => ({ ...prev, userSide: 'AUTHOR' }))}
-                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'AUTHOR' ? 'bg-white text-black border-white' : 'border-white/20 text-white/40 hover:border-white/40'}`}
+                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'AUTHOR' ? '' : 'border-[var(--border-active)] text-[var(--text-muted)] hover:border-[var(--border-active)]'}`}
+                    style={state.userSide === 'AUTHOR' ? { background: themeColor(MODE_CONFIG[4]), color: ctaTextColor, borderColor: themeColor(MODE_CONFIG[4]) } : undefined}
                   >
                     Sou o Autor
                   </button>
                   <button
                     onClick={() => setState(prev => ({ ...prev, userSide: 'DEFENSE' }))}
-                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'DEFENSE' ? 'bg-amber-500 text-black border-amber-500' : 'border-white/20 text-white/40 hover:border-white/40'}`}
+                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'DEFENSE' ? '' : 'border-[var(--border-active)] text-[var(--text-muted)] hover:border-[var(--border-active)]'}`}
+                    style={state.userSide === 'DEFENSE' ? { background: 'rgb(var(--warning-rgb))', color: ctaTextColor, borderColor: 'rgb(var(--warning-rgb))' } : undefined}
                   >
                     Sou o Réu
                   </button>
@@ -2370,7 +2405,7 @@ const startRecovery = (sessionId: string) => {
                   <button
                     disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading}
                     onClick={handleValidate}
-                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                    className="px-8 py-4 disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-xl" style={{ background: themeColor(MODE_CONFIG[4]), color: ctaTextColor }}
                   >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                     <ArrowRight className="w-4 h-4" />
@@ -2387,42 +2422,43 @@ const startRecovery = (sessionId: string) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-8"
               >
-                <FlowStepper currentStep="input" modeColor={MODE_CONFIG[5].color} variant="inline" />
+                <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[5])} variant="inline" />
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
                     </button>
-                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.7)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.25)` }}>
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5" style={{ color: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.7)`, border: `1px solid rgba(${themeColorRgb(MODE_CONFIG[5])},0.25)` }}>
                       Revisão Pós-Conflito
                     </span>
                   </div>
-                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
-                    Sentença ou proposta? <br /><span className="text-[#F4F4F2] font-bold">O Juiz Estrategista avalia.</span>
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-[var(--text-primary)]">
+                    Sentença ou proposta? <br /><span className="text-[var(--text-primary)] font-bold">O Juiz Estrategista avalia.</span>
                   </h1>
-                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
-                    ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
+                  <p className="text-[var(--text-muted)] max-w-lg text-sm uppercase tracking-widest font-medium flex items-center gap-2">
+                    <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" /> O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'RECURSO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: [] } }))}
-                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'RECURSO' ? 'bg-white text-black border-white' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
+                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'RECURSO' ? '' : 'bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-active)]'}`}
+                    style={state.mode5Input?.subCase === 'RECURSO' ? { background: themeColor(MODE_CONFIG[5]), borderColor: themeColor(MODE_CONFIG[5]), color: ctaTextColor } : undefined}
                   >
-                    <span className="text-[10px] font-bold uppercase tracking-widest block">⚖️ Tenho uma Sentença</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"><Scale className="w-3.5 h-3.5" /> Tenho uma Sentença</span>
                     <span className="text-xs opacity-60">Quero saber se vale recorrer</span>
                   </button>
                   <button
                     onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'ACORDO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: [] } }))}
-                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'ACORDO' ? 'text-black' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
-                    style={state.mode5Input?.subCase === 'ACORDO' ? { backgroundColor: MODE_CONFIG[5].color, borderColor: MODE_CONFIG[5].color } : {}}
+                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'ACORDO' ? '' : 'bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-active)]'}`}
+                    style={state.mode5Input?.subCase === 'ACORDO' ? { background: themeColor(MODE_CONFIG[5]), borderColor: themeColor(MODE_CONFIG[5]), color: ctaTextColor } : undefined}
                   >
-                    <span className="text-[10px] font-bold uppercase tracking-widest block">🤝 Tenho uma Proposta de Acordo</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"><HeartHandshake className="w-3.5 h-3.5" /> Tenho uma Proposta de Acordo</span>
                     <span className="text-xs opacity-60">Quero saber se aceito ou vou a julgamento</span>
                   </button>
                 </div>
@@ -2433,23 +2469,23 @@ const startRecovery = (sessionId: string) => {
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-6"
                   >
-                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                    <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                      <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'var(--text-muted)' }} />
                       <div className="px-8 pt-6 pb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Relato do Caso</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Relato do Caso</span>
                       </div>
                       <textarea
                         value={state.mode5Input?.caseDescription || ''}
                         onChange={(e) => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, caseDescription: e.target.value } }))}
                         placeholder="Descreva o contexto do conflito, o que aconteceu e qual é sua posição..."
-                        className="w-full min-h-[180px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                        className="w-full min-h-[180px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10"
                       />
                     </div>
 
-                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                      <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
+                    <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                      <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
                           {state.mode5Input.subCase === 'RECURSO' ? 'Sentença Recebida' : 'Proposta de Acordo'}
                         </span>
                       </div>
@@ -2457,14 +2493,14 @@ const startRecovery = (sessionId: string) => {
                         value={state.mode5Input?.sentencaOuProposta || ''}
                         onChange={(e) => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, sentencaOuProposta: e.target.value } }))}
                         placeholder={state.mode5Input.subCase === 'RECURSO' ? 'Cole aqui o texto da sentença ou decisão recebida...' : 'Descreva os termos da proposta de acordo recebida...'}
-                        className="w-full min-h-[180px] bg-transparent px-8 pb-6 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                        className="w-full min-h-[180px] bg-transparent px-8 pb-6 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10"
                       />
                     </div>
 
-                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                      <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
+                    <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                      <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
                           Anexar Documentos
                         </span>
                       </div>
@@ -2493,12 +2529,12 @@ const startRecovery = (sessionId: string) => {
                         {(state.mode5Input?.attachments || []).length > 0 && (
                           <div className="flex flex-wrap gap-2 mb-4">
                             {(state.mode5Input?.attachments || []).map((file, i) => (
-                              <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 border border-white/5">
-                                <FileIcon className="w-3 h-3 text-white/40" />
-                                <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
+                              <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 border border-[var(--border)]">
+                                <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />
+                                <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-[var(--text-secondary)]">{file.name}</span>
                                 <button
                                   onClick={() => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, attachments: (prev.mode5Input?.attachments || []).filter((_, j) => j !== i) } }))}
-                                  className="text-white/30 hover:text-red-500"
+                                  className="text-[var(--text-muted)] hover:text-[var(--danger)]"
                                 >
                                   <X className="w-3 h-3" />
                                 </button>
@@ -2507,38 +2543,38 @@ const startRecovery = (sessionId: string) => {
                           </div>
                         )}
                         <div className="flex flex-col gap-1">
-                          <label htmlFor="mode5-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                          <label htmlFor="mode5-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors w-fit">
                             <Plus className="w-3 h-3" /> Anexar Sentença ou Documentos
                           </label>
-                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB · PDF, JPEG ou PNG</span>
-                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
-                          {mode5AttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{mode5AttachmentError}</span>}
+                          <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB · PDF, JPEG ou PNG</span>
+                          <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
+                          {mode5AttachmentError && <span className="text-[10px] text-[var(--danger)] mt-1 block pl-1">{mode5AttachmentError}</span>}
                         </div>
                       </div>
                     </div>
 
-                    <div className="p-4 text-[10px] uppercase tracking-widest font-bold" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)`, color: `rgba(${MODE_CONFIG[5].colorRgb},0.7)` }}>
-                      ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
+                    <div className="p-4 text-[10px] uppercase tracking-widest font-bold flex items-center gap-2" style={{ backgroundColor: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.05)`, border: `1px solid rgba(${themeColorRgb(MODE_CONFIG[5])},0.2)`, color: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.7)` }}>
+                      <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" /> O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
 
                     {(state.detectedArea === 'FAMILY' ||
                       state.detectedArea === 'SOCIAL_SECURITY') && (
-                      <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)` }}>
-                        <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.8)` }}>
-                          🤝 Recursos de Apoio
+                      <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.05)`, border: `1px solid rgba(${themeColorRgb(MODE_CONFIG[5])},0.2)` }}>
+                        <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.8)` }}>
+                          <HeartHandshake className="w-3.5 h-3.5" /> Recursos de Apoio
                         </span>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Se você está em situação de violência, ligue{' '}
-                          <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                          <strong className="text-[var(--text-primary)]">180</strong>: Central de Atendimento à Mulher.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Em sofrimento emocional, ligue{' '}
-                          <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                          <strong className="text-[var(--text-primary)]">188</strong>: CVV, Centro de Valorização da Vida.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Para apoio jurídico gratuito, procure a{' '}
-                          <strong className="text-white">Defensoria Pública</strong> ou o{' '}
-                          <strong className="text-white">CRAS</strong> da sua cidade.
+                          <strong className="text-[var(--text-primary)]">Defensoria Pública</strong> ou o{' '}
+                          <strong className="text-[var(--text-primary)]">CRAS</strong> da sua cidade.
                         </p>
                       </div>
                     )}
@@ -2547,7 +2583,7 @@ const startRecovery = (sessionId: string) => {
                       <button
                         disabled={!state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
                         onClick={handleValidate}
-                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                        className="px-8 py-4 disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-xl" style={{ background: themeColor(MODE_CONFIG[5]), color: ctaTextColor }}
                       >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Consultar Juiz Estrategista'}
                         <ArrowRight className="w-4 h-4" />
@@ -2566,52 +2602,52 @@ const startRecovery = (sessionId: string) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-8"
               >
-                <FlowStepper currentStep="input" modeColor={MODE_CONFIG[3].color} variant="inline" />
+                <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[3])} variant="inline" />
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
                     </button>
-                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5" style={{ color: `rgba(${MODE_CONFIG[3].colorRgb},0.7)`, border: `1px solid rgba(${MODE_CONFIG[3].colorRgb},0.25)` }}>
-                      Mesa Dupla — Juiz
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5" style={{ color: `rgba(${themeColorRgb(MODE_CONFIG[3])},0.7)`, border: `1px solid rgba(${themeColorRgb(MODE_CONFIG[3])},0.25)` }}>
+                      Mesa Dupla: Juiz
                     </span>
                   </div>
-                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
-                    Insira os dois lados para o <br /><span className="text-[#F4F4F2] font-bold">julgamento direto.</span>
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-[var(--text-primary)]">
+                    Insira os dois lados para o <br /><span className="text-[var(--text-primary)] font-bold">julgamento direto.</span>
                   </h1>
-                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                  <p className="text-[var(--text-muted)] max-w-lg text-sm uppercase tracking-widest font-medium">
                     O magistrado analisa a petição e a contestação sem intervenção de advogado.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'var(--text-muted)' }} />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Petição do Autor</span>
                     </div>
                     <textarea
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a petição inicial do autor..."
-                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10"
                     />
                     {state.attachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.attachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-sm border border-[var(--border)]">
+                            <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-[var(--text-secondary)]">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-[var(--text-muted)] hover:text-[var(--danger)]"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-[var(--border)] pt-3">
                       <input type="file" id="author-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2629,39 +2665,39 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="author-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="author-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
-                        {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
+                        {attachmentError && <span className="text-[10px] text-[var(--danger)] mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                    <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[3].colorRgb},0.6)` }} />
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${themeColorRgb(MODE_CONFIG[3])},0.6)` }} />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Contestação do Réu</span>
                     </div>
                     <textarea
                       value={state.defenseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a contestação do réu..."
-                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10"
                     />
                     {state.defenseAttachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.defenseAttachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-sm border border-[var(--border)]">
+                            <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-[var(--text-secondary)]">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-[var(--text-muted)] hover:text-[var(--danger)]"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-[var(--border)] pt-3">
                       <input type="file" id="defense-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2679,12 +2715,12 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="defense-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="defense-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
-                        {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
+                        {defenseAttachmentError && <span className="text-[10px] text-[var(--danger)] mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -2694,7 +2730,7 @@ const startRecovery = (sessionId: string) => {
                   <button
                     disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || loading}
                     onClick={handleValidate}
-                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                    className="px-8 py-4 disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-xl" style={{ background: themeColor(MODE_CONFIG[3]), color: ctaTextColor }}
                   >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                     <ArrowRight className="w-4 h-4" />
@@ -2709,10 +2745,10 @@ const startRecovery = (sessionId: string) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-12 gap-8 lg:gap-12"
+                className="hidden md:grid grid-cols-12 gap-8 lg:gap-12"
               >
                 <div className="col-span-12 xl:col-span-9 space-y-12">
-                  <FlowStepper currentStep="input" modeColor={MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF'} variant="inline" />
+                  <FlowStepper currentStep="input" modeColor={MODE_CONFIG[state.selectedMode] ? themeColor(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '#996E00' : '#00FFEF')} variant="inline" />
                   <div className="space-y-4">
                     <div className="flex items-center gap-4">
                       <button
@@ -2726,8 +2762,8 @@ const startRecovery = (sessionId: string) => {
                         <span
                           className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5"
                           style={{
-                            color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.7)`,
-                            border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.25)`
+                            color: `rgba(${MODE_CONFIG[state.selectedMode] ? themeColorRgb(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '153,110,0' : '255,184,0')},0.7)`,
+                            border: `1px solid rgba(${MODE_CONFIG[state.selectedMode] ? themeColorRgb(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '153,110,0' : '255,184,0')},0.25)`
                           }}
                         >
                           {MODE_NAMES[state.selectedMode]}
@@ -2793,7 +2829,7 @@ const startRecovery = (sessionId: string) => {
                             <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
                           </button>
                           <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
                           {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                         </div>
                         <div className="w-[1px] h-4 bg-[var(--border)] mx-2"></div>
@@ -2828,7 +2864,7 @@ const startRecovery = (sessionId: string) => {
                 <div className="col-span-12 xl:col-span-3 flex flex-col gap-6">
                   {/* Resumo Analítico - Global Stats */}
                   <div className="bg-[var(--bg-card)] text-[var(--text-primary)] p-8 rounded-sm space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-[var(--border)]">
-                    <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
+                    <div className="absolute inset-0 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000" style={{ background: 'var(--border)' }}></div>
                     <div className="flex justify-between items-center opacity-30">
                       <span className="text-[9px] uppercase tracking-widest font-bold">Performance Global EAI?</span>
                       <TrendingUp className="w-4 h-4" />
@@ -2838,13 +2874,13 @@ const startRecovery = (sessionId: string) => {
                         mostrar um "0%"/valor zerado como se fosse dado real. */}
                     {statsLoading ? (
                       <div className="space-y-1 py-4">
-                        <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
+                        <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-[var(--success)]">Ganhos de Causa via EAI?</div>
                         <div className="text-lg font-mono text-[var(--text-muted)] animate-pulse">Carregando estatísticas...</div>
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 gap-6">
                         <div className="space-y-1">
-                          <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Ganhos de Causa via EAI?</div>
+                          <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-[var(--success)]">Ganhos de Causa via EAI?</div>
                           <div className="text-6xl font-serif italic text-[var(--text-primary)]">
                             {globalStats.winRate}%
                           </div>
@@ -2857,7 +2893,7 @@ const startRecovery = (sessionId: string) => {
                           </div>
                           <div className="text-right space-y-1">
                             <div className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-widest leading-none">Precisão Média</div>
-                            <div className="text-2xl font-mono text-emerald-500 font-bold">{globalStats.precision}%</div>
+                            <div className="text-2xl font-mono text-[var(--success)] font-bold">{globalStats.precision}%</div>
                           </div>
                         </div>
                       </div>
@@ -2897,14 +2933,14 @@ const startRecovery = (sessionId: string) => {
                           <div key={i} className="space-y-2 group cursor-default">
                             <div className="flex justify-between items-end">
                               <span className="text-[11px] font-bold text-[var(--text-tertiary)] group-hover:text-[var(--text-primary)] transition-colors">{stat.region}</span>
-                              <span className="text-[11px] font-mono text-emerald-500">{stat.active} vitórias</span>
+                              <span className="text-[11px] font-mono text-[var(--success)]">{stat.active} vitórias</span>
                             </div>
                             <div className="h-[2px] bg-[var(--border)] overflow-hidden rounded-full">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${(stat.seeds / maxSeeds) * 100}%` }}
                                 transition={{ duration: 1.5, delay: i * 0.1 }}
-                                className="h-full bg-[var(--text-muted)] group-hover:bg-emerald-500/50 transition-colors"
+                                className="h-full bg-[var(--text-muted)] group-hover:bg-[var(--success)]/50 transition-colors"
                               />
                             </div>
                             <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-tighter text-[var(--text-muted)]">
@@ -2923,7 +2959,7 @@ const startRecovery = (sessionId: string) => {
                         <div className="bg-[var(--bg-secondary)] p-4 space-y-2 border border-[var(--border)]">
                           <div className="flex justify-between items-center">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Total de Vitórias</span>
-                            <span className="text-xs font-mono text-emerald-500 font-bold">
+                            <span className="text-xs font-mono text-[var(--success)] font-bold">
                               {state.regionalStats.reduce((acc, s) => acc + s.active, 0)} VITÓRIAS
                             </span>
                           </div>
@@ -2936,7 +2972,7 @@ const startRecovery = (sessionId: string) => {
                   </div>
 
                   <div className="bg-[var(--bg-card)] border border-[var(--border)] p-6 flex items-center gap-4">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <div className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse"></div>
                     <div className="flex flex-col">
                       <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-primary)]">Ambiente de Simulação</span>
                       <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase">Agentes de IA · EAI?</span>
@@ -2947,8 +2983,9 @@ const startRecovery = (sessionId: string) => {
             )}
 
             {state.step === 'confirm' && (() => {
-              const dcColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
-              const dcColorRgb = MODE_CONFIG[state.selectedMode]?.colorRgb ?? '0,255,239';
+              const confirmCfgDesktop = MODE_CONFIG[state.selectedMode];
+              const dcColor = confirmCfgDesktop ? themeColor(confirmCfgDesktop) : (theme === 'light' ? '#996E00' : '#00FFEF');
+              const dcColorRgb = confirmCfgDesktop ? themeColorRgb(confirmCfgDesktop) : (theme === 'light' ? '153,110,0' : '255,184,0');
               const agentSpecMap: Record<string, string> = {
                 LABOR: 'Trabalhista', CONSUMER: 'Consumerista', CIVIL: 'Civilista',
                 FAMILY: 'Família', CRIMINAL: 'Criminal', TAX: 'Tributarista',
@@ -2959,7 +2996,7 @@ const startRecovery = (sessionId: string) => {
                 key="confirm"
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="space-y-8 py-16 text-center max-w-3xl mx-auto"
+                className="hidden md:block space-y-8 py-16 text-center max-w-3xl mx-auto"
               >
                 <FlowStepper currentStep="confirm" modeColor={dcColor} variant="inline" />
                 {/* Badge de área — identifica o modo e a área detectada */}
@@ -2974,23 +3011,23 @@ const startRecovery = (sessionId: string) => {
                 {/* Aviso área não identificada — PR-02 */}
                 {state.detectedArea === 'OTHER' && (
                   <div className="flex items-start gap-3 text-left px-5 py-4"
-                    style={{ background: 'rgba(251,191,36,0.07)', border: '1px solid rgba(251,191,36,0.25)', borderRadius: '8px' }}>
-                    <span className="text-lg flex-shrink-0">🔍</span>
-                    <p className="text-sm leading-relaxed" style={{ color: '#FBBF24', margin: 0 }}>
+                    style={{ background: 'rgba(var(--warning-rgb),0.07)', border: '1px solid rgba(var(--warning-rgb),0.25)', borderRadius: '8px' }}>
+                    <Search className="w-[18px] h-[18px] flex-shrink-0" style={{ color: 'rgb(var(--warning-rgb))' }} />
+                    <p className="text-sm leading-relaxed" style={{ color: 'rgb(var(--warning-rgb))', margin: 0 }}>
                       Área jurídica não identificada com precisão. Você pode continuar ou descrever o caso com mais detalhes.
                     </p>
                   </div>
                 )}
 
-                <h1 className="text-4xl font-serif italic tracking-tight text-white/90">
+                <h1 className="text-4xl font-serif italic tracking-tight text-[var(--text-primary)]">
                   O sistema entendeu<br />sua causa.
                 </h1>
 
                 {state.caseSummary && (
                   <div className="p-8 shadow-2xl shadow-black/50 mt-8 text-left"
-                    style={{ background: '#15161A', borderWidth: '1px 1px 1px 3px', borderStyle: 'solid', borderColor: `rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) ${dcColor}` }}>
-                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-white/30 mb-4 border-b border-white/5 pb-2">Núcleo Central · Gerado automaticamente</h4>
-                    <p className="text-xl font-sans text-white/80 leading-relaxed">
+                    style={{ background: 'var(--bg-card)', borderWidth: '1px 1px 1px 3px', borderStyle: 'solid', borderColor: `rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) ${dcColor}` }}>
+                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-muted)] mb-4 border-b border-[var(--border)] pb-2">Núcleo Central · Gerado automaticamente</h4>
+                    <p className="text-xl font-sans text-[var(--text-secondary)] leading-relaxed">
                       "{state.caseSummary}"
                     </p>
                   </div>
@@ -2999,10 +3036,10 @@ const startRecovery = (sessionId: string) => {
                 {/* Aviso documento ilegível — PR-04 */}
                 {state.attachmentsUnreadable && (
                   <div className="flex items-start gap-3 text-left px-5 py-4"
-                    style={{ background: 'rgba(251,191,36,0.07)', border: '1px solid rgba(251,191,36,0.25)', borderRadius: '8px' }}>
-                    <span className="text-lg flex-shrink-0">⚠️</span>
-                    <p className="text-sm leading-relaxed" style={{ color: '#FBBF24', margin: 0 }}>
-                      Um ou mais documentos não puderam ser lidos. A análise pode estar incompleta — verifique se o PDF possui texto selecionável.
+                    style={{ background: 'rgba(var(--warning-rgb),0.07)', border: '1px solid rgba(var(--warning-rgb),0.25)', borderRadius: '8px' }}>
+                    <AlertTriangle className="w-[18px] h-[18px] flex-shrink-0" style={{ color: 'rgb(var(--warning-rgb))' }} />
+                    <p className="text-sm leading-relaxed" style={{ color: 'rgb(var(--warning-rgb))', margin: 0 }}>
+                      Um ou mais documentos não puderam ser lidos. A análise pode estar incompleta, verifique se o PDF possui texto selecionável.
                     </p>
                   </div>
                 )}
@@ -3010,36 +3047,36 @@ const startRecovery = (sessionId: string) => {
                 {/* Agentes escalados */}
                 <p className="text-[9px] font-bold uppercase tracking-[0.2em] mt-4" style={{ color: dcColor }}>Agentes Escalados</p>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2"
-                    style={{ borderLeftWidth: '3px', borderLeftColor: dcColor }}>
-                    <span className="text-2xl block">⚖️</span>
+                  <div className="p-5 space-y-2"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeftWidth: '3px', borderLeftColor: dcColor }}>
+                    <Scale className="w-6 h-6 mx-auto" style={{ color: dcColor }} />
                     <p className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>Advogado</p>
-                    <p className="text-sm font-medium text-white/60">{agentSpec}</p>
+                    <p className="text-sm font-medium text-[var(--text-secondary)]">{agentSpec}</p>
                   </div>
-                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2"
-                    style={{ borderLeftWidth: '3px', borderLeftColor: dcColor }}>
-                    <span className="text-2xl block">🧑‍⚖️</span>
+                  <div className="p-5 space-y-2"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeftWidth: '3px', borderLeftColor: dcColor }}>
+                    <Gavel className="w-6 h-6 mx-auto" style={{ color: dcColor }} />
                     <p className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>Magistrado</p>
-                    <p className="text-sm font-medium text-white/60">{agentSpec}</p>
+                    <p className="text-sm font-medium text-[var(--text-secondary)]">{agentSpec}</p>
                   </div>
                 </div>
 
-                <div className="mt-10 border-t border-white/5 pt-8 space-y-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/20 text-center">
+                <div className="mt-10 border-t border-[var(--border)] pt-8 space-y-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--text-muted)] text-center">
                     Deseja iniciar o fórum?
                   </p>
                   <div className="flex flex-col items-center gap-4">
                     <button
                       onClick={handleSimulate}
-                      className="w-full max-w-xs px-8 py-5 text-black text-[11px] uppercase tracking-[0.25em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-black/50"
-                      style={{ background: dcColor }}
+                      className="w-full max-w-xs px-8 py-5 text-[11px] uppercase tracking-[0.25em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-black/50"
+                      style={{ background: dcColor, color: ctaTextColor }}
                     >
                       Iniciar Fórum
                       <ArrowRight className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/25 hover:text-white/50 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Corrigir causa
@@ -3050,87 +3087,90 @@ const startRecovery = (sessionId: string) => {
               );
             })()}
 
-            {(state.step === 'simulating' || (state.step === 'result' && !state.isUnlocked)) && (
-              <motion.div 
+            {(state.step === 'simulating' || (state.step === 'result' && !state.isUnlocked)) && (() => {
+              const simDesktopCfg = MODE_CONFIG[state.selectedMode];
+              const modeColor = simDesktopCfg ? themeColor(simDesktopCfg) : (theme === 'light' ? '#996E00' : '#00FFEF');
+              return (
+              <motion.div
                 key="simulating"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="space-y-8"
+                className="hidden md:block space-y-8"
               >
-                <div className="flex justify-between items-end border-b border-white/10 pb-6">
+                <div className="flex justify-between items-end border-b border-[var(--border)] pb-6">
                   <div>
-                    <h2 className="text-3xl font-serif italic text-white">Arena de Simulação</h2>
-                    <p className="text-[10px] uppercase font-bold tracking-widest text-white/20 mt-1">
+                    <h2 className="text-3xl font-serif italic text-[var(--text-primary)]">Arena de Simulação</h2>
+                    <p className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-muted)] mt-1">
                       Sessão de Simulação{state.simulationId ? ` · ${state.simulationId.slice(-6).toUpperCase()}` : ''}
                     </p>
                   </div>
                   <div className="flex gap-2">
                     {[1, 2, 3].map(r => (
-                      <div 
+                      <div
                         key={r}
-                        className={`w-3 h-3 rounded-full border border-white/20 ${
-                          (state.simulation?.rounds.length || 0) >= r ? 'bg-emerald-500' : 'bg-white/5'
+                        className={`w-3 h-3 rounded-full border border-[var(--border)] ${
+                          (state.simulation?.rounds.length || 0) >= r ? 'bg-[var(--success)]' : 'bg-[var(--bg-secondary)]'
                         }`}
                       />
                     ))}
                   </div>
                 </div>
 
-                <div 
+                <div
                   ref={scrollRef}
                   className="space-y-12 max-h-[700px] overflow-y-auto pr-4 scrollbar-thin overflow-x-hidden"
                 >
                   {state.simulation?.rounds.map((round, i) => (
                     <div key={i} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                       <div className="flex items-center gap-4">
-                        <span className="text-[10px] font-mono font-bold text-white/10">RODADA {i + 1}</span>
-                        <div className="h-px bg-white/5 flex-1" />
+                        <span className="text-[10px] font-mono font-bold text-[var(--text-muted)]">RODADA {i + 1}</span>
+                        <div className="h-px bg-[var(--border)] flex-1" />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Modo 4: lado estático */}
                         {state.selectedMode === 4 && (
-                          <div className="bg-[#15161A] border border-white/5 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden opacity-50">
-                            <div className="absolute top-0 left-0 w-1 h-full bg-white/10"></div>
+                          <div className="border p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden opacity-50" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                            <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'var(--text-muted)' }}></div>
                             <div className="flex justify-between items-center mb-4">
-                              <span className="text-sm font-bold uppercase tracking-tight text-white/40">
+                              <span className="text-sm font-bold uppercase tracking-tight text-[var(--text-muted)]">
                                 {state.userSide === 'AUTHOR' ? 'Contestação do Réu' : 'Petição do Autor'}
                               </span>
-                              <span className="px-2 py-0.5 border border-white/10 text-white/30 text-[9px] uppercase tracking-widest font-bold">Estático</span>
+                              <span className="px-2 py-0.5 border border-[var(--border)] text-[var(--text-muted)] text-[9px] uppercase tracking-widest font-bold">Estático</span>
                             </div>
-                            <p className="text-xs text-white/20 italic font-serif line-clamp-4">
+                            <p className="text-xs text-[var(--text-muted)] italic font-serif line-clamp-4">
                               {state.userSide === 'AUTHOR' ? state.defenseDescription : state.caseDescription}
                             </p>
                           </div>
                         )}
                         {/* Agent: Lawyer */}
-                        <div className="bg-[#15161A] border border-white/10 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden">
-                           <div className="absolute top-0 left-0 w-1 h-full bg-white/40"></div>
+                        <div className="border p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                           <div className="absolute top-0 left-0 w-1 h-full" style={{ background: modeColor }}></div>
                            <div className="flex justify-between items-center mb-6">
                              <div className="flex flex-col">
-                               <span className="text-[9px] font-mono text-white/20">AGT_LAW_{state.detectedArea}</span>
-                               <span className="text-sm font-bold uppercase tracking-tight text-white/80">Advogado Especializado</span>
+                               <span className="text-[9px] font-mono text-[var(--text-muted)]">AGT_LAW_{state.detectedArea}</span>
+                               <span className="text-sm font-bold uppercase tracking-tight text-[var(--text-secondary)]">Advogado Especializado</span>
                              </div>
                              <div className="flex flex-col items-end gap-1">
-                               <span className="px-2 py-0.5 bg-white text-black text-[9px] uppercase tracking-widest font-bold">Petição</span>
+                               <span className="px-2 py-0.5 text-[9px] uppercase tracking-widest font-bold" style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)' }}>Petição</span>
                                {state.selectedMode === 4 && (
-                                 <span className="px-2 py-0.5 bg-amber-500 text-black text-[9px] uppercase tracking-widest font-bold">
+                                 <span className="px-2 py-0.5 text-[9px] uppercase tracking-widest font-bold" style={{ background: 'rgb(var(--warning-rgb))', color: ctaTextColor }}>
                                    {state.userSide === 'AUTHOR' ? 'IA Assistindo Autor' : 'IA Assistindo Réu'}
                                  </span>
                                )}
                              </div>
                            </div>
-                           <div className="text-xs text-white/50 leading-relaxed italic font-serif mb-6 line-clamp-4">
+                           <div className="text-xs text-[var(--text-secondary)] leading-relaxed italic font-serif mb-6 line-clamp-4">
                              "<CensoredText text={round.lawyerPetition} enabled={!state.isUnlocked} />"
                            </div>
 
                            {round.lawyerBrief && (
-                             <div className="mb-6 p-4 bg-white/[0.02] border border-white/5 rounded-sm">
+                             <div className="mb-6 p-4 border rounded-sm" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
                                <div className="flex items-center gap-2 mb-2">
-                                 <TrendingUp className="w-3 h-3 text-white/20" />
-                                 <span className="text-[8px] font-bold uppercase tracking-widest text-white/20">Brief Estratégico (Memória)</span>
+                                 <TrendingUp className="w-3 h-3 text-[var(--text-muted)]" />
+                                 <span className="text-[8px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Brief Estratégico (Memória)</span>
                                </div>
-                               <p className="text-[10px] text-white/40 leading-relaxed font-mono italic">
+                               <p className="text-[10px] text-[var(--text-muted)] leading-relaxed font-mono italic">
                                  <CensoredText text={round.lawyerBrief} enabled={!state.isUnlocked} />
                                </p>
                              </div>
@@ -3138,42 +3178,42 @@ const startRecovery = (sessionId: string) => {
 
                            <div className="flex justify-between items-end">
                              <div className="flex-1 max-w-[120px]">
-                               <div className="text-[8px] uppercase font-bold text-white/20 mb-1">Impacto Técnico</div>
-                               <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                                 <div className="h-full bg-white/60" style={{ width: `${60 + i * 15}%` }}></div>
+                               <div className="text-[8px] uppercase font-bold text-[var(--text-muted)] mb-1">Impacto Técnico</div>
+                               <div className="h-1 rounded-full overflow-hidden" style={{ background: 'var(--border)' }}>
+                                 <div className="h-full" style={{ width: `${60 + i * 15}%`, background: 'var(--text-secondary)' }}></div>
                                </div>
                              </div>
-                             <span className="text-[9px] font-mono font-bold text-white/20">MEMÓRIA OK</span>
+                             <span className="text-[9px] font-mono font-bold text-[var(--text-muted)]">MEMÓRIA OK</span>
                            </div>
                         </div>
 
                         {/* Agent: Judge */}
-                        <div className="bg-[#1C1C1F] border border-white/10 p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden backdrop-blur-sm">
-                           <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60"></div>
+                        <div className="border p-6 rounded-sm shadow-xl shadow-black/40 relative overflow-hidden backdrop-blur-sm" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                           <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'rgba(var(--warning-rgb),0.6)' }}></div>
                            <div className="flex justify-between items-center mb-6">
                              <div className="flex flex-col">
-                               <span className="text-[9px] font-mono text-white/20">AGT_JUDGE_{state.detectedArea}</span>
-                               <span className="text-sm font-bold uppercase tracking-tight text-white/80">Magistrado Técnico</span>
+                               <span className="text-[9px] font-mono text-[var(--text-muted)]">AGT_JUDGE_{state.detectedArea}</span>
+                               <span className="text-sm font-bold uppercase tracking-tight text-[var(--text-secondary)]">Magistrado Técnico</span>
                              </div>
-                             <span className="px-2 py-0.5 border border-white/40 text-white text-[9px] uppercase tracking-widest font-bold">{(state.selectedMode === 1 || state.selectedMode === 2) ? 'Avaliação Técnica' : 'Sentença'}</span>
+                             <span className="px-2 py-0.5 border text-[9px] uppercase tracking-widest font-bold text-[var(--text-primary)]" style={{ borderColor: 'var(--border-active)' }}>{(state.selectedMode === 1 || state.selectedMode === 2) ? 'Avaliação Técnica' : 'Sentença'}</span>
                            </div>
-                           <div className="text-xs text-white/50 leading-relaxed font-sans mb-6">
+                           <div className="text-xs text-[var(--text-secondary)] leading-relaxed font-sans mb-6">
                              "<CensoredText text={cleanJudgmentText(round.judgeJudgment) || round.judgeJudgment || ''} enabled={!state.isUnlocked} />"
                            </div>
                            <div className="flex justify-between items-end">
-                             <div className="bg-white/5 px-3 py-1.5 flex flex-col">
+                             <div className="px-3 py-1.5 flex flex-col" style={{ background: 'var(--bg-secondary)' }}>
                                {(() => {
                                  const _es = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
                                  const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
                                  return (
                                    <>
-                                     <span className="text-[8px] font-bold text-white/30 uppercase">Prob. {_es === 'DEFENSE' ? 'Réu' : 'Autor'}</span>
-                                     <span className="text-lg font-serif italic font-bold text-white/90">{_rp}%</span>
+                                     <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase">Prob. {_es === 'DEFENSE' ? 'Réu' : 'Autor'}</span>
+                                     <span className="text-lg font-serif italic font-bold text-[var(--text-primary)]">{_rp}%</span>
                                    </>
                                  );
                                })()}
                              </div>
-                             <span className="text-[9px] font-mono font-bold text-white/20">ISENÇÃO 100%</span>
+                             <span className="text-[9px] font-mono font-bold text-[var(--text-muted)]">ISENÇÃO 100%</span>
                            </div>
                         </div>
                       </div>
@@ -3184,7 +3224,8 @@ const startRecovery = (sessionId: string) => {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="flex items-center gap-3 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest"
+                      className="flex items-center gap-3 px-4 py-2 border text-[10px] font-bold uppercase tracking-widest"
+                      style={{ background: 'color-mix(in srgb, var(--success) 10%, transparent)', borderColor: 'color-mix(in srgb, var(--success) 20%, transparent)', color: 'var(--success)' }}
                     >
                       <Loader2 className="w-3 h-3 animate-spin" />
                       Verificando sua simulação...
@@ -3194,20 +3235,21 @@ const startRecovery = (sessionId: string) => {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="flex items-center gap-3 px-4 py-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-widest"
+                      className="flex items-center gap-3 px-4 py-2 border text-[10px] font-bold uppercase tracking-widest"
+                      style={{ background: 'rgba(var(--warning-rgb),0.1)', borderColor: 'rgba(var(--warning-rgb),0.2)', color: 'rgb(var(--warning-rgb))' }}
                     >
                       <Loader2 className="w-3 h-3 animate-spin" />
-                      Reconectando... tentativa {retryCount} de 3
+                      Reconectando, tentativa {retryCount} de 3
                     </motion.div>
                   )}
 
                   {loading && (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                       <div className="relative">
-                        <Loader2 className="w-8 h-8 animate-spin text-white/40" />
-                        <div className="absolute inset-0 blur-md animate-pulse bg-white/5 rounded-full"></div>
+                        <Loader2 className="w-8 h-8 animate-spin text-[var(--text-muted)]" />
+                        <div className="absolute inset-0 blur-md animate-pulse rounded-full" style={{ background: 'var(--border)' }}></div>
                       </div>
-                      <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/20">Processando Inteligência...</div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--text-muted)]">Processando Inteligência...</div>
                     </div>
                   )}
                 </div>
@@ -3222,38 +3264,40 @@ const startRecovery = (sessionId: string) => {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-12 p-10 bg-[#15161A] border border-white/20 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden"
+                    className="mt-12 p-10 border shadow-[0_0_100px_rgba(0,0,0,0.25)] relative overflow-hidden"
+                    style={{ background: 'var(--bg-card)', borderColor: 'var(--border-active)' }}
                   >
                     <div className="absolute top-0 right-0 p-4">
-                      <Lock className="text-white/5 w-24 h-24 -rotate-12" />
+                      <Lock className="w-24 h-24 -rotate-12" style={{ color: 'var(--border)' }} />
                     </div>
                     <div className="relative z-10 flex flex-col items-center text-center space-y-6">
                       {displayPct > 0 && (
                         <div className="flex flex-col items-center mb-4">
-                          <span className="text-7xl font-serif italic font-bold text-white">
+                          <span className="text-7xl font-serif italic font-bold text-[var(--text-primary)]">
                             {displayPct}%
                           </span>
-                          <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold mt-1">
+                          <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-bold mt-1">
                             Índice de força argumentativa
                           </span>
-                          <span className="text-[9px] text-white/20 uppercase tracking-widest mt-1">
+                          <span className="text-[9px] text-[var(--text-muted)] uppercase tracking-widest mt-1">
                             Estimativa baseada na sua descrição. Resultados reais variam.
                           </span>
                         </div>
                       )}
-                      <h3 className="text-3xl font-serif italic text-white">Simulação de Rodadas Concluída.</h3>
-                      <p className="text-sm text-white/40 max-w-lg leading-relaxed uppercase tracking-widest font-medium">
+                      <h3 className="text-3xl font-serif italic text-[var(--text-primary)]">Simulação de Rodadas Concluída.</h3>
+                      <p className="text-sm text-[var(--text-muted)] max-w-lg leading-relaxed uppercase tracking-widest font-medium">
                         O laudo estratégico completo com fundamentos técnicos, valor estimado da causa e próximos passos processuais foi gerado.
                       </p>
                       <button
                         onClick={handleCheckout}
-                        className="bg-white text-black px-12 py-5 text-sm font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-2xl shadow-black"
+                        className="px-12 py-5 text-sm font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-2xl shadow-black/30"
+                        style={{ background: modeColor, color: ctaTextColor }}
                       >
-                        Desbloquear Laudo Completo — {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
+                        Desbloquear Laudo Completo: {promoStatus?.valid && promoStatus.finalAmountFormatted ? promoStatus.finalAmountFormatted : ([3, 5].includes(state.selectedMode) ? 'R$ 5,90' : 'R$ 9,90')}
                       </button>
                       <div>
                         {!showPromoInput ? (
-                          <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] text-white/30 underline cursor-pointer bg-transparent border-none">
+                          <button type="button" onClick={() => setShowPromoInput(true)} className="text-[11px] underline cursor-pointer bg-transparent border-none" style={{ color: 'var(--text-muted)' }}>
                             Tenho um código promocional
                           </button>
                         ) : (
@@ -3264,28 +3308,34 @@ const startRecovery = (sessionId: string) => {
                               onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); }}
                               onKeyDown={e => { if (e.key === 'Enter') validatePromoCode(promoCode); }}
                               placeholder="CÓDIGO PROMO"
-                              className="flex-1 px-3 py-2 bg-white/5 border border-white/15 text-white text-[12px] font-semibold tracking-wider uppercase outline-none"
+                              className="flex-1 px-3 py-2 border text-[12px] font-semibold tracking-wider uppercase outline-none"
+                              style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
                             />
                             <button
                               type="button"
                               onClick={() => validatePromoCode(promoCode)}
                               disabled={promoLoading || !promoCode.trim()}
-                              className="px-4 py-2 bg-white/10 border border-white/20 text-white text-[11px] font-bold tracking-wide cursor-pointer"
+                              className="px-4 py-2 border text-[11px] font-bold tracking-wide cursor-pointer"
+                              style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
                             >
                               {promoLoading ? 'Validando…' : 'Aplicar'}
                             </button>
                           </div>
                         )}
                         {promoStatus && (
-                          <p className={`text-[11px] text-center mt-1 font-semibold ${promoStatus.valid ? 'text-emerald-400' : 'text-red-400'}`}>
-                            {promoStatus.valid ? `✓ ${promoStatus.discountLabel} aplicado — ${promoStatus.finalAmountFormatted}` : '✗ Código inválido ou expirado'}
+                          <p className="text-[11px] text-center mt-1 font-semibold" style={{ color: promoStatus.valid ? 'var(--success)' : 'var(--danger)' }}>
+                            {promoStatus.valid ? (
+                              <><CheckCircle2 className="w-3 h-3 inline mr-1" />{promoStatus.discountLabel} aplicado: {promoStatus.finalAmountFormatted}</>
+                            ) : (
+                              <><X className="w-3 h-3 inline mr-1" />Código inválido ou expirado</>
+                            )}
                           </p>
                         )}
                       </div>
-                      <div className="flex gap-8 border-t border-white/5 pt-6 text-[9px] font-bold uppercase tracking-widest text-white/20">
-                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Pagamento seguro</span>
-                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Acesso Vitalício</span>
-                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Formato Profissional</span>
+                      <div className="flex gap-8 border-t pt-6 text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]" style={{ borderColor: 'var(--border)' }}>
+                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3" style={{ color: 'var(--success)' }} /> Pagamento seguro</span>
+                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3" style={{ color: 'var(--success)' }} /> Acesso Vitalício</span>
+                        <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3" style={{ color: 'var(--success)' }} /> Formato Profissional</span>
                       </div>
                     </div>
                   </motion.div>
@@ -3294,22 +3344,22 @@ const startRecovery = (sessionId: string) => {
 
                 {(state.detectedArea === 'FAMILY' ||
                   state.detectedArea === 'SOCIAL_SECURITY') && (
-                  <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.05)`, border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.2)` }}>
-                    <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.8)` }}>
-                      🤝 Recursos de Apoio
+                  <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${(MODE_CONFIG[state.selectedMode] ? themeColorRgb(MODE_CONFIG[state.selectedMode]) : '255,184,0')},0.05)`, border: `1px solid rgba(${(MODE_CONFIG[state.selectedMode] ? themeColorRgb(MODE_CONFIG[state.selectedMode]) : '255,184,0')},0.2)` }}>
+                    <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: `rgba(${(MODE_CONFIG[state.selectedMode] ? themeColorRgb(MODE_CONFIG[state.selectedMode]) : '255,184,0')},0.8)` }}>
+                      <HeartHandshake className="w-3.5 h-3.5" /> Recursos de Apoio
                     </span>
-                    <p className="text-sm text-white/60 leading-relaxed">
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                       Se você está em situação de violência, ligue{' '}
-                      <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                      <strong className="text-[var(--text-primary)]">180</strong>: Central de Atendimento à Mulher.
                     </p>
-                    <p className="text-sm text-white/60 leading-relaxed">
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                       Em sofrimento emocional, ligue{' '}
-                      <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                      <strong className="text-[var(--text-primary)]">188</strong>: CVV, Centro de Valorização da Vida.
                     </p>
-                    <p className="text-sm text-white/60 leading-relaxed">
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                       Para apoio jurídico gratuito, procure a{' '}
-                      <strong className="text-white">Defensoria Pública</strong> ou o{' '}
-                      <strong className="text-white">CRAS</strong> da sua cidade.
+                      <strong className="text-[var(--text-primary)]">Defensoria Pública</strong> ou o{' '}
+                      <strong className="text-[var(--text-primary)]">CRAS</strong> da sua cidade.
                     </p>
                   </div>
                 )}
@@ -3320,22 +3370,23 @@ const startRecovery = (sessionId: string) => {
                     animate={{ opacity: 1, y: 0 }}
                     className="mt-8 space-y-6"
                   >
-                    <div className="p-6 bg-white/5 border border-white/10 space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-sans text-white/80 leading-relaxed">
+                    <div className="p-6 border space-y-4" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] block">Análise do Juiz Estrategista</span>
+                      <p className="text-lg font-sans text-[var(--text-secondary)] leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={true} />
                       </p>
                     </div>
-                    <div className="p-6 bg-[#15161A] border border-white/10 space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Fundamentação Jurídica</span>
-                      <p className="text-sm font-mono text-white/60 leading-relaxed">
+                    <div className="p-6 border space-y-4" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] block">Fundamentação Jurídica</span>
+                      <p className="text-sm font-mono text-[var(--text-secondary)] leading-relaxed">
                         <CensoredText text={state.mode5Result.reasoning} enabled={true} />
                       </p>
                     </div>
                   </motion.div>
                 )}
               </motion.div>
-            )}
+              );
+            })()}
 
             {state.step === 'result' && state.isUnlocked && (
               <motion.div
@@ -3344,16 +3395,22 @@ const startRecovery = (sessionId: string) => {
                 animate={{ opacity: 1 }}
                 className="space-y-12 pb-32"
               >
-                {state.mode5Result && (
+                {state.mode5Result && (() => {
+                  const rec5 = state.mode5Result.recommendation;
+                  const rec5Color = rec5 === 'RECORRER' ? 'var(--danger)' : rec5 === 'ACEITAR' ? 'var(--success)' : 'rgb(var(--warning-rgb))';
+                  const Rec5Icon = rec5 === 'RECORRER' ? Scale : rec5 === 'ACEITAR' ? CheckCircle2 : HeartHandshake;
+                  const rec5Label = rec5 === 'RECORRER' ? 'Recorrer' : rec5 === 'ACEITAR' ? 'Aceitar' : 'Negociar';
+                  const m5ColorRgb = themeColorRgb(MODE_CONFIG[5]);
+                  return (
                   <div className="space-y-8 mb-12">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-8">
-                      <h2 className="text-5xl font-serif italic tracking-tight text-white/90">
-                        Laudo <span className="text-white font-bold">Estratégico</span>
+                    <div className="flex items-center justify-between border-b border-[var(--border)] pb-8">
+                      <h2 className="text-5xl font-serif italic tracking-tight text-[var(--text-primary)]">
+                        Laudo <span className="font-bold">Estratégico</span>
                       </h2>
                       <div className="flex flex-col items-end gap-1">
-                        <span className="text-[10px] uppercase font-bold tracking-widest text-white/20">Recomendação</span>
-                        <span className={`text-2xl font-bold font-serif italic ${state.mode5Result.recommendation === 'RECORRER' ? 'text-red-400' : state.mode5Result.recommendation === 'ACEITAR' ? 'text-emerald-400' : 'text-amber-400'}`}>
-                          {state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}
+                        <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-muted)]">Recomendação</span>
+                        <span className="text-2xl font-bold font-serif italic flex items-center gap-2" style={{ color: rec5Color }}>
+                          <Rec5Icon className="w-5 h-5" /> {rec5Label}
                         </span>
                         {(() => {
                           const pct = state.mode5Result.successProbability;
@@ -3361,15 +3418,15 @@ const startRecovery = (sessionId: string) => {
 
                           const getLabel = (p: number) => {
                             if (isRecurso) {
-                              if (p <= 20) return { label: 'Reforma improvável', color: 'bg-red-500' };
-                              if (p <= 50) return { label: 'Recorrer com cautela', color: 'bg-amber-500' };
-                              if (p <= 75) return { label: 'Bons fundamentos', color: 'bg-emerald-400' };
-                              return { label: 'Recurso é o caminho', color: 'bg-emerald-500' };
+                              if (p <= 20) return { label: 'Reforma improvável', color: 'var(--danger)' };
+                              if (p <= 50) return { label: 'Recorrer com cautela', color: 'rgb(var(--warning-rgb))' };
+                              if (p <= 75) return { label: 'Bons fundamentos', color: 'var(--success)' };
+                              return { label: 'Recurso é o caminho', color: 'var(--success)' };
                             } else {
-                              if (p <= 30) return { label: 'Aceitar o acordo', color: 'bg-red-500' };
-                              if (p <= 55) return { label: 'Negociar melhores termos', color: 'bg-amber-500' };
-                              if (p <= 80) return { label: 'Julgamento favorável', color: 'bg-emerald-400' };
-                              return { label: 'Vantagem clara — rejeitar o acordo', color: 'bg-emerald-500' };
+                              if (p <= 30) return { label: 'Aceitar o acordo', color: 'var(--danger)' };
+                              if (p <= 55) return { label: 'Negociar melhores termos', color: 'rgb(var(--warning-rgb))' };
+                              if (p <= 80) return { label: 'Julgamento favorável', color: 'var(--success)' };
+                              return { label: 'Vantagem clara: rejeitar o acordo', color: 'var(--success)' };
                             }
                           };
 
@@ -3378,22 +3435,22 @@ const startRecovery = (sessionId: string) => {
                           return (
                             <div className="space-y-2 w-full max-w-xs">
                               <div className="flex justify-between items-center">
-                                <span className="text-[10px] font-mono text-white/30">
+                                <span className="text-[10px] font-mono text-[var(--text-muted)]">
                                   {isRecurso ? 'Chance de reforma' : 'Êxito em julgamento'}
                                 </span>
-                                <span className="text-[10px] font-bold text-white/60">{pct}%</span>
+                                <span className="text-[10px] font-bold text-[var(--text-secondary)]">{pct}%</span>
                               </div>
-                              <div className="h-2 bg-white/10 rounded-full overflow-hidden w-full">
+                              <div className="h-2 rounded-full overflow-hidden w-full" style={{ background: 'var(--border)' }}>
                                 <div
-                                  className={`h-full rounded-full transition-all ${color}`}
-                                  style={{ width: `${pct}%` }}
+                                  className="h-full rounded-full transition-all"
+                                  style={{ width: `${pct}%`, background: color }}
                                 />
                               </div>
-                              <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">{label}</span>
-                              <p className="text-[10px] uppercase tracking-widest text-white/30 mt-2 font-bold print:text-black/40">
-                                Índice de força argumentativa — não probabilidade estatística.
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{label}</span>
+                              <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] mt-2 font-bold print:text-black/40">
+                                Índice de força argumentativa: não probabilidade estatística.
                               </p>
-                              <p className="text-[9px] text-white/20 uppercase tracking-widest mt-1 print:text-black/30">
+                              <p className="text-[9px] text-[var(--text-muted)] uppercase tracking-widest mt-1 print:text-black/30">
                                 Estimativa baseada na sua descrição. Resultados reais variam.
                               </p>
                             </div>
@@ -3402,53 +3459,54 @@ const startRecovery = (sessionId: string) => {
                       </div>
                     </div>
 
-                    <div className="p-8 bg-white/5 border border-white/10 space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-sans text-white/80 leading-relaxed">
+                    <div className="p-8 border space-y-4" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] block">Análise do Juiz Estrategista</span>
+                      <p className="text-lg font-sans text-[var(--text-secondary)] leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={!state.isUnlocked} />
                       </p>
                     </div>
 
-                    <div className="p-8 bg-[#15161A] border border-white/10 space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Fundamentação Jurídica</span>
-                      <p className="text-sm font-mono text-white/60 leading-relaxed">
+                    <div className="p-8 border space-y-4" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] block">Fundamentação Jurídica</span>
+                      <p className="text-sm font-mono text-[var(--text-secondary)] leading-relaxed">
                         <CensoredText text={state.mode5Result.reasoning} enabled={!state.isUnlocked} />
                       </p>
                     </div>
 
                     {state.mode5Result.tokenCount && (
-                      <div className="text-[9px] font-mono text-white/20 text-right">
+                      <div className="text-[9px] font-mono text-[var(--text-muted)] text-right">
                         Tokens consumidos nesta análise: {state.mode5Result.tokenCount.toLocaleString()}
                       </div>
                     )}
 
-                    <div className="p-4 text-[10px] uppercase tracking-widest font-bold" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)`, color: `rgba(${MODE_CONFIG[5].colorRgb},0.7)` }}>
-                      ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
+                    <div className="p-4 text-[10px] uppercase tracking-widest font-bold flex items-center gap-2" style={{ backgroundColor: `rgba(${m5ColorRgb},0.05)`, border: `1px solid rgba(${m5ColorRgb},0.2)`, color: `rgba(${m5ColorRgb},0.7)` }}>
+                      <AlertTriangle className="w-3.5 h-3.5" /> O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
 
                     {(state.detectedArea === 'FAMILY' ||
                       state.detectedArea === 'SOCIAL_SECURITY') && (
-                      <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)` }}>
-                        <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.8)` }}>
-                          🤝 Recursos de Apoio
+                      <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${m5ColorRgb},0.05)`, border: `1px solid rgba(${m5ColorRgb},0.2)` }}>
+                        <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: `rgba(${m5ColorRgb},0.8)` }}>
+                          <HeartHandshake className="w-3.5 h-3.5" /> Recursos de Apoio
                         </span>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Se você está em situação de violência, ligue{' '}
-                          <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                          <strong className="text-[var(--text-primary)]">180</strong>: Central de Atendimento à Mulher.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Em sofrimento emocional, ligue{' '}
-                          <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                          <strong className="text-[var(--text-primary)]">188</strong>: CVV, Centro de Valorização da Vida.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Para apoio jurídico gratuito, procure a{' '}
-                          <strong className="text-white">Defensoria Pública</strong> ou o{' '}
-                          <strong className="text-white">CRAS</strong> da sua cidade.
+                          <strong className="text-[var(--text-primary)]">Defensoria Pública</strong> ou o{' '}
+                          <strong className="text-[var(--text-primary)]">CRAS</strong> da sua cidade.
                         </p>
                       </div>
                     )}
                   </div>
-                )}
+                  );
+                })()}
 
                 <div className="hidden print:block print:fixed print:top-0 print:left-0 print:right-0 print:bg-white print:pb-3 print:mb-0 print:z-50 border-b-2 border-black">
                   <div className="flex justify-between items-center">
@@ -3464,8 +3522,8 @@ const startRecovery = (sessionId: string) => {
                 <div className="hidden print:block" style={{ height: '56px' }} />
 
                 {state.selectedMode === 1 && (
-                  <div className="p-6 bg-white/5 border border-white/10 mb-8 no-print">
-                    <p className="text-sm text-white/60 leading-relaxed">
+                  <div className="p-6 border mb-8 no-print" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                       Esta análise avalia a força dos seus argumentos de forma independente.
                       Para simular o contraditório com a outra parte, continue abaixo.
                     </p>
@@ -3483,43 +3541,41 @@ const startRecovery = (sessionId: string) => {
                           const hypotheses = await generateCounterHypotheses(lastPetition, state.detectedArea, state.selectedMode);
                           setState(prev => ({ ...prev, counterHypotheses: hypotheses.length ? hypotheses : [] }));
                         }}
-                        className="w-full p-4 border border-white/20 text-[11px] font-bold uppercase tracking-widest text-white/60 hover:border-white/40 hover:text-white transition-all text-left flex items-center justify-between"
+                        className="w-full p-4 border text-[11px] font-bold uppercase tracking-widest transition-all text-left flex items-center justify-between text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                        style={{ borderColor: 'var(--border)' }}
                       >
-                        <span>
+                        <span className="flex items-center gap-2">
                           {state.selectedMode === 1
-                            ? '⚖️ Quer ver como a outra parte vai reagir?'
-                            : '⚔️ Quer ver como o outro lado vai contra-atacar?'}
+                            ? <><Scale className="w-4 h-4" /> Quer ver como a outra parte vai reagir?</>
+                            : <><Swords className="w-4 h-4" /> Quer ver como o outro lado vai contra-atacar?</>}
                         </span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     )}
 
                     {state.showHypotheses && !state.counterHypotheses?.length && (
-                      <div className="flex items-center gap-3 p-4 bg-white/5 border border-white/10">
-                        <Loader2 className="w-4 h-4 animate-spin text-white/40" />
-                        <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold">
+                      <div className="flex items-center gap-3 p-4 border" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                        <Loader2 className="w-4 h-4 animate-spin text-[var(--text-muted)]" />
+                        <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-bold">
                           Gerando hipóteses do outro lado...
                         </span>
                       </div>
                     )}
 
                     {state.counterHypotheses && state.counterHypotheses.length > 0 && !state.expandedHypothesis && (
-                      <div className="space-y-4 p-6 bg-white/5 border border-white/10">
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-4">
+                      <div className="space-y-4 p-6 border" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-4">
                           {state.selectedMode === 1
-                            ? 'Hipóteses de defesa do Réu — escolha a mais provável:'
-                            : 'Hipóteses de ataque do Autor — escolha a mais provável:'}
+                            ? 'Hipóteses de defesa do Réu: escolha a mais provável:'
+                            : 'Hipóteses de ataque do Autor: escolha a mais provável:'}
                         </div>
-                        <p className="text-[9px] text-white/30 uppercase tracking-widest italic mb-4">
+                        <p className="text-[9px] text-[var(--text-muted)] uppercase tracking-widest italic mb-4">
                           Estas são hipóteses baseadas nos fatos narrados. Escolha a que melhor representa o que você espera do outro lado.
                         </p>
                         {isExpandingHypothesis ? (
                           <div className="flex items-center gap-3 py-6 px-4">
-                            <svg className="animate-spin h-4 w-4 text-white/40 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                            </svg>
-                            <span className="text-[10px] uppercase tracking-widest text-white/40">Desenvolvendo argumento do outro lado...</span>
+                            <Loader2 className="animate-spin h-4 w-4 text-[var(--text-muted)] shrink-0" />
+                            <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Desenvolvendo argumento do outro lado...</span>
                           </div>
                         ) : (
                           state.counterHypotheses.map((hyp, i) => (
@@ -3537,29 +3593,31 @@ const startRecovery = (sessionId: string) => {
                                 setState(prev => ({ ...prev, expandedHypothesis: expanded }));
                                 setIsExpandingHypothesis(false);
                               }}
-                              className="w-full p-4 border border-white/10 text-left hover:border-white/30 hover:bg-white/5 transition-all space-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full p-4 border text-left transition-all space-y-1 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--accent-muted)]"
+                              style={{ borderColor: 'var(--border)' }}
                             >
-                              <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
                                 Opção {String.fromCharCode(65 + i)}
                               </span>
-                              <p className="text-sm text-white/70 leading-relaxed">{hyp}</p>
+                              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{hyp}</p>
                             </button>
                           ))
                         )}
-                        <div className="border border-white/10">
+                        <div className="border" style={{ borderColor: 'var(--border)' }}>
                           <button
                             disabled={isExpandingHypothesis}
                             onClick={() => setState(prev => ({ ...prev, selectedHypothesis: 'D' }))}
-                            className="w-full p-4 text-left hover:bg-white/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full p-4 text-left transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--accent-muted)]"
                           >
-                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">Opção D</span>
-                            <p className="text-sm text-white/50">Eu sei o que o outro lado vai alegar</p>
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Opção D</span>
+                            <p className="text-sm text-[var(--text-secondary)]">Eu sei o que o outro lado vai alegar</p>
                           </button>
                           {state.selectedHypothesis === 'D' && (
                             <div className="px-4 pb-4 space-y-3">
                               <textarea
                                 placeholder="Descreva o argumento do outro lado..."
-                                className="w-full min-h-[120px] bg-transparent border border-white/10 p-3 text-sm font-serif italic text-white/80 outline-none resize-y placeholder:opacity-30"
+                                className="w-full min-h-[120px] bg-transparent border p-3 text-sm font-serif italic outline-none resize-y placeholder:opacity-30 text-[var(--text-secondary)]"
+                                style={{ borderColor: 'var(--border)' }}
                                 onChange={(e) => setState(prev => ({ ...prev, expandedHypothesis: e.target.value }))}
                               />
                               <button
@@ -3575,7 +3633,8 @@ const startRecovery = (sessionId: string) => {
                                   setState(prev => ({ ...prev, expandedHypothesis: expanded }));
                                   setIsExpandingHypothesis(false);
                                 }}
-                                className="px-6 py-2 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+                                style={{ background: MODE_CONFIG[state.selectedMode] ? themeColor(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '#996E00' : '#00FFEF'), color: ctaTextColor }}
                               >
                                 Usar este argumento →
                               </button>
@@ -3586,11 +3645,11 @@ const startRecovery = (sessionId: string) => {
                     )}
 
                     {state.expandedHypothesis && (
-                      <div className="space-y-4 p-6 bg-white/5 border border-white/20">
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">
-                          Argumento do outro lado — expandido
+                      <div className="space-y-4 p-6 border" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-active)' }}>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
+                          Argumento do outro lado: expandido
                         </div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                        <p className="text-sm font-sans text-[var(--text-secondary)] leading-relaxed">
                           {state.expandedHypothesis}
                         </p>
                         <button
@@ -3602,12 +3661,13 @@ const startRecovery = (sessionId: string) => {
                             caseDescription: state.selectedMode === 1 ? state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '' : state.expandedHypothesis!,
                             userSide: state.selectedMode === 1 ? 'AUTHOR' : 'DEFENSE',
                           }))}
-                          className="w-full py-4 bg-white text-black text-[11px] font-bold uppercase tracking-widest hover:bg-white/90 transition-all flex items-center justify-center gap-3"
+                          className="w-full py-4 text-[11px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-3 hover:opacity-90"
+                          style={{ background: MODE_CONFIG[state.selectedMode] ? themeColor(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '#996E00' : '#00FFEF'), color: ctaTextColor }}
                         >
                           Simular o contraditório no Modo 4
                           <ArrowRight className="w-4 h-4" />
                         </button>
-                        <p className="text-[9px] text-white/20 text-center uppercase tracking-widest">
+                        <p className="text-[9px] text-[var(--text-muted)] text-center uppercase tracking-widest">
                           Você será direcionado para a Mesa Dupla Assistida com os campos pré-carregados.
                         </p>
                       </div>
@@ -3617,30 +3677,30 @@ const startRecovery = (sessionId: string) => {
                 )}
 
                 {state.selectedMode !== 5 && (
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-white/10 pb-8 gap-6 print:border-black/10">
-                  <h2 className="text-3xl md:text-5xl font-serif italic tracking-tight text-white/90 print:text-black">
-                    Laudo <span className="text-white font-bold print:text-black">Estratégico</span>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-8 gap-6 print:border-black/10" style={{ borderColor: 'var(--border)' }}>
+                  <h2 className="text-3xl md:text-5xl font-serif italic tracking-tight print:text-black text-[var(--text-primary)]">
+                    Laudo <span className="font-bold">Estratégico</span>
                   </h2>
                   <div className="flex flex-col items-end">
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-white/20 print:text-black/40">Probabilidade Final</span>
+                    <span className="text-[10px] uppercase font-bold tracking-widest print:text-black/40 text-[var(--text-muted)]">Probabilidade Final</span>
                     {(state.selectedMode === 3 || state.selectedMode === 4) && state.simulation ? (
                       <>
-                        <span className="text-[10px] uppercase font-bold tracking-widest text-white/40 mt-1">
+                        <span className="text-[10px] uppercase font-bold tracking-widest mt-1 text-[var(--text-muted)]">
                           {state.simulation.finalSuccessProbability >= 55 ? '↓ AUTOR FAVORECIDO' : state.simulation.finalSuccessProbability <= 45 ? '↓ RÉU FAVORECIDO' : '↓ RESULTADO EQUILIBRADO'}
                         </span>
-                        <span className="text-4xl font-serif italic text-emerald-500 font-bold print:text-black">
+                        <span className="text-4xl font-serif italic font-bold print:text-black" style={{ color: 'var(--success)' }}>
                           {state.simulation.finalSuccessProbability >= 55 ? state.simulation.finalSuccessProbability : 100 - state.simulation.finalSuccessProbability}%
                         </span>
                       </>
                     ) : (
-                      <span className="text-4xl font-serif italic text-emerald-500 font-bold print:text-black">
+                      <span className="text-4xl font-serif italic font-bold print:text-black" style={{ color: 'var(--success)' }}>
                         {(state.simulation?.rounds && state.simulation.rounds.length > 0) ? `${state.simulation.finalSuccessProbability}` : "--"}%
                       </span>
                     )}
-                    <p className="text-[10px] uppercase tracking-widest text-white/30 mt-2 font-bold print:text-black/40">
-                      Índice de força argumentativa — não probabilidade estatística.
+                    <p className="text-[10px] uppercase tracking-widest mt-2 font-bold print:text-black/40 text-[var(--text-muted)]">
+                      Índice de força argumentativa: não probabilidade estatística.
                     </p>
-                    <p className="text-[9px] text-white/20 uppercase tracking-widest mt-1 print:text-black/30">
+                    <p className="text-[9px] uppercase tracking-widest mt-1 print:text-black/30 text-[var(--text-muted)]">
                       Estimativa baseada na sua descrição. Resultados reais variam.
                     </p>
                   </div>
@@ -3648,85 +3708,90 @@ const startRecovery = (sessionId: string) => {
                 )}
 
                 {state.selectedMode !== 5 && state.caseSummary && (
-                  <div className="p-8 bg-white/5 border border-white/10 print:bg-gray-50 print:border-black/10 print:p-6 mb-8">
-                    <h4 className="text-[10px] uppercase font-bold tracking-[0.3em] text-white/40 print:text-black/60 mb-3">Objeto da Simulação (Entendimento do Sistema)</h4>
-                    <p className="text-xl font-serif italic text-white/90 leading-relaxed print:text-black">
+                  <div className="p-8 border print:bg-gray-50 print:border-black/10 print:p-6 mb-8" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                    <h4 className="text-[10px] uppercase font-bold tracking-[0.3em] print:text-black/60 mb-3 text-[var(--text-muted)]">Objeto da Simulação (Entendimento do Sistema)</h4>
+                    <p className="text-xl font-serif italic leading-relaxed print:text-black text-[var(--text-primary)]">
                       "{state.caseSummary}"
                     </p>
                   </div>
                 )}
 
-                {(state.selectedMode === 3 || state.selectedMode === 4) && state.simulation?.rounds[0] && (
+                {(state.selectedMode === 3 || state.selectedMode === 4) && state.simulation?.rounds[0] && (() => {
+                  const verdictCfg = MODE_CONFIG[state.selectedMode];
+                  const verdictColor = verdictCfg ? themeColor(verdictCfg) : (theme === 'light' ? '#996E00' : '#00FFEF');
+                  const verdictColorRgb = verdictCfg ? themeColorRgb(verdictCfg) : (theme === 'light' ? '153,110,0' : '255,184,0');
+                  return (
                   <div className="space-y-6 mb-8">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="p-6 bg-white/5 border border-white/10">
-                        <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-3">Argumento do Autor</div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                      <div className="p-6 border" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                        <div className="text-[9px] font-bold uppercase tracking-widest mb-3 text-[var(--text-muted)]">Argumento do Autor</div>
+                        <p className="text-sm font-sans leading-relaxed text-[var(--text-secondary)]">
                           {(state.selectedMode === 4 && state.userSide === 'AUTHOR')
-                            ? (state.simulation.rounds[0].lawyerPetition || '—')
-                            : (state.caseDescription || '—')}
+                            ? (state.simulation.rounds[0].lawyerPetition || '-')
+                            : (state.caseDescription || '-')}
                         </p>
                       </div>
-                      <div className="p-6 bg-white/5" style={{ border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.2)` }}>
-                        <div className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.6)` }}>Argumento do Réu</div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                      <div className="p-6" style={{ background: 'var(--bg-secondary)', border: `1px solid rgba(${verdictColorRgb},0.2)` }}>
+                        <div className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: `rgba(${verdictColorRgb},0.6)` }}>Argumento do Réu</div>
+                        <p className="text-sm font-sans leading-relaxed text-[var(--text-secondary)]">
                           {(state.selectedMode === 4 && state.userSide === 'DEFENSE')
-                            ? (state.simulation.rounds[0].lawyerPetition || '—')
-                            : (state.defenseDescription || '—')}
+                            ? (state.simulation.rounds[0].lawyerPetition || '-')
+                            : (state.defenseDescription || '-')}
                         </p>
                       </div>
                     </div>
-                    <div className="p-6 bg-white/5 border border-white/10 space-y-4">
-                      <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Veredito Imparcial</div>
+                    <div className="p-6 border space-y-4" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                      <div className="text-[9px] font-bold uppercase tracking-widest mb-2 text-[var(--text-muted)]">Veredito Imparcial</div>
                       <div className="flex items-center gap-0 h-8 rounded-sm overflow-hidden">
-                        <div className="h-full bg-white/40 flex items-center justify-end pr-3 transition-all" style={{ width: `${state.simulation.finalSuccessProbability}%` }}>
-                          <span className="text-[10px] font-bold text-black whitespace-nowrap">{state.simulation.finalSuccessProbability}% AUTOR</span>
+                        <div className="h-full flex items-center justify-end pr-3 transition-all" style={{ width: `${state.simulation.finalSuccessProbability}%`, background: 'var(--text-muted)' }}>
+                          <span className="text-[10px] font-bold whitespace-nowrap" style={{ color: ctaTextColor }}>{state.simulation.finalSuccessProbability}% AUTOR</span>
                         </div>
-                        <div className="h-full flex items-center justify-start pl-3 transition-all" style={{ width: `${100 - state.simulation.finalSuccessProbability}%`, backgroundColor: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.6)` }}>
-                          <span className="text-[10px] font-bold text-black whitespace-nowrap">RÉU {100 - state.simulation.finalSuccessProbability}%</span>
+                        <div className="h-full flex items-center justify-start pl-3 transition-all" style={{ width: `${100 - state.simulation.finalSuccessProbability}%`, background: verdictColor }}>
+                          <span className="text-[10px] font-bold whitespace-nowrap" style={{ color: ctaTextColor }}>RÉU {100 - state.simulation.finalSuccessProbability}%</span>
                         </div>
                       </div>
-                      <p className="text-lg font-serif italic text-white/80">
+                      <p className="text-lg font-serif italic text-[var(--text-secondary)]">
                         {state.simulation.finalSuccessProbability >= 55
                           ? `O Autor vence com ${state.simulation.finalSuccessProbability}% de probabilidade de procedência.`
                           : state.simulation.finalSuccessProbability <= 45
-                          ? `O Réu vence — probabilidade de procedência do Autor é de apenas ${state.simulation.finalSuccessProbability}%.`
-                          : `Resultado equilibrado — ${state.simulation.finalSuccessProbability}% para o Autor, ${100 - state.simulation.finalSuccessProbability}% para o Réu.`}
+                          ? `O Réu vence: probabilidade de procedência do Autor é de apenas ${state.simulation.finalSuccessProbability}%.`
+                          : `Resultado equilibrado: ${state.simulation.finalSuccessProbability}% para o Autor, ${100 - state.simulation.finalSuccessProbability}% para o Réu.`}
                       </p>
                     </div>
                   </div>
-                )}
+                  );
+                })()}
 
                 {state.simulation?.rounds && state.simulation.rounds.length > 0 && (
                   <div className="space-y-4 mb-8 print:hidden">
-                    <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 border-b border-white/10 pb-3">
+                    <div className="text-[9px] font-bold uppercase tracking-widest border-b pb-3 text-[var(--text-muted)]" style={{ borderColor: 'var(--border)' }}>
                       Histórico de Rodadas
                     </div>
                     {state.simulation.rounds.map((round, i) => (
-                      <div key={i} className="p-6 bg-white/5 border border-white/10 space-y-4">
+                      <div key={i} className="p-6 border space-y-4" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
                         <div className="flex items-center gap-3">
-                          <span className="text-[9px] font-mono font-bold text-white/20">RODADA {i + 1}</span>
-                          <div className="h-px bg-white/5 flex-1" />
+                          <span className="text-[9px] font-mono font-bold text-[var(--text-muted)]">RODADA {i + 1}</span>
+                          <div className="h-px flex-1" style={{ background: 'var(--border)' }} />
                           {(() => {
                             const _es = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
                             const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
-                            return <span className="text-[9px] font-mono font-bold text-white/30">APROVEITAMENTO ({_es === 'DEFENSE' ? 'RÉU' : 'AUTOR'}) {_rp}%</span>;
+                            return <span className="text-[9px] font-mono font-bold text-[var(--text-muted)]">APROVEITAMENTO ({_es === 'DEFENSE' ? 'RÉU' : 'AUTOR'}) {_rp}%</span>;
                           })()}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <div className="text-[8px] font-bold uppercase tracking-widest text-white/20 mb-2">
+                            <div className="text-[8px] font-bold uppercase tracking-widest mb-2 text-[var(--text-muted)]">
                               {state.selectedMode === 4
                                 ? (state.userSide === 'AUTHOR' ? 'Advogado do Autor' : 'Advogado do Réu')
                                 : 'Advogado'}
                             </div>
-                            <p className="text-xs text-white/60 leading-relaxed font-serif italic line-clamp-6">
+                            <p className="text-xs leading-relaxed font-serif italic line-clamp-6 text-[var(--text-secondary)]">
                               "{round.lawyerPetition}"
                             </p>
                           </div>
                           <div>
-                            <div className="text-[8px] font-bold uppercase tracking-widest text-white/20 mb-2">Magistrado Técnico</div>
-                            <p className="text-xs text-white/60 leading-relaxed font-sans line-clamp-6">
+                            <div className="text-[8px] font-bold uppercase tracking-widest mb-2 text-[var(--text-muted)]">Magistrado Técnico</div>
+                            <p className="text-xs leading-relaxed font-sans line-clamp-6 text-[var(--text-secondary)]">
                               "{cleanJudgmentText(round.judgeJudgment) || round.judgeJudgment || ''}"
                             </p>
                           </div>
@@ -3740,20 +3805,20 @@ const startRecovery = (sessionId: string) => {
                   {/* Volume 1: Orientação ao Cliente */}
                   {state.selectedMode !== 5 && (
                   <section className="space-y-6">
-                    <div className="flex items-center gap-4 border-b border-emerald-500/30 pb-4 print:border-black/10">
+                    <div className="flex items-center gap-4 border-b border-[color-mix(in_srgb,var(--success)_30%,transparent)] pb-4 print:border-black/10">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-emerald-500 text-black px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit" style={{ background: 'var(--success)', color: ctaTextColor }}>
                           VOLUME I: ORIENTAÇÃO AO CLIENTE
                         </span>
-                        <span className="text-[8px] font-mono text-emerald-500/50 uppercase tracking-widest pl-1">Linguagem Acessível e Prática</span>
+                        <span className="text-[8px] font-mono text-[color-mix(in_srgb,var(--success)_50%,transparent)] uppercase tracking-widest pl-1">Linguagem Acessível e Prática</span>
                       </div>
                       <div className="flex-1" />
                       <div className="flex flex-col items-end print:hidden">
-                        <div className="text-[9px] font-bold uppercase tracking-widest text-emerald-500/60">Agente Responsável</div>
-                        <div className="text-[11px] font-serif italic text-white/40">Estrategista de Acessibilidade</div>
+                        <div className="text-[9px] font-bold uppercase tracking-widest text-[color-mix(in_srgb,var(--success)_60%,transparent)]">Agente Responsável</div>
+                        <div className="text-[11px] font-serif italic text-[var(--text-muted)]">Estrategista de Acessibilidade</div>
                       </div>
                     </div>
-                    <div className="laudo-prose prose prose-invert max-w-none font-sans text-lg leading-[1.6] text-white/90 font-light bg-emerald-500/[0.05] p-8 border border-emerald-500/20 shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0">
+                    <div className={`laudo-prose prose ${theme === 'dark' ? 'prose-invert' : ''} max-w-none font-sans text-lg leading-[1.6] text-[var(--text-primary)] font-light bg-[color-mix(in_srgb,var(--success)_5%,transparent)] p-8 border border-[color-mix(in_srgb,var(--success)_20%,transparent)] shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0`}>
                       <ReactMarkdown>
                         {state.report?.layman || ''}
                       </ReactMarkdown>
@@ -3764,20 +3829,20 @@ const startRecovery = (sessionId: string) => {
                   {/* Volume 2: Fundamentação Técnica Estratégica */}
                   {state.selectedMode !== 5 && (
                   <section className="space-y-6">
-                    <div className="flex items-center gap-4 border-b border-white/10 pb-4 print:border-black/10">
+                    <div className="flex items-center gap-4 border-b border-[var(--border)] pb-4 print:border-black/10">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-white/10 text-white px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-[var(--bg-secondary)] text-[var(--text-primary)] px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
                           VOLUME II: LAUDO TÉCNICO ESTRATÉGICO
                         </span>
-                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest pl-1">Fundamentação Jurídica e Normativa</span>
+                        <span className="text-[8px] font-mono text-[var(--text-muted)] uppercase tracking-widest pl-1">Fundamentação Jurídica e Normativa</span>
                       </div>
                       <div className="flex-1" />
                       <div className="flex flex-col items-end print:hidden">
-                        <div className="text-[9px] font-bold uppercase tracking-widest text-white/30">Agente Responsável</div>
-                        <div className="text-[11px] font-serif italic text-white/40">Analista Processual Sênior</div>
+                        <div className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Agente Responsável</div>
+                        <div className="text-[11px] font-serif italic text-[var(--text-muted)]">Analista Processual Sênior</div>
                       </div>
                     </div>
-                    <div className="laudo-prose p-10 border border-white/5 bg-[#15161A]/50 font-sans text-[13px] leading-loose text-white/60 shadow-2xl relative overflow-hidden prose prose-invert prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0">
+                    <div className={`laudo-prose p-10 border border-[var(--border)] font-sans text-[13px] leading-loose text-[var(--text-secondary)] shadow-2xl relative overflow-hidden prose ${theme === 'dark' ? 'prose-invert' : ''} prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0`} style={{ background: 'var(--bg-secondary)' }}>
                       <ReactMarkdown>
                         {state.report?.professional || ''}
                       </ReactMarkdown>
@@ -3787,13 +3852,13 @@ const startRecovery = (sessionId: string) => {
 
                   {/* Resumo da Causa — Modos 1 e 2 */}
                   {(state.selectedMode === 1 || state.selectedMode === 2) && state.report?.causeSummary && (
-                  <section className="space-y-6 pt-12 border-t-2 border-white/10 print:border-black/20 print:pt-8">
-                    <div className="flex items-center gap-4 border-b border-white/10 pb-4 print:border-black/10">
+                  <section className="space-y-6 pt-12 border-t-2 border-[var(--border)] print:border-black/20 print:pt-8">
+                    <div className="flex items-center gap-4 border-b border-[var(--border)] pb-4 print:border-black/10">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-white/10 text-white px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-[var(--bg-secondary)] text-[var(--text-primary)] px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
                           RESUMO DA SUA CAUSA
                         </span>
-                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest pl-1">Para apresentar a um advogado — não é peça processual</span>
+                        <span className="text-[8px] font-mono text-[var(--text-muted)] uppercase tracking-widest pl-1">Para apresentar a um advogado, não é peça processual</span>
                       </div>
                       <div className="flex-1" />
                       <button
@@ -3806,45 +3871,45 @@ const startRecovery = (sessionId: string) => {
                           a.click();
                           URL.revokeObjectURL(url);
                         }}
-                        className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest border border-white/20 text-white/60 hover:bg-white/5 transition-colors print:hidden"
+                        className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest border border-[var(--border-active)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors print:hidden"
                       >
                         Baixar Resumo da Causa
                       </button>
                     </div>
-                    <div className="p-8 bg-white/5 border border-white/10 font-sans text-[13px] leading-loose text-white/70 print:bg-gray-50 print:border-black/10 print:text-black prose prose-invert prose-sm max-w-none">
+                    <div className={`p-8 bg-[var(--bg-secondary)] border border-[var(--border)] font-sans text-[13px] leading-loose text-[var(--text-secondary)] print:bg-gray-50 print:border-black/10 print:text-black prose ${theme === 'dark' ? 'prose-invert' : ''} prose-sm max-w-none`}>
                       <ReactMarkdown>
                         {state.report.causeSummary}
                       </ReactMarkdown>
                     </div>
-                    <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold print:text-black/40">
-                      ⚠️ Este resumo não é uma peça processual. Não substitui consulta com advogado.
+                    <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-bold print:text-black/40 flex items-center gap-2">
+                      <AlertTriangle className="w-3 h-3 print:hidden" /> Este resumo não é uma peça processual. Não substitui consulta com advogado.
                     </p>
                   </section>
                   )}
 
                   {/* Volume 3: Anexos Processuais (Audit Trail) */}
                   {state.selectedMode !== 5 && (
-                  <section className="space-y-6 pt-12 border-t-2 border-white/10 print:border-black/20 print:pt-8 print:break-before-page">
-                    <div className="flex flex-col gap-2 border-b border-white/5 pb-6 print:border-black/10">
-                      <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-white/40 print:text-black/60">
+                  <section className="space-y-6 pt-12 border-t-2 border-[var(--border)] print:border-black/20 print:pt-8 print:break-before-page">
+                    <div className="flex flex-col gap-2 border-b border-[var(--border)] pb-6 print:border-black/10">
+                      <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-[var(--text-muted)] print:text-black/60">
                         ANEXO I: HISTÓRICO DE EVOLUÇÃO DAS PEÇAS E JULGAMENTOS
                       </span>
-                      <span className="text-[9px] font-mono text-white/10 uppercase tracking-[0.2em] print:text-black/30 italic">
+                      <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-[0.2em] print:text-black/30 italic">
                         Memorial Descritivo do Ciclo de Debate Estratégico (Lawyer VS Judge Dynamics)
                       </span>
                     </div>
                     
                     <div className="space-y-12 print:space-y-10">
                       {state.simulation?.rounds.map((round, idx) => (
-                        <div key={idx} className="border-l-4 border-emerald-500/30 bg-white/[0.01] p-10 space-y-8 rounded-r-md print:border-black/20 print:bg-white print:p-0 print:border-l-0 print:space-y-6">
-                          <div className="flex justify-between items-center border-b border-white/5 pb-4 print:border-black/10">
+                        <div key={idx} className="border-l-4 border-[color-mix(in_srgb,var(--success)_30%,transparent)] bg-[var(--bg-secondary)] p-10 space-y-8 rounded-r-md print:border-black/20 print:bg-white print:p-0 print:border-l-0 print:space-y-6">
+                          <div className="flex justify-between items-center border-b border-[var(--border)] pb-4 print:border-black/10">
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-full bg-emerald-500 text-black flex items-center justify-center text-sm font-bold font-mono print:bg-black print:text-white">
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold font-mono print:bg-black print:text-white" style={{ background: 'var(--success)', color: ctaTextColor }}>
                                 {round.round}
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-xs font-bold uppercase tracking-widest text-white/80 print:text-black">Ciclo de Aperfeiçoamento Processual</span>
-                                <span className="text-[9px] font-mono text-white/20 print:text-black/40">ID_PROTOCOLO: {Math.random().toString(16).slice(2, 10).toUpperCase()}</span>
+                                <span className="text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] print:text-black">Ciclo de Aperfeiçoamento Processual</span>
+                                <span className="text-[9px] font-mono text-[var(--text-muted)] print:text-black/40">ID_PROTOCOLO: {Math.random().toString(16).slice(2, 10).toUpperCase()}</span>
                               </div>
                             </div>
                             <div className="text-right">
@@ -3853,8 +3918,8 @@ const startRecovery = (sessionId: string) => {
                                 const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
                                 return (
                                   <>
-                                    <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest print:text-black">Aproveitamento ({_es === 'DEFENSE' ? 'Réu' : 'Autor'})</div>
-                                    <div className="text-xl font-serif italic text-white print:text-black">{_rp}%</div>
+                                    <div className="text-[9px] font-bold text-[var(--success)] uppercase tracking-widest print:text-black">Aproveitamento ({_es === 'DEFENSE' ? 'Réu' : 'Autor'})</div>
+                                    <div className="text-xl font-serif italic text-[var(--text-primary)] print:text-black">{_rp}%</div>
                                   </>
                                 );
                               })()}
@@ -3864,32 +3929,32 @@ const startRecovery = (sessionId: string) => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 print:gap-8">
                             <div className="space-y-4">
                               <div className="flex items-center gap-2">
-                                <Scale className="w-4 h-4 text-emerald-500 print:text-black" />
-                                <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest print:text-black">Petição e Pedidos do Advogado</span>
+                                <Scale className="w-4 h-4 text-[var(--success)] print:text-black" />
+                                <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest print:text-black">Petição e Pedidos do Advogado</span>
                               </div>
-                              <div className="laudo-prose prose prose-invert prose-sm max-w-none p-6 bg-white/[0.02] border border-white/5 text-[13px] leading-relaxed text-white/50 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
+                              <div className={`laudo-prose prose ${theme === 'dark' ? 'prose-invert' : ''} prose-sm max-w-none p-6 bg-[var(--bg-card)] border border-[var(--border)] text-[13px] leading-relaxed text-[var(--text-secondary)] font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4`}>
                                 <ReactMarkdown>{round.lawyerPetition}</ReactMarkdown>
                               </div>
                             </div>
 
                             <div className="space-y-4">
                               <div className="flex items-center gap-2">
-                                <Gavel className="w-4 h-4 text-white/20 print:text-black" />
-                                <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest print:text-black/60">Análise e Decisão do Magistrado</span>
+                                <Gavel className="w-4 h-4 text-[var(--text-muted)] print:text-black" />
+                                <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest print:text-black/60">Análise e Decisão do Magistrado</span>
                               </div>
-                              <div className="laudo-prose prose prose-invert prose-sm max-w-none p-6 bg-white/[0.01] border border-dashed border-white/5 text-[13px] leading-relaxed text-white/40 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
+                              <div className={`laudo-prose prose ${theme === 'dark' ? 'prose-invert' : ''} prose-sm max-w-none p-6 bg-[var(--bg-secondary)] border border-dashed border-[var(--border)] text-[13px] leading-relaxed text-[var(--text-muted)] font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4`}>
                                 <ReactMarkdown>{cleanJudgmentText(round.judgeJudgment)}</ReactMarkdown>
                               </div>
                             </div>
                           </div>
 
                           {round.lawyerBrief && (
-                            <div className="mt-4 p-6 bg-emerald-500/5 rounded-sm border border-emerald-500/10 print:border-black/5 print:bg-gray-100">
+                            <div className="mt-4 p-6 rounded-sm border print:border-black/5 print:bg-gray-100" style={{ background: 'color-mix(in srgb, var(--success) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--success) 10%, transparent)' }}>
                                <div className="flex items-center gap-2 mb-3">
-                                 <History className="w-4 h-4 text-emerald-500/40 print:text-black/40" />
-                                 <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-500/40 print:text-black/60">Insight Estratégico Retido para o Próximo Ciclo</span>
+                                 <History className="w-4 h-4 text-[color-mix(in_srgb,var(--success)_40%,transparent)] print:text-black/40" />
+                                 <span className="text-[9px] font-bold uppercase tracking-widest text-[color-mix(in_srgb,var(--success)_40%,transparent)] print:text-black/60">Insight Estratégico Retido para o Próximo Ciclo</span>
                                </div>
-                               <p className="text-[11px] text-white/40 leading-relaxed font-mono italic print:text-black/80">
+                               <p className="text-[11px] text-[var(--text-muted)] leading-relaxed font-mono italic print:text-black/80">
                                  {round.lawyerBrief}
                                </p>
                             </div>
@@ -3936,9 +4001,9 @@ const startRecovery = (sessionId: string) => {
                         key={agent.id}
                         className="bg-[var(--bg-card)] p-3 border border-[var(--border)] space-y-1 relative group overflow-hidden"
                       >
-                        <div className="absolute top-0 right-0 w-1 h-full bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute top-0 right-0 w-1 h-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: 'var(--success)' }} />
                         <div className="flex justify-between items-start">
-                          <div className="text-[9px] font-bold text-emerald-500/60 uppercase tracking-tighter">{agent.type}</div>
+                          <div className="text-[9px] font-bold uppercase tracking-tighter" style={{ color: 'color-mix(in srgb, var(--success) 60%, transparent)' }}>{agent.type}</div>
                           <div className="text-[7px] font-mono text-[var(--text-muted)]">0x{(i * 133).toString(16).toUpperCase()}</div>
                         </div>
                         <div className="text-[10px] text-[var(--text-primary)] font-medium italic font-serif leading-tight">{agent.name}</div>
@@ -4010,8 +4075,8 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 <div className={`transition-all duration-500 ${state.simStep !== 'IDLE' ? 'opacity-100' : 'opacity-0'}`}>
-                  <div className="bg-emerald-500/5 border border-emerald-500/20 p-4 rounded-sm">
-                    <p className="text-[10px] font-mono text-emerald-500 uppercase tracking-[0.2em] leading-relaxed text-center animate-pulse">
+                  <div className="p-4 rounded-sm border" style={{ background: 'color-mix(in srgb, var(--success) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--success) 20%, transparent)' }}>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] leading-relaxed text-center animate-pulse" style={{ color: 'var(--success)' }}>
                       {state.simStep === 'WRITING' && `>> R${state.currentRound}: Redigindo tese jurídica...`}
                       {state.simStep === 'DELIVERING' && `>> R${state.currentRound}: Transmitindo dados...`}
                       {state.simStep === 'JUDGING' && `>> R${state.currentRound}: Avaliando fundamentos...`}
@@ -4027,19 +4092,20 @@ const startRecovery = (sessionId: string) => {
           <div className="mt-auto pt-8">
             {/* Contextual Summary for active process */}
             {(state.step === 'simulating' || state.step === 'result') && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-[#1C1C1F] text-white p-6 rounded-sm space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group border border-white/10"
+                className="text-[var(--text-primary)] p-6 rounded-sm space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.15)] relative overflow-hidden group border"
+                style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}
               >
-                <div className="absolute inset-0 bg-white/5 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
+                <div className="absolute inset-0 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000" style={{ background: 'var(--border)' }}></div>
                 <div className="flex justify-between items-center opacity-30">
                   <span className="text-[9px] uppercase tracking-widest font-bold">Resumo do Caso Atual</span>
                   <TrendingUp className="w-4 h-4" />
                 </div>
                 <div className="space-y-1">
-                  <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest text-emerald-400">Índice de Força Argumentativa</div>
-                  <div className="text-5xl font-serif italic text-white/90">
+                  <div className="text-[11px] font-medium opacity-40 uppercase tracking-widest" style={{ color: 'var(--success)' }}>Índice de Força Argumentativa</div>
+                  <div className="text-5xl font-serif italic text-[var(--text-primary)]">
                     { (state.simulation?.rounds && state.simulation.rounds.length > 0)
                       ? (() => {
                           const _fp = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
@@ -4051,7 +4117,7 @@ const startRecovery = (sessionId: string) => {
                     }%
                   </div>
                 </div>
-                <div className="text-[10px] font-mono text-emerald-500/60 font-bold border-t border-white/5 pt-4 flex justify-between">
+                <div className="text-[10px] font-mono font-bold border-t pt-4 flex justify-between" style={{ color: 'color-mix(in srgb, var(--success) 60%, transparent)', borderColor: 'var(--border)' }}>
                    <span>SESSÃO: {state.simulation?.lawyerAgentName ? 'SEED_ACTIVE' : 'INITIALIZING'}</span>
                    <span>VEREDITO: {state.step === 'result' ? 'CONCLUÍDO' : 'PENDENTE'}</span>
                 </div>
@@ -4245,43 +4311,43 @@ const startRecovery = (sessionId: string) => {
 
       {state.step === 'result' && state.isUnlocked && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] pointer-events-none no-print">
-           <div className="pointer-events-auto bg-[#1C1C1F] text-white p-1 flex gap-px shadow-[0_0_50px_rgba(0,0,0,0.8)] scale-125 lg:scale-100 border border-white/10">
+           <div className="pointer-events-auto p-1 flex gap-px shadow-[0_0_50px_rgba(0,0,0,0.25)] scale-125 lg:scale-100 border text-[var(--text-primary)]" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
              <button
               onClick={() => {
                 const btn = document.getElementById('btn-export-pdf');
-                if (btn) btn.textContent = '⏳ Gerando...';
+                if (btn) btn.textContent = 'Gerando...';
                 setTimeout(() => {
                   window.print();
                   if (btn) btn.textContent = 'Exportar PDF';
                 }, 300);
               }}
               id="btn-export-pdf"
-              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest transition-colors hover:bg-[var(--bg-secondary)]"
              >
                 Exportar PDF
              </button>
-             <div className="w-px bg-white/10"></div>
+             <div className="w-px" style={{ background: 'var(--border)' }}></div>
              {user && (
                <>
                  <button
                    onClick={handleOpenChat}
-                   className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+                   className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest transition-colors hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                  >
-                   💬 Chat
+                   <MessageCircle className="w-3.5 h-3.5" /> Chat
                  </button>
-                 <div className="w-px bg-white/10"></div>
+                 <div className="w-px" style={{ background: 'var(--border)' }}></div>
                </>
              )}
              <button
               onClick={() => window.location.reload()}
-              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest transition-colors hover:bg-[var(--bg-secondary)]"
              >
                 Reiniciar
              </button>
-             <div className="w-px bg-white/10"></div>
+             <div className="w-px" style={{ background: 'var(--border)' }}></div>
              <a
                href="mailto:suporte@eaijuridico.com.br"
-               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest transition-colors hover:bg-[var(--bg-secondary)]"
              >
                Contato
              </a>
