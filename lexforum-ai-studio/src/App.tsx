@@ -15,6 +15,8 @@ import {
   AlertTriangle,
   Search,
   HeartHandshake,
+  MessageCircle,
+  Swords,
   ArrowRight,
   Loader2,
   ChevronRight,
@@ -131,6 +133,8 @@ function formatSimDate(createdAt: unknown): string {
 }
 
 function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMode4, onShowHypotheses, onOpenChat }: { state: any; modeColor: string; onRestart: () => void; onSelectHypothesis?: (hyp: string) => void; onGoToMode4?: () => void; onShowHypotheses?: () => void; onOpenChat?: () => void; }) {
+  const { theme } = useTheme();
+  const ctaTextColor = theme === 'light' ? '#FFFFFF' : '#000000';
   const [activeVolume, setActiveVolume] = React.useState<'I' | 'II'>('I');
   const finalPct = state.selectedMode === 5 ? (state.mode5Result?.successProbability ?? 0) : (state.simulation?.finalSuccessProbability ?? 0);
   const effectiveSide = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
@@ -149,8 +153,8 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
   return (
     <div className="flex flex-col md:hidden eai-laudo-mobile" style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'var(--bg-primary)' }}>
       <div style={{ display: 'flex', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', overflow: 'hidden', margin: '12px 20px 0', flexShrink: 0 }}>
-        <button onClick={() => setActiveVolume('I')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'I' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'I' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'I' ? '8px' : 0, margin: activeVolume === 'I' ? '4px' : 0, transition: 'all 0.2s' }}>Volume I — Orientação</button>
-        <button onClick={() => setActiveVolume('II')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'II' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'II' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'II' ? '8px' : 0, margin: activeVolume === 'II' ? '4px' : 0, transition: 'all 0.2s' }}>Volume II — Técnico</button>
+        <button onClick={() => setActiveVolume('I')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'I' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'I' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'I' ? '8px' : 0, margin: activeVolume === 'I' ? '4px' : 0, transition: 'all 0.2s' }}>Volume I: Orientação</button>
+        <button onClick={() => setActiveVolume('II')} style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: activeVolume === 'II' ? 'var(--text-primary)' : 'var(--text-muted)', cursor: 'pointer', border: 'none', background: activeVolume === 'II' ? 'var(--bg-primary)' : 'transparent', borderRadius: activeVolume === 'II' ? '8px' : 0, margin: activeVolume === 'II' ? '4px' : 0, transition: 'all 0.2s' }}>Volume II: Técnico</button>
       </div>
       <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingBottom: 'calc(96px + env(safe-area-inset-bottom))', scrollbarWidth: 'none' }}>
         <div style={{ textAlign: 'center', padding: '24px 20px 16px' }}>
@@ -170,17 +174,25 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
                 <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{rightLabel}</span>
               </div>
               <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${barFill}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, #00CC88)`, transition: 'width 0.6s ease' }} />
+                <div style={{ width: `${barFill}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, var(--success))`, transition: 'width 0.6s ease' }} />
               </div>
             </div>
           );
         })()}
-        {state.selectedMode === 5 && state.mode5Result && (
-          <div style={{ margin: '0 20px 16px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', textAlign: 'center' }}>
-            <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Recomendação</p>
-            <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '22px', fontStyle: 'italic', fontWeight: 700, color: state.mode5Result.recommendation === 'RECORRER' ? '#FF6B6B' : state.mode5Result.recommendation === 'ACEITAR' ? '#00CC88' : '#FFB800' }}>{state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}</p>
-          </div>
-        )}
+        {state.selectedMode === 5 && state.mode5Result && (() => {
+          const rec = state.mode5Result.recommendation;
+          const recColor = rec === 'RECORRER' ? 'var(--danger)' : rec === 'ACEITAR' ? 'var(--success)' : 'rgb(var(--warning-rgb))';
+          const RecIcon = rec === 'RECORRER' ? Scale : rec === 'ACEITAR' ? CheckCircle2 : HeartHandshake;
+          const recLabel = rec === 'RECORRER' ? 'Recorrer' : rec === 'ACEITAR' ? 'Aceitar' : 'Negociar';
+          return (
+            <div style={{ margin: '0 20px 16px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', textAlign: 'center' }}>
+              <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px' }}>Recomendação</p>
+              <p style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: '22px', fontStyle: 'italic', fontWeight: 700, color: recColor, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <RecIcon style={{ width: '20px', height: '20px' }} /> {recLabel}
+              </p>
+            </div>
+          );
+        })()}
         {activeVolume === 'I' && (
           <div style={{ padding: '0 20px 16px' }}>
             {state.selectedMode === 5 && state.mode5Result && (
@@ -191,7 +203,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
             )}
             {state.selectedMode !== 5 && state.report && (state.report.layman || state.report.professional) && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
-                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#00CC88', marginBottom: '12px' }}>Orientação ao Cliente</p>
+                <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--success)', marginBottom: '12px' }}>Orientação ao Cliente</p>
                 <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}><ReactMarkdown>{state.report.layman || state.report.professional || ''}</ReactMarkdown></div>
               </div>
             )}
@@ -202,10 +214,10 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
               </div>
             )}
             {(state.detectedArea === 'FAMILY' || state.detectedArea === 'SOCIAL_SECURITY') && (
-              <div style={{ padding: '16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', borderRadius: '12px', marginTop: '16px' }}>
-                <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,184,0,0.8)', display: 'block', marginBottom: '8px' }}>🤝 Recursos de Apoio</span>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong> — Central de Atendimento à Mulher.</p>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong> — CVV.</p>
+              <div style={{ padding: '16px', background: 'rgba(var(--warning-rgb),0.05)', border: '1px solid rgba(var(--warning-rgb),0.2)', borderRadius: '12px', marginTop: '16px' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(var(--warning-rgb),0.8)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}><HeartHandshake style={{ width: '14px', height: '14px' }} /> Recursos de Apoio</span>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em situação de violência, ligue <strong style={{ color: 'var(--text-primary)' }}>180</strong>: Central de Atendimento à Mulher.</p>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 6px' }}>Em sofrimento emocional, ligue <strong style={{ color: 'var(--text-primary)' }}>188</strong>: CVV.</p>
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>Apoio jurídico gratuito: <strong style={{ color: 'var(--text-primary)' }}>Defensoria Pública</strong> ou <strong style={{ color: 'var(--text-primary)' }}>CRAS</strong>.</p>
               </div>
             )}
@@ -236,7 +248,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
         {/* Carregando hipóteses */}
         {state.showHypotheses && !state.counterHypotheses?.length && !state.expandedHypothesis && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', marginBottom: '10px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
+            <Loader2 className="animate-spin" style={{ width: '14px', height: '14px', color: 'var(--text-muted)' }} />
             <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Gerando hipóteses...</span>
           </div>
         )}
@@ -247,7 +259,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
             <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 4px' }}>Como o réu pode reagir:</p>
             {isExpanding ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>⏳</span>
+                <Loader2 className="animate-spin" style={{ width: '14px', height: '14px', color: 'var(--text-muted)' }} />
                 <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Expandindo argumento...</span>
               </div>
             ) : (
@@ -269,7 +281,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
         {state.expandedHypothesis && state.selectedMode !== 5 && state.selectedMode !== 4 && (
           <button
             onClick={onGoToMode4}
-            style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '13px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginBottom: '10px', letterSpacing: '0.1em', textTransform: 'uppercase' }}
+            style={{ width: '100%', padding: '16px', background: modeColor, color: ctaTextColor, border: 'none', fontSize: '13px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginBottom: '10px', letterSpacing: '0.1em', textTransform: 'uppercase' }}
           >
             Simular contraditório no Modo 4 →
           </button>
@@ -278,8 +290,8 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
         {/* Barra normal */}
         {!state.showHypotheses && !state.expandedHypothesis && (
           <>
-            <button onClick={handlePrint} disabled={isPrinting} style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: isPrinting ? 'not-allowed' : 'pointer', opacity: isPrinting ? 0.8 : 1, transition: 'opacity 0.2s' }}>
-              {isPrinting ? '⏳ Gerando PDF...' : '↓ Exportar PDF'}
+            <button onClick={handlePrint} disabled={isPrinting} style={{ width: '100%', padding: '16px', background: modeColor, color: ctaTextColor, border: 'none', fontSize: '15px', fontWeight: 700, borderRadius: '14px', cursor: isPrinting ? 'not-allowed' : 'pointer', opacity: isPrinting ? 0.8 : 1, transition: 'opacity 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              {isPrinting ? <><Loader2 className="animate-spin" style={{ width: '16px', height: '16px' }} /> Gerando PDF...</> : 'Exportar PDF'}
             </button>
             {isPrinting && (
               <button onClick={() => setIsPrinting(false)} style={{ width: '100%', padding: '10px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-muted)', fontSize: '12px', borderRadius: '10px', cursor: 'pointer', marginTop: '8px' }}>
@@ -292,7 +304,7 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
                   onClick={() => setShowMode4Preview(prev => !prev)}
                   style={{ width: '100%', padding: '14px 16px', marginTop: '10px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                 >
-                  <span>⚖ Ver como a outra parte vai reagir</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Scale style={{ width: '14px', height: '14px' }} /> Ver como a outra parte vai reagir</span>
                   <span>{showMode4Preview ? '↑' : '→'}</span>
                 </button>
 
@@ -314,8 +326,8 @@ function LaudoMobile({ state, modeColor, onRestart, onSelectHypothesis, onGoToMo
         )}
 
         {onOpenChat && (
-          <button onClick={onOpenChat} style={{ width: '100%', padding: '14px', background: '#00FFEF', color: '#000', border: 'none', fontSize: '14px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>
-            💬 Falar com os agentes
+          <button onClick={onOpenChat} style={{ width: '100%', padding: '14px', background: modeColor, color: ctaTextColor, border: 'none', fontSize: '14px', fontWeight: 700, borderRadius: '14px', cursor: 'pointer', marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <MessageCircle style={{ width: '16px', height: '16px' }} /> Falar com os agentes
           </button>
         )}
         <button onClick={onRestart} style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}>Nova simulação</button>
@@ -1977,7 +1989,7 @@ const startRecovery = (sessionId: string) => {
                       <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{rightLabel}</span>
                     </div>
                     <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${barFill}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, #00CC88)`, transition: 'width 0.6s ease' }} />
+                      <div style={{ width: `${barFill}%`, height: '100%', borderRadius: '4px', background: `linear-gradient(to right, ${modeColor}, var(--success))`, transition: 'width 0.6s ease' }} />
                     </div>
                   </div>
                 );
@@ -2084,7 +2096,7 @@ const startRecovery = (sessionId: string) => {
       {state.step === 'result' && state.isUnlocked && (
         <LaudoMobile
           state={state}
-          modeColor={MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF'}
+          modeColor={MODE_CONFIG[state.selectedMode] ? themeColor(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '#996E00' : '#00FFEF')}
           onRestart={() => window.location.reload()}
           onSelectHypothesis={async (hyp: string) => {
             setState((prev: any) => ({ ...prev, selectedHypothesis: hyp }));
@@ -3373,16 +3385,22 @@ const startRecovery = (sessionId: string) => {
                 animate={{ opacity: 1 }}
                 className="space-y-12 pb-32"
               >
-                {state.mode5Result && (
+                {state.mode5Result && (() => {
+                  const rec5 = state.mode5Result.recommendation;
+                  const rec5Color = rec5 === 'RECORRER' ? 'var(--danger)' : rec5 === 'ACEITAR' ? 'var(--success)' : 'rgb(var(--warning-rgb))';
+                  const Rec5Icon = rec5 === 'RECORRER' ? Scale : rec5 === 'ACEITAR' ? CheckCircle2 : HeartHandshake;
+                  const rec5Label = rec5 === 'RECORRER' ? 'Recorrer' : rec5 === 'ACEITAR' ? 'Aceitar' : 'Negociar';
+                  const m5ColorRgb = themeColorRgb(MODE_CONFIG[5]);
+                  return (
                   <div className="space-y-8 mb-12">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-8">
-                      <h2 className="text-5xl font-serif italic tracking-tight text-white/90">
-                        Laudo <span className="text-white font-bold">Estratégico</span>
+                    <div className="flex items-center justify-between border-b border-[var(--border)] pb-8">
+                      <h2 className="text-5xl font-serif italic tracking-tight text-[var(--text-primary)]">
+                        Laudo <span className="font-bold">Estratégico</span>
                       </h2>
                       <div className="flex flex-col items-end gap-1">
-                        <span className="text-[10px] uppercase font-bold tracking-widest text-white/20">Recomendação</span>
-                        <span className={`text-2xl font-bold font-serif italic ${state.mode5Result.recommendation === 'RECORRER' ? 'text-red-400' : state.mode5Result.recommendation === 'ACEITAR' ? 'text-emerald-400' : 'text-amber-400'}`}>
-                          {state.mode5Result.recommendation === 'RECORRER' ? '⚖️ Recorrer' : state.mode5Result.recommendation === 'ACEITAR' ? '✅ Aceitar' : '🤝 Negociar'}
+                        <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-muted)]">Recomendação</span>
+                        <span className="text-2xl font-bold font-serif italic flex items-center gap-2" style={{ color: rec5Color }}>
+                          <Rec5Icon className="w-5 h-5" /> {rec5Label}
                         </span>
                         {(() => {
                           const pct = state.mode5Result.successProbability;
@@ -3390,15 +3408,15 @@ const startRecovery = (sessionId: string) => {
 
                           const getLabel = (p: number) => {
                             if (isRecurso) {
-                              if (p <= 20) return { label: 'Reforma improvável', color: 'bg-red-500' };
-                              if (p <= 50) return { label: 'Recorrer com cautela', color: 'bg-amber-500' };
-                              if (p <= 75) return { label: 'Bons fundamentos', color: 'bg-emerald-400' };
-                              return { label: 'Recurso é o caminho', color: 'bg-emerald-500' };
+                              if (p <= 20) return { label: 'Reforma improvável', color: 'var(--danger)' };
+                              if (p <= 50) return { label: 'Recorrer com cautela', color: 'rgb(var(--warning-rgb))' };
+                              if (p <= 75) return { label: 'Bons fundamentos', color: 'var(--success)' };
+                              return { label: 'Recurso é o caminho', color: 'var(--success)' };
                             } else {
-                              if (p <= 30) return { label: 'Aceitar o acordo', color: 'bg-red-500' };
-                              if (p <= 55) return { label: 'Negociar melhores termos', color: 'bg-amber-500' };
-                              if (p <= 80) return { label: 'Julgamento favorável', color: 'bg-emerald-400' };
-                              return { label: 'Vantagem clara — rejeitar o acordo', color: 'bg-emerald-500' };
+                              if (p <= 30) return { label: 'Aceitar o acordo', color: 'var(--danger)' };
+                              if (p <= 55) return { label: 'Negociar melhores termos', color: 'rgb(var(--warning-rgb))' };
+                              if (p <= 80) return { label: 'Julgamento favorável', color: 'var(--success)' };
+                              return { label: 'Vantagem clara: rejeitar o acordo', color: 'var(--success)' };
                             }
                           };
 
@@ -3407,22 +3425,22 @@ const startRecovery = (sessionId: string) => {
                           return (
                             <div className="space-y-2 w-full max-w-xs">
                               <div className="flex justify-between items-center">
-                                <span className="text-[10px] font-mono text-white/30">
+                                <span className="text-[10px] font-mono text-[var(--text-muted)]">
                                   {isRecurso ? 'Chance de reforma' : 'Êxito em julgamento'}
                                 </span>
-                                <span className="text-[10px] font-bold text-white/60">{pct}%</span>
+                                <span className="text-[10px] font-bold text-[var(--text-secondary)]">{pct}%</span>
                               </div>
-                              <div className="h-2 bg-white/10 rounded-full overflow-hidden w-full">
+                              <div className="h-2 rounded-full overflow-hidden w-full" style={{ background: 'var(--border)' }}>
                                 <div
-                                  className={`h-full rounded-full transition-all ${color}`}
-                                  style={{ width: `${pct}%` }}
+                                  className="h-full rounded-full transition-all"
+                                  style={{ width: `${pct}%`, background: color }}
                                 />
                               </div>
-                              <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">{label}</span>
-                              <p className="text-[10px] uppercase tracking-widest text-white/30 mt-2 font-bold print:text-black/40">
-                                Índice de força argumentativa — não probabilidade estatística.
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{label}</span>
+                              <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] mt-2 font-bold print:text-black/40">
+                                Índice de força argumentativa: não probabilidade estatística.
                               </p>
-                              <p className="text-[9px] text-white/20 uppercase tracking-widest mt-1 print:text-black/30">
+                              <p className="text-[9px] text-[var(--text-muted)] uppercase tracking-widest mt-1 print:text-black/30">
                                 Estimativa baseada na sua descrição. Resultados reais variam.
                               </p>
                             </div>
@@ -3431,53 +3449,54 @@ const startRecovery = (sessionId: string) => {
                       </div>
                     </div>
 
-                    <div className="p-8 bg-white/5 border border-white/10 space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Análise do Juiz Estrategista</span>
-                      <p className="text-lg font-sans text-white/80 leading-relaxed">
+                    <div className="p-8 border space-y-4" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] block">Análise do Juiz Estrategista</span>
+                      <p className="text-lg font-sans text-[var(--text-secondary)] leading-relaxed">
                         <CensoredText text={state.mode5Result.strategistAnalysis} enabled={!state.isUnlocked} />
                       </p>
                     </div>
 
-                    <div className="p-8 bg-[#15161A] border border-white/10 space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 block">Fundamentação Jurídica</span>
-                      <p className="text-sm font-mono text-white/60 leading-relaxed">
+                    <div className="p-8 border space-y-4" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] block">Fundamentação Jurídica</span>
+                      <p className="text-sm font-mono text-[var(--text-secondary)] leading-relaxed">
                         <CensoredText text={state.mode5Result.reasoning} enabled={!state.isUnlocked} />
                       </p>
                     </div>
 
                     {state.mode5Result.tokenCount && (
-                      <div className="text-[9px] font-mono text-white/20 text-right">
+                      <div className="text-[9px] font-mono text-[var(--text-muted)] text-right">
                         Tokens consumidos nesta análise: {state.mode5Result.tokenCount.toLocaleString()}
                       </div>
                     )}
 
-                    <div className="p-4 text-[10px] uppercase tracking-widest font-bold" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)`, color: `rgba(${MODE_CONFIG[5].colorRgb},0.7)` }}>
-                      ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
+                    <div className="p-4 text-[10px] uppercase tracking-widest font-bold flex items-center gap-2" style={{ backgroundColor: `rgba(${m5ColorRgb},0.05)`, border: `1px solid rgba(${m5ColorRgb},0.2)`, color: `rgba(${m5ColorRgb},0.7)` }}>
+                      <AlertTriangle className="w-3.5 h-3.5" /> O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
 
                     {(state.detectedArea === 'FAMILY' ||
                       state.detectedArea === 'SOCIAL_SECURITY') && (
-                      <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)` }}>
-                        <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.8)` }}>
-                          🤝 Recursos de Apoio
+                      <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${m5ColorRgb},0.05)`, border: `1px solid rgba(${m5ColorRgb},0.2)` }}>
+                        <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: `rgba(${m5ColorRgb},0.8)` }}>
+                          <HeartHandshake className="w-3.5 h-3.5" /> Recursos de Apoio
                         </span>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Se você está em situação de violência, ligue{' '}
-                          <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                          <strong className="text-[var(--text-primary)]">180</strong>: Central de Atendimento à Mulher.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Em sofrimento emocional, ligue{' '}
-                          <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                          <strong className="text-[var(--text-primary)]">188</strong>: CVV, Centro de Valorização da Vida.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Para apoio jurídico gratuito, procure a{' '}
-                          <strong className="text-white">Defensoria Pública</strong> ou o{' '}
-                          <strong className="text-white">CRAS</strong> da sua cidade.
+                          <strong className="text-[var(--text-primary)]">Defensoria Pública</strong> ou o{' '}
+                          <strong className="text-[var(--text-primary)]">CRAS</strong> da sua cidade.
                         </p>
                       </div>
                     )}
                   </div>
-                )}
+                  );
+                })()}
 
                 <div className="hidden print:block print:fixed print:top-0 print:left-0 print:right-0 print:bg-white print:pb-3 print:mb-0 print:z-50 border-b-2 border-black">
                   <div className="flex justify-between items-center">
@@ -3493,8 +3512,8 @@ const startRecovery = (sessionId: string) => {
                 <div className="hidden print:block" style={{ height: '56px' }} />
 
                 {state.selectedMode === 1 && (
-                  <div className="p-6 bg-white/5 border border-white/10 mb-8 no-print">
-                    <p className="text-sm text-white/60 leading-relaxed">
+                  <div className="p-6 border mb-8 no-print" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                       Esta análise avalia a força dos seus argumentos de forma independente.
                       Para simular o contraditório com a outra parte, continue abaixo.
                     </p>
@@ -3512,43 +3531,41 @@ const startRecovery = (sessionId: string) => {
                           const hypotheses = await generateCounterHypotheses(lastPetition, state.detectedArea, state.selectedMode);
                           setState(prev => ({ ...prev, counterHypotheses: hypotheses.length ? hypotheses : [] }));
                         }}
-                        className="w-full p-4 border border-white/20 text-[11px] font-bold uppercase tracking-widest text-white/60 hover:border-white/40 hover:text-white transition-all text-left flex items-center justify-between"
+                        className="w-full p-4 border text-[11px] font-bold uppercase tracking-widest transition-all text-left flex items-center justify-between text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                        style={{ borderColor: 'var(--border)' }}
                       >
-                        <span>
+                        <span className="flex items-center gap-2">
                           {state.selectedMode === 1
-                            ? '⚖️ Quer ver como a outra parte vai reagir?'
-                            : '⚔️ Quer ver como o outro lado vai contra-atacar?'}
+                            ? <><Scale className="w-4 h-4" /> Quer ver como a outra parte vai reagir?</>
+                            : <><Swords className="w-4 h-4" /> Quer ver como o outro lado vai contra-atacar?</>}
                         </span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     )}
 
                     {state.showHypotheses && !state.counterHypotheses?.length && (
-                      <div className="flex items-center gap-3 p-4 bg-white/5 border border-white/10">
-                        <Loader2 className="w-4 h-4 animate-spin text-white/40" />
-                        <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold">
+                      <div className="flex items-center gap-3 p-4 border" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                        <Loader2 className="w-4 h-4 animate-spin text-[var(--text-muted)]" />
+                        <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-bold">
                           Gerando hipóteses do outro lado...
                         </span>
                       </div>
                     )}
 
                     {state.counterHypotheses && state.counterHypotheses.length > 0 && !state.expandedHypothesis && (
-                      <div className="space-y-4 p-6 bg-white/5 border border-white/10">
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-4">
+                      <div className="space-y-4 p-6 border" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-4">
                           {state.selectedMode === 1
-                            ? 'Hipóteses de defesa do Réu — escolha a mais provável:'
-                            : 'Hipóteses de ataque do Autor — escolha a mais provável:'}
+                            ? 'Hipóteses de defesa do Réu: escolha a mais provável:'
+                            : 'Hipóteses de ataque do Autor: escolha a mais provável:'}
                         </div>
-                        <p className="text-[9px] text-white/30 uppercase tracking-widest italic mb-4">
+                        <p className="text-[9px] text-[var(--text-muted)] uppercase tracking-widest italic mb-4">
                           Estas são hipóteses baseadas nos fatos narrados. Escolha a que melhor representa o que você espera do outro lado.
                         </p>
                         {isExpandingHypothesis ? (
                           <div className="flex items-center gap-3 py-6 px-4">
-                            <svg className="animate-spin h-4 w-4 text-white/40 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                            </svg>
-                            <span className="text-[10px] uppercase tracking-widest text-white/40">Desenvolvendo argumento do outro lado...</span>
+                            <Loader2 className="animate-spin h-4 w-4 text-[var(--text-muted)] shrink-0" />
+                            <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Desenvolvendo argumento do outro lado...</span>
                           </div>
                         ) : (
                           state.counterHypotheses.map((hyp, i) => (
@@ -3566,29 +3583,31 @@ const startRecovery = (sessionId: string) => {
                                 setState(prev => ({ ...prev, expandedHypothesis: expanded }));
                                 setIsExpandingHypothesis(false);
                               }}
-                              className="w-full p-4 border border-white/10 text-left hover:border-white/30 hover:bg-white/5 transition-all space-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full p-4 border text-left transition-all space-y-1 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--accent-muted)]"
+                              style={{ borderColor: 'var(--border)' }}
                             >
-                              <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
                                 Opção {String.fromCharCode(65 + i)}
                               </span>
-                              <p className="text-sm text-white/70 leading-relaxed">{hyp}</p>
+                              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{hyp}</p>
                             </button>
                           ))
                         )}
-                        <div className="border border-white/10">
+                        <div className="border" style={{ borderColor: 'var(--border)' }}>
                           <button
                             disabled={isExpandingHypothesis}
                             onClick={() => setState(prev => ({ ...prev, selectedHypothesis: 'D' }))}
-                            className="w-full p-4 text-left hover:bg-white/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full p-4 text-left transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--accent-muted)]"
                           >
-                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">Opção D</span>
-                            <p className="text-sm text-white/50">Eu sei o que o outro lado vai alegar</p>
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Opção D</span>
+                            <p className="text-sm text-[var(--text-secondary)]">Eu sei o que o outro lado vai alegar</p>
                           </button>
                           {state.selectedHypothesis === 'D' && (
                             <div className="px-4 pb-4 space-y-3">
                               <textarea
                                 placeholder="Descreva o argumento do outro lado..."
-                                className="w-full min-h-[120px] bg-transparent border border-white/10 p-3 text-sm font-serif italic text-white/80 outline-none resize-y placeholder:opacity-30"
+                                className="w-full min-h-[120px] bg-transparent border p-3 text-sm font-serif italic outline-none resize-y placeholder:opacity-30 text-[var(--text-secondary)]"
+                                style={{ borderColor: 'var(--border)' }}
                                 onChange={(e) => setState(prev => ({ ...prev, expandedHypothesis: e.target.value }))}
                               />
                               <button
@@ -3604,7 +3623,8 @@ const startRecovery = (sessionId: string) => {
                                   setState(prev => ({ ...prev, expandedHypothesis: expanded }));
                                   setIsExpandingHypothesis(false);
                                 }}
-                                className="px-6 py-2 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+                                style={{ background: MODE_CONFIG[state.selectedMode] ? themeColor(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '#996E00' : '#00FFEF'), color: ctaTextColor }}
                               >
                                 Usar este argumento →
                               </button>
@@ -3615,11 +3635,11 @@ const startRecovery = (sessionId: string) => {
                     )}
 
                     {state.expandedHypothesis && (
-                      <div className="space-y-4 p-6 bg-white/5 border border-white/20">
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">
-                          Argumento do outro lado — expandido
+                      <div className="space-y-4 p-6 border" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-active)' }}>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
+                          Argumento do outro lado: expandido
                         </div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                        <p className="text-sm font-sans text-[var(--text-secondary)] leading-relaxed">
                           {state.expandedHypothesis}
                         </p>
                         <button
@@ -3631,12 +3651,13 @@ const startRecovery = (sessionId: string) => {
                             caseDescription: state.selectedMode === 1 ? state.simulation?.rounds.slice(-1)[0]?.lawyerPetition || '' : state.expandedHypothesis!,
                             userSide: state.selectedMode === 1 ? 'AUTHOR' : 'DEFENSE',
                           }))}
-                          className="w-full py-4 bg-white text-black text-[11px] font-bold uppercase tracking-widest hover:bg-white/90 transition-all flex items-center justify-center gap-3"
+                          className="w-full py-4 text-[11px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-3 hover:opacity-90"
+                          style={{ background: MODE_CONFIG[state.selectedMode] ? themeColor(MODE_CONFIG[state.selectedMode]) : (theme === 'light' ? '#996E00' : '#00FFEF'), color: ctaTextColor }}
                         >
                           Simular o contraditório no Modo 4
                           <ArrowRight className="w-4 h-4" />
                         </button>
-                        <p className="text-[9px] text-white/20 text-center uppercase tracking-widest">
+                        <p className="text-[9px] text-[var(--text-muted)] text-center uppercase tracking-widest">
                           Você será direcionado para a Mesa Dupla Assistida com os campos pré-carregados.
                         </p>
                       </div>
@@ -3646,30 +3667,30 @@ const startRecovery = (sessionId: string) => {
                 )}
 
                 {state.selectedMode !== 5 && (
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-white/10 pb-8 gap-6 print:border-black/10">
-                  <h2 className="text-3xl md:text-5xl font-serif italic tracking-tight text-white/90 print:text-black">
-                    Laudo <span className="text-white font-bold print:text-black">Estratégico</span>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-8 gap-6 print:border-black/10" style={{ borderColor: 'var(--border)' }}>
+                  <h2 className="text-3xl md:text-5xl font-serif italic tracking-tight print:text-black text-[var(--text-primary)]">
+                    Laudo <span className="font-bold">Estratégico</span>
                   </h2>
                   <div className="flex flex-col items-end">
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-white/20 print:text-black/40">Probabilidade Final</span>
+                    <span className="text-[10px] uppercase font-bold tracking-widest print:text-black/40 text-[var(--text-muted)]">Probabilidade Final</span>
                     {(state.selectedMode === 3 || state.selectedMode === 4) && state.simulation ? (
                       <>
-                        <span className="text-[10px] uppercase font-bold tracking-widest text-white/40 mt-1">
+                        <span className="text-[10px] uppercase font-bold tracking-widest mt-1 text-[var(--text-muted)]">
                           {state.simulation.finalSuccessProbability >= 55 ? '↓ AUTOR FAVORECIDO' : state.simulation.finalSuccessProbability <= 45 ? '↓ RÉU FAVORECIDO' : '↓ RESULTADO EQUILIBRADO'}
                         </span>
-                        <span className="text-4xl font-serif italic text-emerald-500 font-bold print:text-black">
+                        <span className="text-4xl font-serif italic font-bold print:text-black" style={{ color: 'var(--success)' }}>
                           {state.simulation.finalSuccessProbability >= 55 ? state.simulation.finalSuccessProbability : 100 - state.simulation.finalSuccessProbability}%
                         </span>
                       </>
                     ) : (
-                      <span className="text-4xl font-serif italic text-emerald-500 font-bold print:text-black">
+                      <span className="text-4xl font-serif italic font-bold print:text-black" style={{ color: 'var(--success)' }}>
                         {(state.simulation?.rounds && state.simulation.rounds.length > 0) ? `${state.simulation.finalSuccessProbability}` : "--"}%
                       </span>
                     )}
-                    <p className="text-[10px] uppercase tracking-widest text-white/30 mt-2 font-bold print:text-black/40">
-                      Índice de força argumentativa — não probabilidade estatística.
+                    <p className="text-[10px] uppercase tracking-widest mt-2 font-bold print:text-black/40 text-[var(--text-muted)]">
+                      Índice de força argumentativa: não probabilidade estatística.
                     </p>
-                    <p className="text-[9px] text-white/20 uppercase tracking-widest mt-1 print:text-black/30">
+                    <p className="text-[9px] uppercase tracking-widest mt-1 print:text-black/30 text-[var(--text-muted)]">
                       Estimativa baseada na sua descrição. Resultados reais variam.
                     </p>
                   </div>
@@ -3677,85 +3698,90 @@ const startRecovery = (sessionId: string) => {
                 )}
 
                 {state.selectedMode !== 5 && state.caseSummary && (
-                  <div className="p-8 bg-white/5 border border-white/10 print:bg-gray-50 print:border-black/10 print:p-6 mb-8">
-                    <h4 className="text-[10px] uppercase font-bold tracking-[0.3em] text-white/40 print:text-black/60 mb-3">Objeto da Simulação (Entendimento do Sistema)</h4>
-                    <p className="text-xl font-serif italic text-white/90 leading-relaxed print:text-black">
+                  <div className="p-8 border print:bg-gray-50 print:border-black/10 print:p-6 mb-8" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                    <h4 className="text-[10px] uppercase font-bold tracking-[0.3em] print:text-black/60 mb-3 text-[var(--text-muted)]">Objeto da Simulação (Entendimento do Sistema)</h4>
+                    <p className="text-xl font-serif italic leading-relaxed print:text-black text-[var(--text-primary)]">
                       "{state.caseSummary}"
                     </p>
                   </div>
                 )}
 
-                {(state.selectedMode === 3 || state.selectedMode === 4) && state.simulation?.rounds[0] && (
+                {(state.selectedMode === 3 || state.selectedMode === 4) && state.simulation?.rounds[0] && (() => {
+                  const verdictCfg = MODE_CONFIG[state.selectedMode];
+                  const verdictColor = verdictCfg ? themeColor(verdictCfg) : (theme === 'light' ? '#996E00' : '#00FFEF');
+                  const verdictColorRgb = verdictCfg ? themeColorRgb(verdictCfg) : (theme === 'light' ? '153,110,0' : '255,184,0');
+                  return (
                   <div className="space-y-6 mb-8">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="p-6 bg-white/5 border border-white/10">
-                        <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-3">Argumento do Autor</div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                      <div className="p-6 border" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                        <div className="text-[9px] font-bold uppercase tracking-widest mb-3 text-[var(--text-muted)]">Argumento do Autor</div>
+                        <p className="text-sm font-sans leading-relaxed text-[var(--text-secondary)]">
                           {(state.selectedMode === 4 && state.userSide === 'AUTHOR')
-                            ? (state.simulation.rounds[0].lawyerPetition || '—')
-                            : (state.caseDescription || '—')}
+                            ? (state.simulation.rounds[0].lawyerPetition || '-')
+                            : (state.caseDescription || '-')}
                         </p>
                       </div>
-                      <div className="p-6 bg-white/5" style={{ border: `1px solid rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.2)` }}>
-                        <div className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.6)` }}>Argumento do Réu</div>
-                        <p className="text-sm font-sans text-white/70 leading-relaxed">
+                      <div className="p-6" style={{ background: 'var(--bg-secondary)', border: `1px solid rgba(${verdictColorRgb},0.2)` }}>
+                        <div className="text-[9px] font-bold uppercase tracking-widest mb-3" style={{ color: `rgba(${verdictColorRgb},0.6)` }}>Argumento do Réu</div>
+                        <p className="text-sm font-sans leading-relaxed text-[var(--text-secondary)]">
                           {(state.selectedMode === 4 && state.userSide === 'DEFENSE')
-                            ? (state.simulation.rounds[0].lawyerPetition || '—')
-                            : (state.defenseDescription || '—')}
+                            ? (state.simulation.rounds[0].lawyerPetition || '-')
+                            : (state.defenseDescription || '-')}
                         </p>
                       </div>
                     </div>
-                    <div className="p-6 bg-white/5 border border-white/10 space-y-4">
-                      <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Veredito Imparcial</div>
+                    <div className="p-6 border space-y-4" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                      <div className="text-[9px] font-bold uppercase tracking-widest mb-2 text-[var(--text-muted)]">Veredito Imparcial</div>
                       <div className="flex items-center gap-0 h-8 rounded-sm overflow-hidden">
-                        <div className="h-full bg-white/40 flex items-center justify-end pr-3 transition-all" style={{ width: `${state.simulation.finalSuccessProbability}%` }}>
-                          <span className="text-[10px] font-bold text-black whitespace-nowrap">{state.simulation.finalSuccessProbability}% AUTOR</span>
+                        <div className="h-full flex items-center justify-end pr-3 transition-all" style={{ width: `${state.simulation.finalSuccessProbability}%`, background: 'var(--text-muted)' }}>
+                          <span className="text-[10px] font-bold whitespace-nowrap" style={{ color: ctaTextColor }}>{state.simulation.finalSuccessProbability}% AUTOR</span>
                         </div>
-                        <div className="h-full flex items-center justify-start pl-3 transition-all" style={{ width: `${100 - state.simulation.finalSuccessProbability}%`, backgroundColor: `rgba(${MODE_CONFIG[state.selectedMode]?.colorRgb || '255,184,0'},0.6)` }}>
-                          <span className="text-[10px] font-bold text-black whitespace-nowrap">RÉU {100 - state.simulation.finalSuccessProbability}%</span>
+                        <div className="h-full flex items-center justify-start pl-3 transition-all" style={{ width: `${100 - state.simulation.finalSuccessProbability}%`, background: verdictColor }}>
+                          <span className="text-[10px] font-bold whitespace-nowrap" style={{ color: ctaTextColor }}>RÉU {100 - state.simulation.finalSuccessProbability}%</span>
                         </div>
                       </div>
-                      <p className="text-lg font-serif italic text-white/80">
+                      <p className="text-lg font-serif italic text-[var(--text-secondary)]">
                         {state.simulation.finalSuccessProbability >= 55
                           ? `O Autor vence com ${state.simulation.finalSuccessProbability}% de probabilidade de procedência.`
                           : state.simulation.finalSuccessProbability <= 45
-                          ? `O Réu vence — probabilidade de procedência do Autor é de apenas ${state.simulation.finalSuccessProbability}%.`
-                          : `Resultado equilibrado — ${state.simulation.finalSuccessProbability}% para o Autor, ${100 - state.simulation.finalSuccessProbability}% para o Réu.`}
+                          ? `O Réu vence: probabilidade de procedência do Autor é de apenas ${state.simulation.finalSuccessProbability}%.`
+                          : `Resultado equilibrado: ${state.simulation.finalSuccessProbability}% para o Autor, ${100 - state.simulation.finalSuccessProbability}% para o Réu.`}
                       </p>
                     </div>
                   </div>
-                )}
+                  );
+                })()}
 
                 {state.simulation?.rounds && state.simulation.rounds.length > 0 && (
                   <div className="space-y-4 mb-8 print:hidden">
-                    <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 border-b border-white/10 pb-3">
+                    <div className="text-[9px] font-bold uppercase tracking-widest border-b pb-3 text-[var(--text-muted)]" style={{ borderColor: 'var(--border)' }}>
                       Histórico de Rodadas
                     </div>
                     {state.simulation.rounds.map((round, i) => (
-                      <div key={i} className="p-6 bg-white/5 border border-white/10 space-y-4">
+                      <div key={i} className="p-6 border space-y-4" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
                         <div className="flex items-center gap-3">
-                          <span className="text-[9px] font-mono font-bold text-white/20">RODADA {i + 1}</span>
-                          <div className="h-px bg-white/5 flex-1" />
+                          <span className="text-[9px] font-mono font-bold text-[var(--text-muted)]">RODADA {i + 1}</span>
+                          <div className="h-px flex-1" style={{ background: 'var(--border)' }} />
                           {(() => {
                             const _es = state.userSide ?? (state.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
                             const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
-                            return <span className="text-[9px] font-mono font-bold text-white/30">APROVEITAMENTO ({_es === 'DEFENSE' ? 'RÉU' : 'AUTOR'}) {_rp}%</span>;
+                            return <span className="text-[9px] font-mono font-bold text-[var(--text-muted)]">APROVEITAMENTO ({_es === 'DEFENSE' ? 'RÉU' : 'AUTOR'}) {_rp}%</span>;
                           })()}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <div className="text-[8px] font-bold uppercase tracking-widest text-white/20 mb-2">
+                            <div className="text-[8px] font-bold uppercase tracking-widest mb-2 text-[var(--text-muted)]">
                               {state.selectedMode === 4
                                 ? (state.userSide === 'AUTHOR' ? 'Advogado do Autor' : 'Advogado do Réu')
                                 : 'Advogado'}
                             </div>
-                            <p className="text-xs text-white/60 leading-relaxed font-serif italic line-clamp-6">
+                            <p className="text-xs leading-relaxed font-serif italic line-clamp-6 text-[var(--text-secondary)]">
                               "{round.lawyerPetition}"
                             </p>
                           </div>
                           <div>
-                            <div className="text-[8px] font-bold uppercase tracking-widest text-white/20 mb-2">Magistrado Técnico</div>
-                            <p className="text-xs text-white/60 leading-relaxed font-sans line-clamp-6">
+                            <div className="text-[8px] font-bold uppercase tracking-widest mb-2 text-[var(--text-muted)]">Magistrado Técnico</div>
+                            <p className="text-xs leading-relaxed font-sans line-clamp-6 text-[var(--text-secondary)]">
                               "{cleanJudgmentText(round.judgeJudgment) || round.judgeJudgment || ''}"
                             </p>
                           </div>
@@ -3769,20 +3795,20 @@ const startRecovery = (sessionId: string) => {
                   {/* Volume 1: Orientação ao Cliente */}
                   {state.selectedMode !== 5 && (
                   <section className="space-y-6">
-                    <div className="flex items-center gap-4 border-b border-emerald-500/30 pb-4 print:border-black/10">
+                    <div className="flex items-center gap-4 border-b border-[color-mix(in_srgb,var(--success)_30%,transparent)] pb-4 print:border-black/10">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-emerald-500 text-black px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit" style={{ background: 'var(--success)', color: ctaTextColor }}>
                           VOLUME I: ORIENTAÇÃO AO CLIENTE
                         </span>
-                        <span className="text-[8px] font-mono text-emerald-500/50 uppercase tracking-widest pl-1">Linguagem Acessível e Prática</span>
+                        <span className="text-[8px] font-mono text-[color-mix(in_srgb,var(--success)_50%,transparent)] uppercase tracking-widest pl-1">Linguagem Acessível e Prática</span>
                       </div>
                       <div className="flex-1" />
                       <div className="flex flex-col items-end print:hidden">
-                        <div className="text-[9px] font-bold uppercase tracking-widest text-emerald-500/60">Agente Responsável</div>
-                        <div className="text-[11px] font-serif italic text-white/40">Estrategista de Acessibilidade</div>
+                        <div className="text-[9px] font-bold uppercase tracking-widest text-[color-mix(in_srgb,var(--success)_60%,transparent)]">Agente Responsável</div>
+                        <div className="text-[11px] font-serif italic text-[var(--text-muted)]">Estrategista de Acessibilidade</div>
                       </div>
                     </div>
-                    <div className="laudo-prose prose prose-invert max-w-none font-sans text-lg leading-[1.6] text-white/90 font-light bg-emerald-500/[0.05] p-8 border border-emerald-500/20 shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0">
+                    <div className={`laudo-prose prose ${theme === 'dark' ? 'prose-invert' : ''} max-w-none font-sans text-lg leading-[1.6] text-[var(--text-primary)] font-light bg-[color-mix(in_srgb,var(--success)_5%,transparent)] p-8 border border-[color-mix(in_srgb,var(--success)_20%,transparent)] shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none print:p-0`}>
                       <ReactMarkdown>
                         {state.report?.layman || ''}
                       </ReactMarkdown>
@@ -3793,20 +3819,20 @@ const startRecovery = (sessionId: string) => {
                   {/* Volume 2: Fundamentação Técnica Estratégica */}
                   {state.selectedMode !== 5 && (
                   <section className="space-y-6">
-                    <div className="flex items-center gap-4 border-b border-white/10 pb-4 print:border-black/10">
+                    <div className="flex items-center gap-4 border-b border-[var(--border)] pb-4 print:border-black/10">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-white/10 text-white px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-[var(--bg-secondary)] text-[var(--text-primary)] px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
                           VOLUME II: LAUDO TÉCNICO ESTRATÉGICO
                         </span>
-                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest pl-1">Fundamentação Jurídica e Normativa</span>
+                        <span className="text-[8px] font-mono text-[var(--text-muted)] uppercase tracking-widest pl-1">Fundamentação Jurídica e Normativa</span>
                       </div>
                       <div className="flex-1" />
                       <div className="flex flex-col items-end print:hidden">
-                        <div className="text-[9px] font-bold uppercase tracking-widest text-white/30">Agente Responsável</div>
-                        <div className="text-[11px] font-serif italic text-white/40">Analista Processual Sênior</div>
+                        <div className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Agente Responsável</div>
+                        <div className="text-[11px] font-serif italic text-[var(--text-muted)]">Analista Processual Sênior</div>
                       </div>
                     </div>
-                    <div className="laudo-prose p-10 border border-white/5 bg-[#15161A]/50 font-sans text-[13px] leading-loose text-white/60 shadow-2xl relative overflow-hidden prose prose-invert prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0">
+                    <div className={`laudo-prose p-10 border border-[var(--border)] font-sans text-[13px] leading-loose text-[var(--text-secondary)] shadow-2xl relative overflow-hidden prose ${theme === 'dark' ? 'prose-invert' : ''} prose-sm max-w-none print:bg-white print:text-black/80 print:border-none print:shadow-none print:p-0`} style={{ background: 'var(--bg-secondary)' }}>
                       <ReactMarkdown>
                         {state.report?.professional || ''}
                       </ReactMarkdown>
@@ -3816,13 +3842,13 @@ const startRecovery = (sessionId: string) => {
 
                   {/* Resumo da Causa — Modos 1 e 2 */}
                   {(state.selectedMode === 1 || state.selectedMode === 2) && state.report?.causeSummary && (
-                  <section className="space-y-6 pt-12 border-t-2 border-white/10 print:border-black/20 print:pt-8">
-                    <div className="flex items-center gap-4 border-b border-white/10 pb-4 print:border-black/10">
+                  <section className="space-y-6 pt-12 border-t-2 border-[var(--border)] print:border-black/20 print:pt-8">
+                    <div className="flex items-center gap-4 border-b border-[var(--border)] pb-4 print:border-black/10">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-white/10 text-white px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] bg-[var(--bg-secondary)] text-[var(--text-primary)] px-4 py-1.5 rounded-sm print:bg-black print:text-white w-fit">
                           RESUMO DA SUA CAUSA
                         </span>
-                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest pl-1">Para apresentar a um advogado — não é peça processual</span>
+                        <span className="text-[8px] font-mono text-[var(--text-muted)] uppercase tracking-widest pl-1">Para apresentar a um advogado, não é peça processual</span>
                       </div>
                       <div className="flex-1" />
                       <button
@@ -3835,45 +3861,45 @@ const startRecovery = (sessionId: string) => {
                           a.click();
                           URL.revokeObjectURL(url);
                         }}
-                        className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest border border-white/20 text-white/60 hover:bg-white/5 transition-colors print:hidden"
+                        className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest border border-[var(--border-active)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors print:hidden"
                       >
                         Baixar Resumo da Causa
                       </button>
                     </div>
-                    <div className="p-8 bg-white/5 border border-white/10 font-sans text-[13px] leading-loose text-white/70 print:bg-gray-50 print:border-black/10 print:text-black prose prose-invert prose-sm max-w-none">
+                    <div className={`p-8 bg-[var(--bg-secondary)] border border-[var(--border)] font-sans text-[13px] leading-loose text-[var(--text-secondary)] print:bg-gray-50 print:border-black/10 print:text-black prose ${theme === 'dark' ? 'prose-invert' : ''} prose-sm max-w-none`}>
                       <ReactMarkdown>
                         {state.report.causeSummary}
                       </ReactMarkdown>
                     </div>
-                    <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold print:text-black/40">
-                      ⚠️ Este resumo não é uma peça processual. Não substitui consulta com advogado.
+                    <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-bold print:text-black/40 flex items-center gap-2">
+                      <AlertTriangle className="w-3 h-3 print:hidden" /> Este resumo não é uma peça processual. Não substitui consulta com advogado.
                     </p>
                   </section>
                   )}
 
                   {/* Volume 3: Anexos Processuais (Audit Trail) */}
                   {state.selectedMode !== 5 && (
-                  <section className="space-y-6 pt-12 border-t-2 border-white/10 print:border-black/20 print:pt-8 print:break-before-page">
-                    <div className="flex flex-col gap-2 border-b border-white/5 pb-6 print:border-black/10">
-                      <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-white/40 print:text-black/60">
+                  <section className="space-y-6 pt-12 border-t-2 border-[var(--border)] print:border-black/20 print:pt-8 print:break-before-page">
+                    <div className="flex flex-col gap-2 border-b border-[var(--border)] pb-6 print:border-black/10">
+                      <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-[var(--text-muted)] print:text-black/60">
                         ANEXO I: HISTÓRICO DE EVOLUÇÃO DAS PEÇAS E JULGAMENTOS
                       </span>
-                      <span className="text-[9px] font-mono text-white/10 uppercase tracking-[0.2em] print:text-black/30 italic">
+                      <span className="text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-[0.2em] print:text-black/30 italic">
                         Memorial Descritivo do Ciclo de Debate Estratégico (Lawyer VS Judge Dynamics)
                       </span>
                     </div>
                     
                     <div className="space-y-12 print:space-y-10">
                       {state.simulation?.rounds.map((round, idx) => (
-                        <div key={idx} className="border-l-4 border-emerald-500/30 bg-white/[0.01] p-10 space-y-8 rounded-r-md print:border-black/20 print:bg-white print:p-0 print:border-l-0 print:space-y-6">
-                          <div className="flex justify-between items-center border-b border-white/5 pb-4 print:border-black/10">
+                        <div key={idx} className="border-l-4 border-[color-mix(in_srgb,var(--success)_30%,transparent)] bg-[var(--bg-secondary)] p-10 space-y-8 rounded-r-md print:border-black/20 print:bg-white print:p-0 print:border-l-0 print:space-y-6">
+                          <div className="flex justify-between items-center border-b border-[var(--border)] pb-4 print:border-black/10">
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-full bg-emerald-500 text-black flex items-center justify-center text-sm font-bold font-mono print:bg-black print:text-white">
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold font-mono print:bg-black print:text-white" style={{ background: 'var(--success)', color: ctaTextColor }}>
                                 {round.round}
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-xs font-bold uppercase tracking-widest text-white/80 print:text-black">Ciclo de Aperfeiçoamento Processual</span>
-                                <span className="text-[9px] font-mono text-white/20 print:text-black/40">ID_PROTOCOLO: {Math.random().toString(16).slice(2, 10).toUpperCase()}</span>
+                                <span className="text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)] print:text-black">Ciclo de Aperfeiçoamento Processual</span>
+                                <span className="text-[9px] font-mono text-[var(--text-muted)] print:text-black/40">ID_PROTOCOLO: {Math.random().toString(16).slice(2, 10).toUpperCase()}</span>
                               </div>
                             </div>
                             <div className="text-right">
@@ -3882,8 +3908,8 @@ const startRecovery = (sessionId: string) => {
                                 const _rp = (state.selectedMode === 4 && _es === 'DEFENSE') ? 100 - round.successProbability : round.successProbability;
                                 return (
                                   <>
-                                    <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest print:text-black">Aproveitamento ({_es === 'DEFENSE' ? 'Réu' : 'Autor'})</div>
-                                    <div className="text-xl font-serif italic text-white print:text-black">{_rp}%</div>
+                                    <div className="text-[9px] font-bold text-[var(--success)] uppercase tracking-widest print:text-black">Aproveitamento ({_es === 'DEFENSE' ? 'Réu' : 'Autor'})</div>
+                                    <div className="text-xl font-serif italic text-[var(--text-primary)] print:text-black">{_rp}%</div>
                                   </>
                                 );
                               })()}
@@ -3893,32 +3919,32 @@ const startRecovery = (sessionId: string) => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 print:gap-8">
                             <div className="space-y-4">
                               <div className="flex items-center gap-2">
-                                <Scale className="w-4 h-4 text-emerald-500 print:text-black" />
-                                <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest print:text-black">Petição e Pedidos do Advogado</span>
+                                <Scale className="w-4 h-4 text-[var(--success)] print:text-black" />
+                                <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest print:text-black">Petição e Pedidos do Advogado</span>
                               </div>
-                              <div className="laudo-prose prose prose-invert prose-sm max-w-none p-6 bg-white/[0.02] border border-white/5 text-[13px] leading-relaxed text-white/50 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
+                              <div className={`laudo-prose prose ${theme === 'dark' ? 'prose-invert' : ''} prose-sm max-w-none p-6 bg-[var(--bg-card)] border border-[var(--border)] text-[13px] leading-relaxed text-[var(--text-secondary)] font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4`}>
                                 <ReactMarkdown>{round.lawyerPetition}</ReactMarkdown>
                               </div>
                             </div>
 
                             <div className="space-y-4">
                               <div className="flex items-center gap-2">
-                                <Gavel className="w-4 h-4 text-white/20 print:text-black" />
-                                <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest print:text-black/60">Análise e Decisão do Magistrado</span>
+                                <Gavel className="w-4 h-4 text-[var(--text-muted)] print:text-black" />
+                                <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest print:text-black/60">Análise e Decisão do Magistrado</span>
                               </div>
-                              <div className="laudo-prose prose prose-invert prose-sm max-w-none p-6 bg-white/[0.01] border border-dashed border-white/5 text-[13px] leading-relaxed text-white/40 font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4">
+                              <div className={`laudo-prose prose ${theme === 'dark' ? 'prose-invert' : ''} prose-sm max-w-none p-6 bg-[var(--bg-secondary)] border border-dashed border-[var(--border)] text-[13px] leading-relaxed text-[var(--text-muted)] font-sans print:text-black print:bg-gray-50 print:border-black/10 print:p-4`}>
                                 <ReactMarkdown>{cleanJudgmentText(round.judgeJudgment)}</ReactMarkdown>
                               </div>
                             </div>
                           </div>
 
                           {round.lawyerBrief && (
-                            <div className="mt-4 p-6 bg-emerald-500/5 rounded-sm border border-emerald-500/10 print:border-black/5 print:bg-gray-100">
+                            <div className="mt-4 p-6 rounded-sm border print:border-black/5 print:bg-gray-100" style={{ background: 'color-mix(in srgb, var(--success) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--success) 10%, transparent)' }}>
                                <div className="flex items-center gap-2 mb-3">
-                                 <History className="w-4 h-4 text-emerald-500/40 print:text-black/40" />
-                                 <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-500/40 print:text-black/60">Insight Estratégico Retido para o Próximo Ciclo</span>
+                                 <History className="w-4 h-4 text-[color-mix(in_srgb,var(--success)_40%,transparent)] print:text-black/40" />
+                                 <span className="text-[9px] font-bold uppercase tracking-widest text-[color-mix(in_srgb,var(--success)_40%,transparent)] print:text-black/60">Insight Estratégico Retido para o Próximo Ciclo</span>
                                </div>
-                               <p className="text-[11px] text-white/40 leading-relaxed font-mono italic print:text-black/80">
+                               <p className="text-[11px] text-[var(--text-muted)] leading-relaxed font-mono italic print:text-black/80">
                                  {round.lawyerBrief}
                                </p>
                             </div>
@@ -3965,9 +3991,9 @@ const startRecovery = (sessionId: string) => {
                         key={agent.id}
                         className="bg-[var(--bg-card)] p-3 border border-[var(--border)] space-y-1 relative group overflow-hidden"
                       >
-                        <div className="absolute top-0 right-0 w-1 h-full bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute top-0 right-0 w-1 h-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: 'var(--success)' }} />
                         <div className="flex justify-between items-start">
-                          <div className="text-[9px] font-bold text-emerald-500/60 uppercase tracking-tighter">{agent.type}</div>
+                          <div className="text-[9px] font-bold uppercase tracking-tighter" style={{ color: 'color-mix(in srgb, var(--success) 60%, transparent)' }}>{agent.type}</div>
                           <div className="text-[7px] font-mono text-[var(--text-muted)]">0x{(i * 133).toString(16).toUpperCase()}</div>
                         </div>
                         <div className="text-[10px] text-[var(--text-primary)] font-medium italic font-serif leading-tight">{agent.name}</div>
@@ -4039,8 +4065,8 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 <div className={`transition-all duration-500 ${state.simStep !== 'IDLE' ? 'opacity-100' : 'opacity-0'}`}>
-                  <div className="bg-emerald-500/5 border border-emerald-500/20 p-4 rounded-sm">
-                    <p className="text-[10px] font-mono text-emerald-500 uppercase tracking-[0.2em] leading-relaxed text-center animate-pulse">
+                  <div className="p-4 rounded-sm border" style={{ background: 'color-mix(in srgb, var(--success) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--success) 20%, transparent)' }}>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] leading-relaxed text-center animate-pulse" style={{ color: 'var(--success)' }}>
                       {state.simStep === 'WRITING' && `>> R${state.currentRound}: Redigindo tese jurídica...`}
                       {state.simStep === 'DELIVERING' && `>> R${state.currentRound}: Transmitindo dados...`}
                       {state.simStep === 'JUDGING' && `>> R${state.currentRound}: Avaliando fundamentos...`}
@@ -4275,43 +4301,43 @@ const startRecovery = (sessionId: string) => {
 
       {state.step === 'result' && state.isUnlocked && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] pointer-events-none no-print">
-           <div className="pointer-events-auto bg-[#1C1C1F] text-white p-1 flex gap-px shadow-[0_0_50px_rgba(0,0,0,0.8)] scale-125 lg:scale-100 border border-white/10">
+           <div className="pointer-events-auto p-1 flex gap-px shadow-[0_0_50px_rgba(0,0,0,0.25)] scale-125 lg:scale-100 border text-[var(--text-primary)]" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
              <button
               onClick={() => {
                 const btn = document.getElementById('btn-export-pdf');
-                if (btn) btn.textContent = '⏳ Gerando...';
+                if (btn) btn.textContent = 'Gerando...';
                 setTimeout(() => {
                   window.print();
                   if (btn) btn.textContent = 'Exportar PDF';
                 }, 300);
               }}
               id="btn-export-pdf"
-              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest transition-colors hover:bg-[var(--bg-secondary)]"
              >
                 Exportar PDF
              </button>
-             <div className="w-px bg-white/10"></div>
+             <div className="w-px" style={{ background: 'var(--border)' }}></div>
              {user && (
                <>
                  <button
                    onClick={handleOpenChat}
-                   className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+                   className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest transition-colors hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                  >
-                   💬 Chat
+                   <MessageCircle className="w-3.5 h-3.5" /> Chat
                  </button>
-                 <div className="w-px bg-white/10"></div>
+                 <div className="w-px" style={{ background: 'var(--border)' }}></div>
                </>
              )}
              <button
               onClick={() => window.location.reload()}
-              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+              className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest transition-colors hover:bg-[var(--bg-secondary)]"
              >
                 Reiniciar
              </button>
-             <div className="w-px bg-white/10"></div>
+             <div className="w-px" style={{ background: 'var(--border)' }}></div>
              <a
                href="mailto:suporte@eaijuridico.com.br"
-               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+               className="px-10 py-4 text-[10px] font-bold uppercase tracking-widest transition-colors hover:bg-[var(--bg-secondary)]"
              >
                Contato
              </a>
