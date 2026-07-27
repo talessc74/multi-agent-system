@@ -61,7 +61,6 @@ function safeParseJSON(text: string) {
 async function identifyReference(description: string) {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    systemInstruction: JSON.stringify(SHAW_V2),
     contents: [{
       role: "user",
       parts: [{ text: `
@@ -77,7 +76,7 @@ async function identifyReference(description: string) {
         }
       `}]
     }],
-    config: { responseMimeType: "application/json" },
+    config: { responseMimeType: "application/json", systemInstruction: JSON.stringify(SHAW_V2) },
   });
   return safeParseJSON(response.text!);
 }
@@ -85,7 +84,6 @@ async function identifyReference(description: string) {
 async function generateSeed(legacyData: any, seedId: string) {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    systemInstruction: JSON.stringify(SHAW_V2),
     contents: [{
       role: "user",
       parts: [{ text: `
@@ -97,7 +95,7 @@ async function generateSeed(legacyData: any, seedId: string) {
         Campos obrigatórios: seed_id, kernel_logic, decision_gates, vocabulary_filter, semantic_anchor.
       `}]
     }],
-    config: { responseMimeType: "application/json" },
+    config: { responseMimeType: "application/json", systemInstruction: JSON.stringify(SHAW_V2) },
   });
   return safeParseJSON(response.text!);
 }
@@ -105,7 +103,6 @@ async function generateSeed(legacyData: any, seedId: string) {
 async function generateAgent(seed: any, request: string, agentId: string) {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    systemInstruction: JSON.stringify(ESPECIALISTA_V2),
     contents: [{
       role: "user",
       parts: [{ text: `
@@ -122,7 +119,7 @@ async function generateAgent(seed: any, request: string, agentId: string) {
         Retorne JSON: { "explicacao": "...", "agente": { ... } }
       `}]
     }],
-    config: { responseMimeType: "application/json" },
+    config: { responseMimeType: "application/json", systemInstruction: JSON.stringify(ESPECIALISTA_V2) },
   });
   return safeParseJSON(response.text!);
 }
