@@ -186,7 +186,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
 
         {/* Disclaimer */}
         <div className="px-6 md:px-12 lg:px-20 mb-10 max-w-6xl mx-auto">
-          <div className="border-l-2 pl-4 py-1" style={{ borderColor: 'var(--warning-border)' }}>
+          <div className="border-l-2 pl-4 py-1" style={{ borderColor: 'rgba(var(--warning-rgb), 0.25)' }}>
             <p className="text-[9px] uppercase tracking-[0.22em] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               O EAI? É UMA FERRAMENTA DE APOIO ANALÍTICO BASEADA EM MODELOS DE LINGUAGEM AVANÇADOS.
               NÃO SUBSTITUI O ACONSELHAMENTO JURÍDICO PROFISSIONAL.
@@ -368,7 +368,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
                         ease: 'easeInOut',
                       }}
                     >
-                      <ArrowRight className="w-3 h-3 flex-shrink-0" style={{ color: 'var(--warning-icon)' }} />
+                      <ArrowRight className="w-3 h-3 flex-shrink-0" style={{ color: 'rgba(var(--warning-rgb), 0.5)' }} />
                       <span className="text-[9px] uppercase tracking-[0.18em] font-medium" style={{ color: 'var(--text-muted)' }}>
                         {step}
                       </span>

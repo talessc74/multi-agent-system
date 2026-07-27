@@ -12,6 +12,8 @@ import {
   FileText,
   ShieldCheck,
   AlertCircle,
+  AlertTriangle,
+  Search,
   ArrowRight,
   Loader2,
   ChevronRight,
@@ -1820,8 +1822,9 @@ const startRecovery = (sessionId: string) => {
 
       {/* ── CONFIRMAÇÃO MOBILE — Área identificada ───────────────── */}
       {state.step === 'confirm' && (() => {
-        const modeColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
-        const modeColorRgb = MODE_CONFIG[state.selectedMode]?.colorRgb ?? '0,255,239';
+        const confirmCfg = MODE_CONFIG[state.selectedMode];
+        const modeColor = confirmCfg ? themeColor(confirmCfg) : (theme === 'light' ? '#996E00' : '#00FFEF');
+        const modeColorRgb = confirmCfg ? themeColorRgb(confirmCfg) : (theme === 'light' ? '153,110,0' : '255,184,0');
         const agentTypeByArea: Record<string, string> = {
           LABOR: 'Trabalhista',
           CONSUMER: 'Consumerista',
@@ -1854,9 +1857,9 @@ const startRecovery = (sessionId: string) => {
               </p>
               {/* Aviso área não identificada — PR-02 */}
               {state.detectedArea === 'OTHER' && (
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '16px', flexShrink: 0 }}>🔍</span>
-                  <p style={{ fontSize: '12px', color: '#FBBF24', lineHeight: 1.5, margin: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(var(--warning-rgb),0.08)', border: '1px solid rgba(var(--warning-rgb),0.3)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px' }}>
+                  <Search style={{ width: '16px', height: '16px', flexShrink: 0, color: 'rgb(var(--warning-rgb))' }} />
+                  <p style={{ fontSize: '12px', color: 'rgb(var(--warning-rgb))', lineHeight: 1.5, margin: 0 }}>
                     Área jurídica não identificada com precisão. Você pode continuar ou descrever o caso com mais detalhes.
                   </p>
                 </div>
@@ -1870,10 +1873,10 @@ const startRecovery = (sessionId: string) => {
               )}
               {/* Aviso documento ilegível — PR-04 */}
               {state.attachmentsUnreadable && (
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '16px', flexShrink: 0 }}>⚠️</span>
-                  <p style={{ fontSize: '12px', color: '#FBBF24', lineHeight: 1.5, margin: 0 }}>
-                    Um ou mais documentos não puderam ser lidos. A análise pode estar incompleta — verifique se o PDF possui texto selecionável.
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(var(--warning-rgb),0.08)', border: '1px solid rgba(var(--warning-rgb),0.3)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px' }}>
+                  <AlertTriangle style={{ width: '16px', height: '16px', flexShrink: 0, color: 'rgb(var(--warning-rgb))' }} />
+                  <p style={{ fontSize: '12px', color: 'rgb(var(--warning-rgb))', lineHeight: 1.5, margin: 0 }}>
+                    Um ou mais documentos não puderam ser lidos. A análise pode estar incompleta, verifique se o PDF possui texto selecionável.
                   </p>
                 </div>
               )}
@@ -1881,12 +1884,12 @@ const startRecovery = (sessionId: string) => {
               <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: modeColor, marginBottom: '8px' }}>AGENTES ESCALADOS</p>
               <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
                 <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
-                  <p style={{ fontSize: '20px', marginBottom: '6px' }}>⚖️</p>
+                  <Scale style={{ width: '20px', height: '20px', margin: '0 auto 6px', color: modeColor }} />
                   <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor, margin: '0 0 2px' }}>ADVOGADO</p>
                   <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
                 </div>
                 <div style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${modeColor}`, borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
-                  <p style={{ fontSize: '20px', marginBottom: '6px' }}>🧑‍⚖️</p>
+                  <Gavel style={{ width: '20px', height: '20px', margin: '0 auto 6px', color: modeColor }} />
                   <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: modeColor, margin: '0 0 2px' }}>MAGISTRADO</p>
                   <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', margin: 0 }}>{agentType}</p>
                 </div>
@@ -1900,7 +1903,7 @@ const startRecovery = (sessionId: string) => {
             <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)', background: 'var(--bg-primary)', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 onClick={handleSimulate}
-                style={{ width: '100%', padding: '16px', background: modeColor, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: 'pointer' }}
+                style={{ width: '100%', padding: '16px', background: modeColor, color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: 'pointer' }}
               >
                 Iniciar Fórum →
               </button>
@@ -2956,8 +2959,9 @@ const startRecovery = (sessionId: string) => {
             )}
 
             {state.step === 'confirm' && (() => {
-              const dcColor = MODE_CONFIG[state.selectedMode]?.color ?? '#00FFEF';
-              const dcColorRgb = MODE_CONFIG[state.selectedMode]?.colorRgb ?? '0,255,239';
+              const confirmCfgDesktop = MODE_CONFIG[state.selectedMode];
+              const dcColor = confirmCfgDesktop ? themeColor(confirmCfgDesktop) : (theme === 'light' ? '#996E00' : '#00FFEF');
+              const dcColorRgb = confirmCfgDesktop ? themeColorRgb(confirmCfgDesktop) : (theme === 'light' ? '153,110,0' : '255,184,0');
               const agentSpecMap: Record<string, string> = {
                 LABOR: 'Trabalhista', CONSUMER: 'Consumerista', CIVIL: 'Civilista',
                 FAMILY: 'Família', CRIMINAL: 'Criminal', TAX: 'Tributarista',
@@ -2968,7 +2972,7 @@ const startRecovery = (sessionId: string) => {
                 key="confirm"
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="space-y-8 py-16 text-center max-w-3xl mx-auto"
+                className="hidden md:block space-y-8 py-16 text-center max-w-3xl mx-auto"
               >
                 <FlowStepper currentStep="confirm" modeColor={dcColor} variant="inline" />
                 {/* Badge de área — identifica o modo e a área detectada */}
@@ -2983,23 +2987,23 @@ const startRecovery = (sessionId: string) => {
                 {/* Aviso área não identificada — PR-02 */}
                 {state.detectedArea === 'OTHER' && (
                   <div className="flex items-start gap-3 text-left px-5 py-4"
-                    style={{ background: 'rgba(251,191,36,0.07)', border: '1px solid rgba(251,191,36,0.25)', borderRadius: '8px' }}>
-                    <span className="text-lg flex-shrink-0">🔍</span>
-                    <p className="text-sm leading-relaxed" style={{ color: '#FBBF24', margin: 0 }}>
+                    style={{ background: 'rgba(var(--warning-rgb),0.07)', border: '1px solid rgba(var(--warning-rgb),0.25)', borderRadius: '8px' }}>
+                    <Search className="w-[18px] h-[18px] flex-shrink-0" style={{ color: 'rgb(var(--warning-rgb))' }} />
+                    <p className="text-sm leading-relaxed" style={{ color: 'rgb(var(--warning-rgb))', margin: 0 }}>
                       Área jurídica não identificada com precisão. Você pode continuar ou descrever o caso com mais detalhes.
                     </p>
                   </div>
                 )}
 
-                <h1 className="text-4xl font-serif italic tracking-tight text-white/90">
+                <h1 className="text-4xl font-serif italic tracking-tight text-[var(--text-primary)]">
                   O sistema entendeu<br />sua causa.
                 </h1>
 
                 {state.caseSummary && (
                   <div className="p-8 shadow-2xl shadow-black/50 mt-8 text-left"
-                    style={{ background: '#15161A', borderWidth: '1px 1px 1px 3px', borderStyle: 'solid', borderColor: `rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) ${dcColor}` }}>
-                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-white/30 mb-4 border-b border-white/5 pb-2">Núcleo Central · Gerado automaticamente</h4>
-                    <p className="text-xl font-sans text-white/80 leading-relaxed">
+                    style={{ background: 'var(--bg-card)', borderWidth: '1px 1px 1px 3px', borderStyle: 'solid', borderColor: `rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) rgba(${dcColorRgb},0.15) ${dcColor}` }}>
+                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-muted)] mb-4 border-b border-[var(--border)] pb-2">Núcleo Central · Gerado automaticamente</h4>
+                    <p className="text-xl font-sans text-[var(--text-secondary)] leading-relaxed">
                       "{state.caseSummary}"
                     </p>
                   </div>
@@ -3008,10 +3012,10 @@ const startRecovery = (sessionId: string) => {
                 {/* Aviso documento ilegível — PR-04 */}
                 {state.attachmentsUnreadable && (
                   <div className="flex items-start gap-3 text-left px-5 py-4"
-                    style={{ background: 'rgba(251,191,36,0.07)', border: '1px solid rgba(251,191,36,0.25)', borderRadius: '8px' }}>
-                    <span className="text-lg flex-shrink-0">⚠️</span>
-                    <p className="text-sm leading-relaxed" style={{ color: '#FBBF24', margin: 0 }}>
-                      Um ou mais documentos não puderam ser lidos. A análise pode estar incompleta — verifique se o PDF possui texto selecionável.
+                    style={{ background: 'rgba(var(--warning-rgb),0.07)', border: '1px solid rgba(var(--warning-rgb),0.25)', borderRadius: '8px' }}>
+                    <AlertTriangle className="w-[18px] h-[18px] flex-shrink-0" style={{ color: 'rgb(var(--warning-rgb))' }} />
+                    <p className="text-sm leading-relaxed" style={{ color: 'rgb(var(--warning-rgb))', margin: 0 }}>
+                      Um ou mais documentos não puderam ser lidos. A análise pode estar incompleta, verifique se o PDF possui texto selecionável.
                     </p>
                   </div>
                 )}
@@ -3019,36 +3023,36 @@ const startRecovery = (sessionId: string) => {
                 {/* Agentes escalados */}
                 <p className="text-[9px] font-bold uppercase tracking-[0.2em] mt-4" style={{ color: dcColor }}>Agentes Escalados</p>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2"
-                    style={{ borderLeftWidth: '3px', borderLeftColor: dcColor }}>
-                    <span className="text-2xl block">⚖️</span>
+                  <div className="p-5 space-y-2"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeftWidth: '3px', borderLeftColor: dcColor }}>
+                    <Scale className="w-6 h-6 mx-auto" style={{ color: dcColor }} />
                     <p className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>Advogado</p>
-                    <p className="text-sm font-medium text-white/60">{agentSpec}</p>
+                    <p className="text-sm font-medium text-[var(--text-secondary)]">{agentSpec}</p>
                   </div>
-                  <div className="p-5 bg-white/[0.02] border border-white/5 space-y-2"
-                    style={{ borderLeftWidth: '3px', borderLeftColor: dcColor }}>
-                    <span className="text-2xl block">🧑‍⚖️</span>
+                  <div className="p-5 space-y-2"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeftWidth: '3px', borderLeftColor: dcColor }}>
+                    <Gavel className="w-6 h-6 mx-auto" style={{ color: dcColor }} />
                     <p className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: dcColor }}>Magistrado</p>
-                    <p className="text-sm font-medium text-white/60">{agentSpec}</p>
+                    <p className="text-sm font-medium text-[var(--text-secondary)]">{agentSpec}</p>
                   </div>
                 </div>
 
-                <div className="mt-10 border-t border-white/5 pt-8 space-y-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/20 text-center">
+                <div className="mt-10 border-t border-[var(--border)] pt-8 space-y-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--text-muted)] text-center">
                     Deseja iniciar o fórum?
                   </p>
                   <div className="flex flex-col items-center gap-4">
                     <button
                       onClick={handleSimulate}
-                      className="w-full max-w-xs px-8 py-5 text-black text-[11px] uppercase tracking-[0.25em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-black/50"
-                      style={{ background: dcColor }}
+                      className="w-full max-w-xs px-8 py-5 text-[11px] uppercase tracking-[0.25em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-black/50"
+                      style={{ background: dcColor, color: ctaTextColor }}
                     >
                       Iniciar Fórum
                       <ArrowRight className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'input' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/25 hover:text-white/50 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Corrigir causa
