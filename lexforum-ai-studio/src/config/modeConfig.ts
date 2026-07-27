@@ -60,7 +60,7 @@ export const MODE_CONFIG: Record<number, ModeConfig> = {
     colorRgb: '168,130,255',
     colorLight: '#8652FF',
     colorRgbLight: '134,82,255',
-    headline: 'Mesa Dupla — Juiz',
+    headline: 'Mesa Dupla: Juiz',
     tagline: 'Você já tem os dois lados. O juiz decide.',
     description:
       'Você traz a acusação e a defesa prontas. O sistema aciona o magistrado mais especializado para emitir uma sentença direta — sem advogado intermediário. O caminho mais rápido para um veredito.',
@@ -77,7 +77,7 @@ export const MODE_CONFIG: Record<number, ModeConfig> = {
     colorRgb: '255,184,0',
     colorLight: '#996E00',
     colorRgbLight: '153,110,0',
-    headline: 'Mesa Dupla — Assistida',
+    headline: 'Mesa Dupla: Assistida',
     tagline: 'Você escolhe seu lado. A IA reforça sua tese.',
     description:
       'Você já sabe qual argumento quer defender. O sistema melhora ativamente sua tese antes do julgamento — você não entra no debate sozinho. Ideal para quem veio do Modo 1 e quer simular o confronto real.',
