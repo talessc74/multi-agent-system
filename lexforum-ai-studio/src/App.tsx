@@ -2898,11 +2898,6 @@ const startRecovery = (sessionId: string) => {
                         </div>
                       </div>
                     )}
-
-                    <div className="text-[10px] font-mono text-[var(--text-muted)] font-bold border-t border-[var(--border)] pt-4 flex justify-between opacity-60">
-                       <span>ALGORITMO: LEX_FRAME_V3</span>
-                       <span>STATUS: OPTIMIZED</span>
-                    </div>
                   </div>
 
                   <div className="bg-[var(--bg-card)] border border-[var(--border)] p-8 space-y-8 flex-1">
