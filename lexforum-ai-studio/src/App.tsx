@@ -17,6 +17,7 @@ import {
   HeartHandshake,
   MessageCircle,
   Swords,
+  Shield,
   ArrowRight,
   Loader2,
   ChevronRight,
@@ -1021,8 +1022,8 @@ const startRecovery = (sessionId: string) => {
     0: 'Modo Livre',
     1: 'Tese Estratégica',
     2: 'Defesa sob Ataque',
-    3: 'Mesa Dupla — Juiz',
-    4: 'Mesa Dupla — Assistida',
+    3: 'Mesa Dupla: Juiz',
+    4: 'Mesa Dupla: Assistida',
     5: 'Revisão Pós-Conflito',
   };
 
@@ -1182,25 +1183,25 @@ const startRecovery = (sessionId: string) => {
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[5].headline}
-            color={MODE_CONFIG[5].color}
+            color={themeColor(MODE_CONFIG[5])}
           />
-          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[5].color} />
+          <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[5])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+                <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
                   <X style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
             )}
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[5].color, marginBottom: '12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: themeColor(MODE_CONFIG[5]), marginBottom: '12px' }}>
               {MODE_CONFIG[5].tagline}
             </p>
             <ContextZone
-              color={MODE_CONFIG[5].color}
-              colorRgb={MODE_CONFIG[5].colorRgb}
+              color={themeColor(MODE_CONFIG[5])}
+              colorRgb={themeColorRgb(MODE_CONFIG[5])}
               description={MODE_CONFIG[5].description}
               bring={MODE_CONFIG[5].bring}
               receive={MODE_CONFIG[5].receive}
@@ -1209,20 +1210,20 @@ const startRecovery = (sessionId: string) => {
             <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
               <button
                 onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'RECURSO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: prev.mode5Input?.attachments || [] } }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.mode5Input?.subCase === 'RECURSO' ? `2px solid ${MODE_CONFIG[5].color}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'RECURSO' ? 'rgba(0,204,136,0.1)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'RECURSO' ? MODE_CONFIG[5].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.mode5Input?.subCase === 'RECURSO' ? `2px solid ${themeColor(MODE_CONFIG[5])}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'RECURSO' ? 'color-mix(in srgb, var(--success) 10%, transparent)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'RECURSO' ? themeColor(MODE_CONFIG[5]) : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                ⚖️ Recorrer
+                <Scale style={{ width: '14px', height: '14px' }} /> Recorrer
               </button>
               <button
                 onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'ACORDO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: prev.mode5Input?.attachments || [] } }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.mode5Input?.subCase === 'ACORDO' ? `2px solid ${MODE_CONFIG[5].color}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'ACORDO' ? 'rgba(0,204,136,0.1)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'ACORDO' ? MODE_CONFIG[5].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.mode5Input?.subCase === 'ACORDO' ? `2px solid ${themeColor(MODE_CONFIG[5])}` : '2px solid var(--border)', background: state.mode5Input?.subCase === 'ACORDO' ? 'color-mix(in srgb, var(--success) 10%, transparent)' : 'var(--bg-card)', color: state.mode5Input?.subCase === 'ACORDO' ? themeColor(MODE_CONFIG[5]) : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                🤝 Acordo
+                <HeartHandshake style={{ width: '14px', height: '14px' }} /> Acordo
               </button>
             </div>
             {state.mode5Input?.subCase && (
               <>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[5])}`, marginBottom: '12px' }}>
                   <div style={{ padding: '16px 20px 4px' }}>
                     <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Relato do Caso</span>
                   </div>
@@ -1233,7 +1234,7 @@ const startRecovery = (sessionId: string) => {
                     style={{ width: '100%', minHeight: '130px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[5])}`, marginBottom: '12px' }}>
                   <div style={{ padding: '16px 20px 4px' }}>
                     <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
                       {state.mode5Input.subCase === 'RECURSO' ? 'Sentença Recebida' : 'Proposta de Acordo'}
@@ -1246,7 +1247,7 @@ const startRecovery = (sessionId: string) => {
                     style={{ width: '100%', minHeight: '130px', background: 'transparent', padding: '8px 20px 16px', outline: 'none', fontSize: '15px', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', color: 'var(--text-primary)', resize: 'vertical', border: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[5].color}`, marginBottom: '12px' }}>
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[5])}`, marginBottom: '12px' }}>
                   <div style={{ padding: '12px 20px 12px' }}>
                     <input type="file" id="m5-file-new" className="hidden" multiple accept="image/*,application/pdf"
                       onChange={async (e) => {
@@ -1278,8 +1279,8 @@ const startRecovery = (sessionId: string) => {
                         {state.mode5Input.subCase === 'RECURSO' ? 'Anexar sentença ou documentos' : 'Anexar proposta ou documentos'}
                       </label>
                       <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                      {mode5AttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{mode5AttachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                      {mode5AttachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{mode5AttachmentError}</span>}
                     </div>
                   </div>
                 </div>
@@ -1293,7 +1294,7 @@ const startRecovery = (sessionId: string) => {
             <button
               disabled={!state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[5].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: themeColor(MODE_CONFIG[5]), color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.mode5Input?.subCase || !state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[5].cta}
             </button>
@@ -1307,34 +1308,34 @@ const startRecovery = (sessionId: string) => {
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[4].headline}
-            color={MODE_CONFIG[4].color}
+            color={themeColor(MODE_CONFIG[4])}
           />
-          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[4].color} />
+          <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[4])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+                <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
                   <X style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
             )}
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[4].color, marginBottom: '12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: themeColor(MODE_CONFIG[4]), marginBottom: '12px' }}>
               {MODE_CONFIG[4].tagline}
             </p>
             <ContextZone
-              color={MODE_CONFIG[4].color}
-              colorRgb={MODE_CONFIG[4].colorRgb}
+              color={themeColor(MODE_CONFIG[4])}
+              colorRgb={themeColorRgb(MODE_CONFIG[4])}
               description={MODE_CONFIG[4].description}
               bring={MODE_CONFIG[4].bring}
               receive={MODE_CONFIG[4].receive}
             />
             {fromPreviousSimulation && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'rgba(255,184,0,0.05)', border: '1px solid rgba(255,184,0,0.2)', marginBottom: '16px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,184,0,0.7)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'rgba(var(--warning-rgb),0.05)', border: '1px solid rgba(var(--warning-rgb),0.2)', marginBottom: '16px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(var(--warning-rgb),0.7)' }}>
                 <span style={{ flex: 1 }}>Continuando a partir da sua simulação anterior.</span>
                 {!isEditingMode4 && (
-                  <button onClick={() => setIsEditingMode4(true)} style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', border: '1px solid rgba(255,184,0,0.3)', padding: '6px 12px', color: 'rgba(255,184,0,0.7)', background: 'none', cursor: 'pointer', borderRadius: '10px' }}>
+                  <button onClick={() => setIsEditingMode4(true)} style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', border: '1px solid rgba(var(--warning-rgb),0.3)', padding: '6px 12px', color: 'rgba(var(--warning-rgb),0.7)', background: 'none', cursor: 'pointer', borderRadius: '10px' }}>
                     Editar campos
                   </button>
                 )}
@@ -1344,18 +1345,18 @@ const startRecovery = (sessionId: string) => {
             <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
               <button
                 onClick={() => setState(prev => ({ ...prev, userSide: 'AUTHOR' }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.userSide === 'AUTHOR' ? `2px solid ${MODE_CONFIG[4].color}` : '2px solid var(--border)', background: state.userSide === 'AUTHOR' ? `rgba(255,184,0,0.1)` : 'var(--bg-card)', color: state.userSide === 'AUTHOR' ? MODE_CONFIG[4].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.userSide === 'AUTHOR' ? `2px solid ${themeColor(MODE_CONFIG[4])}` : '2px solid var(--border)', background: state.userSide === 'AUTHOR' ? `rgba(var(--warning-rgb),0.1)` : 'var(--bg-card)', color: state.userSide === 'AUTHOR' ? themeColor(MODE_CONFIG[4]) : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                ⚔️ Acusação
+                <Swords style={{ width: '14px', height: '14px' }} /> Acusação
               </button>
               <button
                 onClick={() => setState(prev => ({ ...prev, userSide: 'DEFENSE' }))}
-                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.userSide === 'DEFENSE' ? `2px solid ${MODE_CONFIG[4].color}` : '2px solid var(--border)', background: state.userSide === 'DEFENSE' ? `rgba(255,184,0,0.1)` : 'var(--bg-card)', color: state.userSide === 'DEFENSE' ? MODE_CONFIG[4].color : 'var(--text-secondary)' }}
+                style={{ flex: 1, padding: '14px 8px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '12px', border: state.userSide === 'DEFENSE' ? `2px solid ${themeColor(MODE_CONFIG[4])}` : '2px solid var(--border)', background: state.userSide === 'DEFENSE' ? `rgba(var(--warning-rgb),0.1)` : 'var(--bg-card)', color: state.userSide === 'DEFENSE' ? themeColor(MODE_CONFIG[4]) : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                🛡 Defesa
+                <Shield style={{ width: '14px', height: '14px' }} /> Defesa
               </button>
             </div>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[4])}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Petição do Autor</span>
               </div>
@@ -1396,12 +1397,12 @@ const startRecovery = (sessionId: string) => {
                     Anexar provas do autor
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[4].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[4])}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Contestação do Réu</span>
               </div>
@@ -1442,8 +1443,8 @@ const startRecovery = (sessionId: string) => {
                     Anexar provas do réu
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1455,7 +1456,7 @@ const startRecovery = (sessionId: string) => {
             <button
               disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[4].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: themeColor(MODE_CONFIG[4]), color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[4].cta}
             </button>
@@ -1469,30 +1470,30 @@ const startRecovery = (sessionId: string) => {
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[3].headline}
-            color={MODE_CONFIG[3].color}
+            color={themeColor(MODE_CONFIG[3])}
           />
-          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[3].color} />
+          <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[3])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 100px' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+                <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
                   <X style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
             )}
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[3].color, marginBottom: '12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: themeColor(MODE_CONFIG[3]), marginBottom: '12px' }}>
               {MODE_CONFIG[3].tagline}
             </p>
             <ContextZone
-              color={MODE_CONFIG[3].color}
-              colorRgb={MODE_CONFIG[3].colorRgb}
+              color={themeColor(MODE_CONFIG[3])}
+              colorRgb={themeColorRgb(MODE_CONFIG[3])}
               description={MODE_CONFIG[3].description}
               bring={MODE_CONFIG[3].bring}
               receive={MODE_CONFIG[3].receive}
             />
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[3].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[3])}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Argumento da Acusação</span>
               </div>
@@ -1532,12 +1533,12 @@ const startRecovery = (sessionId: string) => {
                     Anexar provas do autor
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[3].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[3])}`, marginBottom: '12px' }}>
               <div style={{ padding: '16px 20px 4px' }}>
                 <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Argumento da Defesa</span>
               </div>
@@ -1577,8 +1578,8 @@ const startRecovery = (sessionId: string) => {
                     Anexar provas do réu
                   </label>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {defenseAttachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{defenseAttachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1590,7 +1591,7 @@ const startRecovery = (sessionId: string) => {
             <button
               disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[3].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: themeColor(MODE_CONFIG[3]), color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: !state.caseDescription.trim() || !state.defenseDescription.trim() || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[3].cta}
             </button>
@@ -1604,30 +1605,30 @@ const startRecovery = (sessionId: string) => {
           <ModeNavbar
             onBack={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
             modeName={MODE_CONFIG[2].headline}
-            color={MODE_CONFIG[2].color}
+            color={themeColor(MODE_CONFIG[2])}
           />
-          <FlowStepper currentStep="input" modeColor={MODE_CONFIG[2].color} />
+          <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[2])} />
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px 0' }}>
             {state.error && (
               <div style={{ marginBottom: '16px', padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+                <AlertCircle style={{ width: '20px', height: '20px', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', flex: 1 }}>{state.error.message}</p>
                 <button onClick={() => setState(prev => ({ ...prev, error: null }))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
                   <X style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
             )}
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: MODE_CONFIG[2].color, marginBottom: '12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: themeColor(MODE_CONFIG[2]), marginBottom: '12px' }}>
               {MODE_CONFIG[2].tagline}
             </p>
             <ContextZone
-              color={MODE_CONFIG[2].color}
-              colorRgb={MODE_CONFIG[2].colorRgb}
+              color={themeColor(MODE_CONFIG[2])}
+              colorRgb={themeColorRgb(MODE_CONFIG[2])}
               description={MODE_CONFIG[2].description}
               bring={MODE_CONFIG[2].bring}
               receive={MODE_CONFIG[2].receive}
             />
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${MODE_CONFIG[2].color}`, marginBottom: '12px' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: `3px solid ${themeColor(MODE_CONFIG[2])}`, marginBottom: '12px' }}>
               <textarea
                 value={state.caseDescription}
                 onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
@@ -1653,8 +1654,8 @@ const startRecovery = (sessionId: string) => {
                     Anexar provas de defesa
                   </button>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -1666,7 +1667,7 @@ const startRecovery = (sessionId: string) => {
             <button
               disabled={state.caseDescription.trim().length <= 10 || loading}
               onClick={handleValidate}
-              style={{ width: '100%', padding: '16px', background: MODE_CONFIG[2].color, color: '#000000', border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '16px', background: themeColor(MODE_CONFIG[2]), color: ctaTextColor, border: 'none', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', borderRadius: '14px', cursor: state.caseDescription.trim().length <= 10 || loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: state.caseDescription.trim().length <= 10 || loading ? 0.5 : 1 }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : MODE_CONFIG[2].cta}
             </button>
@@ -1729,8 +1730,8 @@ const startRecovery = (sessionId: string) => {
                     Anexar documentos
                   </button>
                   <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px' }}>máx 10MB por arquivo · PDF, JPEG ou PNG</span>
-                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px' }}>🔒 Texto anonimizado antes do processamento</span>
-                  {attachmentError && <span style={{ fontSize: '10px', color: '#FF5555', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
+                  <span style={{ fontSize: '8px', color: 'var(--text-muted)', paddingLeft: '4px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock style={{ width: '9px', height: '9px' }} /> Texto anonimizado antes do processamento</span>
+                  {attachmentError && <span style={{ fontSize: '10px', color: 'var(--danger)', marginTop: '4px', display: 'block', paddingLeft: '4px' }}>{attachmentError}</span>}
                 </div>
               </div>
             </div>
@@ -2237,67 +2238,67 @@ const startRecovery = (sessionId: string) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-8"
               >
-                <FlowStepper currentStep="input" modeColor={MODE_CONFIG[4].color} variant="inline" />
+                <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[4])} variant="inline" />
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
                     </button>
-                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-amber-400/60 border border-amber-400/20 px-2 py-0.5">
-                      Mesa Dupla — Assistida
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-[color-mix(in_srgb,rgb(var(--warning-rgb))_60%,transparent)] border border-[color-mix(in_srgb,rgb(var(--warning-rgb))_20%,transparent)] px-2 py-0.5">
+                      Mesa Dupla: Assistida
                     </span>
                   </div>
                   {fromPreviousSimulation && (
-                    <div className="p-4 bg-white/5 border border-white/20 text-[10px] font-bold uppercase tracking-widest text-white/60 flex items-center gap-3">
+                    <div className="p-4 bg-[var(--bg-secondary)] border border-[var(--border-active)] text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] flex items-center gap-3">
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Continuando a partir da sua simulação anterior.
                       {!isEditingMode4 && (
                         <button
                           onClick={() => setIsEditingMode4(true)}
-                          className="text-[10px] font-bold uppercase tracking-widest border border-white/20 px-3 py-1.5 hover:border-white/40 hover:text-white transition-all text-white/40"
+                          className="text-[10px] font-bold uppercase tracking-widest border border-[var(--border-active)] px-3 py-1.5 hover:border-[var(--border-active)] hover:text-[var(--text-primary)] transition-all text-[var(--text-muted)]"
                         >
                           Editar campos
                         </button>
                       )}
                     </div>
                   )}
-                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
-                    Insira os dois lados e <br /><span className="text-[#F4F4F2] font-bold">escolha o seu.</span>
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-[var(--text-primary)]">
+                    Insira os dois lados e <br /><span className="text-[var(--text-primary)] font-bold">escolha o seu.</span>
                   </h1>
-                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                  <p className="text-[var(--text-muted)] max-w-lg text-sm uppercase tracking-widest font-medium">
                     O advogado do seu lado recebe assistência da IA em cada rodada.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'var(--text-muted)' }} />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Petição do Autor</span>
                     </div>
                     <textarea
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a petição inicial do autor..."
                       readOnly={fromPreviousSimulation && !isEditingMode4}
-                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
+                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
                     />
                     {state.attachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.attachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-sm border border-[var(--border)]">
+                            <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-[var(--text-secondary)]">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-[var(--text-muted)] hover:text-[var(--danger)]"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-[var(--border)] pt-3">
                       <input type="file" id="author-file-m4" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2315,40 +2316,40 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="author-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="author-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
-                        {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
+                        {attachmentError && <span className="text-[10px] text-[var(--danger)] mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-[color-mix(in_srgb,rgb(var(--warning-rgb))_60%,transparent)]" />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Contestação do Réu</span>
                     </div>
                     <textarea
                       value={state.defenseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a contestação do réu..."
                       readOnly={fromPreviousSimulation && !isEditingMode4}
-                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
+                      className={`w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10${fromPreviousSimulation && !isEditingMode4 ? ' opacity-60 cursor-not-allowed' : ''}`}
                     />
                     {state.defenseAttachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.defenseAttachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-sm border border-[var(--border)]">
+                            <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-[var(--text-secondary)]">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-[var(--text-muted)] hover:text-[var(--danger)]"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-[var(--border)] pt-3">
                       <input type="file" id="defense-file-m4" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2366,12 +2367,12 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="defense-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="defense-file-m4" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
-                        {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
+                        {defenseAttachmentError && <span className="text-[10px] text-[var(--danger)] mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -2380,13 +2381,15 @@ const startRecovery = (sessionId: string) => {
                 <div className="flex gap-4 justify-center">
                   <button
                     onClick={() => setState(prev => ({ ...prev, userSide: 'AUTHOR' }))}
-                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'AUTHOR' ? 'bg-white text-black border-white' : 'border-white/20 text-white/40 hover:border-white/40'}`}
+                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'AUTHOR' ? '' : 'border-[var(--border-active)] text-[var(--text-muted)] hover:border-[var(--border-active)]'}`}
+                    style={state.userSide === 'AUTHOR' ? { background: themeColor(MODE_CONFIG[4]), color: ctaTextColor, borderColor: themeColor(MODE_CONFIG[4]) } : undefined}
                   >
                     Sou o Autor
                   </button>
                   <button
                     onClick={() => setState(prev => ({ ...prev, userSide: 'DEFENSE' }))}
-                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'DEFENSE' ? 'bg-amber-500 text-black border-amber-500' : 'border-white/20 text-white/40 hover:border-white/40'}`}
+                    className={`px-6 py-3 border text-[11px] uppercase tracking-widest font-bold transition-all ${state.userSide === 'DEFENSE' ? '' : 'border-[var(--border-active)] text-[var(--text-muted)] hover:border-[var(--border-active)]'}`}
+                    style={state.userSide === 'DEFENSE' ? { background: 'rgb(var(--warning-rgb))', color: ctaTextColor, borderColor: 'rgb(var(--warning-rgb))' } : undefined}
                   >
                     Sou o Réu
                   </button>
@@ -2396,7 +2399,7 @@ const startRecovery = (sessionId: string) => {
                   <button
                     disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || !state.userSide || loading}
                     onClick={handleValidate}
-                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                    className="px-8 py-4 disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-xl" style={{ background: themeColor(MODE_CONFIG[4]), color: ctaTextColor }}
                   >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                     <ArrowRight className="w-4 h-4" />
@@ -2413,42 +2416,43 @@ const startRecovery = (sessionId: string) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-8"
               >
-                <FlowStepper currentStep="input" modeColor={MODE_CONFIG[5].color} variant="inline" />
+                <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[5])} variant="inline" />
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
                     </button>
-                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.7)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.25)` }}>
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5" style={{ color: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.7)`, border: `1px solid rgba(${themeColorRgb(MODE_CONFIG[5])},0.25)` }}>
                       Revisão Pós-Conflito
                     </span>
                   </div>
-                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
-                    Sentença ou proposta? <br /><span className="text-[#F4F4F2] font-bold">O Juiz Estrategista avalia.</span>
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-[var(--text-primary)]">
+                    Sentença ou proposta? <br /><span className="text-[var(--text-primary)] font-bold">O Juiz Estrategista avalia.</span>
                   </h1>
-                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
-                    ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
+                  <p className="text-[var(--text-muted)] max-w-lg text-sm uppercase tracking-widest font-medium flex items-center gap-2">
+                    <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" /> O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'RECURSO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: [] } }))}
-                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'RECURSO' ? 'bg-white text-black border-white' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
+                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'RECURSO' ? '' : 'bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-active)]'}`}
+                    style={state.mode5Input?.subCase === 'RECURSO' ? { background: themeColor(MODE_CONFIG[5]), borderColor: themeColor(MODE_CONFIG[5]), color: ctaTextColor } : undefined}
                   >
-                    <span className="text-[10px] font-bold uppercase tracking-widest block">⚖️ Tenho uma Sentença</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"><Scale className="w-3.5 h-3.5" /> Tenho uma Sentença</span>
                     <span className="text-xs opacity-60">Quero saber se vale recorrer</span>
                   </button>
                   <button
                     onClick={() => setState(prev => ({ ...prev, mode5Input: { subCase: 'ACORDO', caseDescription: prev.mode5Input?.caseDescription || '', sentencaOuProposta: prev.mode5Input?.sentencaOuProposta || '', attachments: [] } }))}
-                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'ACORDO' ? 'text-black' : 'bg-[#15161A] border-white/10 text-white/60 hover:border-white/30'}`}
-                    style={state.mode5Input?.subCase === 'ACORDO' ? { backgroundColor: MODE_CONFIG[5].color, borderColor: MODE_CONFIG[5].color } : {}}
+                    className={`p-6 border text-left transition-all space-y-2 ${state.mode5Input?.subCase === 'ACORDO' ? '' : 'bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-active)]'}`}
+                    style={state.mode5Input?.subCase === 'ACORDO' ? { background: themeColor(MODE_CONFIG[5]), borderColor: themeColor(MODE_CONFIG[5]), color: ctaTextColor } : undefined}
                   >
-                    <span className="text-[10px] font-bold uppercase tracking-widest block">🤝 Tenho uma Proposta de Acordo</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"><HeartHandshake className="w-3.5 h-3.5" /> Tenho uma Proposta de Acordo</span>
                     <span className="text-xs opacity-60">Quero saber se aceito ou vou a julgamento</span>
                   </button>
                 </div>
@@ -2459,23 +2463,23 @@ const startRecovery = (sessionId: string) => {
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-6"
                   >
-                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                    <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                      <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'var(--text-muted)' }} />
                       <div className="px-8 pt-6 pb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Relato do Caso</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Relato do Caso</span>
                       </div>
                       <textarea
                         value={state.mode5Input?.caseDescription || ''}
                         onChange={(e) => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, caseDescription: e.target.value } }))}
                         placeholder="Descreva o contexto do conflito, o que aconteceu e qual é sua posição..."
-                        className="w-full min-h-[180px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                        className="w-full min-h-[180px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10"
                       />
                     </div>
 
-                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                      <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
+                    <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                      <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
                           {state.mode5Input.subCase === 'RECURSO' ? 'Sentença Recebida' : 'Proposta de Acordo'}
                         </span>
                       </div>
@@ -2483,14 +2487,14 @@ const startRecovery = (sessionId: string) => {
                         value={state.mode5Input?.sentencaOuProposta || ''}
                         onChange={(e) => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, sentencaOuProposta: e.target.value } }))}
                         placeholder={state.mode5Input.subCase === 'RECURSO' ? 'Cole aqui o texto da sentença ou decisão recebida...' : 'Descreva os termos da proposta de acordo recebida...'}
-                        className="w-full min-h-[180px] bg-transparent px-8 pb-6 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                        className="w-full min-h-[180px] bg-transparent px-8 pb-6 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10"
                       />
                     </div>
 
-                    <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                      <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.6)` }} />
+                    <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                      <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.6)` }} />
                       <div className="px-8 pt-6 pb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
                           Anexar Documentos
                         </span>
                       </div>
@@ -2519,12 +2523,12 @@ const startRecovery = (sessionId: string) => {
                         {(state.mode5Input?.attachments || []).length > 0 && (
                           <div className="flex flex-wrap gap-2 mb-4">
                             {(state.mode5Input?.attachments || []).map((file, i) => (
-                              <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 border border-white/5">
-                                <FileIcon className="w-3 h-3 text-white/40" />
-                                <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
+                              <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 border border-[var(--border)]">
+                                <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />
+                                <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-[var(--text-secondary)]">{file.name}</span>
                                 <button
                                   onClick={() => setState(prev => ({ ...prev, mode5Input: { ...prev.mode5Input!, attachments: (prev.mode5Input?.attachments || []).filter((_, j) => j !== i) } }))}
-                                  className="text-white/30 hover:text-red-500"
+                                  className="text-[var(--text-muted)] hover:text-[var(--danger)]"
                                 >
                                   <X className="w-3 h-3" />
                                 </button>
@@ -2533,38 +2537,38 @@ const startRecovery = (sessionId: string) => {
                           </div>
                         )}
                         <div className="flex flex-col gap-1">
-                          <label htmlFor="mode5-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                          <label htmlFor="mode5-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors w-fit">
                             <Plus className="w-3 h-3" /> Anexar Sentença ou Documentos
                           </label>
-                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB · PDF, JPEG ou PNG</span>
-                          <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
-                          {mode5AttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{mode5AttachmentError}</span>}
+                          <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB · PDF, JPEG ou PNG</span>
+                          <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
+                          {mode5AttachmentError && <span className="text-[10px] text-[var(--danger)] mt-1 block pl-1">{mode5AttachmentError}</span>}
                         </div>
                       </div>
                     </div>
 
-                    <div className="p-4 text-[10px] uppercase tracking-widest font-bold" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)`, color: `rgba(${MODE_CONFIG[5].colorRgb},0.7)` }}>
-                      ⚠️ O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
+                    <div className="p-4 text-[10px] uppercase tracking-widest font-bold flex items-center gap-2" style={{ backgroundColor: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.05)`, border: `1px solid rgba(${themeColorRgb(MODE_CONFIG[5])},0.2)`, color: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.7)` }}>
+                      <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" /> O EAI? é uma ferramenta de simulação argumentativa. Não é aconselhamento jurídico. Não substitui advogado.
                     </div>
 
                     {(state.detectedArea === 'FAMILY' ||
                       state.detectedArea === 'SOCIAL_SECURITY') && (
-                      <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${MODE_CONFIG[5].colorRgb},0.05)`, border: `1px solid rgba(${MODE_CONFIG[5].colorRgb},0.2)` }}>
-                        <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: `rgba(${MODE_CONFIG[5].colorRgb},0.8)` }}>
-                          🤝 Recursos de Apoio
+                      <div className="p-6 space-y-3 mt-4" style={{ backgroundColor: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.05)`, border: `1px solid rgba(${themeColorRgb(MODE_CONFIG[5])},0.2)` }}>
+                        <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: `rgba(${themeColorRgb(MODE_CONFIG[5])},0.8)` }}>
+                          <HeartHandshake className="w-3.5 h-3.5" /> Recursos de Apoio
                         </span>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Se você está em situação de violência, ligue{' '}
-                          <strong className="text-white">180</strong> — Central de Atendimento à Mulher.
+                          <strong className="text-[var(--text-primary)]">180</strong>: Central de Atendimento à Mulher.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Em sofrimento emocional, ligue{' '}
-                          <strong className="text-white">188</strong> — CVV, Centro de Valorização da Vida.
+                          <strong className="text-[var(--text-primary)]">188</strong>: CVV, Centro de Valorização da Vida.
                         </p>
-                        <p className="text-sm text-white/60 leading-relaxed">
+                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                           Para apoio jurídico gratuito, procure a{' '}
-                          <strong className="text-white">Defensoria Pública</strong> ou o{' '}
-                          <strong className="text-white">CRAS</strong> da sua cidade.
+                          <strong className="text-[var(--text-primary)]">Defensoria Pública</strong> ou o{' '}
+                          <strong className="text-[var(--text-primary)]">CRAS</strong> da sua cidade.
                         </p>
                       </div>
                     )}
@@ -2573,7 +2577,7 @@ const startRecovery = (sessionId: string) => {
                       <button
                         disabled={!state.mode5Input?.caseDescription?.trim() || !state.mode5Input?.sentencaOuProposta?.trim() || loading}
                         onClick={handleValidate}
-                        className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                        className="px-8 py-4 disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-xl" style={{ background: themeColor(MODE_CONFIG[5]), color: ctaTextColor }}
                       >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Consultar Juiz Estrategista'}
                         <ArrowRight className="w-4 h-4" />
@@ -2592,52 +2596,52 @@ const startRecovery = (sessionId: string) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-8"
               >
-                <FlowStepper currentStep="input" modeColor={MODE_CONFIG[3].color} variant="inline" />
+                <FlowStepper currentStep="input" modeColor={themeColor(MODE_CONFIG[3])} variant="inline" />
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setState(prev => ({ ...prev, step: 'boardroom' }))}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 hover:text-white/70 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
                     >
                       <ArrowRight className="w-3 h-3 rotate-180" />
                       Voltar
                     </button>
-                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5" style={{ color: `rgba(${MODE_CONFIG[3].colorRgb},0.7)`, border: `1px solid rgba(${MODE_CONFIG[3].colorRgb},0.25)` }}>
-                      Mesa Dupla — Juiz
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] px-2 py-0.5" style={{ color: `rgba(${themeColorRgb(MODE_CONFIG[3])},0.7)`, border: `1px solid rgba(${themeColorRgb(MODE_CONFIG[3])},0.25)` }}>
+                      Mesa Dupla: Juiz
                     </span>
                   </div>
-                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-white">
-                    Insira os dois lados para o <br /><span className="text-[#F4F4F2] font-bold">julgamento direto.</span>
+                  <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] text-[var(--text-primary)]">
+                    Insira os dois lados para o <br /><span className="text-[var(--text-primary)] font-bold">julgamento direto.</span>
                   </h1>
-                  <p className="text-white/40 max-w-lg text-sm uppercase tracking-widest font-medium">
+                  <p className="text-[var(--text-muted)] max-w-lg text-sm uppercase tracking-widest font-medium">
                     O magistrado analisa a petição e a contestação sem intervenção de advogado.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-white/40" />
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'var(--text-muted)' }} />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Petição do Autor</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Petição do Autor</span>
                     </div>
                     <textarea
                       value={state.caseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, caseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a petição inicial do autor..."
-                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10"
                     />
                     {state.attachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.attachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-sm border border-[var(--border)]">
+                            <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-[var(--text-secondary)]">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, attachments: prev.attachments.filter((_, j) => j !== i) }))} className="text-[var(--text-muted)] hover:text-[var(--danger)]"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-[var(--border)] pt-3">
                       <input type="file" id="author-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2655,39 +2659,39 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="author-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="author-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Autor
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
-                        {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
+                        {attachmentError && <span className="text-[10px] text-[var(--danger)] mt-1 block pl-1">{attachmentError}</span>}
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-[#15161A] border border-white/10 relative shadow-2xl shadow-black/50">
-                    <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${MODE_CONFIG[3].colorRgb},0.6)` }} />
+                  <div className="bg-[var(--bg-card)] border border-[var(--border)] relative shadow-2xl shadow-black/50">
+                    <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: `rgba(${themeColorRgb(MODE_CONFIG[3])},0.6)` }} />
                     <div className="px-8 pt-6 pb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Contestação do Réu</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Contestação do Réu</span>
                     </div>
                     <textarea
                       value={state.defenseDescription}
                       onChange={(e) => setState(prev => ({ ...prev, defenseDescription: e.target.value }))}
                       placeholder="Cole ou descreva a contestação do réu..."
-                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-white/90 resize-y placeholder:opacity-10"
+                      className="w-full min-h-[300px] bg-transparent px-8 pb-4 outline-none text-lg font-serif italic text-[var(--text-primary)] resize-y placeholder:opacity-10"
                     />
                     {state.defenseAttachments.length > 0 && (
                       <div className="px-8 pb-2 flex flex-wrap gap-2">
                         {state.defenseAttachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-[#1C1C1F] px-3 py-1.5 rounded-sm border border-white/5">
-                            <FileIcon className="w-3 h-3 text-white/40" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-white/60">{file.name}</span>
-                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-white/30 hover:text-red-500"><X className="w-3 h-3" /></button>
+                          <div key={i} className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-sm border border-[var(--border)]">
+                            <FileIcon className="w-3 h-3 text-[var(--text-muted)]" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight max-w-[100px] truncate text-[var(--text-secondary)]">{file.name}</span>
+                            <button onClick={() => setState(prev => ({ ...prev, defenseAttachments: prev.defenseAttachments.filter((_, j) => j !== i) }))} className="text-[var(--text-muted)] hover:text-[var(--danger)]"><X className="w-3 h-3" /></button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="px-8 pb-6 border-t border-white/5 pt-3">
+                    <div className="px-8 pb-6 border-t border-[var(--border)] pt-3">
                       <input type="file" id="defense-file" className="hidden" multiple accept="image/*,application/pdf"
                         onChange={async (e) => {
                           const files = Array.from(e.target.files || []);
@@ -2705,12 +2709,12 @@ const startRecovery = (sessionId: string) => {
                         }}
                       />
                       <div className="flex flex-col gap-1">
-                        <label htmlFor="defense-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-fit">
+                        <label htmlFor="defense-file" className="flex items-center gap-2 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors w-fit">
                           <Plus className="w-3 h-3" /> Anexar Provas do Réu
                         </label>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-white/20 normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
-                        {defenseAttachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{defenseAttachmentError}</span>}
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
+                        {defenseAttachmentError && <span className="text-[10px] text-[var(--danger)] mt-1 block pl-1">{defenseAttachmentError}</span>}
                       </div>
                     </div>
                   </div>
@@ -2720,7 +2724,7 @@ const startRecovery = (sessionId: string) => {
                   <button
                     disabled={!state.caseDescription.trim() || !state.defenseDescription.trim() || loading}
                     onClick={handleValidate}
-                    className="px-8 py-4 bg-white text-black disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-[#F4F4F2] transition-all flex items-center justify-center gap-3 shadow-xl"
+                    className="px-8 py-4 disabled:opacity-50 text-[11px] uppercase tracking-[0.2em] font-bold hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-xl" style={{ background: themeColor(MODE_CONFIG[3]), color: ctaTextColor }}
                   >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Validar Causa"}
                     <ArrowRight className="w-4 h-4" />
@@ -2819,7 +2823,7 @@ const startRecovery = (sessionId: string) => {
                             <span className="text-[10px] font-bold uppercase tracking-widest">Anexar Provas</span>
                           </button>
                           <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">máx 10MB por arquivo · total 20MB</span>
-                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1">🔒 Texto anonimizado antes do processamento</span>
+                        <span className="text-[8px] text-[var(--text-muted)] normal-case tracking-normal pl-1 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Texto anonimizado antes do processamento</span>
                           {attachmentError && <span className="text-[10px] text-red-400 mt-1 block pl-1">{attachmentError}</span>}
                         </div>
                         <div className="w-[1px] h-4 bg-[var(--border)] mx-2"></div>
