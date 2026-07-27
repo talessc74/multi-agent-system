@@ -4134,20 +4134,20 @@ const startRecovery = (sessionId: string) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-xl flex items-center justify-center p-8"
+            className="fixed inset-0 z-[200] bg-[var(--bg-primary)]/95 backdrop-blur-xl flex items-center justify-center p-8"
           >
             <div className="w-full max-w-6xl h-full flex flex-col gap-8">
-              <div className="flex justify-between items-end border-b border-white/10 pb-6">
+              <div className="flex justify-between items-end border-b border-[var(--border)] pb-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <h2 className="text-2xl font-serif italic text-white">Central de Monitoramento de Agentes de IA</h2>
+                    <div className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse" />
+                    <h2 className="text-2xl font-serif italic text-[var(--text-primary)]">Central de Monitoramento de Agentes de IA</h2>
                   </div>
-                  <p className="text-[10px] text-white/30 uppercase tracking-[0.4em] font-bold">Central de Monitoramento · EAI?</p>
+                  <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.4em] font-bold">Central de Monitoramento · EAI?</p>
                 </div>
-                <button 
+                <button
                   onClick={() => setState(prev => ({ ...prev, showForgeMonitor: false }))}
-                  className="px-6 py-2 border border-white/20 text-[10px] uppercase font-bold tracking-widest hover:bg-white hover:text-black transition-all"
+                  className="px-6 py-2 border border-[var(--border-active)] text-[10px] uppercase font-bold tracking-widest hover:bg-[var(--text-primary)] hover:text-[var(--bg-primary)] transition-all"
                 >
                   Fechar Dashboard
                 </button>
@@ -4156,37 +4156,37 @@ const startRecovery = (sessionId: string) => {
               <div className="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
                 {/* Metrics */}
                 <div className="col-span-12 lg:col-span-3 space-y-6 overflow-y-auto pr-4 custom-scrollbar">
-                  <div className="bg-white/5 border border-white/5 p-6 space-y-4">
-                    <div className="flex items-center gap-2 text-emerald-500">
+                  <div className="bg-[var(--bg-secondary)] border border-[var(--border)] p-6 space-y-4">
+                    <div className="flex items-center gap-2 text-[var(--success)]">
                       <Activity className="w-4 h-4" />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Agentes em Ação</span>
                     </div>
-                    <div className="text-4xl font-serif italic text-white">{state.activeAgents.length}</div>
-                    <div className="text-[9px] text-white/20 leading-relaxed uppercase font-bold tracking-tighter">
+                    <div className="text-4xl font-serif italic text-[var(--text-primary)]">{state.activeAgents.length}</div>
+                    <div className="text-[9px] text-[var(--text-muted)] leading-relaxed uppercase font-bold tracking-tighter">
                       Instâncias processando tokens judiciais em tempo real
                     </div>
                   </div>
 
-                  <div className="bg-white/5 border border-white/5 p-6 space-y-4">
-                    <div className="flex items-center gap-2 text-white/40">
+                  <div className="bg-[var(--bg-secondary)] border border-[var(--border)] p-6 space-y-4">
+                    <div className="flex items-center gap-2 text-[var(--text-muted)]">
                       <Database className="w-4 h-4" />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Simulações por Área</span>
                     </div>
-                    <div className="text-4xl font-serif italic text-white/60">
+                    <div className="text-4xl font-serif italic text-[var(--text-secondary)]">
                       {state.regionalStats.reduce((acc, s) => acc + s.seeds, 0)}
                     </div>
-                    <div className="text-[9px] text-white/20 leading-relaxed uppercase font-bold tracking-tighter">
+                    <div className="text-[9px] text-[var(--text-muted)] leading-relaxed uppercase font-bold tracking-tighter">
                       Total de simulações indexadas por área jurídica
                     </div>
                   </div>
 
-                  <div className="bg-white/5 border border-white/5 p-6 space-y-4">
-                    <div className="flex items-center gap-2 text-white/40">
+                  <div className="bg-[var(--bg-secondary)] border border-[var(--border)] p-6 space-y-4">
+                    <div className="flex items-center gap-2 text-[var(--text-muted)]">
                       <History className="w-4 h-4" />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Sessões Totais</span>
                     </div>
-                    <div className="text-4xl font-serif italic text-white/60">{globalStats.simulations.toLocaleString()}</div>
-                    <div className="text-[9px] text-white/20 leading-relaxed uppercase font-bold tracking-tighter">
+                    <div className="text-4xl font-serif italic text-[var(--text-secondary)]">{globalStats.simulations.toLocaleString()}</div>
+                    <div className="text-[9px] text-[var(--text-muted)] leading-relaxed uppercase font-bold tracking-tighter">
                       Cargas de treinamento processadas desde a v1.0
                     </div>
                   </div>
@@ -4197,26 +4197,27 @@ const startRecovery = (sessionId: string) => {
                   {(() => {
                     const maxSeeds = Math.max(...state.regionalStats.map(r => r.seeds), 1);
                     return state.regionalStats.map((reg, i) => (
-                    <div key={i} className="bg-white/[0.02] border border-white/5 p-5 space-y-4 relative group">
+                    <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] p-5 space-y-4 relative group">
                       <div className="absolute top-2 right-4 text-[8px] font-mono opacity-20 italic">REG_{i+1}</div>
                       <div className="space-y-1">
-                        <div className="text-[11px] font-bold text-white/80">{reg.region}</div>
-                        <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div className="text-[11px] font-bold text-[var(--text-secondary)]">{reg.region}</div>
+                        <div className="h-1 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${(reg.seeds / maxSeeds) * 100}%` }}
-                            className="h-full bg-emerald-500/50"
+                            className="h-full"
+                            style={{ background: 'color-mix(in srgb, var(--success) 50%, transparent)' }}
                           />
                         </div>
                       </div>
                       <div className="flex justify-between items-center text-[9px] font-mono">
                         <div className="flex flex-col">
-                          <span className="text-white/20 uppercase tracking-tighter">Simulações</span>
-                          <span className="text-white/60">{reg.seeds}</span>
+                          <span className="text-[var(--text-muted)] uppercase tracking-tighter">Simulações</span>
+                          <span className="text-[var(--text-secondary)]">{reg.seeds}</span>
                         </div>
                         <div className="flex flex-col text-right">
-                          <span className="text-white/20 uppercase tracking-tighter">Vitórias</span>
-                          <span className="text-emerald-500">{reg.active}</span>
+                          <span className="text-[var(--text-muted)] uppercase tracking-tighter">Vitórias</span>
+                          <span className="text-[var(--success)]">{reg.active}</span>
                         </div>
                       </div>
                     </div>
@@ -4225,18 +4226,18 @@ const startRecovery = (sessionId: string) => {
                 </div>
 
                 {/* Execution Log */}
-                <div className="col-span-12 lg:col-span-3 border-l border-white/10 pl-8 flex flex-col overflow-hidden">
+                <div className="col-span-12 lg:col-span-3 border-l border-[var(--border)] pl-8 flex flex-col overflow-hidden">
                   <div className="flex items-center justify-between mb-6">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Live Logs</span>
-                    <span className="text-[8px] font-mono text-emerald-500 animate-pulse">RECORDING...</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Live Logs</span>
+                    <span className="text-[8px] font-mono text-[var(--success)] animate-pulse">RECORDING...</span>
                   </div>
-                  <div className="flex-1 overflow-y-auto space-y-4 font-mono text-[9px] text-white/30 custom-scrollbar pr-4">
+                  <div className="flex-1 overflow-y-auto space-y-4 font-mono text-[9px] text-[var(--text-muted)] custom-scrollbar pr-4">
                     {state.activeAgents.map((agent, i) => (
-                      <div key={i} className="border-b border-white/5 pb-2">
-                        <div className="text-emerald-500/60 mb-1">[{new Date(agent.activatedAt).toLocaleTimeString()}] INSTANCE_SYNC</div>
-                        <div>Target: <span className="text-white/60">{agent.name}</span></div>
-                        <div>Type: <span className="text-white/40">{agent.type}</span></div>
-                        <div>ID: <span className="text-white/20">{agent.id}</span></div>
+                      <div key={i} className="border-b border-[var(--border)] pb-2">
+                        <div className="mb-1" style={{ color: 'color-mix(in srgb, var(--success) 60%, transparent)' }}>[{new Date(agent.activatedAt).toLocaleTimeString()}] INSTANCE_SYNC</div>
+                        <div>Target: <span className="text-[var(--text-secondary)]">{agent.name}</span></div>
+                        <div>Type: <span className="text-[var(--text-muted)]">{agent.type}</span></div>
+                        <div>ID: <span className="text-[var(--text-muted)]">{agent.id}</span></div>
                       </div>
                     ))}
                     {state.activeAgents.length === 0 && (
