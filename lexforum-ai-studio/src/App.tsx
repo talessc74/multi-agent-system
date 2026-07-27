@@ -4368,32 +4368,32 @@ const startRecovery = (sessionId: string) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[var(--bg-primary)]/80 backdrop-blur-xl"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-4xl bg-[#0D0D0E] border border-white/10 overflow-hidden flex flex-col max-h-[85vh]"
+              className="w-full max-w-4xl bg-[var(--bg-card)] border border-[var(--border)] overflow-hidden flex flex-col max-h-[85vh]"
             >
-              <div className="p-8 border-b border-white/10 flex items-center justify-between">
+              <div className="p-8 border-b border-[var(--border)] flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-serif italic text-white tracking-tight">Meus Casos</h2>
-                  <p className="text-white/40 text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Histórico de simulações processadas</p>
+                  <h2 className="text-2xl font-serif italic text-[var(--text-primary)] tracking-tight">Meus Casos</h2>
+                  <p className="text-[var(--text-muted)] text-[10px] uppercase tracking-[0.2em] font-bold mt-1">Histórico de simulações processadas</p>
                 </div>
                 <button
                   onClick={() => setShowHistory(false)}
-                  className="p-2 border border-white/5 hover:bg-white/5 transition-colors"
+                  className="p-2 border border-[var(--border)] hover:bg-[var(--bg-secondary)] transition-colors"
                 >
-                  <X className="w-6 h-6 text-white/40" />
+                  <X className="w-6 h-6 text-[var(--text-muted)]" />
                 </button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                 {userHistory.length === 0 ? (
                   <div className="py-20 text-center">
-                    <History className="w-12 h-12 text-white/10 mx-auto mb-4" />
-                    <p className="text-white/30 text-sm italic">Nenhum caso simulado encontrado sob esta credencial.</p>
+                    <History className="w-12 h-12 text-[var(--text-muted)] mx-auto mb-4" />
+                    <p className="text-[var(--text-muted)] text-sm italic">Nenhum caso simulado encontrado sob esta credencial.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-4">
@@ -4401,28 +4401,28 @@ const startRecovery = (sessionId: string) => {
                       <button
                         key={sim.id}
                         onClick={() => loadSimulation(sim)}
-                        className="w-full text-left p-6 bg-white/[0.02] border border-white/5 hover:border-white/20 hover:bg-white/[0.04] transition-all group relative overflow-hidden"
+                        className="w-full text-left p-6 bg-[var(--bg-secondary)] border border-[var(--border)] hover:border-[var(--border-active)] hover:bg-[var(--bg-card)] transition-all group relative overflow-hidden"
                       >
                         <div className="flex justify-between items-start mb-5">
                           <div className="max-w-[70%]">
-                            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-emerald-500/60 mb-2 block">
+                            <span className="text-[9px] font-bold uppercase tracking-[0.3em] mb-2 block" style={{ color: 'color-mix(in srgb, var(--success) 60%, transparent)' }}>
                               {formatSimDate(sim.createdAt)}
                             </span>
-                            <h3 className="text-lg font-serif italic text-white/90 leading-tight line-clamp-1">
+                            <h3 className="text-lg font-serif italic text-[var(--text-secondary)] leading-tight line-clamp-1">
                               {sim.caseSummary || sim.caseDescription}
                             </h3>
                           </div>
                           <div className="flex flex-col items-end">
-                            <span className="text-3xl font-mono font-bold text-white tracking-tighter tabular-nums">{sim.finalSuccessProbability}%</span>
-                            <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-white/20">Probabilidade</span>
+                            <span className="text-3xl font-mono font-bold text-[var(--text-primary)] tracking-tighter tabular-nums">{sim.finalSuccessProbability}%</span>
+                            <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-[var(--text-muted)]">Probabilidade</span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4 text-white/30 text-[9px] font-bold uppercase tracking-[0.2em]">
-                          <span className="px-2 py-0.5 border border-white/10 bg-white/5">
+                        <div className="flex items-center gap-4 text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-[0.2em]">
+                          <span className="px-2 py-0.5 border border-[var(--border)] bg-[var(--bg-secondary)]">
                             {formatAreaLabel(sim.area) || "Direito Geral"}
                           </span>
                           <span className="flex items-center gap-1.5">
-                            <Activity className="w-3 h-3 text-emerald-500/50" />
+                            <Activity className="w-3 h-3" style={{ color: 'color-mix(in srgb, var(--success) 50%, transparent)' }} />
                             {sim.rounds?.length || 0} Etapas de Julgamento
                           </span>
                         </div>
