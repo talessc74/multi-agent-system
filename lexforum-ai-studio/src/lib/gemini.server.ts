@@ -90,7 +90,7 @@ export async function validateCausaServer(caseDescription: string, attachments: 
   const specificJudge = rawSpecificJudge && rawSpecificJudge.toLowerCase() !== 'null' ? rawSpecificJudge : null;
 
   return {
-    area: (parsed.area?.toUpperCase() as LegalArea) || LegalArea.OTHER,
+    area: (parsed.area?.toUpperCase() as LegalArea) || "OTHER",
     specificJudge,
     summary: parsed.summary || null,
     detectedProfile: (parsed.detectedProfile === 'profissional' ? 'profissional' : 'leigo') as 'leigo' | 'profissional',

@@ -32,7 +32,7 @@ app.use((req, res, next) => {
   if (req.path === '/api/webhook/stripe') return next();
   express.json({ limit: '50mb' })(req, res, next);
 });
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 
 async function startServer() {
@@ -300,6 +300,7 @@ async function startServer() {
         code: (code as string).trim().toUpperCase(),
         active: true,
         limit: 1,
+        expand: ['data.promotion.coupon'],
       });
 
       if (!promoCodes.data.length) {
@@ -308,7 +309,11 @@ async function startServer() {
       }
 
       const promoCode = promoCodes.data[0];
-      const coupon = promoCode.coupon;
+      const coupon = promoCode.promotion.coupon;
+      if (!coupon || typeof coupon === 'string') {
+        res.json({ valid: false });
+        return;
+      }
       const baseAmount = (mode === 3 || mode === 5) ? 590 : 990;
 
       let finalAmount = baseAmount;

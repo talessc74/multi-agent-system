@@ -95,5 +95,6 @@ export interface Mode5Result {
   recommendation: 'RECORRER' | 'ACEITAR' | 'NEGOCIAR';
   successProbability: number;
   reasoning: string;
+  judgeAgentName: string;
   tokenCount?: number;
 }
