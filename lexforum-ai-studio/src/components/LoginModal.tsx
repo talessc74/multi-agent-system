@@ -131,24 +131,24 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--bg-primary)]/70 backdrop-blur-sm"
       onClick={handleClose}
     >
       <div
-        className="relative w-full max-w-sm mx-4 bg-[#111111] border border-white/10 p-8"
+        className="relative w-full max-w-sm mx-4 bg-[var(--bg-card)] border border-[var(--border)] p-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close */}
         <button
           onClick={handleClose}
           aria-label="Fechar"
-          className="absolute top-4 right-4 text-white/30 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Title */}
-        <h2 className="font-playfair italic text-2xl text-white mb-8">
+        <h2 className="font-playfair italic text-2xl text-[var(--text-primary)] mb-8">
           {mode === 'login' && 'Acesse o EAI?'}
           {mode === 'register' && 'Crie sua conta'}
           {mode === 'forgot' && 'Recuperar senha'}
@@ -161,7 +161,7 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
             <button
               onClick={handleGoogle}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 bg-white text-black text-[11px] font-bold uppercase tracking-widest py-3 hover:bg-white/90 transition-colors disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-3 bg-[var(--text-primary)] text-[var(--bg-primary)] text-[11px] font-bold uppercase tracking-widest py-3 hover:opacity-90 transition-colors disabled:opacity-50"
             >
               {loading
                 ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -178,9 +178,9 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
             </button>
 
             <div className="flex items-center gap-4 my-6">
-              <div className="flex-1 h-px bg-white/10" />
-              <span className="text-[10px] uppercase tracking-widest text-white/30 font-bold">ou</span>
-              <div className="flex-1 h-px bg-white/10" />
+              <div className="flex-1 h-px bg-[var(--border)]" />
+              <span className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-bold">ou</span>
+              <div className="flex-1 h-px bg-[var(--border)]" />
             </div>
 
             <form onSubmit={handleLogin} className="flex flex-col gap-3">
@@ -190,7 +190,7 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-transparent border border-white/10 px-4 py-3 text-[12px] text-white placeholder-white/25 focus:outline-none focus:border-white/30 transition-colors"
+                className="w-full bg-transparent border border-[var(--border)] px-4 py-3 text-[12px] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--border-active)] transition-colors"
               />
               <input
                 type="password"
@@ -198,17 +198,17 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full bg-transparent border border-white/10 px-4 py-3 text-[12px] text-white placeholder-white/25 focus:outline-none focus:border-white/30 transition-colors"
+                className="w-full bg-transparent border border-[var(--border)] px-4 py-3 text-[12px] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--border-active)] transition-colors"
               />
 
               {error && (
-                <p className="text-[10px] text-red-400 leading-relaxed">{error}</p>
+                <p className="text-[10px]" style={{ color: "var(--danger)" }}>{error}</p>
               )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-white text-black text-[11px] font-bold uppercase tracking-widest py-3 hover:bg-white/90 transition-colors disabled:opacity-50 mt-1"
+                className="w-full bg-[var(--text-primary)] text-[var(--bg-primary)] text-[11px] font-bold uppercase tracking-widest py-3 hover:opacity-90 transition-colors disabled:opacity-50 mt-1"
               >
                 {loading ? 'Entrando...' : 'Entrar'}
               </button>
@@ -217,15 +217,15 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
             <div className="mt-6 flex flex-col items-center gap-2">
               <button
                 onClick={() => switchMode('forgot')}
-                className="text-[10px] text-white/30 hover:text-white/60 underline underline-offset-2 transition-colors"
+                className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text-secondary)] underline underline-offset-2 transition-colors"
               >
                 Esqueci minha senha
               </button>
-              <p className="text-[10px] text-white/30">
+              <p className="text-[10px] text-[var(--text-muted)]">
                 Não tem conta?{' '}
                 <button
                   onClick={() => switchMode('register')}
-                  className="text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+                  className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2 transition-colors"
                 >
                   Cadastre-se
                 </button>
@@ -239,12 +239,12 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
           <>
             {resetSent ? (
               <div className="flex flex-col gap-6">
-                <p className="text-[12px] text-white/60 leading-relaxed">
+                <p className="text-[12px] text-[var(--text-secondary)] leading-relaxed">
                   Se esse e-mail estiver cadastrado, você receberá um link de recuperação em instantes. Verifique também sua caixa de spam.
                 </p>
                 <button
                   onClick={() => switchMode('login')}
-                  className="w-full bg-white text-black text-[11px] font-bold uppercase tracking-widest py-3 hover:bg-white/90 transition-colors"
+                  className="w-full bg-[var(--text-primary)] text-[var(--bg-primary)] text-[11px] font-bold uppercase tracking-widest py-3 hover:opacity-90 transition-colors"
                 >
                   Voltar para o login
                 </button>
@@ -258,23 +258,23 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full bg-transparent border border-white/10 px-4 py-3 text-[12px] text-white placeholder-white/25 focus:outline-none focus:border-white/30 transition-colors"
+                    className="w-full bg-transparent border border-[var(--border)] px-4 py-3 text-[12px] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--border-active)] transition-colors"
                   />
                   {error && (
-                    <p className="text-[10px] text-red-400 leading-relaxed">{error}</p>
+                    <p className="text-[10px]" style={{ color: "var(--danger)" }}>{error}</p>
                   )}
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-white text-black text-[11px] font-bold uppercase tracking-widest py-3 hover:bg-white/90 transition-colors disabled:opacity-50 mt-1"
+                    className="w-full bg-[var(--text-primary)] text-[var(--bg-primary)] text-[11px] font-bold uppercase tracking-widest py-3 hover:opacity-90 transition-colors disabled:opacity-50 mt-1"
                   >
                     {loading ? 'Enviando...' : 'Enviar link de recuperação'}
                   </button>
                 </form>
-                <p className="mt-6 text-[10px] text-white/30 text-center">
+                <p className="mt-6 text-[10px] text-[var(--text-muted)] text-center">
                   <button
                     onClick={() => switchMode('login')}
-                    className="text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2 transition-colors"
                   >
                     Voltar para o login
                   </button>
@@ -294,7 +294,7 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-transparent border border-white/10 px-4 py-3 text-[12px] text-white placeholder-white/25 focus:outline-none focus:border-white/30 transition-colors"
+                className="w-full bg-transparent border border-[var(--border)] px-4 py-3 text-[12px] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--border-active)] transition-colors"
               />
               <input
                 type="password"
@@ -302,7 +302,7 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full bg-transparent border border-white/10 px-4 py-3 text-[12px] text-white placeholder-white/25 focus:outline-none focus:border-white/30 transition-colors"
+                className="w-full bg-transparent border border-[var(--border)] px-4 py-3 text-[12px] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--border-active)] transition-colors"
               />
               <input
                 type="password"
@@ -310,11 +310,11 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 required
-                className="w-full bg-transparent border border-white/10 px-4 py-3 text-[12px] text-white placeholder-white/25 focus:outline-none focus:border-white/30 transition-colors"
+                className="w-full bg-transparent border border-[var(--border)] px-4 py-3 text-[12px] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--border-active)] transition-colors"
               />
 
               {error && (
-                <p className="text-[10px] text-red-400 leading-relaxed">{error}</p>
+                <p className="text-[10px]" style={{ color: "var(--danger)" }}>{error}</p>
               )}
 
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
@@ -332,17 +332,17 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
               <button
                 type="submit"
                 disabled={loading || !termosAceitos}
-                className="w-full bg-white text-black text-[11px] font-bold uppercase tracking-widest py-3 hover:bg-white/90 transition-colors disabled:opacity-50 mt-1"
+                className="w-full bg-[var(--text-primary)] text-[var(--bg-primary)] text-[11px] font-bold uppercase tracking-widest py-3 hover:opacity-90 transition-colors disabled:opacity-50 mt-1"
               >
                 {loading ? 'Criando conta...' : 'Criar conta'}
               </button>
             </form>
 
-            <p className="mt-6 text-[10px] text-white/30 text-center">
+            <p className="mt-6 text-[10px] text-[var(--text-muted)] text-center">
               Já tem conta?{' '}
               <button
                 onClick={() => switchMode('login')}
-                className="text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+                className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2 transition-colors"
               >
                 Entre
               </button>
@@ -353,7 +353,7 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
         {/* Terms acceptance for new Google users */}
         {mode === 'terms-google' && (
           <>
-            <p className="text-[12px] text-white/60 leading-relaxed mb-6">
+            <p className="text-[12px] text-[var(--text-secondary)] leading-relaxed mb-6">
               Sua conta Google foi criada com sucesso. Para continuar, confirme que leu e aceita nossos termos.
             </p>
 
@@ -370,13 +370,13 @@ export default function LoginModal({ onClose, onSuccess }: Props) {
             </label>
 
             {error && (
-              <p className="text-[10px] text-red-400 leading-relaxed mb-3">{error}</p>
+              <p className="text-[10px] mb-3" style={{ color: "var(--danger)" }}>{error}</p>
             )}
 
             <button
               onClick={handleAcceptTermsGoogle}
               disabled={loading || !termosAceitos}
-              className="w-full bg-white text-black text-[11px] font-bold uppercase tracking-widest py-3 hover:bg-white/90 transition-colors disabled:opacity-50"
+              className="w-full bg-[var(--text-primary)] text-[var(--bg-primary)] text-[11px] font-bold uppercase tracking-widest py-3 hover:opacity-90 transition-colors disabled:opacity-50"
             >
               {loading ? 'Salvando...' : 'Concluir cadastro'}
             </button>
