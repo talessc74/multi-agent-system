@@ -19,6 +19,8 @@ interface Props {
   onLogout: () => void;
   onShowHistory: () => void;
   user: import('firebase/auth').User | null;
+  globalStats: { simulations: number; winRate: number; precision: number };
+  statsLoading: boolean;
 }
 
 // ADR-007: o painel desktop lê tagline/description/bring/receive/cta do
@@ -55,7 +57,7 @@ const FOOTER_STATS = [
   { label: 'Contato', value: 'suporte@eaijuridico.com.br' },
 ];
 
-export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }: Props) {
+export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user, globalStats, statsLoading }: Props) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [openMode, setOpenMode] = useState<number | null>(null);
   const [desktopMode, setDesktopMode] = useState<number>(1);
@@ -332,6 +334,7 @@ export default function BoardroomPage({ onEnter, onLogout, onShowHistory, user }
               {/* Status Info */}
               <div className="space-y-0">
                 {[
+                  { label: 'Simulações concluídas', value: statsLoading ? 'Carregando…' : globalStats.simulations.toLocaleString() },
                   { label: 'Área identificada', value: 'Geral / Outros' },
                   { label: 'Foro/Comarca', value: 'Justiça Comum / JEC' },
                   { label: 'Agentes ativados', value: 'Aguardando ativação de agentes...' },

@@ -2157,6 +2157,8 @@ const startRecovery = (sessionId: string) => {
           onLogout={() => logoutUser()}
           onShowHistory={handleShowHistory}
           user={user}
+          globalStats={globalStats}
+          statsLoading={statsLoading}
         />
       ) : (
         <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans selection:bg-white/10 flex flex-col overflow-x-hidden print:bg-white print:text-black">
