@@ -43,10 +43,11 @@ export function registerAdminRoutes(
     if (!uid) return;
 
     try {
-      const [usersSnap, statsSnap, simsSnap] = await Promise.all([
+      const [usersSnap, statsSnap, simsSnap, apiTrafficSnap] = await Promise.all([
         adminDb.collection('users').orderBy('createdAt', 'desc').limit(200).get(),
         adminDb.collection('stats').doc('global').get(),
         adminDb.collection('simulations').orderBy('createdAt', 'desc').limit(50).get(),
+        adminDb.collection('stats').doc('apiTraffic').get(),
       ]);
 
       const users = usersSnap.docs.map(d => {
@@ -62,6 +63,10 @@ export function registerAdminRoutes(
       const statsData = statsSnap.exists ? statsSnap.data()! : { totalSimulations: 0, totalWins: 0 };
       const totalSimulations = statsData.totalSimulations || 0;
       const totalWins = statsData.totalWins || 0;
+
+      const apiTrafficData = apiTrafficSnap.exists ? apiTrafficSnap.data()! : { totalCalls: 0, byEndpoint: {} };
+      const totalApiCalls = apiTrafficData.totalCalls || 0;
+      const byEndpoint: Record<string, number> = apiTrafficData.byEndpoint || {};
 
       const simulations = simsSnap.docs.map(d => {
         const data = d.data();
@@ -82,6 +87,10 @@ export function registerAdminRoutes(
           totalSimulations,
           totalWins,
           winRate: totalSimulations > 0 ? Number(((totalWins / totalSimulations) * 100).toFixed(1)) : 0,
+        },
+        apiTraffic: {
+          totalCalls: totalApiCalls,
+          byEndpoint,
         },
         simulations,
       });
