@@ -40,6 +40,7 @@ import { auth, loginWithGoogle, logoutUser, getGoogleRedirectResult } from './li
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getStats, getAreaStats, saveSimulation, getUserSimulations, hasUserPaidForSession, createOrUpdateUser, getUserAccessLevel, getSimulationById, registrarAcessoLaudo, subscribeSimRecovery, getSimRecovery } from './services/dbService';
 import TermosPage from './pages/TermosPage';
+import AdminPage from './pages/AdminPage';
 import ChatPanel, { SheetState } from './components/ChatPanel';
 import { useTheme } from './hooks/useTheme';
 import type { ModeConfig } from './config/modeConfig';
@@ -1174,6 +1175,7 @@ const startRecovery = (sessionId: string) => {
   }, [openChatAfterLoad, state.step, state.isUnlocked, state.simulationId]);
 
   if (window.location.pathname === '/termos') return <TermosPage />;
+  if (window.location.pathname === '/admin') return <AdminPage />;
 
   return (
     <>

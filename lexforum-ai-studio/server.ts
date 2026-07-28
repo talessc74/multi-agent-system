@@ -10,6 +10,7 @@ import Stripe from 'stripe';
 import { setupSSE, sendSSE } from './sse-utils';
 import { notifySpendingCap } from './alerts';
 import { registerChatRoutes } from './chat-handler';
+import { registerAdminRoutes } from './admin-routes';
 import { randomUUID } from 'crypto';
 
 if (!admin.apps.length) {
@@ -256,6 +257,7 @@ async function startServer() {
   });
 
   registerChatRoutes(app, adminDb);
+  registerAdminRoutes(app, adminDb);
 
   app.use('/simulation', simulationStatus);
 
