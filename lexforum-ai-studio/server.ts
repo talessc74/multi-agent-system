@@ -28,6 +28,18 @@ import simulationStatus from './simulation-status';
 import { resolveAgent } from './agent-resolver';
 dotenv.config();
 
+// Registra toda chamada que chega num endpoint caro do Gemini, mesmo que a
+// simulação nunca termine — diferente de stats/global (que só sobe quando a
+// simulação é salva com sucesso), isto conta hits crus, incluindo abandono e
+// possível tráfego automatizado batendo direto na API.
+function logApiCall(endpoint: string): void {
+  adminDb.collection('stats').doc('apiTraffic').set({
+    totalCalls: admin.firestore.FieldValue.increment(1),
+    byEndpoint: { [endpoint]: admin.firestore.FieldValue.increment(1) },
+    lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+  }, { merge: true }).catch((e) => console.error('[logApiCall] falhou:', e));
+}
+
 const app = express();
 app.use((req, res, next) => {
   if (req.path === '/api/webhook/stripe') return next();
@@ -40,6 +52,7 @@ async function startServer() {
   console.log("Starting server...");
   // API routes FIRST
   app.post("/api/gemini/validate", async (req, res) => {
+    logApiCall('validate');
     try {
       const { caseDescription, attachments } = req.body;
       const data = await validateCausaServer(caseDescription, attachments);
@@ -54,6 +67,7 @@ async function startServer() {
   });
 
   app.post("/api/gemini/simulate", async (req, res) => {
+    logApiCall('simulate');
     setupSSE(res);
 
     const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide } =
@@ -155,6 +169,7 @@ async function startServer() {
   });
 
   app.post("/api/gemini/report", async (req, res) => {
+    logApiCall('report');
     try {
       const { lastPetition, lastJudgment, clientSide } = req.body;
       const data = await generateReportServer(lastPetition, lastJudgment, clientSide);
@@ -169,6 +184,7 @@ async function startServer() {
   });
 
   app.post("/api/counter-hypotheses", async (req, res) => {
+    logApiCall('counterHypotheses');
     try {
       const { petition, area, mode } = req.body;
       if (!petition || !area) {
@@ -186,6 +202,7 @@ async function startServer() {
   });
 
   app.post("/api/expand-hypothesis", async (req, res) => {
+    logApiCall('expandHypothesis');
     try {
       const { petition, hypothesis, area } = req.body;
       if (!petition || !hypothesis || !area) {
@@ -200,6 +217,7 @@ async function startServer() {
   });
 
   app.post("/api/gemini/mode5", async (req, res) => {
+    logApiCall('mode5');
     setupSSE(res);
 
     const { mode5Input, area, attachments, specificJudge } = req.body;

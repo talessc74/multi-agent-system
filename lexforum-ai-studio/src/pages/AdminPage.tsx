@@ -23,6 +23,7 @@ interface AdminSimulation {
 interface Overview {
   users: AdminUser[];
   stats: { totalSimulations: number; totalWins: number; winRate: number };
+  apiTraffic: { totalCalls: number; byEndpoint: Record<string, number> };
   simulations: AdminSimulation[];
 }
 
@@ -166,6 +167,10 @@ export default function AdminPage() {
                 <div style={s.kpiValue}>{data.stats.totalSimulations.toLocaleString()}</div>
               </div>
               <div style={s.kpiCard}>
+                <div style={s.kpiLabel}>Chamadas de API</div>
+                <div style={{ ...s.kpiValue, color: 'rgb(var(--warning-rgb))' }}>{data.apiTraffic.totalCalls.toLocaleString()}</div>
+              </div>
+              <div style={s.kpiCard}>
                 <div style={s.kpiLabel}>Taxa de vitória</div>
                 <div style={{ ...s.kpiValue, color: 'var(--success)' }}>{data.stats.winRate}%</div>
               </div>
@@ -173,6 +178,23 @@ export default function AdminPage() {
                 <div style={s.kpiLabel}>Usuários beta</div>
                 <div style={s.kpiValue}>{data.users.filter(u => u.accessLevel === 'beta').length}</div>
               </div>
+            </div>
+
+            <h2 style={s.sectionTitle}>Chamadas de API por endpoint</h2>
+            <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '14px', maxWidth: '640px', lineHeight: 1.6 }}>
+              Conta toda requisição recebida nos endpoints que chamam o Gemini, mesmo que a simulação nunca termine ou nunca seja salva.
+              Se este número for muito maior que "Simulações concluídas", é sinal de chamadas abandonadas ou tráfego automatizado batendo direto na API.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
+              {Object.entries(data.apiTraffic.byEndpoint).map(([endpoint, count]) => (
+                <div key={endpoint} style={{ ...s.kpiCard, padding: '12px 14px' }}>
+                  <div style={{ ...s.kpiLabel, marginBottom: '4px' }}>{endpoint}</div>
+                  <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'monospace' }}>{count.toLocaleString()}</div>
+                </div>
+              ))}
+              {Object.keys(data.apiTraffic.byEndpoint).length === 0 && (
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Nenhuma chamada registrada ainda.</p>
+              )}
             </div>
 
             <h2 style={s.sectionTitle}>Usuários ({data.users.length})</h2>
