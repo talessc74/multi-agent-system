@@ -1,7 +1,7 @@
 import admin from 'firebase-admin';
 import type { Application, Request, Response } from 'express';
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'talessc@mac.com')
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'talessc@gmail.com')
   .split(',')
   .map(e => e.trim().toLowerCase())
   .filter(Boolean);
