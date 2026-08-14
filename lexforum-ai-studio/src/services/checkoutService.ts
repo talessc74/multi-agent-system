@@ -3,7 +3,8 @@ import type { User } from 'firebase/auth';
 export async function initiateCheckout(
   user: User,
   simulationId: string,
-  mode: number
+  mode: number,
+  options?: { promoCode?: string; returnPath?: string }
 ): Promise<string | null> {
   const token = await user.getIdToken();
   const response = await fetch('/api/stripe/create-checkout-session', {
@@ -12,7 +13,12 @@ export async function initiateCheckout(
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify({ simulationId, mode }),
+    body: JSON.stringify({
+      simulationId,
+      mode,
+      ...(options?.promoCode ? { promoCode: options.promoCode } : {}),
+      ...(options?.returnPath ? { returnPath: options.returnPath } : {}),
+    }),
   });
   const data = await response.json();
   return data.url ?? null;

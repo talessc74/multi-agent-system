@@ -40,6 +40,17 @@ function logApiCall(endpoint: string): void {
   }, { merge: true }).catch((e) => console.error('[logApiCall] falhou:', e));
 }
 
+// Stripe success/cancel URLs need to send the user back to whichever
+// front-end path started checkout (e.g. /novaversao/...) instead of always
+// bouncing to "/". Only a same-origin path is accepted — never a full URL
+// or protocol-relative "//host" — to avoid turning this into an open
+// redirect off a payment confirmation link.
+function safeReturnPath(input: unknown): string {
+  if (typeof input !== 'string') return '/';
+  if (!input.startsWith('/') || input.startsWith('//') || input.includes('://')) return '/';
+  return input;
+}
+
 const app = express();
 app.use((req, res, next) => {
   if (req.path === '/api/webhook/stripe') return next();
@@ -373,11 +384,12 @@ async function startServer() {
       const decoded = await admin.auth().verifyIdToken(token);
       const uid = decoded.uid;
 
-      const { simulationId, mode, promoCode } = req.body;
+      const { simulationId, mode, promoCode, returnPath } = req.body;
       if (!simulationId) {
         res.status(400).json({ error: 'simulationId required' });
         return;
       }
+      const base = safeReturnPath(returnPath);
 
       const simRef = adminDb.collection('simulations').doc(simulationId);
       const simSnap = await simRef.get();
@@ -413,8 +425,8 @@ async function startServer() {
         }],
         mode: 'payment',
         ...(sessionDiscounts ? { discounts: sessionDiscounts } : { allow_promotion_codes: true }),
-        success_url: `${process.env.APP_URL}/?session_id={CHECKOUT_SESSION_ID}&sim=${simulationId}`,
-        cancel_url: `${process.env.APP_URL}/`,
+        success_url: `${process.env.APP_URL}${base}?session_id={CHECKOUT_SESSION_ID}&sim=${simulationId}`,
+        cancel_url: `${process.env.APP_URL}${base}`,
         metadata: { uid, simulationId },
       });
 
@@ -439,11 +451,12 @@ async function startServer() {
       const decoded = await admin.auth().verifyIdToken(token);
       const uid = decoded.uid;
 
-      const { simulationId } = req.body;
+      const { simulationId, returnPath } = req.body;
       if (!simulationId) {
         res.status(400).json({ error: 'simulationId required' });
         return;
       }
+      const chatBase = safeReturnPath(returnPath);
 
       const simSnap = await adminDb.collection('simulations').doc(simulationId).get();
       if (!simSnap.exists || simSnap.data()?.userId !== uid) {
@@ -468,8 +481,8 @@ async function startServer() {
           quantity: 1,
         }],
         mode: 'payment',
-        success_url: `${process.env.APP_URL}/?session_id={CHECKOUT_SESSION_ID}&sim=${simulationId}&chat=1`,
-        cancel_url: `${process.env.APP_URL}/`,
+        success_url: `${process.env.APP_URL}${chatBase}?session_id={CHECKOUT_SESSION_ID}&sim=${simulationId}&chat=1`,
+        cancel_url: `${process.env.APP_URL}${chatBase}`,
         metadata: { uid, simulationId, type: 'chat' },
       });
 
