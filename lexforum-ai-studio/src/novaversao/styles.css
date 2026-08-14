@@ -1,0 +1,260 @@
+/*
+ * Sistema visual V5 ("dossiê, não SaaS") — namespaced sob .nv para nunca
+ * vazar pro resto do produto. Ver BRIEFING_REDESIGN_V5_HANDOFF.md e
+ * .xdrs/_local/adrs/application/008-v5-redesign-rollout-path.md.
+ *
+ * Fontes: Fraunces e JetBrains Mono são os arquivos reais, self-hosted.
+ * "General Sans" (corpo de texto) ainda não pôde ser buscado do Fontshare
+ * neste ambiente — Plus Jakarta Sans é o substituto temporário. Trocar o
+ * src abaixo quando o self-host de General Sans estiver disponível; os
+ * pontos de uso (--nv-sans) não precisam mudar.
+ */
+
+@font-face {
+  font-family: 'Fraunces Display';
+  font-style: italic;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('../assets/fonts/fraunces-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fraunces Display';
+  font-style: normal;
+  font-weight: 600 800;
+  font-display: swap;
+  src: url('../assets/fonts/fraunces-display.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JB Mono';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('../assets/fonts/jetbrains-mono.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../assets/fonts/plusjakartasans-variable.woff2') format('woff2');
+}
+
+.nv {
+  --nv-paper: #FBFAF7;
+  --nv-paper-2: #F2F0EA;
+  --nv-ink: #12110F;
+  --nv-ink-2: #55524B;
+  --nv-ink-3: #8C887E;
+  --nv-line: rgba(18,17,15,0.14);
+  --nv-line-2: rgba(18,17,15,0.26);
+  --nv-red: #9A2B1F;
+  --nv-red-soft: rgba(154,43,31,0.08);
+  --nv-redact-bg: #12110F;
+  --nv-redact-shadow: rgba(0,0,0,0.32);
+
+  /* void tokens — always dark, never inverted (hero, stats, ticker) */
+  --nv-void: #12110F;
+  --nv-void-fg: #FBFAF7;
+  --nv-void-fg-dim: rgba(251,250,247,0.62);
+  --nv-void-line: rgba(251,250,247,0.18);
+
+  /* per-mode brand colors, adapted from MODE_CONFIG for this palette */
+  --nv-m1: #3D6B5C;
+  --nv-m2: #9A2B1F;
+  --nv-m3: #5A4B8C;
+  --nv-m4: #8C6A1F;
+  --nv-m5: #3D6B5C;
+
+  --nv-serif: 'Fraunces Display', ui-serif, Georgia, 'Times New Roman', serif;
+  --nv-sans: 'Plus Jakarta Sans', ui-sans-serif, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --nv-mono: 'JB Mono', ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', monospace;
+
+  background: var(--nv-paper);
+  color: var(--nv-ink);
+  font-family: var(--nv-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+
+.nv[data-theme='dark'] {
+  --nv-paper: #0E0D0C;
+  --nv-paper-2: #171512;
+  --nv-ink: #F2EFE9;
+  --nv-ink-2: #A8A399;
+  --nv-ink-3: #6E6A61;
+  --nv-line: rgba(242,239,233,0.14);
+  --nv-line-2: rgba(242,239,233,0.26);
+  --nv-red: #D3644F;
+  --nv-red-soft: rgba(211,100,79,0.10);
+  --nv-redact-bg: #F2EFE9;
+  --nv-redact-shadow: rgba(0,0,0,0.55);
+  --nv-m1: #7FB39E;
+  --nv-m2: #D3644F;
+  --nv-m3: #A896E0;
+  --nv-m4: #D3A94F;
+  --nv-m5: #7FB39E;
+}
+
+.nv * { box-sizing: border-box; }
+
+.nv .nv-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+@media (max-width: 820px) {
+  .nv .nv-container { padding: 0 20px; }
+}
+
+.nv .nv-kicker {
+  font-family: var(--nv-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nv-red);
+}
+
+.nv hr.nv-hr {
+  border: none;
+  border-top: 1px solid var(--nv-line);
+}
+.nv hr.nv-hr-strong {
+  border: none;
+  border-top: 1px solid var(--nv-line-2);
+}
+
+.nv a { color: inherit; }
+.nv a:focus-visible,
+.nv button:focus-visible,
+.nv input:focus-visible,
+.nv textarea:focus-visible {
+  outline: 2px solid var(--nv-red);
+  outline-offset: 2px;
+}
+
+/* grão de papel — SVG feTurbulence inline, sem requisição de rede */
+.nv .nv-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.nv[data-theme='dark'] .nv-grain { opacity: 0.07; mix-blend-mode: soft-light; }
+
+/* fundo de bloco — void e o padrão inverso */
+.nv .nv-void {
+  background: var(--nv-void);
+  color: var(--nv-void-fg);
+}
+
+/* ── redação da caneta ────────────────────────────────────────────── */
+.nv .nv-redact {
+  position: relative;
+  display: inline-block;
+  padding: 0 3px;
+  margin: 0 1px;
+  line-height: 1.16;
+  user-select: none;
+}
+/* Same security posture as production's CensoredText: the underlying text
+   is technically in the DOM (client receives the full text either way —
+   see ADR-008 Conflicts) but must not be made MORE readable than today.
+   Keep this transparent, never ink-colored. */
+.nv .nv-redact-fill { color: transparent; }
+.nv .nv-redact-mark {
+  position: absolute;
+  left: -6%;
+  top: 9%;
+  width: 112%;
+  height: 82%;
+  pointer-events: none;
+  overflow: visible;
+}
+.nv .nv-redact-mark path {
+  fill: none;
+  stroke: var(--nv-redact-bg);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0.5px 0.5px var(--nv-redact-shadow));
+}
+
+/* ── ticker mechanics — shared by market + confidence tickers ──────── */
+.nv .nv-ticker-wrap { overflow: hidden; }
+.nv .nv-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: nv-ticker-scroll linear infinite;
+}
+.nv .nv-ticker-wrap:hover .nv-ticker-track { animation-play-state: paused; }
+@keyframes nv-ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nv .nv-ticker-track { animation: none; }
+}
+
+/* ── layout primitives that need real media queries (inline styles can't) ── */
+.nv .nv-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 48px;
+  align-items: end;
+}
+.nv .nv-hero-side {
+  border-left: 1px solid var(--nv-void-line);
+  padding-left: 28px;
+  padding-bottom: 6px;
+}
+.nv .nv-hero-ghost { display: block; }
+@media (max-width: 900px) {
+  .nv .nv-hero-grid { grid-template-columns: 1fr; gap: 28px; }
+  .nv .nv-hero-side { border-left: none; border-top: 1px solid var(--nv-void-line); padding-left: 0; padding-top: 20px; }
+}
+@media (max-width: 640px) {
+  .nv .nv-hero-ghost { display: none; }
+}
+
+.nv .nv-mode-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 130px 100px;
+  gap: 16px;
+  align-items: center;
+}
+@media (max-width: 640px) {
+  .nv .nv-mode-row {
+    grid-template-columns: 32px 1fr;
+    grid-template-areas: "idx name" ". price" ". cta";
+    row-gap: 4px;
+  }
+  .nv .nv-mode-idx { grid-area: idx; }
+  .nv .nv-mode-name { grid-area: name; }
+  .nv .nv-mode-price { grid-area: price; text-align: left !important; }
+  .nv .nv-mode-cta { grid-area: cta; text-align: left !important; }
+}
+
+.nv .nv-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+@media (max-width: 640px) {
+  .nv .nv-stats-grid { grid-template-columns: 1fr; gap: 24px; }
+}
+
+/* ── fail-safe reveal pattern (briefing §10.1) — visible by default,
+   JS only enhances with a reveal transition, never gates visibility ── */
+.nv .nv-reveal { opacity: 1; transform: none; }
+.nv .nv-reveal.nv-pre {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s cubic-bezier(.16,1,.3,1), transform 0.8s cubic-bezier(.16,1,.3,1);
+}
+.nv .nv-reveal.nv-pre.nv-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .nv .nv-reveal.nv-pre { opacity: 1; transform: none; transition: none; }
+}
