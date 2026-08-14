@@ -27,7 +27,7 @@ export const ConfirmScreen: React.FC<ConfirmProps> = ({ theme, onToggleTheme, on
       <div className="nv-container" style={{ padding: '48px 40px 60px', maxWidth: 680 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: `1px solid ${color}`, padding: '7px 14px', marginBottom: 24 }}>
           <span style={{ width: 7, height: 7, borderRadius: '50%', background: color }} />
-          <span style={{ fontFamily: 'var(--nv-mono)', fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', color }}>
+          <span style={{ fontFamily: 'var(--nv-mono)', fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 600, color: 'var(--nv-ink)' }}>
             {formatAreaLabel(area)}
           </span>
         </div>
@@ -61,16 +61,16 @@ export const ConfirmScreen: React.FC<ConfirmProps> = ({ theme, onToggleTheme, on
           </p>
         )}
 
-        <p style={{ fontFamily: 'var(--nv-mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color, margin: '32px 0 12px' }}>
+        <p style={{ fontFamily: 'var(--nv-mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--nv-ink-2)', margin: '32px 0 12px' }}>
           Agentes escalados
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 40 }}>
           <div style={{ borderLeft: `3px solid ${color}`, background: 'var(--nv-paper-2)', padding: 16, textAlign: 'center' }}>
-            <p style={{ fontFamily: 'var(--nv-mono)', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color, margin: '0 0 4px' }}>Advogado</p>
+            <p style={{ fontFamily: 'var(--nv-mono)', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'var(--nv-ink)', margin: '0 0 4px' }}>Advogado</p>
             <p style={{ fontSize: 13, color: 'var(--nv-ink-2)', margin: 0 }}>{agentSpec}</p>
           </div>
           <div style={{ borderLeft: `3px solid ${color}`, background: 'var(--nv-paper-2)', padding: 16, textAlign: 'center' }}>
-            <p style={{ fontFamily: 'var(--nv-mono)', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color, margin: '0 0 4px' }}>Magistrado</p>
+            <p style={{ fontFamily: 'var(--nv-mono)', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'var(--nv-ink)', margin: '0 0 4px' }}>Magistrado</p>
             <p style={{ fontSize: 13, color: 'var(--nv-ink-2)', margin: 0 }}>{agentSpec}</p>
           </div>
         </div>

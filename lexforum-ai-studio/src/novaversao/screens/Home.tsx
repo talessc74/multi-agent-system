@@ -15,9 +15,6 @@ interface HomeProps {
   onNavigate: (route: NvRoute) => void;
 }
 
-const themeColor = (cfg: (typeof MODE_CONFIG)[number], theme: 'dark' | 'light') =>
-  theme === 'light' ? cfg.colorLight : cfg.color;
-
 // Modos agrupados por situação do usuário — herdado da V2, ver briefing §7.1.4
 const MODE_GROUPS: { label: string; modes: number[] }[] = [
   { label: 'Você está em um conflito em aberto', modes: [1, 2] },
@@ -226,7 +223,7 @@ export const HomeScreen: React.FC<HomeProps> = ({ theme, onToggleTheme, onNaviga
                     <span style={{ display: 'block', fontSize: 12.5, color: 'var(--nv-ink-3)', marginTop: 2 }}>{cfg.tagline}</span>
                   </span>
                   <span className="nv-mode-price" style={{ fontFamily: 'var(--nv-mono)', fontSize: 13, color: 'var(--nv-ink-2)' }}>{priceFor(modeId)}</span>
-                  <span className="nv-mode-cta" style={{ fontFamily: 'var(--nv-mono)', fontSize: 12, letterSpacing: '0.03em', color: themeColor(cfg, theme), textAlign: 'right' }}>
+                  <span className="nv-mode-cta" style={{ fontFamily: 'var(--nv-mono)', fontSize: 12, letterSpacing: '0.03em', fontWeight: 600, color: 'var(--nv-ink)', textAlign: 'right' }}>
                     {cfg.cta}
                   </span>
                 </NvLink>
