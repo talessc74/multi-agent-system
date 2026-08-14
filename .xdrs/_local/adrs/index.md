@@ -13,6 +13,7 @@ System and service design decisions.
 - [005-boardroom-desktop-mode-selector](application/005-boardroom-desktop-mode-selector.md) — Desktop mode selector uses a list + detail-panel pattern sourced from MODE_CONFIG, not a separate hardcoded array or a literal copy of the mobile accordion
 - [006-monitor-de-agentes-and-empty-state-copy](application/006-monitor-de-agentes-and-empty-state-copy.md) — Monitor de Agentes only renders once a simulation has started; Live Logs shows real activation timestamps, not the render-time clock; empty-state copy states the no-fabricated-data policy instead of apologizing
 - [007-light-mode-color-system](application/007-light-mode-color-system.md) — Light-theme color tokens (neutral tiers and per-mode brand colors) calibrated against real WCAG contrast math; every consumer reads a named token, never a hardcoded hex/opacity value
+- [008-v5-redesign-rollout-path](application/008-v5-redesign-rollout-path.md) — Build the V5 "dossiê" redesign as an undisclosed parallel path at /novaversao, reusing the existing backend, staged through eai-staging before any production deploy
 
 ## governance
 
