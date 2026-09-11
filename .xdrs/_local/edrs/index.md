@@ -30,6 +30,7 @@ Engineering principles and non-functional quality defaults.
 Delivery pipeline and release automation decisions.
 
 - [001-deployment-strategy](devops/001-deployment-strategy.md) — Auto-deploy to Cloud Run on push to main via Cloud Build
+- [002-production-deploy-authorization](devops/002-production-deploy-authorization.md) — Standing user authorization: the agent triggers deploy-producao.yml on a tested/validated main commit without asking first, then monitors and reports the result
 
 ## governance
 
