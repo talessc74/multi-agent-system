@@ -1,8 +1,8 @@
 # Governance System — ARGUS + XDRS
-# Version: 1.5.1
+# Version: 1.6.1
 # Modelo: Deliberação Coletiva sob ARGUS com Registro XDRS
-# Seeds under governance: 28
-# Grupos: Galera do Código (4) · Galera de UX (4) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2) · Galera do Design (10)
+# Seeds under governance: 30
+# Grupos: Galera do Código (6) · Galera de UX (4) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2) · Galera do Design (10)
 
 ---
 
@@ -20,7 +20,7 @@ e sem ter operado sob o protocolo ARGUS.
 
 ## O que é este sistema
 
-Este projeto opera sob governança distribuída de 28 seeds organizadas em
+Este projeto opera sob governança distribuída de 30 seeds organizadas em
 seis equipes. As seeds não executam em fila — elas deliberam em mesa.
 
 ARGUS é o orquestrador permanente. Ele observa o sistema o tempo inteiro,
@@ -62,13 +62,13 @@ Esta regra não tem exceções. Perguntas simples ("qual comando?",
 | Comando | O que acontece |
 |---|---|
 | `"Argus, revisa este código"` | ARGUS lê o contexto e convoca a equipe certa |
-| `"Argus, chama a galera do código"` | Scout · Flux · Literate · RiverRaid |
+| `"Argus, chama a galera do código"` | Scout · Flux · Literate · RiverRaid · Surgeon · Vigil |
 | `"Argus, chama a galera de UX"` | Compass · Empiricus · PolarBear · Few |
 | `"Argus, chama a galera de segurança"` | Blast · BAU · Sentinel · Sovereign · Ghost |
 | `"Argus, chama a galera de QA"` | Pareto · Probe · Scaffold |
 | `"Argus, chama a galera de governança"` | Scribe · Herald |
 | `"Argus, chama a galera do design"` | Aether · Nexus · Chronos · Canvas · Forge · Quill · Tempo · Threshold · Empath · Skeptic |
-| `"Argus, chama todo mundo"` | todas as 28 seeds |
+| `"Argus, chama todo mundo"` | todas as 30 seeds |
 | `"Argus, quem é o [nome]?"` | ARGUS apresenta a seed e sua jurisdição |
 | `"Argus, apresenta a equipe"` | ARGUS lista todos os membros e papéis |
 | `"Argus, apresenta a [galera]"` | ARGUS lista os membros do grupo solicitado |
@@ -122,6 +122,8 @@ A hierarquia de resolução está em `.seeds/ARGUS.md` — Seção V.
 - `.seeds/FLUX.json`       → Evolutionary Design, refatoração contínua
 - `.seeds/LITERATE.json`   → Algoritmos, análise assintótica, narrativa antes de execução
 - `.seeds/RIVERRAID.json`  → Recursos finitos, geração procedural determinística, bitmask boundary
+- `.seeds/SURGEON.json`    → Disciplina de escopo, diff mínimo, anti scope-creep
+- `.seeds/VIGIL.json`      → Confiabilidade em produção, SLO, orçamento de erro, rollout progressivo
 
 ### Galera de UX
 - `.seeds/COMPASS.json`    → Human-Centered Design, affordances, feedback cognitivo
@@ -173,6 +175,8 @@ A hierarquia de resolução está em `.seeds/ARGUS.md` — Seção V.
     FLUX.json
     LITERATE.json
     RIVERRAID.json
+    SURGEON.json
+    VIGIL.json
     COMPASS.json
     EMPIRICUS.json
     POLARBEAR.json

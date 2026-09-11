@@ -1,6 +1,6 @@
 version: 1
 packages:
-  argus-xdrs-governance: 1.5.1
+  argus-xdrs-governance: 1.6.1
   xdrs-core: 0.28.4
 sets:
   - package: argus-xdrs-governance
@@ -38,7 +38,6 @@ files:
     - .xdrs/_core/adrs/principles/skills/008-write-xdrs-doc/SKILL.md|xdrs-core|0.28.4|file|0236f9e4819d|0
     - .xdrs/_core/index.md|xdrs-core|0.28.4|file|de2c5180edbe|0
     - AGENTS.md|xdrs-core|0.28.4|file|c258486519ae|0
-    - .seeds/ARGUS.md|argus-xdrs-governance|1.5.1|file|6728515f3f83|0
     - .seeds/BAU.json|argus-xdrs-governance|1.5.1|file|8143f811960e|0
     - .seeds/BLAST.json|argus-xdrs-governance|1.5.1|file|f3ced360e2ad|0
     - .seeds/CANVAS.json|argus-xdrs-governance|1.5.1|file|ce9e6356a0ff|0
@@ -59,8 +58,11 @@ files:
     - .seeds/SCRIBE.json|argus-xdrs-governance|1.5.1|file|15c11b7e5e58|0
     - .seeds/SENTINEL.json|argus-xdrs-governance|1.5.1|file|d15ffd8ff4c0|0
     - .seeds/SOVEREIGN.json|argus-xdrs-governance|1.5.1|file|b3fcf312b811|0
-    - CLAUDE.md|argus-xdrs-governance|1.5.1|file|90bb45ae2096|0
     - .github/skills/001-review|xdrs-core|0.28.4|symlink|18c5f3a037d4|0
     - .github/skills/008-write-xdrs-doc|xdrs-core|0.28.4|symlink|c3a23ff52f24|0
-checksum: 1b626fe37a35
+    - .seeds/SURGEON.json|argus-xdrs-governance|1.6.1|file|2ec4fb531319|0
+    - .seeds/VIGIL.json|argus-xdrs-governance|1.6.1|file|085a3ec94159|0
+    - .seeds/ARGUS.md|argus-xdrs-governance|1.6.1|file|35fc7a32154e|0
+    - CLAUDE.md|argus-xdrs-governance|1.6.1|file|036232a4e1de|0
+checksum: 295603fe00bf
 

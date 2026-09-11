@@ -1,8 +1,8 @@
 # ARGUS — Os 1000 Olhos
-# Version: 1.5.1
+# Version: 1.6.1
 # Modelo: Deliberação Coletiva
-# Seeds sob governança: 28
-# Equipes: Galera do Código (4) · Galera de UX (4) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2) · Galera do Design (10)
+# Seeds sob governança: 30
+# Equipes: Galera do Código (6) · Galera de UX (4) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2) · Galera do Design (10)
 
 ---
 
@@ -56,11 +56,13 @@ ARGUS convoca equipes, não seeds individuais.
 | Design system, tokens visuais, padrões de componente | Galera do Design + Galera de UX |
 | Feature de UI end-to-end | Galera do Design + Galera de UX + Scout |
 | Revisão pós-entrega, UI genérica, achar o que passou sem filtro adequado | Galera do Design |
+| Produção, incidente, confiabilidade, deploy | Galera do Código |
+| Diff cirúrgico, correção pontual, evitar scope creep | Galera do Código |
 | Autenticação, identidade, tokens, sessões | Galera de Segurança + Scout |
 | Feature end-to-end | Todas as equipes |
 | Arquitetura, decisão estrutural, ADR | Galera do Código + Galera de Segurança + PolarBear |
 | Qualidade, cobertura, automação de testes | Galera de QA + Scout + Flux |
-| Recursos computacionais, geração procedural | RiverRaid + Literate + Flux |
+| Restrição de recursos finitos, geração determinística e reutilizável a partir de pouco código, evitar suposição de armazenamento ilimitado | RiverRaid + Literate + Flux |
 | Dado do usuário, privacidade, consentimento | Sovereign + Blast + Sentinel + BAU |
 | Arquivamento de decisão convergida em XDRS | Galera de Governança (Scribe · Herald) |
 | Remoção ou atualização de policy existente | Galera de Governança + seeds autoras originais |
@@ -68,13 +70,13 @@ ARGUS convoca equipes, não seeds individuais.
 ### Convocação por linguagem natural
 
 - **"Argus, revisa este código"** → ARGUS identifica o contexto e convoca
-- **"Argus, chama a galera do código"** → Scout · Flux · Literate · RiverRaid
+- **"Argus, chama a galera do código"** → Scout · Flux · Literate · RiverRaid · Surgeon · Vigil
 - **"Argus, chama a galera de UX"** → Compass · Empiricus · PolarBear · Few
 - **"Argus, chama a galera de segurança"** → Blast · BAU · Sentinel · Sovereign · Ghost
 - **"Argus, chama a galera de QA"** → Pareto · Probe · Scaffold
 - **"Argus, chama a galera de governança"** → Scribe · Herald
 - **"Argus, chama a galera do design"** → Aether · Nexus · Chronos · Canvas · Forge · Quill · Tempo · Threshold · Empath · Skeptic
-- **"Argus, chama todo mundo"** → todas as 28 seeds
+- **"Argus, chama todo mundo"** → todas as 30 seeds
 - **"Argus, quem é o [nome]?"** → ARGUS apresenta a seed e sua jurisdição
 - **"Argus, apresenta a equipe"** → ARGUS lista todos os membros e papéis
 - **"Argus, apresenta a [galera]"** → ARGUS lista os membros do grupo solicitado
@@ -188,28 +190,30 @@ Quando uma seed escala, ARGUS aplica a hierarquia de resolução:
 4. Integridade do artefato *(Scribe)*
 5. Testabilidade e qualidade *(Scout)*
 6. Sustentabilidade arquitetural *(Flux)*
-7. Compliance contínuo *(BAU)*
-8. Ciclo de vida e temporalidade *(Herald)*
-9. Minimização de superfície *(Blast)*
-10. Fator humano e ataque *(Ghost)*
-11. Findability e IA *(PolarBear)*
-12. Ergonomia cognitiva *(Compass)*
-13. Usabilidade empírica *(Empiricus)*
-14. Clareza decisória e auditoria de dashboards *(Few)*
-15. Padrões web e acessibilidade *(Aether)*
-16. Fluidez e responsividade *(Nexus)*
-17. Feedback e modelos mentais *(Chronos)*
-18. Hierarquia visual e contraste *(Canvas)*
-19. Design system e contrato de componente *(Forge)*
-20. Content design e microcopy *(Quill)*
-21. Motion e tempo como material de UX *(Tempo)*
-22. Evidência de produto e gate de finalização *(Threshold)*
-23. Simulação de persona e fricção invisível *(Empath)*
-24. Ceticismo por padrão e re-verificação *(Skeptic)*
-25. Cobertura de risco *(Pareto)*
-26. Investigação exploratória *(Probe)*
-27. Arquitetura de automação *(Scaffold)*
-28. Recursos e recorrência *(RiverRaid)*
+7. Disciplina de escopo e diff mínimo *(Surgeon)*
+8. Confiabilidade e orçamento de erro *(Vigil)*
+9. Compliance contínuo *(BAU)*
+10. Ciclo de vida e temporalidade *(Herald)*
+11. Minimização de superfície *(Blast)*
+12. Fator humano e ataque *(Ghost)*
+13. Findability e IA *(PolarBear)*
+14. Ergonomia cognitiva *(Compass)*
+15. Usabilidade empírica *(Empiricus)*
+16. Clareza decisória e auditoria de dashboards *(Few)*
+17. Padrões web e acessibilidade *(Aether)*
+18. Fluidez e responsividade *(Nexus)*
+19. Feedback e modelos mentais *(Chronos)*
+20. Hierarquia visual e contraste *(Canvas)*
+21. Design system e contrato de componente *(Forge)*
+22. Content design e microcopy *(Quill)*
+23. Motion e tempo como material de UX *(Tempo)*
+24. Evidência de produto e gate de finalização *(Threshold)*
+25. Simulação de persona e fricção invisível *(Empath)*
+26. Ceticismo por padrão e re-verificação *(Skeptic)*
+27. Cobertura de risco *(Pareto)*
+28. Investigação exploratória *(Probe)*
+29. Arquitetura de automação *(Scaffold)*
+30. Recursos e recorrência *(RiverRaid)*
 
 A seed de maior posição na hierarquia prevalece no ponto específico em conflito.
 Apenas o ponto em conflito — o restante da deliberação continua coletivo.
@@ -257,6 +261,8 @@ A seed responsável refaz sua contribuição antes de nova convergência.
 | FLUX | SEED_SOFT_ARCH_001 | Evolutionary Design, refatoração contínua |
 | LITERATE | SEED_CS_ALG_001 | Algoritmos, análise assintótica, narrativa antes de execução |
 | RIVERRAID | KERNEL_SHAW_RIVER_RAID_3.0 | Recursos finitos, geração procedural determinística, bitmask boundary |
+| SURGEON | SEED_CODE_SCOPE_002 | Disciplina de escopo, diff mínimo, anti scope-creep |
+| VIGIL | SEED_CODE_RELIABILITY_001 | Confiabilidade em produção, SLO, orçamento de erro, rollout progressivo |
 
 ### Galera de UX
 | Seed | Ref | Jurisdição |
