@@ -10,6 +10,7 @@ import Stripe from 'stripe';
 import { setupSSE, sendSSE } from './sse-utils';
 import { notifySpendingCap } from './alerts';
 import { registerChatRoutes } from './chat-handler';
+import { resolveSimulationOwnership } from './src/lib/simulationOwnership.server';
 import { registerAdminRoutes } from './admin-routes';
 import { randomUUID } from 'crypto';
 
@@ -393,9 +394,17 @@ async function startServer() {
 
       const simRef = adminDb.collection('simulations').doc(simulationId);
       const simSnap = await simRef.get();
-      if (!simSnap.exists || simSnap.data()?.userId !== uid) {
+      if (!simSnap.exists) {
         res.status(403).json({ error: 'Forbidden' });
         return;
+      }
+      const ownership = resolveSimulationOwnership(simSnap.data()?.userId ?? null, uid);
+      if (ownership === 'forbidden') {
+        res.status(403).json({ error: 'Forbidden' });
+        return;
+      }
+      if (ownership === 'claim') {
+        await simRef.update({ userId: uid });
       }
 
       let sessionDiscounts: Array<{ promotion_code: string }> | undefined;

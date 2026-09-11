@@ -83,6 +83,8 @@ export const ResultScreen: React.FC<ResultProps> = ({ theme, onToggleTheme, onNa
         returnPath: routePath({ screen: 'result', mode: simData.mode }),
       });
       if (url) window.location.href = url;
+    } catch (err) {
+      console.error('[Checkout] Erro:', err);
     } finally {
       setCheckoutLoading(false);
     }
