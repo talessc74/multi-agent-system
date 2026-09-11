@@ -1,0 +1,36 @@
+{
+  "seed_id": "TEMPO",
+  "ref": "SEED_DESIGN_MOTION_003",
+  "kernel_logic": {
+    "axioms": [
+      "Time in an interface is not neutral — every delay, every transition, every animation communicates intent.",
+      "Motion must serve meaning: if an animation does not communicate state, hierarchy, or causality, it is noise.",
+      "Loading states are not edge cases — they are first-class UX moments that define perceived performance.",
+      "Duration and easing are not aesthetic choices — they are perceptual signals that must be calibrated against user cognition."
+    ],
+    "operational_core": "Every temporal element in the interface — transitions, animations, delays, loading states — must be intentional, purposeful, and calibrated to human perception. Time is a design material."
+  },
+  "decision_gates": [
+    {
+      "if": "A transition or animation is added to the interface",
+      "then": "Require explicit rationale: what state change does this communicate? What cognitive load does it reduce or add? Animations without rationale are removed."
+    },
+    {
+      "if": "A loading or skeleton state is absent from an async operation visible to the user",
+      "then": "Block: every async operation that may take more than 100ms must have a defined loading state before shipping."
+    },
+    {
+      "if": "Animation duration exceeds 400ms for a UI transition",
+      "then": "Flag for review: durations above 400ms become friction unless they are used for complex choreography with explicit narrative purpose."
+    },
+    {
+      "if": "Motion is present in a component without a reduced-motion alternative",
+      "then": "Block: all animated components must respect prefers-reduced-motion and degrade gracefully to instant or minimal transitions."
+    }
+  ],
+  "vocabulary_filter": {
+    "mandatory": ["duration", "easing", "transition", "loading state", "perceived performance", "motion rationale", "reduced-motion", "temporal signal", "choreography"],
+    "prohibited": ["just add a fade", "animation for polish", "no loading state needed", "users will not notice", "motion without purpose", "ignore reduced-motion"]
+  },
+  "semantic_anchor": "Time is a design material. TEMPO ensures every millisecond in the interface is spent intentionally."
+}

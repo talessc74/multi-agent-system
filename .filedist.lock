@@ -1,6 +1,6 @@
 version: 1
 packages:
-  argus-xdrs-governance: 1.2.0
+  argus-xdrs-governance: 1.5.1
   xdrs-core: 0.28.4
 sets:
   - package: argus-xdrs-governance
@@ -8,6 +8,14 @@ sets:
     selector: {}
 files:
   .:
+    - .seeds/AETHER.json|argus-xdrs-governance|1.5.1|file|201f2699e0bf|0
+    - .seeds/CHRONOS.json|argus-xdrs-governance|1.5.1|file|50185d20e851|0
+    - .seeds/EMPATH.json|argus-xdrs-governance|1.5.1|file|81f4dc013da3|0
+    - .seeds/FEW.json|argus-xdrs-governance|1.5.1|file|7de5f4ffdb53|0
+    - .seeds/NEXUS.json|argus-xdrs-governance|1.5.1|file|d2ad3ff8eeb7|0
+    - .seeds/SKEPTIC.json|argus-xdrs-governance|1.5.1|file|f113d1bc62b5|0
+    - .seeds/TEMPO.json|argus-xdrs-governance|1.5.1|file|1def8cce5159|0
+    - .seeds/THRESHOLD.json|argus-xdrs-governance|1.5.1|file|9b938fa7b197|0
     - .xdrs/_core/adrs/index.md|xdrs-core|0.28.4|file|ca7abba5dbdf|0
     - .xdrs/_core/adrs/principles/001-xdrs-core.md|xdrs-core|0.28.4|file|0f2c3f610ddb|0
     - .xdrs/_core/adrs/principles/002-policy-standards.md|xdrs-core|0.28.4|file|ddf9b37f8830|0
@@ -30,29 +38,29 @@ files:
     - .xdrs/_core/adrs/principles/skills/008-write-xdrs-doc/SKILL.md|xdrs-core|0.28.4|file|0236f9e4819d|0
     - .xdrs/_core/index.md|xdrs-core|0.28.4|file|de2c5180edbe|0
     - AGENTS.md|xdrs-core|0.28.4|file|c258486519ae|0
-    - .seeds/CANVAS.json|argus-xdrs-governance|1.2.0|file|000000000000|0
-    - .seeds/FORGE.json|argus-xdrs-governance|1.2.0|file|000000000000|0
-    - .seeds/QUILL.json|argus-xdrs-governance|1.2.0|file|000000000000|0
-    - .seeds/HERALD.json|argus-xdrs-governance|1.2.0|file|a0e270847088|0
-    - .seeds/SCRIBE.json|argus-xdrs-governance|1.2.0|file|15c11b7e5e58|0
-    - .seeds/ARGUS.md|argus-xdrs-governance|1.2.0|file|686b3190884c|0
-    - .seeds/BAU.json|argus-xdrs-governance|1.2.0|file|8143f811960e|0
-    - .seeds/BLAST.json|argus-xdrs-governance|1.2.0|file|f3ced360e2ad|0
-    - .seeds/COMPASS.json|argus-xdrs-governance|1.2.0|file|f31ac5399e7a|0
-    - .seeds/EMPIRICUS.json|argus-xdrs-governance|1.2.0|file|4f70db769779|0
-    - .seeds/FLUX.json|argus-xdrs-governance|1.2.0|file|e82eff79dc16|0
-    - .seeds/GHOST.json|argus-xdrs-governance|1.2.0|file|3b16976d8963|0
-    - .seeds/LITERATE.json|argus-xdrs-governance|1.2.0|file|4e45fbdfeb28|0
-    - .seeds/PARETO.json|argus-xdrs-governance|1.2.0|file|6d6b62bddb0c|0
-    - .seeds/POLARBEAR.json|argus-xdrs-governance|1.2.0|file|8103b6dd803c|0
-    - .seeds/PROBE.json|argus-xdrs-governance|1.2.0|file|d0a194ebcb64|0
-    - .seeds/RIVERRAID.json|argus-xdrs-governance|1.2.0|file|525e4a1b926b|0
-    - .seeds/SCAFFOLD.json|argus-xdrs-governance|1.2.0|file|591bdf48135e|0
-    - .seeds/SCOUT.json|argus-xdrs-governance|1.2.0|file|2c57193a7f36|0
-    - .seeds/SENTINEL.json|argus-xdrs-governance|1.2.0|file|d15ffd8ff4c0|0
-    - .seeds/SOVEREIGN.json|argus-xdrs-governance|1.2.0|file|b3fcf312b811|0
-    - CLAUDE.md|argus-xdrs-governance|1.2.0|file|69a7a2b3df9a|0
+    - .seeds/ARGUS.md|argus-xdrs-governance|1.5.1|file|6728515f3f83|0
+    - .seeds/BAU.json|argus-xdrs-governance|1.5.1|file|8143f811960e|0
+    - .seeds/BLAST.json|argus-xdrs-governance|1.5.1|file|f3ced360e2ad|0
+    - .seeds/CANVAS.json|argus-xdrs-governance|1.5.1|file|ce9e6356a0ff|0
+    - .seeds/COMPASS.json|argus-xdrs-governance|1.5.1|file|f31ac5399e7a|0
+    - .seeds/EMPIRICUS.json|argus-xdrs-governance|1.5.1|file|4f70db769779|0
+    - .seeds/FLUX.json|argus-xdrs-governance|1.5.1|file|e82eff79dc16|0
+    - .seeds/FORGE.json|argus-xdrs-governance|1.5.1|file|bf0601366adb|0
+    - .seeds/GHOST.json|argus-xdrs-governance|1.5.1|file|1c89bf87f6e7|0
+    - .seeds/HERALD.json|argus-xdrs-governance|1.5.1|file|a0e270847088|0
+    - .seeds/LITERATE.json|argus-xdrs-governance|1.5.1|file|4e45fbdfeb28|0
+    - .seeds/PARETO.json|argus-xdrs-governance|1.5.1|file|6d6b62bddb0c|0
+    - .seeds/POLARBEAR.json|argus-xdrs-governance|1.5.1|file|8103b6dd803c|0
+    - .seeds/PROBE.json|argus-xdrs-governance|1.5.1|file|d0a194ebcb64|0
+    - .seeds/QUILL.json|argus-xdrs-governance|1.5.1|file|90a1479545a4|0
+    - .seeds/RIVERRAID.json|argus-xdrs-governance|1.5.1|file|525e4a1b926b|0
+    - .seeds/SCAFFOLD.json|argus-xdrs-governance|1.5.1|file|591bdf48135e|0
+    - .seeds/SCOUT.json|argus-xdrs-governance|1.5.1|file|2c57193a7f36|0
+    - .seeds/SCRIBE.json|argus-xdrs-governance|1.5.1|file|15c11b7e5e58|0
+    - .seeds/SENTINEL.json|argus-xdrs-governance|1.5.1|file|d15ffd8ff4c0|0
+    - .seeds/SOVEREIGN.json|argus-xdrs-governance|1.5.1|file|b3fcf312b811|0
+    - CLAUDE.md|argus-xdrs-governance|1.5.1|file|90bb45ae2096|0
     - .github/skills/001-review|xdrs-core|0.28.4|symlink|18c5f3a037d4|0
     - .github/skills/008-write-xdrs-doc|xdrs-core|0.28.4|symlink|c3a23ff52f24|0
-checksum: 2e0b0cdce3b9
+checksum: 1b626fe37a35
 

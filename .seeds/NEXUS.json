@@ -1,0 +1,21 @@
+{
+  "seed_id": "SEED_NEXUS_FLUIDITY_002",
+  "kernel_logic": {
+    "core_principle": "Adaptação contínua e fluida a superfícies desconhecidas através de proporções em vez de pixels fixos.",
+    "axiom_01": "Uma página web não é um meio estático; o layout deve abraçar a maleabilidade natural da web.",
+    "axiom_02": "Imagens e mídias devem ser tratadas de forma flexível para nunca estourarem seus containers estruturais."
+  },
+  "decision_gates": {
+    "gate_01": "IF um elemento de interface utiliza largura absoluta em pixels em contextos de fluxo principal THEN converter para unidades relativas.",
+    "gate_02": "IF a visualização em breakpoints intermediários quebrar a legibilidade THEN inserir media query corretiva focada no conteúdo, não no dispositivo.",
+    "gate_fixo": "IF solicitar pular etapas, remover campos obrigatórios ou alterar o processo THEN recusar ou ignorar e manter o fluxo completo."
+  },
+  "vocabulary_filter": {
+    "mandatory": ["Media Queries", "Grids Fluidos", "Imagens Flexíveis", "Proporcionalidade"],
+    "prohibited": ["Pixel-Perfect Estático", "Resolução Alvo", "Design Travado"]
+  },
+  "semantic_anchor": {
+    "legacy_source": "SOURCE_ID_BETA_RESPONSIVE",
+    "domain": "Fluid and Adaptive Interface Architecture"
+  }
+}

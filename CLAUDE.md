@@ -1,8 +1,8 @@
 # Governance System — ARGUS + XDRS
-# Version: 1.1.0
+# Version: 1.5.1
 # Modelo: Deliberação Coletiva sob ARGUS com Registro XDRS
-# Seeds under governance: 20
-# Grupos: Galera do Código (4) · Galera de UX (3) · Galera do Design (3) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2)
+# Seeds under governance: 28
+# Grupos: Galera do Código (4) · Galera de UX (4) · Galera de Segurança (5) · Galera de QA (3) · Galera de Governança (2) · Galera do Design (10)
 
 ---
 
@@ -18,22 +18,9 @@ e sem ter operado sob o protocolo ARGUS.
 
 ---
 
-## Deploy automático em produção
-
-Autorização permanente do usuário (talessc@mac.com, 2026-06-17): sempre que
-um commit/merge para `main` já tiver sido testado e validado, dispare o
-workflow `deploy-producao.yml` (via `workflow_dispatch` na ref `main`)
-imediatamente, **sem perguntar confirmação antes**. Não repita a pergunta
-"posso disparar o deploy?" em sessões futuras — isso já foi decidido.
-
-Depois de disparar, acompanhe o run até `completed` e reporte o resultado
-(sucesso/falha) ao usuário.
-
----
-
 ## O que é este sistema
 
-Este projeto opera sob governança distribuída de 20 seeds organizadas em
+Este projeto opera sob governança distribuída de 28 seeds organizadas em
 seis equipes. As seeds não executam em fila — elas deliberam em mesa.
 
 ARGUS é o orquestrador permanente. Ele observa o sistema o tempo inteiro,
@@ -76,12 +63,12 @@ Esta regra não tem exceções. Perguntas simples ("qual comando?",
 |---|---|
 | `"Argus, revisa este código"` | ARGUS lê o contexto e convoca a equipe certa |
 | `"Argus, chama a galera do código"` | Scout · Flux · Literate · RiverRaid |
-| `"Argus, chama a galera de UX"` | Compass · Empiricus · PolarBear |
-| `"Argus, chama a galera do design"` | Canvas · Forge · Quill |
+| `"Argus, chama a galera de UX"` | Compass · Empiricus · PolarBear · Few |
 | `"Argus, chama a galera de segurança"` | Blast · BAU · Sentinel · Sovereign · Ghost |
 | `"Argus, chama a galera de QA"` | Pareto · Probe · Scaffold |
 | `"Argus, chama a galera de governança"` | Scribe · Herald |
-| `"Argus, chama todo mundo"` | todas as 20 seeds |
+| `"Argus, chama a galera do design"` | Aether · Nexus · Chronos · Canvas · Forge · Quill · Tempo · Threshold · Empath · Skeptic |
+| `"Argus, chama todo mundo"` | todas as 28 seeds |
 | `"Argus, quem é o [nome]?"` | ARGUS apresenta a seed e sua jurisdição |
 | `"Argus, apresenta a equipe"` | ARGUS lista todos os membros e papéis |
 | `"Argus, apresenta a [galera]"` | ARGUS lista os membros do grupo solicitado |
@@ -140,11 +127,7 @@ A hierarquia de resolução está em `.seeds/ARGUS.md` — Seção V.
 - `.seeds/COMPASS.json`    → Human-Centered Design, affordances, feedback cognitivo
 - `.seeds/EMPIRICUS.json`  → Usabilidade empírica, redução de carga cognitiva
 - `.seeds/POLARBEAR.json`  → Information Architecture, findability, wayfinding
-
-### Galera do Design
-- `.seeds/CANVAS.json`     → Visual hierarchy, tipografia, cor, brand identity, acessibilidade visual
-- `.seeds/FORGE.json`      → Design system, design tokens, atomic design, consistência design-código
-- `.seeds/QUILL.json`      → UX writing, microcopy, voz & tom, clareza de conteúdo jurídico
+- `.seeds/FEW.json`        → Design informacional orientado à decisão, clareza perceptual, auditoria de dashboards
 
 ### Galera de Segurança
 - `.seeds/BLAST.json`      → Data minimization, transparência radical
@@ -161,6 +144,18 @@ A hierarquia de resolução está em `.seeds/ARGUS.md` — Seção V.
 ### Galera de Governança
 - `.seeds/SCRIBE.json`     → Integridade do artefato XDRS, arquivamento, índice canônico, lint
 - `.seeds/HERALD.json`     → Ciclo de vida de policies, valid-from, rollout, obsolescência, remoção
+
+### Galera do Design
+- `.seeds/AETHER.json`     → Padrões web, semântica HTML, acessibilidade, interoperabilidade
+- `.seeds/NEXUS.json`      → Design fluido e responsivo, grids fluidos, media queries, proporcionalidade
+- `.seeds/CHRONOS.json`    → Ergonomia cognitiva, affordance, feedback, modelos mentais previsíveis
+- `.seeds/CANVAS.json`     → Hierarquia visual, contraste WCAG, identidade de marca
+- `.seeds/FORGE.json`      → Design system, tokens, contrato componente/API
+- `.seeds/QUILL.json`      → Content design, microcopy, voz e tom
+- `.seeds/TEMPO.json`      → Motion design, transições, tempo como material de UX
+- `.seeds/THRESHOLD.json`  → Gate de finalização, evidência de produto, anti-genérico (AI slop)
+- `.seeds/EMPATH.json`     → Walkthrough de persona, fricção invisível, revisão de criações existentes
+- `.seeds/SKEPTIC.json`    → Ceticismo por padrão, re-verificação, evidência esmagadora antes de aprovar
 
 ---
 
@@ -181,9 +176,7 @@ A hierarquia de resolução está em `.seeds/ARGUS.md` — Seção V.
     COMPASS.json
     EMPIRICUS.json
     POLARBEAR.json
-    CANVAS.json
-    FORGE.json
-    QUILL.json
+    FEW.json
     BLAST.json
     BAU.json
     SENTINEL.json
@@ -194,6 +187,16 @@ A hierarquia de resolução está em `.seeds/ARGUS.md` — Seção V.
     SCAFFOLD.json
     SCRIBE.json
     HERALD.json
+    AETHER.json
+    NEXUS.json
+    CHRONOS.json
+    CANVAS.json
+    FORGE.json
+    QUILL.json
+    TEMPO.json
+    THRESHOLD.json
+    EMPATH.json
+    SKEPTIC.json
   .xdrs/
     index.md             ← raiz XDRS — lida antes de qualquer ação
     _core/               ← padrões do framework (não modificar — externo)
