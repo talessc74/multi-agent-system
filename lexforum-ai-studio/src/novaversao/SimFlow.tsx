@@ -34,7 +34,7 @@ export const SimFlow: React.FC<SimFlowProps> = ({ theme, onToggleTheme, onNaviga
     return <ConfirmScreen theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} simData={simData} />;
   }
   if (route.screen === 'simulating') {
-    return <SimulatingScreen theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} simData={simData} setSimData={setSimData} />;
+    return <SimulatingScreen theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} simData={simData} setSimData={setSimData} user={user} />;
   }
   return (
     <ResultScreen

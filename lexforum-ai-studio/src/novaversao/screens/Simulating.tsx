@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import type { User } from 'firebase/auth';
 import { MODE_CONFIG } from '../../config/modeConfig';
 import { simulateForum, simulateMode5, generateReport } from '../../lib/gemini';
+import { saveSimulation } from '../../services/dbService';
 import type { SimulationResult } from '../../types';
 import { Nav } from '../components/Nav';
 import type { NvRoute } from '../router';
@@ -14,6 +16,7 @@ interface SimulatingProps {
   onNavigate: (route: NvRoute) => void;
   simData: SimData;
   setSimData: React.Dispatch<React.SetStateAction<SimData>>;
+  user: User | null;
 }
 
 const themeColor = (cfg: (typeof MODE_CONFIG)[number], theme: 'dark' | 'light') =>
@@ -26,7 +29,7 @@ const STAGES = [
   { key: 'REVIEWING', label: 'Revisando fundamentos' },
 ];
 
-export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleTheme, onNavigate, simData, setSimData }) => {
+export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleTheme, onNavigate, simData, setSimData, user }) => {
   const cfg = MODE_CONFIG[simData.mode];
   const color = themeColor(cfg, theme);
   const [step, setStep] = useState('WRITING');
@@ -54,8 +57,30 @@ export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleThe
         simData.specificJudge,
         (s) => setStep(s)
       )
-        .then((result) => {
+        .then(async (result) => {
           setSimData((prev) => ({ ...prev, mode5Result: result }));
+
+          const mode5SimResult: SimulationResult = {
+            area: simData.detectedArea ?? 'OTHER',
+            rounds: [],
+            finalSuccessProbability: result.successProbability,
+            lawyerAgentName: undefined,
+            judgeAgentName: result.judgeAgentName,
+          };
+          try {
+            const simId = await saveSimulation(user?.uid || null, simData.caseDescription, mode5SimResult, null, null, {
+              successProbability: result.successProbability,
+              recommendation: result.recommendation,
+              strategistAnalysis: result.strategistAnalysis,
+              reasoning: result.reasoning,
+              subCase: simData.mode5SubCase,
+              judgeAgentName: result.judgeAgentName,
+            });
+            setSimData((prev) => ({ ...prev, simulationId: simId }));
+          } catch (e) {
+            console.error('[Simulating] saveSimulation (mode5) falhou:', e);
+          }
+
           onNavigate({ screen: 'result', mode: simData.mode });
         })
         .catch((err) => setError(parseGeminiError(err)));
@@ -101,6 +126,28 @@ export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleThe
           // generateReport não pode bloquear a exibição do resultado
         }
         setSimData((prev) => ({ ...prev, report }));
+
+        // Salva a simulação para obter o simulationId — sem ele o botão
+        // "Desbloquear" na tela de Resultado não tem o que enviar ao
+        // checkout. Falha aqui não pode bloquear a exibição do resultado,
+        // mesma regra de isolamento de App.tsx (handleSimulate).
+        try {
+          const simId = await saveSimulation(
+            user?.uid || null,
+            simData.caseDescription,
+            finalData,
+            simData.caseSummary,
+            report,
+            null,
+            simData.mode,
+            simData.userSide ?? null,
+            simData.userPole ?? null
+          );
+          setSimData((prev) => ({ ...prev, simulationId: simId }));
+        } catch (e) {
+          console.error('[Simulating] saveSimulation falhou:', e);
+        }
+
         onNavigate({ screen: 'result', mode: simData.mode });
       })
       .catch((err) => setError(parseGeminiError(err)));
