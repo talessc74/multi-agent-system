@@ -5,11 +5,16 @@ import {
   hasUserPaidForSession,
   registrarAcessoLaudo,
   getSimulationById,
+  getUserAccessLevel,
 } from '../../services/dbService';
+import { getChatStatus, getChatHistory, createChatCheckoutSession, sendChatMessage } from '../../services/chatService';
+import type { SheetState } from '../../components/ChatPanel';
+import type { ChatMessage } from '../../types';
 import { initiateCheckout } from '../../services/checkoutService';
 import { Nav } from '../components/Nav';
 import { NvLink } from '../components/NvLink';
 import { RedactedText } from '../components/RedactedText';
+import { ChatSheet } from '../components/ChatSheet';
 import type { NvRoute } from '../router';
 import type { SimData } from '../simState';
 import { routePath } from '../router';
@@ -33,6 +38,12 @@ export const ResultScreen: React.FC<ResultProps> = ({ theme, onToggleTheme, onNa
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const [showPromo, setShowPromo] = useState(false);
+  const [chatSheetState, setChatSheetState] = useState<SheetState>('closed');
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatQuestionsUsed, setChatQuestionsUsed] = useState(0);
+  const [chatQuestionsLimit, setChatQuestionsLimit] = useState(5);
+  const [chatIsSending, setChatIsSending] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
 
   const isMode5 = simData.mode === 5;
   const bestRound = simData.simulation?.rounds?.length
@@ -70,6 +81,74 @@ export const ResultScreen: React.FC<ResultProps> = ({ theme, onToggleTheme, onNa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  // Beta (BDR-003): accessLevel === 'beta' libera laudo e chat sem pagar,
+  // para todo simulação, sem exceção — mesma regra de App.tsx.
+  useEffect(() => {
+    if (!user) return;
+    getUserAccessLevel(user.uid).then((level) => {
+      if (level === 'beta') setSimData((prev) => ({ ...prev, isUnlocked: true }));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  const handleOpenChat = async () => {
+    if (!simData.simulationId) return;
+    setChatError(null);
+    try {
+      const status = await getChatStatus(simData.simulationId);
+      if (!status.isPaid) {
+        const url = await createChatCheckoutSession(simData.simulationId);
+        window.location.href = url;
+        return;
+      }
+      // Recarrega o histórico real a cada abertura — se o usuário já
+      // conversou antes (nesta sessão ou em outra), as perguntas e
+      // respostas anteriores aparecem.
+      const history = await getChatHistory(simData.simulationId);
+      setChatMessages(history);
+      setChatQuestionsUsed(status.questionsUsed);
+      setChatQuestionsLimit(status.questionsLimit);
+      setChatSheetState('half');
+    } catch (err) {
+      console.error('[Chat] Erro ao abrir chat:', err);
+      setChatError('Não foi possível abrir o chat. Tente novamente.');
+    }
+  };
+
+  const handleSendChatMessage = async (agentType: 'lawyer' | 'judge', message: string) => {
+    if (!simData.simulationId || chatIsSending) return;
+    setChatError(null);
+    const userMsg: ChatMessage = { role: 'user', content: message, agentType, agentName: 'Você', timestamp: Date.now() };
+    setChatMessages((prev) => [...prev, userMsg]);
+    setChatIsSending(true);
+    try {
+      await sendChatMessage(simData.simulationId, agentType, message, (event) => {
+        if (event.type === 'message' && event.content) {
+          const agentMsg: ChatMessage = {
+            role: 'agent',
+            content: event.content,
+            agentType: event.agentType ?? agentType,
+            agentName: event.agentName ?? agentType,
+            timestamp: Date.now(),
+          };
+          setChatMessages((prev) => [...prev, agentMsg]);
+          if (event.questionsRemaining !== undefined) {
+            setChatQuestionsUsed((u) => u + 1);
+          }
+        } else if (event.type === 'error') {
+          setChatError(event.message ?? 'Erro ao enviar mensagem. Tente novamente.');
+          setChatMessages((prev) => prev.slice(0, -1));
+        }
+      });
+    } catch (err) {
+      console.error('[Chat] Erro ao enviar mensagem:', err);
+      setChatError('Erro ao enviar mensagem. Tente novamente.');
+      setChatMessages((prev) => prev.slice(0, -1));
+    } finally {
+      setChatIsSending(false);
+    }
+  };
+
   const handleUnlock = async () => {
     if (!user) {
       onRequireLogin();
@@ -92,7 +171,7 @@ export const ResultScreen: React.FC<ResultProps> = ({ theme, onToggleTheme, onNa
 
   return (
     <>
-      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} />
+      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} />
       <div className="nv-container" style={{ padding: '40px 40px 60px', maxWidth: 760 }}>
         <p className="nv-kicker" style={{ marginBottom: 8 }}>
           Modo {String(simData.mode).padStart(2, '0')} · {cfg.headline}
@@ -267,10 +346,19 @@ export const ResultScreen: React.FC<ResultProps> = ({ theme, onToggleTheme, onNa
                 )}
               </>
             )}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 22, marginTop: 40 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 22, marginTop: 40, flexWrap: 'wrap' }}>
               <button type="button" onClick={() => window.print()} style={{ fontFamily: 'var(--nv-mono)', fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', background: 'var(--nv-ink)', color: 'var(--nv-paper)', border: 'none', borderRadius: 2, padding: '15px 26px', cursor: 'pointer' }}>
                 Baixar PDF
               </button>
+              {user && (
+                <button
+                  type="button"
+                  onClick={handleOpenChat}
+                  style={{ fontFamily: 'var(--nv-mono)', fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', background: 'transparent', color: 'var(--nv-ink)', border: '1px solid var(--nv-line-2)', borderRadius: 2, padding: '15px 26px', cursor: 'pointer' }}
+                >
+                  Falar com os agentes
+                </button>
+              )}
               <NvLink to={{ screen: 'home' }} onNavigate={onNavigate} style={{ fontFamily: 'var(--nv-mono)', fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--nv-ink-2)', textDecoration: 'underline' }}>
                 Nova simulação
               </NvLink>
@@ -283,6 +371,24 @@ export const ResultScreen: React.FC<ResultProps> = ({ theme, onToggleTheme, onNa
           aconselhamento jurídico profissional. Não garante resultado judicial.
         </p>
       </div>
+
+      {simData.isUnlocked && user && (
+        <ChatSheet
+          lawyerName={simData.simulation?.lawyerAgentName ?? 'Advogado'}
+          judgeName={simData.simulation?.judgeAgentName ?? 'Juiz'}
+          area={simData.detectedArea ?? cfg.headline}
+          color={color}
+          sheetState={chatSheetState}
+          onSheetChange={setChatSheetState}
+          messages={chatMessages}
+          questionsUsed={chatQuestionsUsed}
+          questionsLimit={chatQuestionsLimit}
+          isSending={chatIsSending}
+          onSend={handleSendChatMessage}
+          error={chatError}
+          onClearError={() => setChatError(null)}
+        />
+      )}
     </>
   );
 };

@@ -12,6 +12,14 @@ vi.mock('../services/dbService', () => ({
   hasUserPaidForSession: vi.fn().mockResolvedValue(false),
   registrarAcessoLaudo: vi.fn(),
   getSimulationById: vi.fn(),
+  getUserAccessLevel: vi.fn().mockResolvedValue('free'),
+}));
+
+vi.mock('../services/chatService', () => ({
+  getChatStatus: vi.fn(),
+  getChatHistory: vi.fn(),
+  createChatCheckoutSession: vi.fn(),
+  sendChatMessage: vi.fn(),
 }));
 
 beforeEach(() => {
