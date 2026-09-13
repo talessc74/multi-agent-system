@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { User } from 'firebase/auth';
 import { MODE_CONFIG } from '../../config/modeConfig';
 import { simulateForum, simulateMode5, generateReport } from '../../lib/gemini';
-import { saveSimulation } from '../../services/dbService';
+import { saveSimulation, subscribeSimRecovery, getSimRecovery } from '../../services/dbService';
 import type { SimulationResult } from '../../types';
 import { Nav } from '../components/Nav';
 import type { NvRoute } from '../router';
@@ -35,12 +35,131 @@ export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleThe
   const [step, setStep] = useState('WRITING');
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<SimError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const startedRef = useRef(false);
+
+  // Recuperação de simulação: se a conexão SSE cair e simulateForum esgotar
+  // as 3 tentativas, mas o servidor tiver terminado o processamento mesmo
+  // assim, recuperamos o resultado em vez de descartar o trabalho já feito
+  // — mesmo mecanismo de App.tsx (startRecovery/displayRecoveredResult).
+  const recoverySessionIdRef = useRef<string | null>(null);
+  const recoveryUnsubRef = useRef<(() => void) | null>(null);
+  const isRecoveringRef = useRef(false);
+  const simAbortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setElapsed((e) => e + 1), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    return () => {
+      simAbortRef.current?.abort();
+      recoveryUnsubRef.current?.();
+    };
+  }, []);
+
+  const finishForumSimulation = async (result: SimulationResult) => {
+    if (isRecoveringRef.current) return;
+    isRecoveringRef.current = true;
+    try {
+      // Melhor rodada: modo 4 defesa quer a MENOR probabilidade do autor
+      // (= melhor para a defesa); todo o resto quer a maior. Mesma regra
+      // de App.tsx (handleSimulate).
+      const isDefenseMode = simData.mode === 4 && simData.userSide === 'DEFENSE';
+      let bestRound = result.rounds[0];
+      for (const round of result.rounds) {
+        if (isDefenseMode ? round.successProbability <= bestRound.successProbability : round.successProbability >= bestRound.successProbability) {
+          bestRound = round;
+        }
+      }
+      const finalData: SimulationResult = { ...result, finalSuccessProbability: bestRound.successProbability };
+      setSimData((prev) => ({ ...prev, simulation: finalData }));
+
+      let report = null;
+      try {
+        const clientSide = simData.userSide ?? (simData.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
+        report = await generateReport(bestRound.lawyerPetition, bestRound.judgeJudgment, clientSide);
+      } catch {
+        // generateReport não pode bloquear a exibição do resultado
+      }
+      setSimData((prev) => ({ ...prev, report }));
+
+      // Salva a simulação para obter o simulationId — sem ele o botão
+      // "Desbloquear" na tela de Resultado não tem o que enviar ao
+      // checkout. Falha aqui não pode bloquear a exibição do resultado,
+      // mesma regra de isolamento de App.tsx (handleSimulate).
+      try {
+        const simId = await saveSimulation(
+          user?.uid || null,
+          simData.caseDescription,
+          finalData,
+          simData.caseSummary,
+          report,
+          null,
+          simData.mode,
+          simData.userSide ?? null,
+          simData.userPole ?? null
+        );
+        setSimData((prev) => ({ ...prev, simulationId: simId }));
+      } catch (e) {
+        console.error('[Simulating] saveSimulation falhou:', e);
+      }
+
+      onNavigate({ screen: 'result', mode: simData.mode });
+    } finally {
+      isRecoveringRef.current = false;
+    }
+  };
+
+  const startRecovery = (sessionId: string) => {
+    setStep('RECOVERING');
+    setRetryCount(0);
+
+    const unsubscribe = subscribeSimRecovery(sessionId, (status, result) => {
+      if (status === 'complete' && result?.rounds?.length) {
+        recoveryUnsubRef.current?.();
+        recoveryUnsubRef.current = null;
+        finishForumSimulation(result as SimulationResult);
+      } else if (status === 'error') {
+        recoveryUnsubRef.current?.();
+        recoveryUnsubRef.current = null;
+        setError(parseGeminiError(new Error('Simulação encerrada com erro no servidor.')));
+      }
+    });
+    recoveryUnsubRef.current = unsubscribe;
+
+    setTimeout(() => {
+      if (!recoveryUnsubRef.current) return;
+      recoveryUnsubRef.current();
+      recoveryUnsubRef.current = null;
+      setError({
+        message: 'Sua conexão caiu durante a simulação. Não foi possível recuperar o resultado. Seus dados estão preservados — tente novamente.',
+        isQuota: false,
+        isRetryable: true,
+      });
+    }, 5 * 60 * 1000);
+  };
+
+  // Safari: quando a aba volta a ficar visível, confere o Firestore na hora
+  // em vez de esperar o listener do onSnapshot acordar.
+  useEffect(() => {
+    const handleVisibility = async () => {
+      if (document.visibilityState !== 'visible') return;
+      if (step !== 'RECOVERING') return;
+      const sessionId = recoverySessionIdRef.current;
+      if (!sessionId) return;
+      const recovery = await getSimRecovery(sessionId);
+      if (recovery?.status === 'complete' && recovery.result?.rounds?.length) {
+        recoveryUnsubRef.current?.();
+        recoveryUnsubRef.current = null;
+        finishForumSimulation(recovery.result as SimulationResult);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
 
   const run = () => {
     setError(null);
@@ -87,70 +206,43 @@ export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleThe
       return;
     }
 
+    recoverySessionIdRef.current = null;
+    setRetryCount(0);
+    simAbortRef.current = new AbortController();
+
     simulateForum(
       simData.caseDescription,
       simData.detectedArea ?? 'OTHER',
       simData.attachments,
       simData.specificJudge,
-      (s) => {
+      (s, progressData) => {
         setStep(s);
-        if (s === 'IDLE') return;
+        // Só captura o sessionId da primeira tentativa — retries geram
+        // novas sessões no servidor (mesma regra de App.tsx).
+        if (s === 'SEED_CREATED' && progressData?.sessionId && !recoverySessionIdRef.current) {
+          recoverySessionIdRef.current = progressData.sessionId;
+        }
       },
       simData.mode,
       simData.defenseDescription,
       simData.defenseAttachments,
-      simData.userSide
+      simData.userSide,
+      (attempt) => setRetryCount(attempt),
+      simAbortRef.current.signal
     )
-      .then(async (result: SimulationResult) => {
+      .then((result: SimulationResult) => {
         if (!result.rounds || result.rounds.length === 0) {
           throw new Error('Simulação retornou sem rodadas. Tente novamente.');
         }
-        // Melhor rodada: modo 4 defesa quer a MENOR probabilidade do autor
-        // (= melhor para a defesa); todo o resto quer a maior. Mesma regra
-        // de App.tsx (handleSimulate).
-        const isDefenseMode = simData.mode === 4 && simData.userSide === 'DEFENSE';
-        let bestRound = result.rounds[0];
-        for (const round of result.rounds) {
-          if (isDefenseMode ? round.successProbability <= bestRound.successProbability : round.successProbability >= bestRound.successProbability) {
-            bestRound = round;
-          }
-        }
-        const finalData: SimulationResult = { ...result, finalSuccessProbability: bestRound.successProbability };
-        setSimData((prev) => ({ ...prev, simulation: finalData }));
-
-        let report = null;
-        try {
-          const clientSide = simData.userSide ?? (simData.userPole === 'REU' ? 'DEFENSE' : 'AUTHOR');
-          report = await generateReport(bestRound.lawyerPetition, bestRound.judgeJudgment, clientSide);
-        } catch {
-          // generateReport não pode bloquear a exibição do resultado
-        }
-        setSimData((prev) => ({ ...prev, report }));
-
-        // Salva a simulação para obter o simulationId — sem ele o botão
-        // "Desbloquear" na tela de Resultado não tem o que enviar ao
-        // checkout. Falha aqui não pode bloquear a exibição do resultado,
-        // mesma regra de isolamento de App.tsx (handleSimulate).
-        try {
-          const simId = await saveSimulation(
-            user?.uid || null,
-            simData.caseDescription,
-            finalData,
-            simData.caseSummary,
-            report,
-            null,
-            simData.mode,
-            simData.userSide ?? null,
-            simData.userPole ?? null
-          );
-          setSimData((prev) => ({ ...prev, simulationId: simId }));
-        } catch (e) {
-          console.error('[Simulating] saveSimulation falhou:', e);
-        }
-
-        onNavigate({ screen: 'result', mode: simData.mode });
+        return finishForumSimulation(result);
       })
-      .catch((err) => setError(parseGeminiError(err)));
+      .catch((err) => {
+        if (err?.message === 'MAX_RETRIES_EXCEEDED' && recoverySessionIdRef.current) {
+          startRecovery(recoverySessionIdRef.current);
+          return;
+        }
+        setError(parseGeminiError(err));
+      });
   };
 
   useEffect(() => {
@@ -164,7 +256,7 @@ export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleThe
 
   return (
     <>
-      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} />
+      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} />
       <div className="nv-container" style={{ padding: '48px 40px 60px', maxWidth: 640 }}>
         <p className="nv-kicker" style={{ marginBottom: 8 }}>01</p>
         <h1 style={{ fontFamily: 'var(--nv-serif)', fontStyle: 'italic', fontWeight: 500, fontSize: 28, color: 'var(--nv-ink)', margin: '0 0 8px' }}>
@@ -215,6 +307,24 @@ export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleThe
             }}
           />
         </div>
+
+        {step === 'RECOVERING' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--nv-line)', padding: '12px 16px', marginTop: 20 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
+            <span style={{ fontFamily: 'var(--nv-mono)', fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--nv-ink-2)' }}>
+              Verificando sua simulação…
+            </span>
+          </div>
+        )}
+
+        {retryCount > 0 && step !== 'RECOVERING' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--nv-line)', padding: '12px 16px', marginTop: 20 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
+            <span style={{ fontFamily: 'var(--nv-mono)', fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--nv-ink-2)' }}>
+              Reconectando, tentativa {retryCount} de 3
+            </span>
+          </div>
+        )}
 
         {error && (
           <div style={{ border: `1px solid var(--nv-red)`, background: 'var(--nv-red-soft)', padding: '16px 18px', marginTop: 28 }}>

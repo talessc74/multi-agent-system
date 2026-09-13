@@ -20,8 +20,16 @@ vi.mock('../lib/gemini', () => ({
   generateReport: generateReportMock,
 }));
 
-const { saveSimulationMock } = vi.hoisted(() => ({ saveSimulationMock: vi.fn() }));
-vi.mock('../services/dbService', () => ({ saveSimulation: saveSimulationMock }));
+const { saveSimulationMock, subscribeSimRecoveryMock, getSimRecoveryMock } = vi.hoisted(() => ({
+  saveSimulationMock: vi.fn(),
+  subscribeSimRecoveryMock: vi.fn((_sessionId: string, _onChange: (status: string, result?: any) => void) => () => {}),
+  getSimRecoveryMock: vi.fn(),
+}));
+vi.mock('../services/dbService', () => ({
+  saveSimulation: saveSimulationMock,
+  subscribeSimRecovery: subscribeSimRecoveryMock,
+  getSimRecovery: getSimRecoveryMock,
+}));
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -140,5 +148,101 @@ describe('SimulatingScreen — saveSimulation garante simulationId', () => {
 
     await waitFor(() => expect(onNavigate).toHaveBeenCalledWith({ screen: 'result', mode: 1 }));
     expect(latest.simulationId).toBeNull();
+  });
+});
+
+// Regressão: App.tsx recupera o resultado via simRecovery/{sessionId} quando
+// a conexão SSE cai 3x mas o servidor terminou o processamento mesmo assim.
+// Simulating.tsx não tinha nenhuma versão disso — MAX_RETRIES_EXCEEDED
+// sempre virava um erro final, mesmo quando o trabalho já estava pronto.
+describe('SimulatingScreen — recuperação de simulação (MAX_RETRIES_EXCEEDED)', () => {
+  it('assina simRecovery/{sessionId} e recupera o resultado quando o status vira "complete"', async () => {
+    simulateForumMock.mockImplementation((_d: any, _a: any, _att: any, _j: any, onProgress: any) => {
+      onProgress('SEED_CREATED', { sessionId: 'sess-recuperada' });
+      return Promise.reject(new Error('MAX_RETRIES_EXCEEDED'));
+    });
+    subscribeSimRecoveryMock.mockImplementation((sessionId: string, onChange: any) => {
+      expect(sessionId).toBe('sess-recuperada');
+      onChange('complete', { rounds: [{ lawyerPetition: 'p', judgeJudgment: 'j', successProbability: 65 }] });
+      return () => {};
+    });
+    generateReportMock.mockResolvedValue(null);
+    saveSimulationMock.mockResolvedValue('sim-recovered');
+
+    let latest: SimData = initialSimData(1);
+    latest.caseDescription = 'descrição válida para recuperação de sessão';
+    const onNavigate = vi.fn();
+    const setSimData = (fn: (prev: SimData) => SimData) => {
+      latest = fn(latest);
+    };
+
+    render(
+      <SimulatingScreen
+        theme="light"
+        onToggleTheme={() => {}}
+        onNavigate={onNavigate}
+        simData={latest}
+        setSimData={setSimData as any}
+        user={null}
+      />
+    );
+
+    await waitFor(() => expect(subscribeSimRecoveryMock).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(onNavigate).toHaveBeenCalledWith({ screen: 'result', mode: 1 }));
+    expect(latest.simulationId).toBe('sim-recovered');
+  });
+
+  it('sem sessionId capturado, MAX_RETRIES_EXCEEDED vira o erro final normal (sem tentar recuperar)', async () => {
+    simulateForumMock.mockRejectedValue(new Error('MAX_RETRIES_EXCEEDED'));
+
+    let latest: SimData = initialSimData(1);
+    latest.caseDescription = 'descrição válida sem sessionId nenhum';
+    const setSimData = (fn: (prev: SimData) => SimData) => {
+      latest = fn(latest);
+    };
+
+    const { findByText } = render(
+      <SimulatingScreen
+        theme="light"
+        onToggleTheme={() => {}}
+        onNavigate={() => {}}
+        simData={latest}
+        setSimData={setSimData as any}
+        user={null}
+      />
+    );
+
+    await findByText(/tentamos reconectar 3 vezes/i);
+    expect(subscribeSimRecoveryMock).not.toHaveBeenCalled();
+  });
+
+  it('recuperação com status "error" mostra um erro retryable em vez de travar', async () => {
+    simulateForumMock.mockImplementation((_d: any, _a: any, _att: any, _j: any, onProgress: any) => {
+      onProgress('SEED_CREATED', { sessionId: 'sess-falhou' });
+      return Promise.reject(new Error('MAX_RETRIES_EXCEEDED'));
+    });
+    subscribeSimRecoveryMock.mockImplementation((_sessionId: string, onChange: any) => {
+      onChange('error');
+      return () => {};
+    });
+
+    let latest: SimData = initialSimData(1);
+    latest.caseDescription = 'descrição válida para recuperação com erro';
+    const setSimData = (fn: (prev: SimData) => SimData) => {
+      latest = fn(latest);
+    };
+
+    const { findByText } = render(
+      <SimulatingScreen
+        theme="light"
+        onToggleTheme={() => {}}
+        onNavigate={() => {}}
+        simData={latest}
+        setSimData={setSimData as any}
+        user={null}
+      />
+    );
+
+    await findByText(/erro no servidor/i);
   });
 });
