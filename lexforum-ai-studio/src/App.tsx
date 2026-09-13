@@ -1050,6 +1050,7 @@ const startRecovery = (sessionId: string) => {
         body: JSON.stringify({
           simulationId: state.simulationId,
           mode: state.selectedMode,
+          returnPath: '/classico',
           ...(promoCode.trim() ? { promoCode: promoCode.trim().toUpperCase() } : {}),
         }),
       });
@@ -1092,7 +1093,7 @@ const startRecovery = (sessionId: string) => {
     try {
       const status = await getChatStatus(state.simulationId);
       if (!status.isPaid) {
-        const url = await createChatCheckoutSession(state.simulationId);
+        const url = await createChatCheckoutSession(state.simulationId, '/classico');
         window.location.href = url;
         return;
       }
@@ -1177,7 +1178,10 @@ const startRecovery = (sessionId: string) => {
 
   if (window.location.pathname === '/termos') return <TermosPage />;
   if (window.location.pathname === '/admin') return <AdminPage />;
-  if (window.location.pathname.startsWith('/novaversao')) return <NovaVersaoApp />;
+  // Troca de rota (ADR-008): a V5 é a raiz do site agora. A versão anterior
+  // continua viva em /classico — link de retorno, não redeploy — para
+  // qualquer sessão em andamento ou rollback rápido de UX.
+  if (window.location.pathname !== '/classico') return <NovaVersaoApp />;
 
   return (
     <>

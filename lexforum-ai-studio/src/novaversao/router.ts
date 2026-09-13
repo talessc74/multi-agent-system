@@ -1,7 +1,10 @@
 /**
- * Roteador mínimo para /novaversao — sem lib de router (o produto inteiro
- * não usa uma; ver App.tsx:1177, o mesmo padrão de window.location.pathname
- * usado por /termos e /admin).
+ * Roteador mínimo para o app V5 — sem lib de router (o produto inteiro não
+ * usa uma; ver App.tsx, o mesmo padrão de window.location.pathname usado
+ * por /termos, /admin e /classico).
+ *
+ * BASE fica vazio desde a troca de rota: o V5 é a raiz do site agora, não
+ * mais um prefixo /novaversao. Ver ADR-008 e o registro da troca.
  *
  * Todo link é um <a href> real: funciona com reload cheio sem JS (o Express
  * já serve index.html para qualquer caminho) e é interceptado com
@@ -17,7 +20,7 @@ export type NvRoute =
   | { screen: 'simulating'; mode: number }
   | { screen: 'result'; mode: number };
 
-const BASE = '/novaversao';
+const BASE = '';
 
 export function parseRoute(pathname: string): NvRoute {
   const rest = pathname.slice(BASE.length).replace(/^\/|\/$/g, '');
@@ -39,7 +42,7 @@ export function parseRoute(pathname: string): NvRoute {
 }
 
 export function routePath(route: NvRoute): string {
-  if (route.screen === 'home') return BASE;
+  if (route.screen === 'home') return BASE || '/';
   if (route.screen === 'history') return `${BASE}/historico`;
   const p = `${BASE}/simular/${route.mode}`;
   if (route.screen === 'input') return p;

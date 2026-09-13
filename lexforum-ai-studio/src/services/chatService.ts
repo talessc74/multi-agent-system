@@ -30,12 +30,12 @@ export async function getChatHistory(simulationId: string): Promise<ChatMessage[
   return data.messages;
 }
 
-export async function createChatCheckoutSession(simulationId: string): Promise<string> {
+export async function createChatCheckoutSession(simulationId: string, returnPath?: string): Promise<string> {
   const token = await getToken();
   const res = await fetch('/api/stripe/create-chat-checkout-session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify({ simulationId }),
+    body: JSON.stringify({ simulationId, ...(returnPath ? { returnPath } : {}) }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
