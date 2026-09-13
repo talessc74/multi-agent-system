@@ -1,4 +1,5 @@
 import React from 'react';
+import type { User } from 'firebase/auth';
 import { MODE_CONFIG } from '../../config/modeConfig';
 import { Nav } from '../components/Nav';
 import type { NvRoute } from '../router';
@@ -10,12 +11,13 @@ interface ConfirmProps {
   onToggleTheme: () => void;
   onNavigate: (route: NvRoute) => void;
   simData: SimData;
+  user?: User | null;
 }
 
 const themeColor = (cfg: (typeof MODE_CONFIG)[number], theme: 'dark' | 'light') =>
   theme === 'light' ? cfg.colorLight : cfg.color;
 
-export const ConfirmScreen: React.FC<ConfirmProps> = ({ theme, onToggleTheme, onNavigate, simData }) => {
+export const ConfirmScreen: React.FC<ConfirmProps> = ({ theme, onToggleTheme, onNavigate, simData, user }) => {
   const cfg = MODE_CONFIG[simData.mode];
   const color = themeColor(cfg, theme);
   const area = simData.detectedArea ?? 'OTHER';
@@ -23,7 +25,7 @@ export const ConfirmScreen: React.FC<ConfirmProps> = ({ theme, onToggleTheme, on
 
   return (
     <>
-      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} />
+      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} />
       <div className="nv-container" style={{ padding: '48px 40px 60px', maxWidth: 680 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: `1px solid ${color}`, padding: '7px 14px', marginBottom: 24 }}>
           <span style={{ width: 7, height: 7, borderRadius: '50%', background: color }} />

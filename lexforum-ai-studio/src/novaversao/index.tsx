@@ -7,14 +7,18 @@ import { useTheme } from '../hooks/useTheme';
 import { parseRoute } from './router';
 import type { NvRoute } from './router';
 import { HomeScreen } from './screens/Home';
+import { HistoryScreen } from './screens/History';
 import { SimFlow } from './SimFlow';
 import LoginModal from '../components/LoginModal';
+import type { SimData } from './simState';
+import { simDataFromHistory } from './simState';
 
 export default function NovaVersaoApp() {
   const { theme, toggle } = useTheme();
   const [route, setRoute] = useState<NvRoute>(() => parseRoute(window.location.pathname));
   const [user, setUser] = useState<User | null>(null);
   const [showLogin, setShowLogin] = useState(false);
+  const [pendingLoad, setPendingLoad] = useState<SimData | null>(null);
 
   useEffect(() => {
     const onPopState = () => setRoute(parseRoute(window.location.pathname));
@@ -32,8 +36,21 @@ export default function NovaVersaoApp() {
   return (
     <div className="nv" data-theme={theme}>
       <div className="nv-grain" aria-hidden="true" />
-      {route.screen === 'home' && <HomeScreen theme={theme} onToggleTheme={toggle} onNavigate={navigate} />}
-      {route.screen !== 'home' && (
+      {route.screen === 'home' && <HomeScreen theme={theme} onToggleTheme={toggle} onNavigate={navigate} user={user} />}
+      {route.screen === 'history' && (
+        <HistoryScreen
+          theme={theme}
+          onToggleTheme={toggle}
+          onNavigate={navigate}
+          user={user}
+          onSelect={(sim) => {
+            const loaded = simDataFromHistory(sim);
+            setPendingLoad(loaded);
+            navigate({ screen: 'result', mode: loaded.mode });
+          }}
+        />
+      )}
+      {route.screen !== 'home' && route.screen !== 'history' && (
         <SimFlow
           theme={theme}
           onToggleTheme={toggle}
@@ -41,6 +58,8 @@ export default function NovaVersaoApp() {
           route={route}
           user={user}
           onRequireLogin={() => setShowLogin(true)}
+          pendingLoad={pendingLoad}
+          onConsumePendingLoad={() => setPendingLoad(null)}
         />
       )}
       {showLogin && (

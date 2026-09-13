@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import type { User } from 'firebase/auth';
 import type { NvRoute } from '../router';
 import { NvLink } from './NvLink';
 
@@ -6,9 +7,10 @@ interface NavProps {
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
   onNavigate: (route: NvRoute) => void;
+  user?: User | null;
 }
 
-export const Nav: React.FC<NavProps> = ({ theme, onToggleTheme, onNavigate }) => {
+export const Nav: React.FC<NavProps> = ({ theme, onToggleTheme, onNavigate, user }) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -53,27 +55,38 @@ export const Nav: React.FC<NavProps> = ({ theme, onToggleTheme, onNavigate }) =>
             EAI<em style={{ fontStyle: 'italic', color: 'var(--nv-red)' }}>✓?</em>
           </span>
         </NvLink>
-        <button
-          type="button"
-          onClick={onToggleTheme}
-          role="switch"
-          aria-checked={theme === 'dark'}
-          aria-label="Alternar tema claro/escuro"
-          style={{
-            fontFamily: 'var(--nv-mono)',
-            fontSize: 10.5,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-            background: 'transparent',
-            border: '1px solid var(--nv-line-2)',
-            borderRadius: 3,
-            padding: '7px 12px',
-            color: 'var(--nv-ink-2)',
-            cursor: 'pointer',
-          }}
-        >
-          {theme === 'dark' ? 'Escuro' : 'Claro'}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+          {user && (
+            <NvLink
+              to={{ screen: 'history' }}
+              onNavigate={onNavigate}
+              style={{ fontFamily: 'var(--nv-mono)', fontSize: 10.5, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--nv-ink-2)', textDecoration: 'none' }}
+            >
+              Meus casos
+            </NvLink>
+          )}
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            role="switch"
+            aria-checked={theme === 'dark'}
+            aria-label="Alternar tema claro/escuro"
+            style={{
+              fontFamily: 'var(--nv-mono)',
+              fontSize: 10.5,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              background: 'transparent',
+              border: '1px solid var(--nv-line-2)',
+              borderRadius: 3,
+              padding: '7px 12px',
+              color: 'var(--nv-ink-2)',
+              cursor: 'pointer',
+            }}
+          >
+            {theme === 'dark' ? 'Escuro' : 'Claro'}
+          </button>
+        </div>
       </div>
     </nav>
   );

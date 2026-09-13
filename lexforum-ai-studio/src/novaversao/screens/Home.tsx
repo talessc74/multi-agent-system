@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import type { User } from 'firebase/auth';
 import { MODE_CONFIG } from '../../config/modeConfig';
 import { getStats } from '../../services/dbService';
 import type { GlobalStats } from '../../services/dbService';
@@ -13,6 +14,7 @@ interface HomeProps {
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
   onNavigate: (route: NvRoute) => void;
+  user?: User | null;
 }
 
 // Modos agrupados por situação do usuário — herdado da V2, ver briefing §7.1.4
@@ -45,7 +47,7 @@ const STEPS = [
   },
 ];
 
-export const HomeScreen: React.FC<HomeProps> = ({ theme, onToggleTheme, onNavigate }) => {
+export const HomeScreen: React.FC<HomeProps> = ({ theme, onToggleTheme, onNavigate, user }) => {
   const [stats, setStats] = useState<GlobalStats | null>(null);
   const ghostRef = useRef<HTMLSpanElement>(null);
 
@@ -73,7 +75,7 @@ export const HomeScreen: React.FC<HomeProps> = ({ theme, onToggleTheme, onNaviga
 
   return (
     <>
-      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} />
+      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} />
 
       {/* ── HERO ─────────────────────────────────────────────────── */}
       <header className="nv-void" style={{ position: 'relative', overflow: 'hidden', padding: '72px 0 64px' }}>

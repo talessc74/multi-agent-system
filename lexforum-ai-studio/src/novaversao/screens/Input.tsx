@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { User } from 'firebase/auth';
 import { MODE_CONFIG } from '../../config/modeConfig';
 import { validateCausa } from '../../lib/gemini';
 import { Nav } from '../components/Nav';
@@ -15,12 +16,13 @@ interface InputProps {
   onNavigate: (route: NvRoute) => void;
   simData: SimData;
   setSimData: React.Dispatch<React.SetStateAction<SimData>>;
+  user?: User | null;
 }
 
 const themeColor = (cfg: (typeof MODE_CONFIG)[number], theme: 'dark' | 'light') =>
   theme === 'light' ? cfg.colorLight : cfg.color;
 
-export const InputScreen: React.FC<InputProps> = ({ theme, onToggleTheme, onNavigate, simData, setSimData }) => {
+export const InputScreen: React.FC<InputProps> = ({ theme, onToggleTheme, onNavigate, simData, setSimData, user }) => {
   const cfg = MODE_CONFIG[simData.mode];
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<SimError | null>(null);
@@ -72,7 +74,7 @@ export const InputScreen: React.FC<InputProps> = ({ theme, onToggleTheme, onNavi
 
   return (
     <>
-      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} />
+      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} />
 
       <div className="nv-container" style={{ padding: '40px 40px 20px', maxWidth: 720 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>

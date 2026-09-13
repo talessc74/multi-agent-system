@@ -54,6 +54,33 @@ export function initialSimData(mode: number): SimData {
   };
 }
 
+/** Reconstrói o SimData de um caso do histórico (equivalente a App.tsx
+ * loadSimulation) — mesma regra: isUnlocked sempre true ao reabrir, já que
+ * o histórico só lista casos do próprio usuário (Firestore rules). */
+export function simDataFromHistory(sim: any): SimData {
+  const mode = sim.mode5Result ? 5 : (sim.selectedMode ?? 1);
+  return {
+    ...initialSimData(mode),
+    caseDescription: sim.caseDescription ?? '',
+    userSide: sim.userSide ?? undefined,
+    userPole: sim.userPole ?? undefined,
+    mode5SubCase: sim.mode5Result?.subCase ?? 'RECURSO',
+    detectedArea: sim.area ?? 'OTHER',
+    caseSummary: sim.caseSummary ?? null,
+    simulation: {
+      area: sim.area,
+      rounds: sim.rounds || [],
+      finalSuccessProbability: sim.finalSuccessProbability,
+      lawyerAgentName: sim.lawyerAgentName,
+      judgeAgentName: sim.judgeAgentName,
+    },
+    report: sim.report ?? null,
+    mode5Result: sim.mode5Result ?? null,
+    isUnlocked: true,
+    simulationId: sim.id ?? null,
+  };
+}
+
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 export const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
 

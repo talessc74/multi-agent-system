@@ -11,6 +11,7 @@
 
 export type NvRoute =
   | { screen: 'home' }
+  | { screen: 'history' }
   | { screen: 'input'; mode: number }
   | { screen: 'confirm'; mode: number }
   | { screen: 'simulating'; mode: number }
@@ -21,6 +22,8 @@ const BASE = '/novaversao';
 export function parseRoute(pathname: string): NvRoute {
   const rest = pathname.slice(BASE.length).replace(/^\/|\/$/g, '');
   const parts = rest.split('/').filter(Boolean);
+
+  if (parts[0] === 'historico') return { screen: 'history' };
 
   if (parts[0] === 'simular' && parts[1]) {
     const mode = Number(parts[1]);
@@ -37,6 +40,7 @@ export function parseRoute(pathname: string): NvRoute {
 
 export function routePath(route: NvRoute): string {
   if (route.screen === 'home') return BASE;
+  if (route.screen === 'history') return `${BASE}/historico`;
   const p = `${BASE}/simular/${route.mode}`;
   if (route.screen === 'input') return p;
   if (route.screen === 'confirm') return `${p}/confirmar`;
