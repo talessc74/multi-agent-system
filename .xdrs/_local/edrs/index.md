@@ -16,6 +16,7 @@ Code-level implementation patterns and conventions.
 - [008-chat-simulationid-and-history-on-case-load](application/008-chat-simulationid-and-history-on-case-load.md) — loadSimulation must set simulationId and reset per-case chat state; handleOpenChat must always refetch real chat history from Firestore on open, never reuse in-memory chatMessages
 - [009-pdf-export-print-only-content](application/009-pdf-export-print-only-content.md) — The "Exportar PDF" button is window.print() over @media print, not a dedicated renderer — screen-only/interactive UI on the result screen needs no-print, and all AI-generated text needs ReactMarkdown, consistently across every section of the report
 - [010-pdf-repeating-print-header](application/010-pdf-repeating-print-header.md) — The PDF masthead must use position:fixed under @media print (plus a matching flow spacer) to repeat on every page; Logo's icon mark and wordmark title are the same brand mark and shouldn't both show in a compact masthead
+- [011-agent-creator-internal-identifier-sanitization](application/011-agent-creator-internal-identifier-sanitization.md) — generateAgent() must run every generated agent through agent-sanitizer.ts before returning it, stripping internal creator-system identifiers ("kernel" field, "Auditor Kern 0xF1", "Arquiteto Especialista") that the prompt instructs but does not enforce — closes the gap EDR-010 left open
 
 ## principles
 
