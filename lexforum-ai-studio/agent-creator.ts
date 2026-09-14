@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { sanitizeGeneratedAgent } from "./agent-sanitizer";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
@@ -121,7 +122,15 @@ async function generateAgent(seed: any, request: string, agentId: string) {
     }],
     config: { responseMimeType: "application/json", systemInstruction: JSON.stringify(ESPECIALISTA_V2) },
   });
-  return safeParseJSON(response.text!);
+  const parsed = safeParseJSON(response.text!);
+  const { agente, leaksFound } = sanitizeGeneratedAgent(parsed.agente);
+  if (leaksFound.length > 0) {
+    console.warn(
+      `[AgentCreator] Identificador(es) interno(s) do sistema criador vazaram no agente "${agentId}" e foram removidos:`,
+      leaksFound
+    );
+  }
+  return { ...parsed, agente };
 }
 
 export interface CreateAgentParams {
