@@ -15,6 +15,7 @@ interface HomeProps {
   onToggleTheme: () => void;
   onNavigate: (route: NvRoute) => void;
   user?: User | null;
+  onRequireLogin: () => void;
 }
 
 // Modos agrupados por situação do usuário — herdado da V2, ver briefing §7.1.4
@@ -47,7 +48,7 @@ const STEPS = [
   },
 ];
 
-export const HomeScreen: React.FC<HomeProps> = ({ theme, onToggleTheme, onNavigate, user }) => {
+export const HomeScreen: React.FC<HomeProps> = ({ theme, onToggleTheme, onNavigate, user, onRequireLogin }) => {
   const [stats, setStats] = useState<GlobalStats | null>(null);
   const ghostRef = useRef<HTMLSpanElement>(null);
 
@@ -75,7 +76,7 @@ export const HomeScreen: React.FC<HomeProps> = ({ theme, onToggleTheme, onNaviga
 
   return (
     <>
-      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} />
+      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} onRequireLogin={onRequireLogin} />
 
       {/* ── HERO ─────────────────────────────────────────────────── */}
       <header className="nv-void" style={{ position: 'relative', overflow: 'hidden', padding: '72px 0 64px' }}>

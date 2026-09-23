@@ -8,9 +8,10 @@ interface NavProps {
   onToggleTheme: () => void;
   onNavigate: (route: NvRoute) => void;
   user?: User | null;
+  onRequireLogin: () => void;
 }
 
-export const Nav: React.FC<NavProps> = ({ theme, onToggleTheme, onNavigate, user }) => {
+export const Nav: React.FC<NavProps> = ({ theme, onToggleTheme, onNavigate, user, onRequireLogin }) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -56,7 +57,10 @@ export const Nav: React.FC<NavProps> = ({ theme, onToggleTheme, onNavigate, user
           </span>
         </NvLink>
         <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-          {user && (
+          {/* Meus casos — sempre visível; abre login se não autenticado
+              (mesmo contrato de src/components/Navbar.tsx, o header da
+              versão anterior) */}
+          {user ? (
             <NvLink
               to={{ screen: 'history' }}
               onNavigate={onNavigate}
@@ -64,6 +68,35 @@ export const Nav: React.FC<NavProps> = ({ theme, onToggleTheme, onNavigate, user
             >
               Meus casos
             </NvLink>
+          ) : (
+            <button
+              type="button"
+              onClick={onRequireLogin}
+              style={{ fontFamily: 'var(--nv-mono)', fontSize: 10.5, letterSpacing: '0.06em', textTransform: 'uppercase', background: 'transparent', border: 'none', padding: 0, color: 'var(--nv-ink-3)', cursor: 'pointer' }}
+            >
+              Meus casos
+            </button>
+          )}
+          {!user && (
+            <button
+              type="button"
+              onClick={onRequireLogin}
+              style={{
+                fontFamily: 'var(--nv-mono)',
+                fontSize: 10.5,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                background: 'transparent',
+                border: '1px solid var(--nv-line-2)',
+                borderRadius: 3,
+                padding: '7px 12px',
+                color: 'var(--nv-ink)',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              Entrar
+            </button>
           )}
           <button
             type="button"

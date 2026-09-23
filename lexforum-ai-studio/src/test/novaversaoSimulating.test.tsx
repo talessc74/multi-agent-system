@@ -44,6 +44,7 @@ function renderScreen(simData: SimData, setSimData: (fn: (prev: SimData) => SimD
       simData={simData}
       setSimData={setSimData as any}
       user={user}
+      onRequireLogin={() => {}}
     />
   );
 }
@@ -143,6 +144,7 @@ describe('SimulatingScreen — saveSimulation garante simulationId', () => {
         simData={latest}
         setSimData={setSimData as any}
         user={null}
+        onRequireLogin={() => {}}
       />
     );
 
@@ -184,6 +186,7 @@ describe('SimulatingScreen — recuperação de simulação (MAX_RETRIES_EXCEEDE
         simData={latest}
         setSimData={setSimData as any}
         user={null}
+        onRequireLogin={() => {}}
       />
     );
 
@@ -209,6 +212,7 @@ describe('SimulatingScreen — recuperação de simulação (MAX_RETRIES_EXCEEDE
         simData={latest}
         setSimData={setSimData as any}
         user={null}
+        onRequireLogin={() => {}}
       />
     );
 
@@ -240,6 +244,7 @@ describe('SimulatingScreen — recuperação de simulação (MAX_RETRIES_EXCEEDE
         simData={latest}
         setSimData={setSimData as any}
         user={null}
+        onRequireLogin={() => {}}
       />
     );
 
