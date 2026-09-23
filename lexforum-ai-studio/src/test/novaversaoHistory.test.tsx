@@ -19,7 +19,7 @@ beforeEach(() => {
 describe('HistoryScreen', () => {
   it('sem usuário logado, pede login e não consulta o Firestore', () => {
     render(
-      <HistoryScreen theme="light" onToggleTheme={() => {}} onNavigate={() => {}} user={null} onSelect={() => {}} />
+      <HistoryScreen theme="light" onToggleTheme={() => {}} onNavigate={() => {}} user={null} onSelect={() => {}} onRequireLogin={() => {}} />
     );
     expect(screen.getByText(/faça login/i)).toBeInTheDocument();
     expect(getUserSimulationsMock).not.toHaveBeenCalled();
@@ -28,7 +28,7 @@ describe('HistoryScreen', () => {
   it('mostra o estado vazio quando o usuário não tem casos', async () => {
     getUserSimulationsMock.mockResolvedValue([]);
     render(
-      <HistoryScreen theme="light" onToggleTheme={() => {}} onNavigate={() => {}} user={{ uid: 'u1' } as any} onSelect={() => {}} />
+      <HistoryScreen theme="light" onToggleTheme={() => {}} onNavigate={() => {}} user={{ uid: 'u1' } as any} onSelect={() => {}} onRequireLogin={() => {}} />
     );
     await screen.findByText(/nenhum caso simulado/i);
   });
@@ -36,7 +36,7 @@ describe('HistoryScreen', () => {
   it('getUserSimulations rejeitando não trava em "Carregando…" para sempre', async () => {
     getUserSimulationsMock.mockRejectedValue(new Error('permission-denied'));
     render(
-      <HistoryScreen theme="light" onToggleTheme={() => {}} onNavigate={() => {}} user={{ uid: 'u1' } as any} onSelect={() => {}} />
+      <HistoryScreen theme="light" onToggleTheme={() => {}} onNavigate={() => {}} user={{ uid: 'u1' } as any} onSelect={() => {}} onRequireLogin={() => {}} />
     );
     await screen.findByText(/nenhum caso simulado/i);
   });
@@ -49,7 +49,7 @@ describe('HistoryScreen', () => {
     const user = userEvent.setup();
 
     render(
-      <HistoryScreen theme="light" onToggleTheme={() => {}} onNavigate={() => {}} user={{ uid: 'u1' } as any} onSelect={onSelect} />
+      <HistoryScreen theme="light" onToggleTheme={() => {}} onNavigate={() => {}} user={{ uid: 'u1' } as any} onSelect={onSelect} onRequireLogin={() => {}} />
     );
 
     const card = await screen.findByText('Resumo do caso um');

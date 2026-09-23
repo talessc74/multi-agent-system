@@ -12,6 +12,7 @@ interface HistoryProps {
   onNavigate: (route: NvRoute) => void;
   user: User | null;
   onSelect: (sim: any) => void;
+  onRequireLogin: () => void;
 }
 
 function formatSimDate(createdAt: unknown): string {
@@ -29,7 +30,7 @@ function formatSimDate(createdAt: unknown): string {
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
-export const HistoryScreen: React.FC<HistoryProps> = ({ theme, onToggleTheme, onNavigate, user, onSelect }) => {
+export const HistoryScreen: React.FC<HistoryProps> = ({ theme, onToggleTheme, onNavigate, user, onSelect, onRequireLogin }) => {
   const [sims, setSims] = useState<any[] | null>(null);
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export const HistoryScreen: React.FC<HistoryProps> = ({ theme, onToggleTheme, on
 
   return (
     <>
-      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} />
+      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} onRequireLogin={onRequireLogin} />
       <div className="nv-container" style={{ padding: '40px 40px 60px', maxWidth: 760 }}>
         <p className="nv-kicker" style={{ marginBottom: 8 }}>Sob esta credencial</p>
         <h1 style={{ fontFamily: 'var(--nv-serif)', fontStyle: 'italic', fontWeight: 500, fontSize: 30, color: 'var(--nv-ink)', margin: '0 0 32px' }}>

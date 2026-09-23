@@ -17,6 +17,7 @@ interface SimulatingProps {
   simData: SimData;
   setSimData: React.Dispatch<React.SetStateAction<SimData>>;
   user: User | null;
+  onRequireLogin: () => void;
 }
 
 const themeColor = (cfg: (typeof MODE_CONFIG)[number], theme: 'dark' | 'light') =>
@@ -29,7 +30,7 @@ const STAGES = [
   { key: 'REVIEWING', label: 'Revisando fundamentos' },
 ];
 
-export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleTheme, onNavigate, simData, setSimData, user }) => {
+export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleTheme, onNavigate, simData, setSimData, user, onRequireLogin }) => {
   const cfg = MODE_CONFIG[simData.mode];
   const color = themeColor(cfg, theme);
   const [step, setStep] = useState('WRITING');
@@ -256,7 +257,7 @@ export const SimulatingScreen: React.FC<SimulatingProps> = ({ theme, onToggleThe
 
   return (
     <>
-      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} />
+      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} onRequireLogin={onRequireLogin} />
       <div className="nv-container" style={{ padding: '48px 40px 60px', maxWidth: 640 }}>
         <p className="nv-kicker" style={{ marginBottom: 8 }}>01</p>
         <h1 style={{ fontFamily: 'var(--nv-serif)', fontStyle: 'italic', fontWeight: 500, fontSize: 28, color: 'var(--nv-ink)', margin: '0 0 8px' }}>

@@ -35,13 +35,13 @@ export const SimFlow: React.FC<SimFlowProps> = ({ theme, onToggleTheme, onNaviga
   }, [route.mode]);
 
   if (route.screen === 'input') {
-    return <InputScreen theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} simData={simData} setSimData={setSimData} user={user} />;
+    return <InputScreen theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} simData={simData} setSimData={setSimData} user={user} onRequireLogin={onRequireLogin} />;
   }
   if (route.screen === 'confirm') {
-    return <ConfirmScreen theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} simData={simData} user={user} />;
+    return <ConfirmScreen theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} simData={simData} user={user} onRequireLogin={onRequireLogin} />;
   }
   if (route.screen === 'simulating') {
-    return <SimulatingScreen theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} simData={simData} setSimData={setSimData} user={user} />;
+    return <SimulatingScreen theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} simData={simData} setSimData={setSimData} user={user} onRequireLogin={onRequireLogin} />;
   }
   return (
     <ResultScreen

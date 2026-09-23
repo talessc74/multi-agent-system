@@ -17,12 +17,13 @@ interface InputProps {
   simData: SimData;
   setSimData: React.Dispatch<React.SetStateAction<SimData>>;
   user?: User | null;
+  onRequireLogin: () => void;
 }
 
 const themeColor = (cfg: (typeof MODE_CONFIG)[number], theme: 'dark' | 'light') =>
   theme === 'light' ? cfg.colorLight : cfg.color;
 
-export const InputScreen: React.FC<InputProps> = ({ theme, onToggleTheme, onNavigate, simData, setSimData, user }) => {
+export const InputScreen: React.FC<InputProps> = ({ theme, onToggleTheme, onNavigate, simData, setSimData, user, onRequireLogin }) => {
   const cfg = MODE_CONFIG[simData.mode];
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<SimError | null>(null);
@@ -74,7 +75,7 @@ export const InputScreen: React.FC<InputProps> = ({ theme, onToggleTheme, onNavi
 
   return (
     <>
-      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} />
+      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} onRequireLogin={onRequireLogin} />
 
       <div className="nv-container" style={{ padding: '40px 40px 20px', maxWidth: 720 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>

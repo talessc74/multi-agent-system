@@ -171,7 +171,7 @@ export const ResultScreen: React.FC<ResultProps> = ({ theme, onToggleTheme, onNa
 
   return (
     <>
-      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} />
+      <Nav theme={theme} onToggleTheme={onToggleTheme} onNavigate={onNavigate} user={user} onRequireLogin={onRequireLogin} />
       <div className="nv-container" style={{ padding: '40px 40px 60px', maxWidth: 760 }}>
         <p className="nv-kicker" style={{ marginBottom: 8 }}>
           Modo {String(simData.mode).padStart(2, '0')} · {cfg.headline}

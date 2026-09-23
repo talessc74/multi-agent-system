@@ -36,13 +36,16 @@ export default function NovaVersaoApp() {
   return (
     <div className="nv" data-theme={theme}>
       <div className="nv-grain" aria-hidden="true" />
-      {route.screen === 'home' && <HomeScreen theme={theme} onToggleTheme={toggle} onNavigate={navigate} user={user} />}
+      {route.screen === 'home' && (
+        <HomeScreen theme={theme} onToggleTheme={toggle} onNavigate={navigate} user={user} onRequireLogin={() => setShowLogin(true)} />
+      )}
       {route.screen === 'history' && (
         <HistoryScreen
           theme={theme}
           onToggleTheme={toggle}
           onNavigate={navigate}
           user={user}
+          onRequireLogin={() => setShowLogin(true)}
           onSelect={(sim) => {
             const loaded = simDataFromHistory(sim);
             setPendingLoad(loaded);
