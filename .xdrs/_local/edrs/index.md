@@ -18,6 +18,7 @@ Code-level implementation patterns and conventions.
 - [010-pdf-repeating-print-header](application/010-pdf-repeating-print-header.md) — The PDF masthead must use position:fixed under @media print (plus a matching flow spacer) to repeat on every page; Logo's icon mark and wordmark title are the same brand mark and shouldn't both show in a compact masthead
 - [011-agent-creator-internal-identifier-sanitization](application/011-agent-creator-internal-identifier-sanitization.md) — generateAgent() must run every generated agent through agent-sanitizer.ts before returning it, stripping internal creator-system identifiers ("kernel" field, "Auditor Kern 0xF1", "Arquiteto Especialista") that the prompt instructs but does not enforce — closes the gap EDR-010 left open
 - [012-dual-agent-generator-sanitizer-boundary](application/012-dual-agent-generator-sanitizer-boundary.md) — agent-sanitizer.ts only covers the primary Shaw/Especialista V2 path (agent-creator.ts); the fallback generator (gemini.server.ts getOrGenerateAgent) stays unsanitized only as long as it never reuses Especialista V2's prompt — unifying the two generators without adding the sanitizer to the merged output is disallowed
+- [013-gemini-model-name-configurable](application/013-gemini-model-name-configurable.md) — The Gemini model id must come from GEMINI_MODEL (defaulting to "gemini-2.5-flash") instead of being hardcoded per call site, so a future migration (e.g. to gemini-3.8-flash) is a Cloud Run env var, not an emergency multi-file PR
 
 ## principles
 

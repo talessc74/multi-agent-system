@@ -12,7 +12,9 @@ const ai = new GoogleGenAI({
   }
 });
 
-const MODEL_NAME = "gemini-2.5-flash";
+// _local-edr-policy-019: nome do modelo configurável via env, nunca hardcoded —
+// permite trocar em produção com uma variável, sem PR de emergência.
+const MODEL_NAME = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
 const dynamicAgents: Record<string, { id: string, name: string, instruction: string }> = {};
 
