@@ -1,11 +1,11 @@
 ---
-name: _local-edr-policy-devops-002-production-deploy-authorization
+name: _local-edr-policy-021-production-deploy-authorization
 description: Defines whether the AI agent must ask for per-instance confirmation before triggering the production deploy workflow. Use before triggering deploy-producao.yml, or when deciding whether a tested/validated main commit should go live.
 apply-to: The GitHub Actions workflow deploy-producao.yml (workflow_dispatch on ref main), triggered by an AI agent working on this repository
 valid-from: 2026-09-11
 ---
 
-# _local-edr-policy-devops-002: Production Deploy Authorization
+# _local-edr-policy-021: Production Deploy Authorization
 
 ## Context and Problem Statement
 
@@ -41,7 +41,7 @@ immediately after a tested/validated commit or merge to `main`, without asking f
 
 ## Conflicts
 
-- `_local-edr-policy-008-deployment-strategy` (`devops/001`) and
+- `_local-edr-policy-020-deployment-strategy` (`devops/001`) and
   `_local-adr-policy-008-rollout-path-for-the-v5-redesign`'s Conflicts section
   both note that some sources describe production as auto-deploying on every
   push to `main` via Cloud Build, while the only production-deploy mechanism

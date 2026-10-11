@@ -55,7 +55,8 @@ or JS `null` — no consumer needs its own sentinel guard.
 - Out of scope: this policy does not cover the "Auditor Kern 0xF1" class of
   leak (internal identifiers appearing in generated agent JSON). That is a
   different mechanism — prompt-instructed field omission, not a type-system
-  sentinel — and needs its own review.
+  sentinel. **Resolved by `_local-edr-policy-017` (2026-09-14)** — see
+  `application/011-agent-creator-internal-identifier-sanitization.md`.
 
 ## References
 
@@ -66,3 +67,4 @@ _Line numbers below reflect the implementation as of 2026-07-02; the Context sec
 - `lexforum-ai-studio/server.ts:86,102,222` (existing but now-redundant guard)
 - `versions/CHANGELOG.md` — Bug 4, commit `3f71a07`
 - `lexforum-ai-studio/src/test/specificJudgeNullLeak.test.ts` — regression test proving the gap and the fix
+- [_local-edr-policy-017 - agent-creator internal identifier sanitization](011-agent-creator-internal-identifier-sanitization.md) — closes the "Auditor Kern 0xF1" gap flagged above
