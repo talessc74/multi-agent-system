@@ -3,6 +3,10 @@ import { sanitizeGeneratedAgent } from "./agent-sanitizer";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
+// _local-edr-policy-019: nome do modelo configurável via env, nunca hardcoded —
+// permite trocar em produção com uma variável, sem PR de emergência.
+const MODEL_NAME = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
 // ─── PRATA DA CASA — NÃO ALTERAR ───────────────────────────
 const SHAW_V2: Record<string, any> = {
   "agent_id": "SHAW_ARCHITECT_GENERATOR",
@@ -61,7 +65,7 @@ function safeParseJSON(text: string) {
 
 async function identifyReference(description: string) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: MODEL_NAME,
     contents: [{
       role: "user",
       parts: [{ text: `
@@ -84,7 +88,7 @@ async function identifyReference(description: string) {
 
 async function generateSeed(legacyData: any, seedId: string) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: MODEL_NAME,
     contents: [{
       role: "user",
       parts: [{ text: `
@@ -103,7 +107,7 @@ async function generateSeed(legacyData: any, seedId: string) {
 
 async function generateAgent(seed: any, request: string, agentId: string) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: MODEL_NAME,
     contents: [{
       role: "user",
       parts: [{ text: `
