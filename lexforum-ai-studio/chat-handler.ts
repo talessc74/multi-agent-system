@@ -268,8 +268,9 @@ export function registerChatRoutes(
         content: d.data().content as string,
       }));
 
-      // Sanitize message
-      const sanitized = sanitizeMessage(message);
+      // Sanitize + anonymize message — anonymize before Gemini sees it, not just
+      // before persisting (see _local-edr-policy-020-pre-ai-text-anonymization)
+      const sanitized = anonymizeText(sanitizeMessage(message));
 
       sendSSE(res, 'thinking', { agentName });
 
@@ -281,7 +282,7 @@ export function registerChatRoutes(
       const batch = adminDb.batch();
       batch.set(messagesRef.doc(), {
         role: 'user',
-        content: anonymizeText(sanitized),
+        content: sanitized,
         agentType,
         agentName,
         timestamp: admin.firestore.FieldValue.serverTimestamp(),

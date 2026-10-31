@@ -13,6 +13,7 @@ import { registerChatRoutes } from './chat-handler';
 import { resolveSimulationOwnership } from './src/lib/simulationOwnership.server';
 import { registerAdminRoutes } from './admin-routes';
 import { randomUUID } from 'crypto';
+import { anonymizeText } from './src/lib/anonymizer';
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -67,7 +68,7 @@ async function startServer() {
     logApiCall('validate');
     try {
       const { caseDescription, attachments } = req.body;
-      const data = await validateCausaServer(caseDescription, attachments);
+      const data = await validateCausaServer(anonymizeText(caseDescription), attachments);
       res.json(data);
     } catch (error: any) {
       if (error?.message?.includes('RESOURCE_EXHAUSTED') || error?.status === 429) {
@@ -82,8 +83,9 @@ async function startServer() {
     logApiCall('simulate');
     setupSSE(res);
 
-    const { caseDescription, area, attachments, specificJudge, mode, defenseDescription, defenseAttachments, userSide } =
-      req.body;
+    const { area, attachments, specificJudge, mode, defenseAttachments, userSide } = req.body;
+    const caseDescription = anonymizeText(req.body.caseDescription);
+    const defenseDescription = anonymizeText(req.body.defenseDescription ?? '');
 
     const sessionId = randomUUID();
     const send = (event: string, data: object) => sendSSE(res, event, data);
@@ -232,7 +234,12 @@ async function startServer() {
     logApiCall('mode5');
     setupSSE(res);
 
-    const { mode5Input, area, attachments, specificJudge } = req.body;
+    const { area, attachments, specificJudge } = req.body;
+    const mode5Input = {
+      ...req.body.mode5Input,
+      caseDescription: anonymizeText(req.body.mode5Input?.caseDescription),
+      sentencaOuProposta: anonymizeText(req.body.mode5Input?.sentencaOuProposta),
+    };
 
     const send = (event: string, data: object) => sendSSE(res, event, data);
 

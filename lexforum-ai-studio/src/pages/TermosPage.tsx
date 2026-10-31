@@ -27,8 +27,9 @@ const SECTIONS: { heading: string; body: React.ReactNode }[] = [
     body: (
       <>
         Levamos sua privacidade a sério. Seguimos a Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018).<br /><br />
-        <strong>O que coletamos:</strong> dados de cadastro (nome e e-mail), conteúdo da simulação (a descrição da causa que você submete) e dados de uso (data, hora, tipo de simulação e momento do desbloqueio do laudo).<br /><br />
-        <strong>O que não fazemos:</strong> não vendemos seus dados, não compartilhamos sua causa com terceiros e não usamos o conteúdo das suas simulações para treinar modelos de IA.<br /><br />
+        <strong>O que coletamos:</strong> dados de cadastro (nome e e-mail), conteúdo da simulação (a descrição da causa que você submete, incluindo documentos anexados, se houver) e dados de uso (data, hora, tipo de simulação e momento do desbloqueio do laudo).<br /><br />
+        <strong>Processamento por IA:</strong> o texto da sua causa é anonimizado (CPF, CNPJ, e-mail, telefone, endereço e número de processo são substituídos por marcadores) antes de ser processado pela infraestrutura de terceiros que gera a simulação. Documentos anexados (PDFs, imagens) não passam por esse filtro — evite anexar documentos com dados sensíveis que não sejam necessários ao caso.<br /><br />
+        <strong>O que não fazemos:</strong> não vendemos seus dados e não usamos o conteúdo das suas simulações para treinar modelos de IA.<br /><br />
         <strong>Prazo de retenção:</strong> seus dados são armazenados pelo período necessário à prestação do serviço e por até 2 (dois) anos após o encerramento da sua conta, salvo obrigação legal de guarda por prazo superior.<br /><br />
         <strong>Seus direitos:</strong> você pode solicitar a exclusão de todos os seus dados a qualquer momento pelo e-mail eaijuridico@icloud.com. Respondemos às solicitações dos titulares de dados no prazo de até 15 (quinze) dias, contados estritamente na forma da legislação de proteção de dados vigente.
       </>
@@ -126,7 +127,7 @@ export default function TermosPage() {
         </h1>
         <p style={{ fontFamily: 'var(--nv-mono)', fontSize: 11, color: 'var(--nv-ink-3)', margin: '0 0 4px' }}>Evidence-Based Artificial Intelligence</p>
         <p style={{ fontFamily: 'var(--nv-mono)', fontSize: 10, color: 'var(--nv-ink-3)', lineHeight: 1.7, margin: '0 0 40px' }}>
-          Versão 1.2 · Maio de 2026<br />
+          Versão 1.3 · Outubro de 2026<br />
           Responsável: Tales Carvalho. E-mail: eaijuridico@icloud.com<br />
           (E-mail provisório — será atualizado para eaijuridico.com.br após migração do domínio)
         </p>
@@ -141,7 +142,7 @@ export default function TermosPage() {
         ))}
 
         <p style={{ fontFamily: 'var(--nv-mono)', fontSize: 10, letterSpacing: '0.03em', textTransform: 'uppercase', color: 'var(--nv-ink-3)', textAlign: 'center', marginTop: 56, paddingTop: 20, borderTop: '1px solid var(--nv-line)' }}>
-          Versão 1.2, Maio de 2026 · EAI? · Evidence-Based Artificial Intelligence
+          Versão 1.3, Outubro de 2026 · EAI? · Evidence-Based Artificial Intelligence
         </p>
       </div>
     </div>
