@@ -24,8 +24,11 @@ purposes. Under Brazil's LGPD, what obligations apply before persisting this dat
 - The anonymizer removes or replaces: names, CPF/CNPJ, addresses, phone numbers, and
   other personal identifiers defined by LGPD as sensitive data.
 - Anonymized data only — raw user text must never be stored in Firestore.
-- Gemini calls during simulation use the original (non-anonymized) text — these calls
-  are transient and not persisted.
+- ~~Gemini calls during simulation use the original (non-anonymized) text — these calls
+  are transient and not persisted.~~ **Superseded by `_local-edr-policy-020`
+  (2026-10-31)** — raw text now passes through the anonymizer before reaching
+  Gemini too, not only before persistence. See
+  `application/014-pre-ai-text-anonymization.md`.
 
 #### Access Logging
 
