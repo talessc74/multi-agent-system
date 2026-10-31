@@ -15,3 +15,4 @@ Product behavior, lifecycle, and offering decisions.
 - [001-pricing-model](product/001-pricing-model.md) — Simulation mode pricing tiers
 - [002-beta-access-policy](product/002-beta-access-policy.md) — Beta users bypass paywall for all features
 - [003-judge-location-anonymization](product/003-judge-location-anonymization.md) — Comarca and geographic location must never be stored in judge agent seeds or Firestore documents
+- [004-agent-naming-no-personification](product/004-agent-naming-no-personification.md) — AI-simulated judges/lawyers must never be displayed under a personified human name, fictional or real-sounding — always role + legal area ("Magistrado Trabalhista"), binding on every EAI? client including non-repository ones (e.g. the SwiftUI app)
