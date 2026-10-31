@@ -70,10 +70,15 @@ the "Gemini calls use original text" clause in `_local-edr-policy-004`.
   redaction, a materially larger feature. Any user-facing copy describing
   this protection MUST carve out attachments explicitly — see the
   `TermosPage.tsx` wording this policy shipped alongside, which does.
-- Not addressed here: which Gemini API tier (free vs. billed) the
-  project's `GEMINI_API_KEY` operates under, and whether Google may use
-  unfiltered submitted content for model training on the free tier. This
-  is a separate, still-open verification — see the governance note below.
+- Resolved 2026-10-31: the project's `GEMINI_API_KEY` operates under the
+  **billed/paid tier** (confirmed by the user against the Google
+  Cloud/AI Studio console). Per Google's published terms at the time of
+  this check, paid-tier usage of the Gemini Developer API is excluded
+  from model-training use. This was the one open item that could have
+  made the pre-fix exposure (raw text reaching Gemini) a training-data
+  leak rather than only a false claim in the product's copy — it does
+  not. Any future migration of this key to a free/unbilled tier MUST
+  re-open this question before being treated as safe.
 
 ## Relationship to other policies
 
